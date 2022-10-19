@@ -2,6 +2,7 @@ using System.IO;
 using Xunit;
 using VDS.RDF;
 using GraphManipulation;
+using GraphManipulation.Models;
 using VDS.RDF.Parsing;
 
 namespace Test;
@@ -20,8 +21,7 @@ public class OntologyTest
 
         return new Triple(subj, pred, obj);
     }
-
-
+    
     [Fact]
     public void OntologyToGraphWithoutBaseThrowsException()
     {
@@ -29,9 +29,10 @@ public class OntologyTest
 
         Ontology ontology = new Ontology(new StringReader(badOntology), new TurtleParser());
 
-        var exception = Assert.Throws<OntologyException>(() => ontology.ToGraph());
+        var exception = Assert.Throws<KnowledgeGraphException>(() => ontology.ToGraph());
         Assert.Equal("No base defined", exception.Message);
     }
+    
 
     [Fact]
     public void OntologyToGraphWithOntologyDefinitionIsSuccess()

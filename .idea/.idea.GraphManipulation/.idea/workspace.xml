@@ -5,11 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c701dcae-c036-4c51-b84d-60162b45a46a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Test/DotNetRdfTest.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Test/OntologyTest.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/KnowledgeGraph.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/Ontology.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Test/DataGraphTest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation.sln.DotSettings.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test/GraphManipulationTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/GraphManipulationTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Ontology.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/OntologyTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/OntologyTest.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +70,7 @@
       <workItem from="1666171693699" duration="272000" />
       <workItem from="1666172007492" duration="75000" />
       <workItem from="1666172430138" duration="149000" />
-      <workItem from="1666172611218" duration="7282000" />
+      <workItem from="1666172611218" duration="10773000" />
     </task>
     <servers />
   </component>
@@ -79,5 +80,24 @@
   <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Test/DataGraphTest.cs</url>
+          <line>31</line>
+          <properties documentPath="$PROJECT_DIR$/Test/DataGraphTest.cs" initialLine="29" containingFunctionPresentation="method 'DataGraphMustConformToShapes'">
+            <startOffsets>
+              <option value="847" />
+            </startOffsets>
+            <endOffsets>
+              <option value="875" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
