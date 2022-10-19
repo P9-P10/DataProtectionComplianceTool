@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphManipulation", "GraphManipulation\GraphManipulation.csproj", "{6AA890E5-48DF-460B-AC7A-4D27CE4860DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{1030FF38-C734-4E2D-8DAE-49231030DF5A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6AA890E5-48DF-460B-AC7A-4D27CE4860DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AA890E5-48DF-460B-AC7A-4D27CE4860DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AA890E5-48DF-460B-AC7A-4D27CE4860DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AA890E5-48DF-460B-AC7A-4D27CE4860DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1030FF38-C734-4E2D-8DAE-49231030DF5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1030FF38-C734-4E2D-8DAE-49231030DF5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1030FF38-C734-4E2D-8DAE-49231030DF5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1030FF38-C734-4E2D-8DAE-49231030DF5A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
