@@ -5,13 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c701dcae-c036-4c51-b84d-60162b45a46a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/GraphManipulation/DataGraph.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Test/DotNetRdfTest.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Test/OntologyTest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/GraphManipulation.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/GraphManipulation.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Ontology.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Ontology.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation.sln.DotSettings.user" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/GraphManipulationTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/GraphManipulationTest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test/Test.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Test/Test.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test/simpleTestOntology.ttl" beforeDir="false" afterPath="$PROJECT_DIR$/Test/simpleTestOntology.ttl" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,7 +69,7 @@
       <workItem from="1666171693699" duration="272000" />
       <workItem from="1666172007492" duration="75000" />
       <workItem from="1666172430138" duration="149000" />
-      <workItem from="1666172611218" duration="6730000" />
+      <workItem from="1666172611218" duration="7282000" />
     </task>
     <servers />
   </component>
