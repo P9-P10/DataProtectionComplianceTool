@@ -25,4 +25,10 @@
       <ProjectReference Include="..\GraphManipulation\GraphManipulation.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="simpleTestOntology.ttl">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

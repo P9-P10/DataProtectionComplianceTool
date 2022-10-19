@@ -11,4 +11,10 @@
       <PackageReference Include="dotNetRdf" Version="3.0.0-rc0004" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Ontologies\datastore-description-language.ttl">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

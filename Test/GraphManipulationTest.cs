@@ -1,35 +1,63 @@
 using System;
+using System.IO;
 using System.Linq;
 using Xunit;
 using VDS.RDF;
 using GraphManipulation;
 using VDS.RDF.Writing;
 using VDS.RDF.Parsing;
+using Xunit.Abstractions;
 
 namespace Test;
 
 public class GraphManipulationTest
 {
-
-    [Fact]
-    public void DDLOntologyReturnsGraph()
+    private const string Namespace = "http://www.example.org/test#";
+    
+    private static Triple OntologyDefinitionTriple()
     {
         IGraph graph = new Graph();
 
+        IUriNode subj = graph.CreateUriNode(UriFactory.Create(Namespace));
+        IUriNode pred = graph.CreateUriNode(UriFactory.Create(NamespaceMapper.RDF + "type"));
+        IUriNode obj = graph.CreateUriNode(UriFactory.Create( NamespaceMapper.OWL + "Ontology"));
+
+        return new Triple(subj, pred, obj);
+    }
+    
+
+    [Fact]
+    public void OntologyToGraphWithoutBaseThrowsException()
+    {
+        string badOntology = "";
+        
+        Ontology ontology = new Ontology(new StringReader(badOntology), new TurtleParser());
+        
+        var exception = Assert.Throws<OntologyException>(() => ontology.ToGraph());
+        Assert.Equal("No base defined", exception.Message);
+    }
+
+    [Fact]
+    public void OntologyToGraphWithOntologyDefinitionIsSuccess()
+    {
         Ontology ontology = new Ontology("simpleTestOntology.ttl", new TurtleParser());
         
-        ontology.ToGraph(graph);
+        IGraph graph = ontology.ToGraph();
 
-        string name = "http://www.example.org/test#";
-        string owl = "http://www.w3.org/2002/07/owl#";
-        string rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+        Triple expected = OntologyDefinitionTriple();
+        
+        Assert.True(graph.ContainsTriple(expected));
+    }
+    
+    [Fact]
+    public void OntologyToGraphWithoutOntologyDefinitionThrowsException()
+    {
+        string badOntology = "@base <http://www.example.org/test#> .";
+        
+        Ontology ontology = new Ontology(new StringReader(badOntology), new TurtleParser());
 
-        IUriNode subj = graph.CreateUriNode(UriFactory.Create(name + "sto:"));
-        IUriNode pred = graph.CreateUriNode(UriFactory.Create(rdf + "type"));
-        IUriNode obj = graph.CreateUriNode(UriFactory.Create( owl + "Ontology"));
-        
-        
-        Assert.True(graph.ContainsTriple(new Triple(subj, pred, obj)));
+        var exception = Assert.Throws<OntologyException>(() => ontology.ToGraph());
+        Assert.Equal("Missing ontology definition", exception.Message);
     }
 
     [Fact]
@@ -42,7 +70,7 @@ public class GraphManipulationTest
         ILiteralNode obj = testGraph.CreateLiteralNode("Hello");
 
         testGraph.Assert(new Triple(subj, pred, obj));
-        
+
         Assert.Equal(1, testGraph.Triples.Count);
         Assert.Equal(new Triple(subj, pred, obj), testGraph.Triples.First());
     }

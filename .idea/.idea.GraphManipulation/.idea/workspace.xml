@@ -5,9 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c701dcae-c036-4c51-b84d-60162b45a46a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/GraphManipulation/Ontologies/datastore-description-language.ttl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/GraphManipulation/Ontology.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Test/simpleTestOntology.ttl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/DataGraph.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/GraphManipulation.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/GraphManipulation.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Ontology.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Ontology.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/GraphManipulationTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/GraphManipulationTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/Test.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Test/Test.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/simpleTestOntology.ttl" beforeDir="false" afterPath="$PROJECT_DIR$/Test/simpleTestOntology.ttl" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,6 +19,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/196b514cc6134f6d93506f3921576e7422f200/23/0b2f0a63/TurtleParser.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/d922388adba941d9b8e94145fefd7a539400/7b/9063f0c0/Ontology.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -26,14 +31,15 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "/home/ane/Documents/GitHub/GraphManipulation/Test/simpleTestOntology.ttl",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="74595497-7b12-47da-b242-592b7bdfe537">
     <configuration name="GraphManipulation" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
@@ -65,7 +71,7 @@
       <workItem from="1666171693699" duration="272000" />
       <workItem from="1666172007492" duration="75000" />
       <workItem from="1666172430138" duration="149000" />
-      <workItem from="1666172611218" duration="2028000" />
+      <workItem from="1666172611218" duration="6730000" />
     </task>
     <servers />
   </component>

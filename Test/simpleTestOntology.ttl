@@ -5,6 +5,7 @@
 @prefix sh:    <http://www.w3.org/ns/shacl#> .
 @prefix ddl:   <http://www.cs-22-dt-9-03.org/datastore-description-language#> .
 @prefix sto:   <http://www.example.org/test#> .
+@base          <http://www.example.org/test#> .
 
 sto:
     a            owl:Ontology ;
@@ -12,3 +13,6 @@ sto:
     rdfs:comment "This is a comment about the test ontology"@en ;
     sh:declare   [ sh:prefix    "sto" ;
                    sh:namespace "http://www.example.org/test#" ; ] ; .
+
+
+sto:T rdf:type rdfs:Class .
