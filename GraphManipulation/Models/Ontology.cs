@@ -4,14 +4,14 @@ namespace GraphManipulation.Models;
 
 public class Ontology : KnowledgeGraph
 {
-    public Ontology(string? path, IRdfReader reader) : base(path, reader)
+    public Ontology(string path, IRdfReader reader) : base(path, reader)
     {
     }
 
-    public Ontology(TextReader textReader, IRdfReader reader) : base(textReader, reader)
+    public Ontology(StringReader stringReader, string data, IRdfReader reader) : base(stringReader, data, reader)
     {
     }
-    
+
     protected override void GraphVerification(IGraph graph)
     {
         IUriNode subj = graph.CreateUriNode(graph.BaseUri);

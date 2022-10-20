@@ -91,7 +91,7 @@ ddl:Relational
     a               rdfs:Class, sh:NodeShape ;
     rdfs:subClassOf ddl:Database ;
     sh:property     [ sh:path     ddl:hasStructure ;
-                      sh:class    ddl:Schema  ;
+                      sh:class    ddl:Schema ;
                       sh:minCount 1 ; ] ;
     sh:property     [ sh:path ddl:hasName ; ] .
 
@@ -116,7 +116,9 @@ ddl:Structure
 ddl:Schema
     a               rdfs:Class, sh:NodeShape ;
     rdfs:subClassOf ddl:Structure ;
-    sh:property [sh:path ddl:hasStructure ; sh:class ddl:Table ; sh:minCount 1] .
+    sh:property     [ sh:path     ddl:hasStructure ;
+                      sh:class    ddl:Table ;
+                      sh:minCount 1 ] .
 
 ddl:Table
     a               rdfs:Class, sh:NodeShape ;

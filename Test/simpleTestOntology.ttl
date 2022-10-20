@@ -3,16 +3,17 @@
 @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
 @prefix owl:   <http://www.w3.org/2002/07/owl#> .
 @prefix sh:    <http://www.w3.org/ns/shacl#> .
-@prefix ddl:   <http://www.cs-22-dt-9-03.org/datastore-description-language#> .
 @prefix sto:   <http://www.example.org/test#> .
-@base          <http://www.example.org/test#> .
+@base <http://www.example.org/test#> .
 
 sto:
-    a            owl:Ontology ;
-    rdfs:label   "Simple Test Ontology"@en ;
-    rdfs:comment "This is a comment about the test ontology"@en ;
-    sh:declare   [ sh:prefix    "sto" ;
-                   sh:namespace "http://www.example.org/test#" ; ] ; .
+    a owl:Ontology .
 
+sto:TestProperty
+    a rdf:Property .
 
-sto:T rdf:type rdfs:Class .
+sto:TestClass
+    a           rdfs:Class, sh:NodeShape ;
+    sh:property [ sh:path     sto:TestProperty ;
+                  sh:class    sto:TestClass ;
+                  sh:minCount 1 ; ] .

@@ -1,7 +1,6 @@
 using System.IO;
 using Xunit;
 using VDS.RDF;
-using GraphManipulation;
 using GraphManipulation.Models;
 using VDS.RDF.Parsing;
 
@@ -21,18 +20,18 @@ public class OntologyTest
 
         return new Triple(subj, pred, obj);
     }
-    
+
     [Fact]
     public void OntologyToGraphWithoutBaseThrowsException()
     {
         string badOntology = "";
 
-        Ontology ontology = new Ontology(new StringReader(badOntology), new TurtleParser());
+        Ontology ontology = new Ontology(new StringReader(""), badOntology, new TurtleParser());
 
         var exception = Assert.Throws<KnowledgeGraphException>(() => ontology.ToGraph());
         Assert.Equal("No base defined", exception.Message);
     }
-    
+
 
     [Fact]
     public void OntologyToGraphWithOntologyDefinitionIsSuccess()
@@ -51,9 +50,19 @@ public class OntologyTest
     {
         string badOntology = "@base <http://www.example.org/test#> .";
 
-        Ontology ontology = new Ontology(new StringReader(badOntology), new TurtleParser());
+        Ontology ontology = new Ontology(new StringReader(""), badOntology, new TurtleParser());
 
         var exception = Assert.Throws<OntologyException>(() => ontology.ToGraph());
         Assert.Equal("Missing ontology definition", exception.Message);
+    }
+
+    [Fact]
+    public void OntologyToGraphWithBadSyntaxThrowsException()
+    {
+        string badOntology = "@base <http://www.example.org/test#> . something is wrong here . ";
+
+        Ontology ontology = new Ontology(new StringReader(""), badOntology, new TurtleParser());
+
+        Assert.Throws<RdfParseException>(() => ontology.ToGraph());
     }
 }

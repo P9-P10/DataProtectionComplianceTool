@@ -6,12 +6,12 @@ namespace GraphManipulation.Models;
 public class DataGraph : KnowledgeGraph
 {
     private readonly List<ShapesGraph> _shapesGraphs = new();
-    
+
     public DataGraph(string path, IRdfReader reader) : base(path, reader)
     {
     }
 
-    public DataGraph(TextReader textReader, IRdfReader reader) : base(textReader, reader)
+    public DataGraph(StringReader stringReader, string data, IRdfReader reader) : base(stringReader, data, reader)
     {
     }
 
@@ -30,11 +30,25 @@ public class DataGraph : KnowledgeGraph
 
         if (nonconformity.Count != 0)
         {
-            throw new DataGraphException("Datagraph does not conform: " + nonconformity);
+            string message = "";
+
+            foreach (var report in nonconformity)
+            {
+                message += "\nConforms: " + report.Conforms + " (" + report.Results.Count + ")";
+
+                foreach (var result in report.Results)
+                {
+                    message += result.FocusNode is not null ? "\nFocus node: " + result.FocusNode.ToString() : "";
+                    message += result.ResultPath is not null ? "\nResult path: " + result.ResultPath : "";
+                    message += result.ResultValue is not null ? "\nResult value: " + result.ResultValue.ToString() : "";
+                    message += "\nMessage: " + result.Message.Value + "\n";
+                }
+            }
+
+            throw new DataGraphException(message);
         }
     }
 }
-
 
 public class DataGraphException : Exception
 {

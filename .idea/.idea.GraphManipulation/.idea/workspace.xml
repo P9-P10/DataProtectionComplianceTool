@@ -5,12 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c701dcae-c036-4c51-b84d-60162b45a46a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/KnowledgeGraph.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/Ontology.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Test/DataGraphTest.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Test/KnowledgeGraphTest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Ontology.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/GraphManipulation.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/GraphManipulation.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/DataGraph.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/DataGraph.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/KnowledgeGraph.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/KnowledgeGraph.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Ontology.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Ontology.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Ontologies/datastore-description-language.ttl" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Ontologies/datastore-description-language.ttl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/DataGraphTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/DataGraphTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/GraphManipulationTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/GraphManipulationTest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/OntologyTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/OntologyTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/Test.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Test/Test.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/simpleTestOntology.ttl" beforeDir="false" afterPath="$PROJECT_DIR$/Test/simpleTestOntology.ttl" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,16 +36,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "/home/ane/Documents/GitHub/GraphManipulation/Test/simpleTestOntology.ttl",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/ane/Documents/GitHub/GraphManipulation/Test/simpleTestOntology.ttl&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
-  <component name="RunManager" selected="74595497-7b12-47da-b242-592b7bdfe537">
+}</component>
+  <component name="RunManager" selected=".NET Project.GraphManipulation">
     <configuration name="GraphManipulation" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
       <option name="PROGRAM_PARAMETERS" value="" />
@@ -71,6 +77,7 @@
       <workItem from="1666172007492" duration="75000" />
       <workItem from="1666172430138" duration="149000" />
       <workItem from="1666172611218" duration="10773000" />
+      <workItem from="1666246570349" duration="5940000" />
     </task>
     <servers />
   </component>
@@ -80,24 +87,5 @@
   <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Test/DataGraphTest.cs</url>
-          <line>31</line>
-          <properties documentPath="$PROJECT_DIR$/Test/DataGraphTest.cs" initialLine="29" containingFunctionPresentation="method 'DataGraphMustConformToShapes'">
-            <startOffsets>
-              <option value="847" />
-            </startOffsets>
-            <endOffsets>
-              <option value="875" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

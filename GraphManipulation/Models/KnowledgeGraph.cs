@@ -5,7 +5,8 @@ namespace GraphManipulation.Models;
 public abstract class KnowledgeGraph
 {
     private readonly string? _path;
-    private readonly TextReader? _textReader;
+    private StringReader? _stringReader;
+    private readonly string? _dataString;
     private readonly IRdfReader _graphReader;
 
     protected KnowledgeGraph(string path, IRdfReader reader)
@@ -14,9 +15,10 @@ public abstract class KnowledgeGraph
         _graphReader = reader;
     }
 
-    protected KnowledgeGraph(TextReader textReader, IRdfReader reader)
+    protected KnowledgeGraph(StringReader stringReader, string data, IRdfReader reader)
     {
-        _textReader = textReader;
+        _stringReader = stringReader;
+        _dataString = data;
         _graphReader = reader;
     }
 
@@ -30,16 +32,17 @@ public abstract class KnowledgeGraph
         {
             _graphReader.Load(resultGraph, _path);
         }
-        else if (_textReader is not null)
+        else if (_stringReader is not null)
         {
-            _graphReader.Load(resultGraph, _textReader);
+            _stringReader = new StringReader(_dataString!);
+            _graphReader.Load(resultGraph, _stringReader);
         }
 
         if (resultGraph.BaseUri is null)
         {
             throw new KnowledgeGraphException("No base defined");
         }
-        
+
         GraphVerification(resultGraph);
 
         return resultGraph;
@@ -48,5 +51,7 @@ public abstract class KnowledgeGraph
 
 public class KnowledgeGraphException : Exception
 {
-    public KnowledgeGraphException(string message) : base(message) { }
+    public KnowledgeGraphException(string message) : base(message)
+    {
+    }
 }
