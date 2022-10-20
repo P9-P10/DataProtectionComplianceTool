@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-
 namespace GraphManipulation.Models.Structures;
 
 public class Schema : Structure

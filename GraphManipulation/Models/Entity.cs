@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -6,9 +5,7 @@ namespace GraphManipulation.Models;
 
 public abstract class Entity
 {
-    public string? Base { get; private set; }
-    public string Id => Encoding.UTF8.GetString(Hash);
-    private byte[] Hash { get; set; }
+    // TODO: Lav et HashedFrom
 
     private readonly HashAlgorithm _algorithm = SHA256.Create();
 
@@ -17,6 +14,10 @@ public abstract class Entity
         ComputeId(toHash);
     }
 
+    public string? Base { get; private set; }
+    public string Id => Encoding.UTF8.GetString(Hash);
+    private byte[] Hash { get; set; }
+
     public void SetBase(string b)
     {
         Base = b;
@@ -24,16 +25,16 @@ public abstract class Entity
 
     public abstract string ComputeHash();
 
-    private void ComputeId(string toHash)
+    protected void ComputeId(string toHash)
     {
-        Hash = _algorithm.ComputeHash(Encoding.UTF8.GetBytes(toHash)); 
+        Hash = _algorithm.ComputeHash(Encoding.UTF8.GetBytes(toHash));
     }
 
     public void ComputeId()
     {
         ComputeId(ComputeHash());
     }
-    
+
     public override bool Equals(object? obj)
     {
         if (obj is null) return false;
@@ -47,7 +48,6 @@ public abstract class Entity
         var id1 = Id;
         var id2 = (obj as Entity).Id;
         return id1 == id2;
-
     }
 
     public override int GetHashCode()
@@ -55,7 +55,6 @@ public abstract class Entity
         return Id.GetHashCode();
     }
 }
-
 
 public class EntityException : Exception
 {

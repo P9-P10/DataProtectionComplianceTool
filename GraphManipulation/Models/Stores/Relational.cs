@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-
 namespace GraphManipulation.Models.Stores;
 
 public abstract class Relational : Database

@@ -8,7 +8,6 @@ namespace Test;
 
 public class GraphManipulationTest
 {
-
     public HashAlgorithm GetHashAlgorithm()
     {
         return SHA256.Create();
@@ -17,34 +16,34 @@ public class GraphManipulationTest
     [Fact]
     public void HashingSanityCheckSameInstance()
     {
-        string testString = "testString";
+        var testString = "testString";
 
-        HashAlgorithm algorithm = GetHashAlgorithm();
+        var algorithm = GetHashAlgorithm();
 
-        string a = Encoding.UTF8.GetString(algorithm.ComputeHash(Encoding.UTF8.GetBytes(testString)));
-        string b = Encoding.UTF8.GetString(algorithm.ComputeHash(Encoding.UTF8.GetBytes(testString)));
-        
+        var a = Encoding.UTF8.GetString(algorithm.ComputeHash(Encoding.UTF8.GetBytes(testString)));
+        var b = Encoding.UTF8.GetString(algorithm.ComputeHash(Encoding.UTF8.GetBytes(testString)));
+
         Assert.Equal(a, b);
     }
 
     [Fact]
     public void HashingSanityCheckDifferentInstances()
     {
-        string testString = "testString";
+        var testString = "testString";
 
-        string a = Encoding.UTF8.GetString(GetHashAlgorithm().ComputeHash(Encoding.UTF8.GetBytes(testString)));
-        string b = Encoding.UTF8.GetString(GetHashAlgorithm().ComputeHash(Encoding.UTF8.GetBytes(testString)));
-        
+        var a = Encoding.UTF8.GetString(GetHashAlgorithm().ComputeHash(Encoding.UTF8.GetBytes(testString)));
+        var b = Encoding.UTF8.GetString(GetHashAlgorithm().ComputeHash(Encoding.UTF8.GetBytes(testString)));
+
         Assert.Equal(a, b);
     }
 
     [Fact]
     public void EntityComparison()
     {
-        string columnName = "Column";
-        
-        Column columnA = new Column(columnName);
-        Column columnB = new Column(columnName);
+        var columnName = "Column";
+
+        var columnA = new Column(columnName);
+        var columnB = new Column(columnName);
 
         Assert.Equal(columnA, columnB);
     }
@@ -52,53 +51,59 @@ public class GraphManipulationTest
     [Fact]
     public void ColumnHashesToExpectedValue()
     {
-        string columnName = "Column";
+        var columnName = "Column";
 
-        HashAlgorithm algorithm = GetHashAlgorithm();
-        
-        byte[] expectedHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(columnName));
-        string expectedString = Encoding.UTF8.GetString(expectedHash);
-        
-        Column column = new Column(columnName);
+        var algorithm = GetHashAlgorithm();
 
-        string actualString = column.Id;
-        
+        var expectedHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(columnName));
+        var expectedString = Encoding.UTF8.GetString(expectedHash);
+
+        var column = new Column(columnName);
+
+        var actualString = column.Id;
+
         Assert.Equal(expectedString, actualString);
     }
-    
+
     [Fact]
     public void StructureCompositionTest()
     {
-        string baseNamespace = "Test";
-        string sqliteName = "SQLite";
-        string schemaName = "Schema";
-        string tableName = "Table";
-        string columnName = "Column";
-        string concatenatedString = baseNamespace + sqliteName + schemaName + tableName + columnName;
+        const string baseNamespace = "Test";
+        const string sqliteName = "SQLite";
+        const string schemaName = "Schema";
+        const string tableName = "Table";
+        const string columnName = "Column";
+        const string concatenatedString = baseNamespace + sqliteName + schemaName + tableName + columnName;
 
-        HashAlgorithm algorithm = GetHashAlgorithm();
+        var algorithm = GetHashAlgorithm();
         
-        byte[] expectedHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(concatenatedString));
-        string expectedString = Encoding.UTF8.GetString(expectedHash);
+        // var expectedSqliteHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(concatenatedString));
+        // var expectedSqliteString = Encoding.UTF8.GetString(expectedSqliteHash);
+        //
+        // var expectedSchemaHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(concatenatedString));
+        // var expectedSchemaString = Encoding.UTF8.GetString(expectedSchemaHash);
+        //
+        // var expectedTableHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(concatenatedString));
+        // var expectedTableString = Encoding.UTF8.GetString(expectedTableHash);
 
-        // byte[] baseHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(baseNamespace));
-        // string baseString = Encoding.UTF8.GetString(baseHash);
+        var expectedColumnHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(concatenatedString));
+        var expectedColumnString = Encoding.UTF8.GetString(expectedColumnHash);
 
-        Sqlite sqlite = new Sqlite(sqliteName);
-        Schema schema = new Schema(schemaName);
-        Table table = new Table(tableName);
-        Column column = new Column(columnName);
-        
+        var sqlite = new Sqlite(sqliteName);
+        var schema = new Schema(schemaName);
+        var table = new Table(tableName);
+        var column = new Column(columnName);
+
         sqlite.SetBase(baseNamespace);
         sqlite.AddStructure(schema);
         schema.AddStructure(table);
         table.AddStructure(column);
-        
-        // TODO: Remove this statement
-        column.ComputeId();
 
-        string actualString = column.Id;
-        
-        Assert.Equal(expectedString, actualString);
+        var actualString = column.Id;
+
+        Assert.Equal(expectedColumnString, actualString);
     }
+
+    // TODO: Test ID på en store og en kæde af structures før de sættes sammen, og tjek så at det er rigtigt efter de er sat sammen
+    // TODO: Test at en structure kan eksistere og have den rigtige ID uden en store
 }

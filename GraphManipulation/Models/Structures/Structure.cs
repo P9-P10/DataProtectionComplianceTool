@@ -1,14 +1,12 @@
-using System.Collections;
-using System.Security.Cryptography;
 using GraphManipulation.Models.Stores;
 
 namespace GraphManipulation.Models.Structures;
 
 public abstract class Structure : NamedEntity
 {
-    public readonly Hashtable SubStructures = new Hashtable();
     private Structure? _predecessor;
-    private DataStore? _store;  
+    private DataStore? _store;
+    public List<Structure> SubStructures = new();
 
     protected Structure(string name) : base(name)
     {
@@ -16,8 +14,18 @@ public abstract class Structure : NamedEntity
 
     public void AddStructure(Structure structure)
     {
-        SubStructures.Add(structure, structure);
+        SubStructures.Add(structure);
         structure._predecessor = this;
+        UpdateToBottom();
+    }
+
+    public void UpdateToBottom()
+    {
+        ComputeId();
+
+        if (!IsBottom())
+            foreach (var subStructure in SubStructures)
+                subStructure.UpdateToBottom();
     }
 
     public void SetStore(DataStore store)
@@ -30,20 +38,21 @@ public abstract class Structure : NamedEntity
         return _predecessor is null;
     }
 
+    private bool IsBottom()
+    {
+        return SubStructures.Count == 0;
+    }
+
     public override string ComputeHash()
     {
-        string result = "";
+        var result = "";
 
         if (IsTop())
         {
             if (_store is not null)
-            {
                 result += _store.ComputeHash();
-            }
             else
-            {
                 throw new StructureException("Structure at top does not have Store");
-            }
         }
         else
         {
@@ -51,7 +60,7 @@ public abstract class Structure : NamedEntity
         }
 
         result += Name;
-        
+
         return result;
     }
 }

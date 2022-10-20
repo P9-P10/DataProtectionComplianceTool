@@ -1,11 +1,13 @@
-using System.Security.Cryptography;
 using GraphManipulation.Models.Connections;
-using GraphManipulation.Models.Structures;
 
 namespace GraphManipulation.Models.Stores;
 
 public class Sqlite : Relational
 {
+    public Sqlite(string name) : base(name)
+    {
+    }
+
     public override Connection GetConnection()
     {
         throw new NotImplementedException();
@@ -19,9 +21,5 @@ public class Sqlite : Relational
     public override void FromRdf()
     {
         throw new NotImplementedException();
-    }
-
-    public Sqlite(string name) : base(name)
-    {
     }
 }
