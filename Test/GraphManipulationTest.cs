@@ -73,20 +73,23 @@ public class GraphManipulationTest
         const string schemaName = "Schema";
         const string tableName = "Table";
         const string columnName = "Column";
-        const string concatenatedString = baseNamespace + sqliteName + schemaName + tableName + columnName;
 
         var algorithm = GetHashAlgorithm();
-        
-        // var expectedSqliteHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(concatenatedString));
-        // var expectedSqliteString = Encoding.UTF8.GetString(expectedSqliteHash);
-        //
-        // var expectedSchemaHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(concatenatedString));
-        // var expectedSchemaString = Encoding.UTF8.GetString(expectedSchemaHash);
-        //
-        // var expectedTableHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(concatenatedString));
-        // var expectedTableString = Encoding.UTF8.GetString(expectedTableHash);
 
-        var expectedColumnHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(concatenatedString));
+        var sqliteString = baseNamespace + sqliteName;
+        var expectedSqliteHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(sqliteString));
+        var expectedSqliteString = Encoding.UTF8.GetString(expectedSqliteHash);
+
+        var schemaString = sqliteString + schemaName;
+        var expectedSchemaHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(schemaString));
+        var expectedSchemaString = Encoding.UTF8.GetString(expectedSchemaHash);
+
+        var tableString = schemaString + tableName;
+        var expectedTableHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(tableString));
+        var expectedTableString = Encoding.UTF8.GetString(expectedTableHash);
+
+        var columnString = tableString + columnName;
+        var expectedColumnHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(columnString));
         var expectedColumnString = Encoding.UTF8.GetString(expectedColumnHash);
 
         var sqlite = new Sqlite(sqliteName);
@@ -99,11 +102,14 @@ public class GraphManipulationTest
         schema.AddStructure(table);
         table.AddStructure(column);
 
-        var actualString = column.Id;
-
-        Assert.Equal(expectedColumnString, actualString);
+        Assert.Equal(expectedSqliteString, sqlite.Id);
+        Assert.Equal(expectedSchemaString, schema.Id);
+        Assert.Equal(expectedTableString, table.Id);
+        Assert.Equal(expectedColumnString, column.Id);
     }
 
-    // TODO: Test ID på en store og en kæde af structures før de sættes sammen, og tjek så at det er rigtigt efter de er sat sammen
+    // TODO: Test ID på en store og en kæde af structures hver for sig, og tjek så at det er rigtigt efter de er sat sammen
     // TODO: Test at en structure kan eksistere og have den rigtige ID uden en store
+    // TODO: Test at en store kan eksistere og have den rigtige ID uden structure
+    // TODO: Der skal nok også opdateres ID når SetStore bliver kaldt
 }
