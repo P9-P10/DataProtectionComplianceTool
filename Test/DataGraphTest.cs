@@ -1,17 +1,15 @@
-using System;
 using System.IO;
-using GraphManipulation.Models;
+using GraphManipulation.Models.Graphs;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 using VDS.RDF.Shacl;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Test;
 
 public class DataGraphTest
 {
-    private string getSimpleOntology()
+    private static string getSimpleOntology()
     {
         return @"
             @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -45,7 +43,7 @@ public class DataGraphTest
             <T> a sto:TestClass .
         ";
 
-        DataGraph dataGraph = new DataGraph(new StringReader(""), data, new TurtleParser());
+        var dataGraph = new DataGraph(new StringReader(""), data, new TurtleParser());
 
         IGraph shapesGraph = new Graph();
         shapesGraph.LoadFromString(getSimpleOntology(), new TurtleParser());
@@ -71,7 +69,7 @@ public class DataGraphTest
             <T> sto:TestProperty 1 .
         ";
 
-        DataGraph dataGraph = new DataGraph(new StringReader(""), data, new TurtleParser());
+        var dataGraph = new DataGraph(new StringReader(""), data, new TurtleParser());
 
         IGraph shapesGraph = new Graph();
         shapesGraph.LoadFromString(getSimpleOntology(), new TurtleParser());
@@ -100,7 +98,7 @@ public class DataGraphTest
             <B> a sto:TestClass .
         ";
 
-        DataGraph dataGraph = new DataGraph(new StringReader(""), data, new TurtleParser());
+        var dataGraph = new DataGraph(new StringReader(""), data, new TurtleParser());
 
         IGraph shapesGraph = new Graph();
         shapesGraph.LoadFromString(getSimpleOntology(), new TurtleParser());
@@ -125,7 +123,7 @@ public class DataGraphTest
             <T> sto:TestProperty <T> .
         ";
 
-        DataGraph dataGraph = new DataGraph(new StringReader(""), data, new TurtleParser());
+        var dataGraph = new DataGraph(new StringReader(""), data, new TurtleParser());
 
         IGraph shapesGraph = new Graph();
         shapesGraph.LoadFromString(getSimpleOntology(), new TurtleParser());
@@ -134,9 +132,9 @@ public class DataGraphTest
 
         var graph = dataGraph.ToGraph();
 
-        IUriNode subj = graph.CreateUriNode(UriFactory.Create("http://www.example.org/T"));
-        IUriNode pred = graph.CreateUriNode(UriFactory.Create(NamespaceMapper.RDF + "type"));
-        IUriNode obj = graph.CreateUriNode(UriFactory.Create("http://www.example.org/test#TestClass"));
+        var subj = graph.CreateUriNode(UriFactory.Create("http://www.example.org/T"));
+        var pred = graph.CreateUriNode(UriFactory.Create(NamespaceMapper.RDF + "type"));
+        var obj = graph.CreateUriNode(UriFactory.Create("http://www.example.org/test#TestClass"));
 
         Assert.True(graph.ContainsTriple(new Triple(subj, pred, obj)));
     }
@@ -150,13 +148,13 @@ public class DataGraphTest
             <T> a sto:TestClass .
         ";
 
-        DataGraph dataGraph = new DataGraph(new StringReader(""), data, new TurtleParser());
+        var dataGraph = new DataGraph(new StringReader(""), data, new TurtleParser());
 
         var graph = dataGraph.ToGraph();
 
-        IUriNode subj = graph.CreateUriNode(UriFactory.Create("http://www.example.org/T"));
-        IUriNode pred = graph.CreateUriNode(UriFactory.Create(NamespaceMapper.RDF + "type"));
-        IUriNode obj = graph.CreateUriNode(UriFactory.Create("http://www.example.org/test#TestClass"));
+        var subj = graph.CreateUriNode(UriFactory.Create("http://www.example.org/T"));
+        var pred = graph.CreateUriNode(UriFactory.Create(NamespaceMapper.RDF + "type"));
+        var obj = graph.CreateUriNode(UriFactory.Create("http://www.example.org/test#TestClass"));
 
         Assert.True(graph.ContainsTriple(new Triple(subj, pred, obj)));
 

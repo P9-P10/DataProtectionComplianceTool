@@ -5,18 +5,34 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c701dcae-c036-4c51-b84d-60162b45a46a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Test/KnowledgeGraphTest.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Interfaces/IHasStructure.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/Connections/Connection.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/Connections/FileConnection.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/Connections/UrlConnection.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/Entity.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/NamedEntity.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Csv.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/DataStore.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Database.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/File.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Plaintext.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Relational.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Column.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/FilePath.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Schema.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Structure.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Table.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/GraphManipulation.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/GraphManipulation.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/DataGraph.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/DataGraph.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/KnowledgeGraph.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/KnowledgeGraph.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Ontology.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Ontology.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Ontologies/datastore-description-language.ttl" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Ontologies/datastore-description-language.ttl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/DataGraph.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Graphs/DataGraph.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/KnowledgeGraph.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Graphs/KnowledgeGraph.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Ontology.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Graphs/Ontology.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/DataGraphTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/DataGraphTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/DotNetRdfTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/DotNetRdfTest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/GraphManipulationTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/GraphManipulationTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/KnowledgeGraphTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/KnowledgeGraphTest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/OntologyTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/OntologyTest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test/Test.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Test/Test.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test/simpleTestOntology.ttl" beforeDir="false" afterPath="$PROJECT_DIR$/Test/simpleTestOntology.ttl" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,7 +41,14 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/196b514cc6134f6d93506f3921576e7422f200/23/0b2f0a63/TurtleParser.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/6818c1ae16684bb6a6533b1e52073ad994de00/21/b645569e/Encoding.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8517f607c12a4b508364c3f896f0fe6f11da8/50/a8a96f81/Assert.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/d922388adba941d9b8e94145fefd7a539400/7b/9063f0c0/Ontology.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/.nuget/packages/microsoft.net.test.sdk/16.11.0/build/netcoreapp2.1/Microsoft.NET.Test.Sdk.Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/GraphManipulation/Models/Stores/Csv.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/GraphManipulation/Models/Stores/File.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/GraphManipulation/Models/Stores/Plaintext.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/GraphManipulation/Models/Structures/FilePath.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -36,15 +59,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/ane/Documents/GitHub/GraphManipulation/Test/simpleTestOntology.ttl&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "/home/ane/Documents/GitHub/GraphManipulation/Test/simpleTestOntology.ttl",
+    "settings.editor.selected.configurable": "CodeInspectionSettingsId",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Project.GraphManipulation">
     <configuration name="GraphManipulation" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
@@ -77,7 +101,7 @@
       <workItem from="1666172007492" duration="75000" />
       <workItem from="1666172430138" duration="149000" />
       <workItem from="1666172611218" duration="10773000" />
-      <workItem from="1666246570349" duration="5940000" />
+      <workItem from="1666246570349" duration="21084000" />
     </task>
     <servers />
   </component>

@@ -1,8 +1,8 @@
 using System.Linq;
-using Xunit;
 using VDS.RDF;
-using VDS.RDF.Writing;
 using VDS.RDF.Parsing;
+using VDS.RDF.Writing;
+using Xunit;
 
 namespace Test;
 
@@ -13,9 +13,9 @@ public class DotNetRdfTest
     {
         IGraph testGraph = new Graph();
 
-        IUriNode subj = testGraph.CreateUriNode(UriFactory.Create("http://www.test.org/"));
-        IUriNode pred = testGraph.CreateUriNode(UriFactory.Create("http://www.noget.org/"));
-        ILiteralNode obj = testGraph.CreateLiteralNode("Hello");
+        var subj = testGraph.CreateUriNode(UriFactory.Create("http://www.test.org/"));
+        var pred = testGraph.CreateUriNode(UriFactory.Create("http://www.noget.org/"));
+        var obj = testGraph.CreateLiteralNode("Hello");
 
         testGraph.Assert(new Triple(subj, pred, obj));
 
@@ -28,8 +28,8 @@ public class DotNetRdfTest
     {
         IGraph testGraph = new Graph();
 
-        IUriNode a = testGraph.CreateUriNode(UriFactory.Create("http://www.test.org/"));
-        IUriNode b = testGraph.CreateUriNode(UriFactory.Create("http://www.test.org/"));
+        var a = testGraph.CreateUriNode(UriFactory.Create("http://www.test.org/"));
+        var b = testGraph.CreateUriNode(UriFactory.Create("http://www.test.org/"));
 
         Assert.Equal(a, b);
     }
@@ -39,8 +39,8 @@ public class DotNetRdfTest
     {
         IGraph testGraph = new Graph();
 
-        IUriNode a = testGraph.CreateUriNode(UriFactory.Create("http://www.test.org/"));
-        IUriNode b = testGraph.CreateUriNode(UriFactory.Create("http://www.noget.org/"));
+        var a = testGraph.CreateUriNode(UriFactory.Create("http://www.test.org/"));
+        var b = testGraph.CreateUriNode(UriFactory.Create("http://www.noget.org/"));
 
         Assert.NotEqual(a, b);
     }
@@ -50,9 +50,9 @@ public class DotNetRdfTest
     {
         IGraph graphToBeWritten = new Graph();
 
-        IUriNode subj = graphToBeWritten.CreateUriNode(UriFactory.Create("http://www.test.org/"));
-        IUriNode pred = graphToBeWritten.CreateUriNode(UriFactory.Create("http://www.noget.org/"));
-        ILiteralNode obj = graphToBeWritten.CreateLiteralNode("Hello");
+        var subj = graphToBeWritten.CreateUriNode(UriFactory.Create("http://www.test.org/"));
+        var pred = graphToBeWritten.CreateUriNode(UriFactory.Create("http://www.noget.org/"));
+        var obj = graphToBeWritten.CreateLiteralNode("Hello");
 
         graphToBeWritten.Assert(new Triple(subj, pred, obj));
 

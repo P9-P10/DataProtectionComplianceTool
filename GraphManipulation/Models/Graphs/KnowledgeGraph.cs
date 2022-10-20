@@ -1,13 +1,13 @@
 using VDS.RDF;
 
-namespace GraphManipulation.Models;
+namespace GraphManipulation.Models.Graphs;
 
 public abstract class KnowledgeGraph
 {
-    private readonly string? _path;
-    private StringReader? _stringReader;
     private readonly string? _dataString;
     private readonly IRdfReader _graphReader;
+    private readonly string? _path;
+    private StringReader? _stringReader;
 
     protected KnowledgeGraph(string path, IRdfReader reader)
     {
@@ -38,10 +38,7 @@ public abstract class KnowledgeGraph
             _graphReader.Load(resultGraph, _stringReader);
         }
 
-        if (resultGraph.BaseUri is null)
-        {
-            throw new KnowledgeGraphException("No base defined");
-        }
+        if (resultGraph.BaseUri is null) throw new KnowledgeGraphException("No base defined");
 
         GraphVerification(resultGraph);
 

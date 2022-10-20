@@ -1,7 +1,7 @@
 using VDS.RDF;
 using VDS.RDF.Shacl;
 
-namespace GraphManipulation.Models;
+namespace GraphManipulation.Models.Graphs;
 
 public class DataGraph : KnowledgeGraph
 {
@@ -30,7 +30,7 @@ public class DataGraph : KnowledgeGraph
 
         if (nonconformity.Count != 0)
         {
-            string message = "";
+            var message = "";
 
             foreach (var report in nonconformity)
             {
@@ -52,7 +52,7 @@ public class DataGraph : KnowledgeGraph
 
 public class DataGraphException : Exception
 {
-    public DataGraphException() : base()
+    public DataGraphException()
     {
     }
 
