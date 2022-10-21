@@ -14,8 +14,12 @@ public abstract class DataStore : NamedEntity, IHasStructure
 
     public void AddStructure(Structure structure)
     {
+        if (Structures.Contains(structure)) return;
+
         Structures.Add(structure);
-        structure.SetStore(this);
+
+        if (!structure.HasStore() || !structure.Store.Equals(this)) structure.AddToStore(this);
+
         structure.UpdateToBottom();
     }
 

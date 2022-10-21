@@ -4,8 +4,8 @@ namespace GraphManipulation.Models.Structures;
 
 public abstract class Structure : NamedEntity
 {
-    private Structure? _predecessor;
-    private DataStore? _store;
+    public Structure? ParentStructure;
+    public DataStore? Store;
     public List<Structure> SubStructures = new();
 
     protected Structure(string name) : base(name)
@@ -14,8 +14,10 @@ public abstract class Structure : NamedEntity
 
     public void AddStructure(Structure structure)
     {
+        if (SubStructures.Contains(structure)) return;
+
         SubStructures.Add(structure);
-        structure._predecessor = this;
+        structure.ParentStructure = this;
         UpdateToBottom();
     }
 
@@ -28,19 +30,25 @@ public abstract class Structure : NamedEntity
                 subStructure.UpdateToBottom();
     }
 
-    public void SetStore(DataStore store)
+    public void AddToStore(DataStore store)
     {
-        _store = store;
+        Store = store;
+        store.AddStructure(this);
     }
 
-    private bool IsTop()
+    public bool IsTop()
     {
-        return _predecessor is null;
+        return ParentStructure is null;
     }
 
-    private bool IsBottom()
+    public bool IsBottom()
     {
         return SubStructures.Count == 0;
+    }
+
+    public bool HasStore()
+    {
+        return Store is not null;
     }
 
     public override string ComputeHash()
@@ -49,14 +57,11 @@ public abstract class Structure : NamedEntity
 
         if (IsTop())
         {
-            if (_store is not null)
-                result += _store.ComputeHash();
-            else
-                throw new StructureException("Structure at top does not have Store");
+            if (HasStore()) result += Store.ComputeHash();
         }
         else
         {
-            result += _predecessor.ComputeHash();
+            result += ParentStructure.ComputeHash();
         }
 
         result += Name;

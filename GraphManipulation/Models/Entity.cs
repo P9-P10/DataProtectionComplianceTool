@@ -5,9 +5,8 @@ namespace GraphManipulation.Models;
 
 public abstract class Entity
 {
-    // TODO: Lav et HashedFrom
-
-    private readonly HashAlgorithm _algorithm = SHA256.Create();
+    public readonly HashAlgorithm Algorithm = SHA256.Create();
+    public string HashedFrom = null!;
 
     public Entity(string toHash)
     {
@@ -16,18 +15,20 @@ public abstract class Entity
 
     public string? Base { get; private set; }
     public string Id => Encoding.UTF8.GetString(Hash);
-    private byte[] Hash { get; set; }
+    private byte[] Hash { get; set; } = null!;
 
     public void SetBase(string b)
     {
         Base = b;
+        ComputeId();
     }
 
     public abstract string ComputeHash();
 
     protected void ComputeId(string toHash)
     {
-        Hash = _algorithm.ComputeHash(Encoding.UTF8.GetBytes(toHash));
+        Hash = Algorithm.ComputeHash(Encoding.UTF8.GetBytes(toHash));
+        HashedFrom = toHash;
     }
 
     public void ComputeId()
@@ -40,10 +41,6 @@ public abstract class Entity
         if (obj is null) return false;
 
         if (!obj.GetType().IsSubclassOf(typeof(Entity))) return false;
-
-        // var hash1 = Hash;
-        // var hash2 = (obj as Entity).Hash;
-        // return hash1 == hash2;
 
         var id1 = Id;
         var id2 = (obj as Entity).Id;
