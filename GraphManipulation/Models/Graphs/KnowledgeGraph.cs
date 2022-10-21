@@ -21,6 +21,8 @@ public abstract class KnowledgeGraph
         _dataString = data;
         _graphReader = reader;
     }
+    
+    // TODO: Det ville måske også give mening at man kan lave en KnowledgeGraph ud fra en IGraph
 
     protected abstract void GraphVerification(IGraph graph);
 

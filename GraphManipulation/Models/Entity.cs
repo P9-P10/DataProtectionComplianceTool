@@ -3,7 +3,7 @@ using System.Text;
 
 namespace GraphManipulation.Models;
 
-public abstract class Entity
+public abstract class Entity : GraphBased
 {
     public readonly HashAlgorithm Algorithm = SHA256.Create();
     public string HashedFrom = null!;
@@ -12,9 +12,11 @@ public abstract class Entity
     {
         ComputeId(toHash);
     }
+    
+    // TODO: Lav ToString
 
     public string? Base { get; private set; }
-    public string Id => Encoding.UTF8.GetString(Hash);
+    public string Id => Encoding.ASCII.GetString(Hash);
     private byte[] Hash { get; set; } = null!;
 
     public void SetBase(string b)
@@ -23,11 +25,18 @@ public abstract class Entity
         ComputeId();
     }
 
+    protected abstract void UpdateBase(string b);
+
+    public bool HasBase()
+    {
+        return Base is not null;
+    }
+
     public abstract string ComputeHash();
 
     protected void ComputeId(string toHash)
     {
-        Hash = Algorithm.ComputeHash(Encoding.UTF8.GetBytes(toHash));
+        Hash = Algorithm.ComputeHash(Encoding.ASCII.GetBytes(toHash));
         HashedFrom = toHash;
     }
 

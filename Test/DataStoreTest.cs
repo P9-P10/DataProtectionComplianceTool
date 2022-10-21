@@ -48,4 +48,14 @@ public class DataStoreTest
 
         Assert.Single(sqlite.Structures);
     }
+
+    public class ToGraphTest
+    {
+        
+    }
+
+    public class FromGraphTest
+    {
+        
+    }
 }

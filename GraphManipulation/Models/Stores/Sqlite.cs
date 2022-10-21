@@ -1,4 +1,6 @@
+using GraphManipulation.Interfaces;
 using GraphManipulation.Models.Connections;
+using VDS.RDF;
 
 namespace GraphManipulation.Models.Stores;
 
@@ -13,12 +15,12 @@ public class Sqlite : Relational
         throw new NotImplementedException();
     }
 
-    public override string ToRdf()
+    public override IGraph ToGraph()
     {
         throw new NotImplementedException();
     }
 
-    public override void FromRdf()
+    public override IGraphBased FromGraph(IGraph graph)
     {
         throw new NotImplementedException();
     }

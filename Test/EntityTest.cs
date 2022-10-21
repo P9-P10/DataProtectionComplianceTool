@@ -8,6 +8,11 @@ namespace Test;
 
 public class EntityTest
 {
+    // TODO: Test at Base er det rigtige Uri format
+    // TODO: SetBase skal sætte alle børns base også (Både fra en Store og fra en Structure)
+    // TODO: SetBase skal sætte alle forældres Base også
+    // TODO: UpdateBase skal opdatere base, se om den skal gå op eller ned i strukturen, og så opdatere dem
+    
     private HashAlgorithm GetHashAlgorithm()
     {
         return new Column("").Algorithm;
@@ -20,8 +25,8 @@ public class EntityTest
 
         var algorithm = GetHashAlgorithm();
 
-        var a = Encoding.UTF8.GetString(algorithm.ComputeHash(Encoding.UTF8.GetBytes(testString)));
-        var b = Encoding.UTF8.GetString(algorithm.ComputeHash(Encoding.UTF8.GetBytes(testString)));
+        var a = Encoding.ASCII.GetString(algorithm.ComputeHash(Encoding.ASCII.GetBytes(testString)));
+        var b = Encoding.ASCII.GetString(algorithm.ComputeHash(Encoding.ASCII.GetBytes(testString)));
 
         Assert.Equal(a, b);
     }
@@ -31,8 +36,8 @@ public class EntityTest
     {
         const string testString = "testString";
 
-        var a = Encoding.UTF8.GetString(GetHashAlgorithm().ComputeHash(Encoding.UTF8.GetBytes(testString)));
-        var b = Encoding.UTF8.GetString(GetHashAlgorithm().ComputeHash(Encoding.UTF8.GetBytes(testString)));
+        var a = Encoding.ASCII.GetString(GetHashAlgorithm().ComputeHash(Encoding.ASCII.GetBytes(testString)));
+        var b = Encoding.ASCII.GetString(GetHashAlgorithm().ComputeHash(Encoding.ASCII.GetBytes(testString)));
 
         Assert.Equal(a, b);
     }
@@ -55,8 +60,8 @@ public class EntityTest
 
         var algorithm = GetHashAlgorithm();
 
-        var expectedHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(columnName));
-        var expectedString = Encoding.UTF8.GetString(expectedHash);
+        var expectedHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnName));
+        var expectedString = Encoding.ASCII.GetString(expectedHash);
 
         var column = new Column(columnName);
 
@@ -77,20 +82,20 @@ public class EntityTest
         var algorithm = GetHashAlgorithm();
 
         const string sqliteString = baseNamespace + sqliteName;
-        var expectedSqliteHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(sqliteString));
-        var expectedSqliteString = Encoding.UTF8.GetString(expectedSqliteHash);
+        var expectedSqliteHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(sqliteString));
+        var expectedSqliteString = Encoding.ASCII.GetString(expectedSqliteHash);
 
         const string schemaString = sqliteString + schemaName;
-        var expectedSchemaHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(schemaString));
-        var expectedSchemaString = Encoding.UTF8.GetString(expectedSchemaHash);
+        var expectedSchemaHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(schemaString));
+        var expectedSchemaString = Encoding.ASCII.GetString(expectedSchemaHash);
 
         const string tableString = schemaString + tableName;
-        var expectedTableHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(tableString));
-        var expectedTableString = Encoding.UTF8.GetString(expectedTableHash);
+        var expectedTableHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableString));
+        var expectedTableString = Encoding.ASCII.GetString(expectedTableHash);
 
         const string columnString = tableString + columnName;
-        var expectedColumnHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(columnString));
-        var expectedColumnString = Encoding.UTF8.GetString(expectedColumnHash);
+        var expectedColumnHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString));
+        var expectedColumnString = Encoding.ASCII.GetString(expectedColumnHash);
 
         var sqlite = new Sqlite(sqliteName);
         var schema = new Schema(schemaName);
@@ -119,8 +124,8 @@ public class EntityTest
         var algorithm = GetHashAlgorithm();
 
         const string sqliteString = baseNamespace + sqliteName;
-        var expectedSqliteHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(sqliteString));
-        var expectedSqliteString = Encoding.UTF8.GetString(expectedSqliteHash);
+        var expectedSqliteHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(sqliteString));
+        var expectedSqliteString = Encoding.ASCII.GetString(expectedSqliteHash);
 
         var sqlite = new Sqlite(sqliteName);
         sqlite.SetBase(baseNamespace);
@@ -128,12 +133,12 @@ public class EntityTest
         Assert.Equal(expectedSqliteString, sqlite.Id);
 
         const string schemaStringBefore = schemaName;
-        var expectedSchemaHashBefore = algorithm.ComputeHash(Encoding.UTF8.GetBytes(schemaStringBefore));
-        var expectedSchemaStringBefore = Encoding.UTF8.GetString(expectedSchemaHashBefore);
+        var expectedSchemaHashBefore = algorithm.ComputeHash(Encoding.ASCII.GetBytes(schemaStringBefore));
+        var expectedSchemaStringBefore = Encoding.ASCII.GetString(expectedSchemaHashBefore);
 
         const string tableStringBefore = schemaStringBefore + tableName;
-        var expectedTableHashBefore = algorithm.ComputeHash(Encoding.UTF8.GetBytes(tableStringBefore));
-        var expectedTableStringBefore = Encoding.UTF8.GetString(expectedTableHashBefore);
+        var expectedTableHashBefore = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableStringBefore));
+        var expectedTableStringBefore = Encoding.ASCII.GetString(expectedTableHashBefore);
 
         var schema = new Schema(schemaName);
         var table = new Table(tableName);
@@ -144,12 +149,12 @@ public class EntityTest
         Assert.Equal(expectedTableStringBefore, table.Id);
 
         const string schemaStringAfter = sqliteString + schemaName;
-        var expectedSchemaHashAfter = algorithm.ComputeHash(Encoding.UTF8.GetBytes(schemaStringAfter));
-        var expectedSchemaStringAfter = Encoding.UTF8.GetString(expectedSchemaHashAfter);
+        var expectedSchemaHashAfter = algorithm.ComputeHash(Encoding.ASCII.GetBytes(schemaStringAfter));
+        var expectedSchemaStringAfter = Encoding.ASCII.GetString(expectedSchemaHashAfter);
 
         const string tableStringAfter = schemaStringAfter + tableName;
-        var expectedTableHashAfter = algorithm.ComputeHash(Encoding.UTF8.GetBytes(tableStringAfter));
-        var expectedTableStringAfter = Encoding.UTF8.GetString(expectedTableHashAfter);
+        var expectedTableHashAfter = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableStringAfter));
+        var expectedTableStringAfter = Encoding.ASCII.GetString(expectedTableHashAfter);
 
         sqlite.AddStructure(schema);
 
@@ -167,12 +172,12 @@ public class EntityTest
         var algorithm = GetHashAlgorithm();
 
         const string schemaStringBefore = schemaName;
-        var expectedSchemaHashBefore = algorithm.ComputeHash(Encoding.UTF8.GetBytes(schemaStringBefore));
-        var expectedSchemaStringBefore = Encoding.UTF8.GetString(expectedSchemaHashBefore);
+        var expectedSchemaHashBefore = algorithm.ComputeHash(Encoding.ASCII.GetBytes(schemaStringBefore));
+        var expectedSchemaStringBefore = Encoding.ASCII.GetString(expectedSchemaHashBefore);
 
         const string tableStringBefore = tableName;
-        var expectedTableHashBefore = algorithm.ComputeHash(Encoding.UTF8.GetBytes(tableStringBefore));
-        var expectedTableStringBefore = Encoding.UTF8.GetString(expectedTableHashBefore);
+        var expectedTableHashBefore = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableStringBefore));
+        var expectedTableStringBefore = Encoding.ASCII.GetString(expectedTableHashBefore);
 
         var schema = new Schema(schemaName);
         var table = new Table(tableName);
@@ -181,8 +186,8 @@ public class EntityTest
         Assert.Equal(expectedTableStringBefore, table.Id);
 
         const string tableStringAfter = schemaStringBefore + tableName;
-        var expectedTableHashAfter = algorithm.ComputeHash(Encoding.UTF8.GetBytes(tableStringAfter));
-        var expectedTableStringAfter = Encoding.UTF8.GetString(expectedTableHashAfter);
+        var expectedTableHashAfter = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableStringAfter));
+        var expectedTableStringAfter = Encoding.ASCII.GetString(expectedTableHashAfter);
 
         schema.AddStructure(table);
 
@@ -201,20 +206,20 @@ public class EntityTest
         var algorithm = GetHashAlgorithm();
 
         const string schemaString = schemaName;
-        var expectedSchemaHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(schemaString));
-        var expectedSchemaString = Encoding.UTF8.GetString(expectedSchemaHash);
+        var expectedSchemaHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(schemaString));
+        var expectedSchemaString = Encoding.ASCII.GetString(expectedSchemaHash);
 
         const string tableStringBefore = tableName;
-        var expectedTableHashBefore = algorithm.ComputeHash(Encoding.UTF8.GetBytes(tableStringBefore));
-        var expectedTableStringBefore = Encoding.UTF8.GetString(expectedTableHashBefore);
+        var expectedTableHashBefore = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableStringBefore));
+        var expectedTableStringBefore = Encoding.ASCII.GetString(expectedTableHashBefore);
 
         const string columnString1Before = tableStringBefore + columnName1;
-        var expectedColumnHash1Before = algorithm.ComputeHash(Encoding.UTF8.GetBytes(columnString1Before));
-        var expectedColumnString1Before = Encoding.UTF8.GetString(expectedColumnHash1Before);
+        var expectedColumnHash1Before = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString1Before));
+        var expectedColumnString1Before = Encoding.ASCII.GetString(expectedColumnHash1Before);
 
         const string columnString2Before = tableStringBefore + columnName2;
-        var expectedColumnHash2Before = algorithm.ComputeHash(Encoding.UTF8.GetBytes(columnString2Before));
-        var expectedColumnString2Before = Encoding.UTF8.GetString(expectedColumnHash2Before);
+        var expectedColumnHash2Before = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString2Before));
+        var expectedColumnString2Before = Encoding.ASCII.GetString(expectedColumnHash2Before);
 
         var schema = new Schema(schemaName);
         var table = new Table(tableName);
@@ -230,16 +235,16 @@ public class EntityTest
         Assert.Equal(expectedColumnString2Before, column2.Id);
 
         const string tableStringAfter = schemaString + tableName;
-        var expectedTableHashAfter = algorithm.ComputeHash(Encoding.UTF8.GetBytes(tableStringAfter));
-        var expectedTableStringAfter = Encoding.UTF8.GetString(expectedTableHashAfter);
+        var expectedTableHashAfter = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableStringAfter));
+        var expectedTableStringAfter = Encoding.ASCII.GetString(expectedTableHashAfter);
 
         const string columnString1After = tableStringAfter + columnName1;
-        var expectedColumnHash1After = algorithm.ComputeHash(Encoding.UTF8.GetBytes(columnString1After));
-        var expectedColumnString1After = Encoding.UTF8.GetString(expectedColumnHash1After);
+        var expectedColumnHash1After = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString1After));
+        var expectedColumnString1After = Encoding.ASCII.GetString(expectedColumnHash1After);
 
         const string columnString2After = tableStringAfter + columnName2;
-        var expectedColumnHash2After = algorithm.ComputeHash(Encoding.UTF8.GetBytes(columnString2After));
-        var expectedColumnString2After = Encoding.UTF8.GetString(expectedColumnHash2After);
+        var expectedColumnHash2After = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString2After));
+        var expectedColumnString2After = Encoding.ASCII.GetString(expectedColumnHash2After);
 
         schema.AddStructure(table);
 
