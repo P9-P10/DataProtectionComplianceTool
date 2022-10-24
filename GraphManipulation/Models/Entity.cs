@@ -15,21 +15,20 @@ public abstract class Entity : GraphBased
     
     // TODO: Lav ToString
 
-    public string? Base { get; private set; }
+    public string? Base { get; protected set; }
     public string Id => Encoding.ASCII.GetString(Hash);
     private byte[] Hash { get; set; } = null!;
 
-    public void SetBase(string b)
-    {
-        Base = b;
-        ComputeId();
-    }
-
-    protected abstract void UpdateBase(string b);
+    public abstract void UpdateBase(string baseName);
 
     public bool HasBase()
     {
         return Base is not null;
+    }
+    
+    public bool HasSameBase(String b)
+    {
+        return HasBase() && Base.Equals(b);
     }
 
     public abstract string ComputeHash();

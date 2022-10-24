@@ -5,16 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c701dcae-c036-4c51-b84d-60162b45a46a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/GraphManipulation/Interfaces/IGraphBased.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/GraphBased.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/GraphManipulation.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/GraphManipulation.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Entity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Entity.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Graphs/KnowledgeGraph.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Graphs/KnowledgeGraph.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/DataStore.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/DataStore.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Column.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Column.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Structure.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Structure.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Table.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Table.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/DataStoreTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/DataStoreTest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/EntityTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/EntityTest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/StructureTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/StructureTest.cs" afterDir="false" />
@@ -89,6 +85,7 @@
       <workItem from="1666172611218" duration="10773000" />
       <workItem from="1666246570349" duration="23437000" />
       <workItem from="1666333363038" duration="15952000" />
+      <workItem from="1666592524559" duration="5487000" />
     </task>
     <servers />
   </component>

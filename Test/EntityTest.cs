@@ -9,11 +9,8 @@ namespace Test;
 public class EntityTest
 {
     // TODO: Test at Base er det rigtige Uri format
-    // TODO: SetBase skal sætte alle børns base også (Både fra en Store og fra en Structure)
-    // TODO: SetBase skal sætte alle forældres Base også
-    // TODO: UpdateBase skal opdatere base, se om den skal gå op eller ned i strukturen, og så opdatere dem
     
-    private HashAlgorithm GetHashAlgorithm()
+    static public HashAlgorithm GetHashAlgorithm()
     {
         return new Column("").Algorithm;
     }
@@ -102,7 +99,7 @@ public class EntityTest
         var table = new Table(tableName);
         var column = new Column(columnName);
 
-        sqlite.SetBase(baseNamespace);
+        sqlite.UpdateBase(baseNamespace);
         sqlite.AddStructure(schema);
         schema.AddStructure(table);
         table.AddStructure(column);
@@ -128,7 +125,7 @@ public class EntityTest
         var expectedSqliteString = Encoding.ASCII.GetString(expectedSqliteHash);
 
         var sqlite = new Sqlite(sqliteName);
-        sqlite.SetBase(baseNamespace);
+        sqlite.UpdateBase(baseNamespace);
 
         Assert.Equal(expectedSqliteString, sqlite.Id);
 

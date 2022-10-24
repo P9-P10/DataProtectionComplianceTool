@@ -19,9 +19,17 @@ public abstract class DataStore : NamedEntity, IHasStructure
 
         Structures.Add(structure);
 
-        if (!structure.HasStore() || !structure.Store.Equals(this)) structure.SetStore(this);
+        if (!structure.HasSameStore(this))
+        {
+            structure.UpdateStore(this);
+        }
 
-        structure.UpdateToBottom();
+        if (!structure.HasSameBase(Base))
+        {
+            structure.UpdateBase(Base);
+        }
+
+        structure.UpdateIdToBottom();
     }
 
     public abstract Connection GetConnection();
@@ -36,8 +44,17 @@ public abstract class DataStore : NamedEntity, IHasStructure
         throw new EntityException("Base was null when computing hash");
     }
 
-    protected override void UpdateBase(string b)
+    public override void UpdateBase(string baseName)
     {
-        throw new NotImplementedException();
+        Base = baseName;
+        ComputeId();
+
+        foreach (var structure in Structures)
+        {
+            if (!structure.HasSameBase(baseName))
+            {
+                structure.UpdateBase(baseName);
+            }
+        }
     }
 }

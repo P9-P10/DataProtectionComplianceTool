@@ -14,12 +14,34 @@ public abstract class Structure : NamedEntity, IHasStructure
     {
     }
 
-    protected override void UpdateBase(string b)
+    public override void UpdateBase(string baseName)
     {
-        throw new NotImplementedException();
+        Base = baseName;
+
+        if (!IsTop() && !ParentStructure.HasSameBase(baseName))
+        {
+            ParentStructure.UpdateBase(baseName);
+        }
+        if (!IsBottom())
+        {
+            foreach (var subStructure in SubStructures)
+            {
+                if (!subStructure.HasSameBase(baseName))
+                {
+                    subStructure.UpdateBase(baseName);
+                }
+            }
+        }
+
+        if (IsTop() && HasStore() && !Store.HasSameBase(baseName))
+        {
+            Store.UpdateBase(baseName);
+        }
+        
+        ComputeId();
     }
 
-    protected void UpdateStore(DataStore store)
+    public void UpdateStore(DataStore store)
     {
         Store = store;
 
@@ -27,21 +49,18 @@ public abstract class Structure : NamedEntity, IHasStructure
         {
             ParentStructure.UpdateStore(store);
         }
-        if (!IsBottom())
+        
+        ComputeId();
+
+        if (IsBottom()) return;
+        
+        foreach (var subStructure in SubStructures)
         {
-            foreach (var subStructure in SubStructures)
+            if (!subStructure.HasSameStore(store))
             {
-                if (!subStructure.HasSameStore(store))
-                {
-                    subStructure.UpdateStore(store);
-                }
+                subStructure.UpdateStore(store);
             }
         }
-    }
-
-    public bool HasSameStore(DataStore store)
-    {
-        return HasStore() && Store.Equals(store);
     }
 
     public void AddStructure(Structure structure)
@@ -50,21 +69,25 @@ public abstract class Structure : NamedEntity, IHasStructure
 
         SubStructures.Add(structure);
         structure.ParentStructure = this;
-        UpdateToBottom();
+        if (HasStore())
+        {
+            UpdateStore(Store);
+        }
+
+        if (HasBase())
+        {
+            UpdateBase(Base);
+        }
+        UpdateIdToBottom();
     }
 
-    public void UpdateToBottom()
+    public void UpdateIdToBottom()
     {
         ComputeId();
 
         if (!IsBottom())
             foreach (var subStructure in SubStructures)
-                subStructure.UpdateToBottom();
-    }
-
-    public void SetStore(DataStore store)
-    {
-        UpdateStore(store);
+                subStructure.UpdateIdToBottom();
     }
 
     public bool IsTop()
@@ -81,14 +104,26 @@ public abstract class Structure : NamedEntity, IHasStructure
     {
         return Store is not null;
     }
+    
+    public bool HasSameStore(DataStore store)
+    {
+        return HasStore() && Store.Equals(store);
+    }
 
     public override string ComputeHash()
     {
         var result = "";
 
         if (IsTop())
-        { 
-            if (HasStore()) result += Store.ComputeHash();
+        {
+            if (HasStore())
+            {
+                result += Store.ComputeHash();
+            }
+            else if (HasBase())
+            {
+                result += Base;
+            }
         }
         else
         {
