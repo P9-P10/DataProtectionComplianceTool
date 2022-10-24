@@ -32,6 +32,8 @@ public abstract class DataStore : NamedEntity, IHasStructure
         structure.UpdateIdToBottom();
     }
 
+    
+
     public abstract Connection GetConnection();
     
     // TODO: Lav FromDataStore metode
@@ -57,4 +59,26 @@ public abstract class DataStore : NamedEntity, IHasStructure
             }
         }
     }
+
+    public new IGraph ToGraph()
+    {
+        IGraph graph = base.ToGraph();
+
+        foreach (var structure in Structures)
+        {
+            graph.Merge(structure.ToGraph());
+        }
+        
+        return graph;
+    }
+    
+    // private void AddHasStructureToGraph(IGraph graph)
+    // {
+    //     var subj = graph.CreateUriNode(UriFactory.Create(Base + Id));
+    //     var pred = graph.CreateUriNode("ddl:hasStructure");
+    //     
+    //     var obj = graph.CreateUriNode(UriFactory.Create(structure.Base + structure.Id));
+    //
+    //     graph.Assert(subj, pred, obj);
+    // }
 }

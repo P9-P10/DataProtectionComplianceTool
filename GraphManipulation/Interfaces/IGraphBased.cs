@@ -1,3 +1,4 @@
+using GraphManipulation.Models;
 using VDS.RDF;
 
 namespace GraphManipulation.Interfaces;
@@ -6,5 +7,5 @@ public interface IGraphBased
 {
     
     public IGraph ToGraph();
-    public IGraphBased FromGraph(IGraph graph);
+    public GraphBased FromGraph(IGraph graph);
 }

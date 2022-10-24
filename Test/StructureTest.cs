@@ -421,10 +421,7 @@ public class StructureTest
             column.UpdateBase(baseName);
             
             var graph = column.ToGraph();
-            
-            Assert.True(graph.NamespaceMap.HasNamespace("rdf"));
-            Assert.True(graph.NamespaceMap.HasNamespace("ddl"));
-            
+
             var subj = graph.CreateUriNode(UriFactory.Create(column.Base + column.Id));
             var pred = graph.CreateUriNode("rdf:type");
             var obj = graph.CreateUriNode("ddl:Column");

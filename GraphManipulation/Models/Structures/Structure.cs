@@ -81,6 +81,11 @@ public abstract class Structure : NamedEntity, IHasStructure
         UpdateIdToBottom();
     }
 
+    public IGraph AddHasStructureToGraph(Structure structure)
+    {
+        throw new NotImplementedException();
+    }
+
     public void UpdateIdToBottom()
     {
         ComputeId();
@@ -135,48 +140,11 @@ public abstract class Structure : NamedEntity, IHasStructure
         return result;
     }
 
-    public override IGraph ToGraph()
+    public new IGraph ToGraph()
     {
-        IGraph graph = new Graph();
-        AddNamespaces(graph);
-        
-        if (!HasBase())
-        {
-            throw new EntityException("Base was null when computing graph");
-        }
-        
-        graph.BaseUri = UriFactory.Create(Base);
-        
-        string className = "ddl:";
-
-        switch (this)
-        {
-            case Column:
-                className += "Column";
-                break;
-            case Schema:
-                className += "Schema";
-                break;
-            case Table:
-                className += "Table";
-                break;
-            default:
-                throw new GraphBasedException("Structure type was is not supported");
-        }
-
-        var subj = graph.CreateUriNode(UriFactory.Create(Base + Id));
-        var pred = graph.CreateUriNode("rdf:type");
-        var obj = graph.CreateUriNode(className);
-
-
-        graph.Assert(new Triple(subj, pred, obj));
-
-        return graph;
-    }
-
-    public override IGraphBased FromGraph(IGraph graph)
-    {
-        throw new NotImplementedException();
+        IGraph baseGraph = base.ToGraph();
+    
+        return baseGraph;
     }
 }
 

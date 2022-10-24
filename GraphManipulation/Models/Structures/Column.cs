@@ -1,3 +1,5 @@
+using VDS.RDF;
+
 namespace GraphManipulation.Models.Structures;
 
 public class Column : Structure
@@ -23,5 +25,16 @@ public class Column : Structure
     public void SetDataType(string dataType)
     {
         DataType = dataType;
+    }
+
+    public new IGraph ToGraph()
+    {
+        IGraph graph = base.ToGraph();
+        return graph;
+    }
+
+    protected override string GetGraphTypeString()
+    {
+        return "Column";
     }
 }

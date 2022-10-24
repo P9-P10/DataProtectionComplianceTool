@@ -5,15 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c701dcae-c036-4c51-b84d-60162b45a46a" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Test/GraphBasedTest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Interfaces/IGraphBased.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Interfaces/IGraphBased.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Interfaces/IHasStructure.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Interfaces/IHasStructure.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Entity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Entity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/GraphBased.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/GraphBased.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/NamedEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/NamedEntity.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/DataStore.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/DataStore.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Column.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Column.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Schema.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Schema.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Structure.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Structure.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Table.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Table.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test/DataStoreTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/DataStoreTest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test/EntityTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/EntityTest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/StructureTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/StructureTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/Test.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Test/Test.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,6 +27,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="mock:///Dummy.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/196b514cc6134f6d93506f3921576e7422f200/23/0b2f0a63/TurtleParser.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/196b514cc6134f6d93506f3921576e7422f200/49/f9bd4f51/NamespaceMapper.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/6818c1ae16684bb6a6533b1e52073ad994de00/21/b645569e/Encoding.cs" root0="SKIP_HIGHLIGHTING" />
@@ -51,7 +58,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected=".NET Project.GraphManipulation">
+  <component name="RunManager" selected="74595497-7b12-47da-b242-592b7bdfe537">
     <configuration name="GraphManipulation" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
       <option name="PROGRAM_PARAMETERS" value="" />
@@ -85,7 +92,8 @@
       <workItem from="1666172611218" duration="10773000" />
       <workItem from="1666246570349" duration="23437000" />
       <workItem from="1666333363038" duration="15952000" />
-      <workItem from="1666592524559" duration="5487000" />
+      <workItem from="1666592524559" duration="6165000" />
+      <workItem from="1666598872271" duration="8722000" />
     </task>
     <servers />
   </component>
@@ -95,5 +103,37 @@
   <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Test/GraphBasedTest.cs</url>
+          <line>23</line>
+          <properties documentPath="$PROJECT_DIR$/Test/GraphBasedTest.cs" initialLine="23" containingFunctionPresentation="method 'ResultingGraphHasBaseUri'">
+            <startOffsets>
+              <option value="536" />
+            </startOffsets>
+            <endOffsets>
+              <option value="568" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Test/GraphBasedTest.cs</url>
+          <line>91</line>
+          <properties documentPath="$PROJECT_DIR$/Test/GraphBasedTest.cs" initialLine="91" containingFunctionPresentation="method 'StoreStructuresAddedToGraph'">
+            <startOffsets>
+              <option value="2731" />
+            </startOffsets>
+            <endOffsets>
+              <option value="2760" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

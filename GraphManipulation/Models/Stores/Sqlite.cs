@@ -15,13 +15,26 @@ public class Sqlite : Relational
         throw new NotImplementedException();
     }
 
-    public override IGraph ToGraph()
+    // protected override IGraph ComputeGraph()
+    // {
+    //     IGraph graph = new Graph();
+    //
+    //     foreach (var structure in Structures)
+    //     {
+    //         graph.Merge(structure.ToGraph());
+    //     }
+    //
+    //     return graph;
+    // }
+
+    public new IGraph ToGraph()
     {
-        throw new NotImplementedException();
+        IGraph graph = base.ToGraph();
+        return graph;
     }
 
-    public override IGraphBased FromGraph(IGraph graph)
+    protected override string GetGraphTypeString()
     {
-        throw new NotImplementedException();
+        return "SQLite";
     }
 }

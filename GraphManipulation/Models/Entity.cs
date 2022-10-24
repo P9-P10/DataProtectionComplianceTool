@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using VDS.RDF;
 
 namespace GraphManipulation.Models;
 
@@ -59,6 +60,37 @@ public abstract class Entity : GraphBased
     {
         return Id.GetHashCode();
     }
+
+    public new IGraph ToGraph()
+    {
+        IGraph graph = base.ToGraph();
+        
+        AddUriBaseToGraph(graph);
+        AddTypeToGraph(graph);
+
+        return graph;
+    }
+    
+    private void AddUriBaseToGraph(IGraph graph)
+    {
+        if (!HasBase())
+        {
+            throw new EntityException("Base was null when computing graph");
+        }
+        
+        graph.BaseUri = UriFactory.Create(Base);
+    }
+    
+    private void AddTypeToGraph(IGraph graph)
+    {
+        var subj = graph.CreateUriNode(UriFactory.Create(Base + Id));
+        var pred = graph.CreateUriNode("rdf:type");
+        var obj = graph.CreateUriNode("ddl:" + GetGraphTypeString());
+
+        graph.Assert(subj, pred, obj);
+    }
+    
+    protected abstract string GetGraphTypeString();
 }
 
 public class EntityException : Exception

@@ -7,21 +7,28 @@ public abstract class GraphBased : IGraphBased
 {
     public Uri OntologyNamespace => UriFactory.Create("http://www.cs-22-dt-9-03.org/datastore-description-language#");
 
-    public void AddNamespaces(IGraph graph)
-    {
-        graph.NamespaceMap.AddNamespace("ddl", OntologyNamespace);
-    }
-
     public GraphBased()
     {
         
     }
+
+    public IGraph ToGraph()
+    {
+        IGraph graph = new Graph();
+        AddNamespaces(graph);
+
+        return graph;
+    }
     
-    // TODO: Lav protected abstract ComputeGraph, og lav en implementering af ToGraph public 
-    // TODO: Lav protected abstract ComputeGraphBased, og lav en implementering af FromGraph public
-    
-    public abstract IGraph ToGraph();
-    public abstract IGraphBased FromGraph(IGraph graph);
+    private void AddNamespaces(IGraph graph)
+    {
+        graph.NamespaceMap.AddNamespace("ddl", OntologyNamespace);
+    }
+
+    public GraphBased FromGraph(IGraph graph)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 public class GraphBasedException : Exception
