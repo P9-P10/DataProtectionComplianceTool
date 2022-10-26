@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using GraphManipulation.Models;
 using GraphManipulation.Models.Stores;
@@ -11,8 +10,8 @@ namespace Test;
 
 public class StructureTest
 {
-    const string baseUri = "http://www.test.com/";
-    
+    private const string baseUri = "http://www.test.com/";
+
     [Fact]
     public void StructuresWithSameNameUniqueUnderDifferentParentStructures()
     {
@@ -52,7 +51,7 @@ public class StructureTest
 
         sqlite.UpdateBaseUri(baseUri);
         table.UpdateStore(sqlite);
-        
+
         Assert.DoesNotContain(table, sqlite.SubStructures);
     }
 
@@ -62,12 +61,12 @@ public class StructureTest
         var sqlite = new Sqlite("SQLite");
         var table = new Table("Table");
         var column = new Column("Column");
-        
+
         sqlite.UpdateBaseUri(baseUri);
-        
+
         table.AddStructure(column);
         column.UpdateStore(sqlite);
-        
+
         Assert.Equal(sqlite, table.Store);
     }
 
@@ -78,14 +77,14 @@ public class StructureTest
         var table = new Table("Table");
         var column1 = new Column("Column1");
         var column2 = new Column("Column2");
-        
+
         sqlite.UpdateBaseUri(baseUri);
-        
+
         table.AddStructure(column1);
         table.AddStructure(column2);
-        
+
         table.UpdateStore(sqlite);
-        
+
         Assert.Equal(sqlite, column1.Store);
         Assert.Equal(sqlite, column2.Store);
     }
@@ -96,13 +95,13 @@ public class StructureTest
         const string sqliteName = "SQLite";
         const string tableName = "Table";
         const string columnName = "Column";
-        
-        HashAlgorithm algorithm = EntityTest.GetHashAlgorithm();
-        
+
+        var algorithm = EntityTest.GetHashAlgorithm();
+
         const string sqliteString = baseUri + sqliteName;
         var expectedSqliteHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(sqliteString));
         var expectedSqliteString = Entity.HashToId(expectedSqliteHash);
-        
+
         const string tableString = sqliteString + tableName;
         var expectedTableHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableString));
         var expectedTableString = Entity.HashToId(expectedTableHash);
@@ -110,21 +109,21 @@ public class StructureTest
         const string columnString = tableString + columnName;
         var expectedColumnHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString));
         var expectedColumnString = Entity.HashToId(expectedColumnHash);
-        
+
         var sqlite = new Sqlite(sqliteName);
         var table = new Table(tableName);
         var column = new Column(columnName);
-        
+
         sqlite.UpdateBaseUri(baseUri);
-        
+
         table.AddStructure(column);
         column.UpdateStore(sqlite);
-        
+
         Assert.Equal(expectedSqliteString, sqlite.Id);
         Assert.Equal(expectedTableString, table.Id);
         Assert.Equal(expectedColumnString, column.Id);
     }
-    
+
     [Fact]
     public void UpdateStoreUpdatesOwnAndSubStructuresId()
     {
@@ -132,13 +131,13 @@ public class StructureTest
         const string tableName = "Table";
         const string columnName1 = "Column1";
         const string columnName2 = "Column2";
-        
-        HashAlgorithm algorithm = EntityTest.GetHashAlgorithm();
-        
+
+        var algorithm = EntityTest.GetHashAlgorithm();
+
         const string sqliteString = baseUri + sqliteName;
         var expectedSqliteHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(sqliteString));
         var expectedSqliteString = Entity.HashToId(expectedSqliteHash);
-        
+
         const string tableString = sqliteString + tableName;
         var expectedTableHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableString));
         var expectedTableString = Entity.HashToId(expectedTableHash);
@@ -146,23 +145,23 @@ public class StructureTest
         const string columnString1 = tableString + columnName1;
         var expectedColumn1Hash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString1));
         var expectedColumn1String = Entity.HashToId(expectedColumn1Hash);
-        
+
         const string columnString2 = tableString + columnName2;
         var expectedColumn2Hash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString2));
         var expectedColumn2String = Entity.HashToId(expectedColumn2Hash);
-        
+
         var sqlite = new Sqlite(sqliteName);
         var table = new Table(tableName);
         var column1 = new Column(columnName1);
         var column2 = new Column(columnName2);
-        
+
         sqlite.UpdateBaseUri(baseUri);
-        
+
         table.AddStructure(column1);
         table.AddStructure(column2);
-        
+
         table.UpdateStore(sqlite);
-        
+
         Assert.Equal(expectedSqliteString, sqlite.Id);
         Assert.Equal(expectedTableString, table.Id);
         Assert.Equal(expectedColumn1String, column1.Id);
@@ -174,10 +173,10 @@ public class StructureTest
     {
         var table = new Table("Table");
         var column = new Column("Column");
-        
+
         table.AddStructure(column);
         column.UpdateBaseUri("http://www.expected.com/");
-        
+
         Assert.Equal("http://www.expected.com/", column.BaseUri);
         Assert.Equal(column.BaseUri, table.BaseUri);
     }
@@ -188,12 +187,12 @@ public class StructureTest
         var sqlite = new Sqlite("SQLite");
         var table = new Table("Table");
         var column = new Column("Column");
-        
+
         sqlite.UpdateBaseUri(baseUri);
         sqlite.AddStructure(table);
         table.AddStructure(column);
         column.UpdateBaseUri("http://www.expected.com/");
-        
+
         Assert.Equal("http://www.expected.com/", sqlite.BaseUri);
     }
 
@@ -203,12 +202,12 @@ public class StructureTest
         var table = new Table("Table");
         var column1 = new Column("Column1");
         var column2 = new Column("Column2");
-        
+
         table.AddStructure(column1);
         table.AddStructure(column2);
-        
+
         table.UpdateBaseUri(baseUri);
-        
+
         Assert.Equal(baseUri, table.BaseUri);
         Assert.Equal(table.BaseUri, column1.BaseUri);
         Assert.Equal(table.BaseUri, column2.BaseUri);
@@ -219,9 +218,9 @@ public class StructureTest
     {
         const string tableName = "Table";
         const string columnName = "Column";
-        
-        HashAlgorithm algorithm = EntityTest.GetHashAlgorithm();
-        
+
+        var algorithm = EntityTest.GetHashAlgorithm();
+
         const string tableString = baseUri + tableName;
         var expectedTableHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableString));
         var expectedTableString = Entity.HashToId(expectedTableHash);
@@ -229,13 +228,13 @@ public class StructureTest
         const string columnString = tableString + columnName;
         var expectedColumnHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString));
         var expectedColumnString = Entity.HashToId(expectedColumnHash);
-        
+
         var table = new Table(tableName);
         var column = new Column(columnName);
 
         table.AddStructure(column);
         column.UpdateBaseUri(baseUri);
-        
+
         Assert.Equal(expectedTableString, table.Id);
         Assert.Equal(expectedColumnString, column.Id);
     }
@@ -246,13 +245,13 @@ public class StructureTest
         const string sqliteName = "SQLite";
         const string tableName = "Table";
         const string columnName = "Column";
-        
-        HashAlgorithm algorithm = EntityTest.GetHashAlgorithm();
-        
+
+        var algorithm = EntityTest.GetHashAlgorithm();
+
         const string sqliteString = baseUri + sqliteName;
         var expectedSqliteHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(sqliteString));
         var expectedSqliteString = Entity.HashToId(expectedSqliteHash);
-        
+
         const string tableString = sqliteString + tableName;
         var expectedTableHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableString));
         var expectedTableString = Entity.HashToId(expectedTableHash);
@@ -260,17 +259,17 @@ public class StructureTest
         const string columnString = tableString + columnName;
         var expectedColumnHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString));
         var expectedColumnString = Entity.HashToId(expectedColumnHash);
-        
+
         var sqlite = new Sqlite(sqliteName);
         var table = new Table(tableName);
         var column = new Column(columnName);
-        
+
         sqlite.UpdateBaseUri("Test");
-        
+
         sqlite.AddStructure(table);
         table.AddStructure(column);
         column.UpdateBaseUri(baseUri);
-        
+
         Assert.Equal(expectedSqliteString, sqlite.Id);
         Assert.Equal(expectedTableString, table.Id);
         Assert.Equal(expectedColumnString, column.Id);
@@ -282,8 +281,8 @@ public class StructureTest
         const string tableName = "Table";
         const string columnName1 = "Column1";
         const string columnName2 = "Column2";
-        
-        HashAlgorithm algorithm = EntityTest.GetHashAlgorithm();
+
+        var algorithm = EntityTest.GetHashAlgorithm();
 
         const string tableString = baseUri + tableName;
         var expectedTableHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableString));
@@ -292,20 +291,20 @@ public class StructureTest
         const string columnString1 = tableString + columnName1;
         var expectedColumn1Hash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString1));
         var expectedColumn1String = Entity.HashToId(expectedColumn1Hash);
-        
+
         const string columnString2 = tableString + columnName2;
         var expectedColumn2Hash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString2));
         var expectedColumn2String = Entity.HashToId(expectedColumn2Hash);
-        
+
         var table = new Table(tableName);
         var column1 = new Column(columnName1);
         var column2 = new Column(columnName2);
-        
+
         table.AddStructure(column1);
         table.AddStructure(column2);
-        
+
         table.UpdateBaseUri(baseUri);
-        
+
         Assert.Equal(expectedTableString, table.Id);
         Assert.Equal(expectedColumn1String, column1.Id);
         Assert.Equal(expectedColumn2String, column2.Id);
@@ -348,12 +347,12 @@ public class StructureTest
         var sqlite = new Sqlite(sqliteName);
         var table = new Table(tableName);
         var column = new Column(columnName);
-        
+
         sqlite.UpdateBaseUri(baseUri);
         sqlite.AddStructure(table);
-        
+
         table.AddStructure(column);
-        
+
         Assert.Equal(sqlite, table.Store);
         Assert.Equal(sqlite, column.Store);
     }
@@ -363,10 +362,10 @@ public class StructureTest
     {
         var table = new Table("Table");
         var column = new Column("Column");
-        
+
         table.UpdateBaseUri(baseUri);
         table.AddStructure(column);
-        
+
         Assert.Equal(baseUri, table.BaseUri);
         Assert.Equal(table.BaseUri, column.BaseUri);
     }
@@ -377,11 +376,11 @@ public class StructureTest
         var sqlite = new Sqlite("SQLite");
         var table = new Table("Table");
         var column = new Column("Column");
-        
+
         sqlite.UpdateBaseUri(baseUri);
         sqlite.AddStructure(table);
         table.AddStructure(column);
-        
+
         Assert.Equal(sqlite, table.Store);
         Assert.Equal(sqlite, column.Store);
     }
@@ -391,16 +390,16 @@ public class StructureTest
     {
         const string baseNamespace = "http://www.expected.com/";
         const string columnName = "Column";
-        
-        HashAlgorithm algorithm = EntityTest.GetHashAlgorithm();
-        
+
+        var algorithm = EntityTest.GetHashAlgorithm();
+
         const string columnString = baseNamespace + columnName;
         var expectedColumnHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString));
         var expectedColumnString = Entity.HashToId(expectedColumnHash);
-        
+
         var column = new Column("Column");
         column.UpdateBaseUri(baseNamespace);
-        
+
         Assert.Equal(expectedColumnString, column.Id);
         Assert.Equal("http://www.expected.com/Column", column.HashedFrom);
     }
@@ -411,24 +410,24 @@ public class StructureTest
         var table1 = new Table("Table1");
         var table2 = new Table("Table2");
         var column = new Column("Column");
-        
+
         table1.UpdateBaseUri(baseUri);
         table2.UpdateBaseUri(baseUri);
         table1.AddStructure(column);
-        
+
         Assert.Equal(column, table1.SubStructures.First());
         Assert.Equal(table1, column.ParentStructure);
-        
+
         table2.AddStructure(column);
-        
+
         Assert.Empty(table1.SubStructures);
         Assert.Equal(column, table2.SubStructures.First());
         Assert.Equal(table2, column.ParentStructure);
     }
 
+
     public class SchemaTest
     {
-        
     }
 
     public class TableTest
@@ -438,7 +437,7 @@ public class StructureTest
         {
             var table = new Table("Table");
             var column = new Column("Column");
-            
+
             table.UpdateBaseUri(baseUri);
             table.AddStructure(column);
             table.AddPrimaryKey(column);
@@ -451,7 +450,7 @@ public class StructureTest
         {
             var table = new Table("Table");
             var column = new Column("Column");
-            
+
             table.UpdateBaseUri(baseUri);
 
             Assert.Throws<StructureException>(() => table.AddPrimaryKey(column));
@@ -462,7 +461,7 @@ public class StructureTest
         {
             var table = new Table("Table");
             var column = new Column("Column");
-            
+
             table.UpdateBaseUri(baseUri);
             table.AddStructure(column);
             table.AddPrimaryKey(column);
@@ -479,13 +478,13 @@ public class StructureTest
 
             var table2 = new Table("Table2");
             var column2 = new Column("Column2");
-            
+
             table1.UpdateBaseUri(baseUri);
             table1.AddStructure(column1);
-            
+
             table2.UpdateBaseUri(baseUri);
             table2.AddStructure(column2);
-            
+
             table1.AddForeignKey(column1, column2);
 
             Assert.Contains(column1, table1.ForeignKeys);
@@ -499,15 +498,15 @@ public class StructureTest
 
             var table2 = new Table("Table2");
             var column2 = new Column("Column2");
-            
+
             table1.UpdateBaseUri(baseUri);
             table1.AddStructure(column1);
-            
+
             table2.UpdateBaseUri(baseUri);
             table2.AddStructure(column2);
-            
+
             table1.AddForeignKey(column1, column2);
-            
+
             Assert.Equal(column2, column1.References);
         }
 
@@ -516,7 +515,7 @@ public class StructureTest
         {
             var table = new Table("Table");
             var column = new Column("Column");
-            
+
             table.UpdateBaseUri(baseUri);
 
             Assert.Throws<StructureException>(() => table.AddForeignKey(column, column));
@@ -527,7 +526,7 @@ public class StructureTest
         {
             var table = new Table("Table");
             var column = new Column("Column");
-            
+
             table.UpdateBaseUri(baseUri);
             table.AddStructure(column);
             table.AddForeignKey(column, column);
@@ -543,15 +542,15 @@ public class StructureTest
             var column1 = new Column("Column1");
             var column2 = new Column("Column2");
             var column3 = new Column("Column3");
-            
+
             table.UpdateBaseUri(baseUri);
             table.AddStructure(column1);
             table.AddForeignKey(column1, column2);
-            
+
             Assert.Equal(column2, column1.References);
-            
+
             table.AddForeignKey(column1, column3);
-            
+
             Assert.Equal(column3, column1.References);
             Assert.Single(table.ForeignKeys);
         }
@@ -562,8 +561,12 @@ public class StructureTest
             var table = new Table("Table");
             table.UpdateBaseUri(baseUri);
 
-            Assert.Throws<GraphBasedException>(() => table.ToGraph());
+            // Added to avoid StructureException caused by Structure having no Store
+            var sqlite = new Sqlite("SQLite");
+            sqlite.UpdateBaseUri(baseUri);
+            sqlite.AddStructure(table);
 
+            Assert.Throws<GraphBasedException>(() => table.ToGraph());
         }
 
         [Fact]
@@ -571,16 +574,21 @@ public class StructureTest
         {
             var table = new Table("Table");
             var column = new Column("Column");
-            
+
             table.UpdateBaseUri(baseUri);
             table.AddStructure(column);
             table.AddPrimaryKey(column);
 
+            // Added to avoid StructureException caused by Structure having no Store
+            var sqlite = new Sqlite("SQLite");
+            sqlite.UpdateBaseUri(baseUri);
+            sqlite.AddStructure(table);
+
             var graph = table.ToGraph();
 
-            var subj = graph.CreateUriNode(UriFactory.Create(table.BaseUri + table.Id));
+            var subj = graph.CreateUriNode(table.Uri);
             var pred = graph.CreateUriNode("ddl:primaryKey");
-            var obj = graph.CreateUriNode(UriFactory.Create(column.BaseUri + column.Id));
+            var obj = graph.CreateUriNode(column.Uri);
 
             var triple = new Triple(subj, pred, obj);
 
@@ -592,17 +600,22 @@ public class StructureTest
         {
             var table = new Table("Table");
             var column = new Column("Column");
-            
+
             table.UpdateBaseUri(baseUri);
             table.AddStructure(column);
             table.AddPrimaryKey(column);
             table.AddForeignKey(column, column);
 
+            // Added to avoid StructureException caused by Structure having no Store
+            var sqlite = new Sqlite("SQLite");
+            sqlite.UpdateBaseUri(baseUri);
+            sqlite.AddStructure(table);
+
             var graph = table.ToGraph();
 
-            var subj = graph.CreateUriNode(UriFactory.Create(table.BaseUri + table.Id));
+            var subj = graph.CreateUriNode(table.Uri);
             var pred = graph.CreateUriNode("ddl:foreignKey");
-            var obj = graph.CreateUriNode(UriFactory.Create(column.BaseUri + column.Id));
+            var obj = graph.CreateUriNode(column.Uri);
 
             var triple = new Triple(subj, pred, obj);
 
@@ -614,15 +627,20 @@ public class StructureTest
         {
             var table = new Table("Table");
             var column = new Column("Column");
-            
+
             table.UpdateBaseUri(baseUri);
             table.AddStructure(column);
             table.AddPrimaryKey(column);
             table.AddForeignKey(column, column);
 
+            // Added to avoid StructureException caused by Structure having no Store
+            var sqlite = new Sqlite("SQLite");
+            sqlite.UpdateBaseUri(baseUri);
+            sqlite.AddStructure(table);
+
             var graph = table.ToGraph();
 
-            var subj = graph.CreateUriNode(UriFactory.Create(column.BaseUri + column.Id));
+            var subj = graph.CreateUriNode(column.Uri);
             var pred = graph.CreateUriNode("ddl:references");
 
             var triple = new Triple(subj, pred, subj);
@@ -633,7 +651,47 @@ public class StructureTest
 
     public class ColumnTest
     {
-        
+        [Fact]
+        public void SetReferenceSetsReference()
+        {
+            var column = new Column("Column");
+
+            column.SetReferences(column);
+
+            Assert.Equal(column, column.References);
+        }
+
+        [Fact]
+        public void SetDataTypeSetsDataType()
+        {
+            var column = new Column("Column");
+
+            column.SetDataType("Test");
+
+            Assert.Equal("Test", column.DataType);
+        }
+
+        [Fact]
+        public void ToGraphDataTypeAddedToGraph()
+        {
+            var column = new Column("Column");
+            column.UpdateBaseUri(baseUri);
+            column.SetDataType("Test");
+
+            // Added to avoid StructureException caused by Structure having no Store
+            var sqlite = new Sqlite("SQLite");
+            sqlite.UpdateBaseUri(baseUri);
+            sqlite.AddStructure(column);
+
+            var graph = column.ToGraph();
+
+            var subj = graph.CreateUriNode(column.Uri);
+            var pred = graph.CreateUriNode("ddl:hasDataType");
+            var obj = graph.CreateLiteralNode("Test");
+
+            var triple = new Triple(subj, pred, obj);
+
+            Assert.Contains(triple, graph.Triples);
+        }
     }
-    
 }

@@ -18,6 +18,9 @@ ddl:
 ddl:hasStructure
     a rdf:Property .
 
+ddl:hasDataType
+    a rdf:Property .
+
 ddl:hasStore
     a rdf:Property .
 
@@ -141,5 +144,9 @@ ddl:Table
 
 
 ddl:Column
-    a               rdfs:Class ;
-    rdfs:subClassOf ddl:Structure .
+    a               rdfs:Class, sh:NodeShape ;
+    rdfs:subClassOf ddl:Structure ;
+    sh:property     [ sh:path     ddl:hasDataType ;
+                      sh:datatype xsd:string ;
+                      sh:minCount 1 ;
+                      sh:maxCount 1 ] .

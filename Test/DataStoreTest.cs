@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using System.Text;
 using GraphManipulation.Models;
 using GraphManipulation.Models.Stores;
@@ -57,11 +56,11 @@ public class DataStoreTest
     {
         var sqlite = new Sqlite("SQLite");
         var table = new Table("Table");
-        
+
         sqlite.UpdateBaseUri("Test");
         sqlite.AddStructure(table);
         sqlite.UpdateBaseUri("Expected");
-        
+
         Assert.Equal("Expected", table.BaseUri);
         Assert.Equal(sqlite.BaseUri, table.BaseUri);
     }
@@ -72,24 +71,24 @@ public class DataStoreTest
         const string baseNamespace = "Expected";
         const string sqliteName = "SQLite";
         const string tableName = "Table";
-        
-        HashAlgorithm algorithm = EntityTest.GetHashAlgorithm();
-        
+
+        var algorithm = EntityTest.GetHashAlgorithm();
+
         const string sqliteString = baseNamespace + sqliteName;
         var expectedSqliteHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(sqliteString));
         var expectedSqliteString = Entity.HashToId(expectedSqliteHash);
-        
+
         const string tableString = sqliteString + tableName;
         var expectedTableHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableString));
         var expectedTableString = Entity.HashToId(expectedTableHash);
-        
+
         var sqlite = new Sqlite(sqliteName);
         var table = new Table(tableName);
-        
+
         sqlite.UpdateBaseUri("Test");
         sqlite.AddStructure(table);
         sqlite.UpdateBaseUri("Expected");
-        
+
         Assert.Equal(expectedSqliteString, sqlite.Id);
         Assert.Equal(expectedTableString, table.Id);
     }
@@ -103,7 +102,7 @@ public class DataStoreTest
         var expected = "Expected";
         sqlite.UpdateBaseUri(expected);
         sqlite.AddStructure(table);
-        
+
         Assert.Equal(expected, sqlite.BaseUri);
         Assert.Equal(sqlite.BaseUri, table.BaseUri);
     }
@@ -113,20 +112,18 @@ public class DataStoreTest
     {
         var sqlite = new Sqlite("SQLite");
         var table = new Table("Table");
-        
+
         sqlite.UpdateBaseUri("Test");
         sqlite.AddStructure(table);
-        
+
         Assert.Equal(sqlite, table.Store);
     }
 
     public class ToGraphTest
     {
-        
     }
 
     public class FromGraphTest
     {
-        
     }
 }

@@ -16,7 +16,7 @@ public class Sqlite : Relational
 
     public override IGraph ToGraph()
     {
-        IGraph graph = base.ToGraph();
+        var graph = base.ToGraph();
         return graph;
     }
 

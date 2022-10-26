@@ -10,7 +10,7 @@ public class Schema : Structure
 
     public override IGraph ToGraph()
     {
-        IGraph graph = base.ToGraph();
+        var graph = base.ToGraph();
         return graph;
     }
 

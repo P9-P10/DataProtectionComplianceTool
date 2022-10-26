@@ -16,21 +16,15 @@ public abstract class DataStore : StructuredEntity
 
         SubStructures.Add(structure);
 
-        if (!structure.HasSameStore(this))
-        {
-            structure.UpdateStore(this);
-        }
+        if (!structure.HasSameStore(this)) structure.UpdateStore(this);
 
-        if (HasBase() && !structure.HasSameBase(BaseUri))
-        {
-            structure.UpdateBaseUri(BaseUri);
-        }
+        if (HasBase() && !structure.HasSameBase(BaseUri)) structure.UpdateBaseUri(BaseUri);
 
         structure.UpdateIdToBottom();
     }
-    
+
     public abstract Connection GetConnection();
-    
+
     // TODO: Lav FromDataStore metode
     // TODO: Lav ToDataStore metode?
 
@@ -47,17 +41,13 @@ public abstract class DataStore : StructuredEntity
         ComputeId();
 
         foreach (var structure in SubStructures)
-        {
             if (!structure.HasSameBase(baseName))
-            {
                 structure.UpdateBaseUri(baseName);
-            }
-        }
     }
 
     public override IGraph ToGraph()
     {
-        IGraph graph = base.ToGraph();
+        var graph = base.ToGraph();
 
         return graph;
     }

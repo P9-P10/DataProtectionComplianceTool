@@ -4,12 +4,11 @@ namespace GraphManipulation.Models;
 
 public abstract class GraphBased
 {
-    public Uri OntologyNamespace => UriFactory.Create("http://www.cs-22-dt-9-03.org/datastore-description-language#");
+    // TODO: Maybe do this:
+    // public List<Exception> Violations = new List<Exception>();
 
-    public GraphBased()
-    {
-        
-    }
+    private static Uri OntologyNamespace =>
+        UriFactory.Create("http://www.cs-22-dt-9-03.org/datastore-description-language#");
 
     public virtual IGraph ToGraph()
     {
@@ -18,7 +17,7 @@ public abstract class GraphBased
 
         return graph;
     }
-    
+
     private void AddNamespaces(IGraph graph)
     {
         graph.NamespaceMap.AddNamespace("ddl", OntologyNamespace);

@@ -3,7 +3,6 @@
 
 using GraphManipulation.Models.Structures;
 
-
 var column = new Column("Something");
 
-Console.WriteLine(column.Id); 
+Console.WriteLine(column.Id);

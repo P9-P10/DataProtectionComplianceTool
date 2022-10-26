@@ -4,9 +4,9 @@ namespace GraphManipulation.Models.Structures;
 
 public class Table : Structure
 {
-    public List<Column> PrimaryKeys = new List<Column>();
-    public List<Column> ForeignKeys = new List<Column>();
-    
+    public List<Column> ForeignKeys = new();
+    public List<Column> PrimaryKeys = new();
+
     public Table(string name) : base(name)
     {
     }
@@ -17,42 +17,37 @@ public class Table : Structure
 
         if (!SubStructures.Contains(column))
             throw new StructureException("Column must be in the list of SubStructures to be a valid primary key");
-        
+
         PrimaryKeys.Add(column);
     }
 
     public void AddForeignKey(Column fromColumn, Column toColumn)
     {
-        if (!ForeignKeys.Contains(fromColumn))
-        {
-            ForeignKeys.Add(fromColumn);
-        }
+        if (!ForeignKeys.Contains(fromColumn)) ForeignKeys.Add(fromColumn);
 
         if (!SubStructures.Contains(fromColumn))
-        {
             throw new StructureException("Column must be in the list of SubStructures to be a valid foreign key");
-        }
 
         fromColumn.SetReferences(toColumn);
     }
 
     public override IGraph ToGraph()
     {
-        IGraph graph = base.ToGraph();
-        
+        var graph = base.ToGraph();
+
         AddPrimaryKeysToGraph(graph);
         AddForeignKeysToGraph(graph);
-        
+
         return graph;
     }
 
     private void AddPrimaryKeysToGraph(IGraph graph)
     {
         if (PrimaryKeys.Count == 0) throw new GraphBasedException("No primary keys when creating graph");
-        
+
         var subj = graph.CreateUriNode(Uri);
         var pred = graph.CreateUriNode("ddl:primaryKey");
-            
+
         foreach (var primaryKey in PrimaryKeys)
         {
             var obj = graph.CreateUriNode(primaryKey.Uri);
@@ -72,14 +67,14 @@ public class Table : Structure
             var from = graph.CreateUriNode(foreignKey.Uri);
 
             graph.Assert(table, foreignKeyRelation, from);
-            
+
             var referencesRelation = graph.CreateUriNode("ddl:references");
             var to = graph.CreateUriNode(foreignKey.References.Uri);
 
             graph.Assert(from, referencesRelation, to);
         }
     }
-    
+
     protected override string GetGraphTypeString()
     {
         return "Table";

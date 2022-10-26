@@ -16,26 +16,14 @@ public abstract class Structure : StructuredEntity //, IHasStructure
     {
         BaseUri = baseName;
 
-        if (!IsTop() && !ParentStructure.HasSameBase(baseName))
-        {
-            ParentStructure.UpdateBaseUri(baseName);
-        }
+        if (!IsTop() && !ParentStructure.HasSameBase(baseName)) ParentStructure.UpdateBaseUri(baseName);
         if (!IsBottom())
-        {
             foreach (var subStructure in SubStructures)
-            {
                 if (!subStructure.HasSameBase(baseName))
-                {
                     subStructure.UpdateBaseUri(baseName);
-                }
-            }
-        }
 
-        if (IsTop() && HasStore() && !Store.HasSameBase(baseName))
-        {
-            Store.UpdateBaseUri(baseName);
-        }
-        
+        if (IsTop() && HasStore() && !Store.HasSameBase(baseName)) Store.UpdateBaseUri(baseName);
+
         ComputeId();
     }
 
@@ -43,51 +31,30 @@ public abstract class Structure : StructuredEntity //, IHasStructure
     {
         Store = store;
 
-        if (!IsTop() && !ParentStructure.HasSameStore(store))
-        {
-            ParentStructure.UpdateStore(store);
-        }
-        
+        if (!IsTop() && !ParentStructure.HasSameStore(store)) ParentStructure.UpdateStore(store);
+
         ComputeId();
 
         if (IsBottom()) return;
-        
+
         foreach (var subStructure in SubStructures)
-        {
             if (!subStructure.HasSameStore(store))
-            {
                 subStructure.UpdateStore(store);
-            }
-        }
     }
 
     public override void AddStructure(Structure structure)
     {
         if (SubStructures.Contains(structure)) return;
 
-        if (!structure.IsTop())
-        {
-            structure.ParentStructure.SubStructures.Remove(structure);
-        }
+        if (!structure.IsTop()) structure.ParentStructure.SubStructures.Remove(structure);
 
         SubStructures.Add(structure);
         structure.ParentStructure = this;
-        
-        if (HasStore())
-        {
-            UpdateStore(Store);
-        }
 
-        if (HasBase())
-        {
-            UpdateBaseUri(BaseUri);
-        }
+        if (HasStore()) UpdateStore(Store);
+
+        if (HasBase()) UpdateBaseUri(BaseUri);
         UpdateIdToBottom();
-    }
-
-    public IGraph AddHasStructureToGraph(Structure structure)
-    {
-        throw new NotImplementedException();
     }
 
     public void UpdateIdToBottom()
@@ -113,7 +80,7 @@ public abstract class Structure : StructuredEntity //, IHasStructure
     {
         return Store is not null;
     }
-    
+
     public bool HasSameStore(DataStore store)
     {
         return HasStore() && Store.Equals(store);
@@ -126,13 +93,8 @@ public abstract class Structure : StructuredEntity //, IHasStructure
         if (IsTop())
         {
             if (HasStore())
-            {
                 result += Store.ComputeHash();
-            }
-            else if (HasBase())
-            {
-                result += BaseUri;
-            }
+            else if (HasBase()) result += BaseUri;
         }
         else
         {
@@ -146,9 +108,23 @@ public abstract class Structure : StructuredEntity //, IHasStructure
 
     public override IGraph ToGraph()
     {
-        IGraph baseGraph = base.ToGraph();
-    
+        var baseGraph = base.ToGraph();
+
+        AddHasStoreToGraph(baseGraph);
+
         return baseGraph;
+    }
+
+    private void AddHasStoreToGraph(IGraph graph)
+    {
+        if (!HasStore()) throw new StructureException("Store was null when building graph");
+
+        var triple = new Triple(
+            graph.CreateUriNode(Uri),
+            graph.CreateUriNode("ddl:hasStore"),
+            graph.CreateUriNode(Store.Uri));
+
+        graph.Assert(triple);
     }
 }
 

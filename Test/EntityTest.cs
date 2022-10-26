@@ -10,8 +10,8 @@ namespace Test;
 public class EntityTest
 {
     // TODO: Test at BaseUri er det rigtige Uri format
-    
-    static public HashAlgorithm GetHashAlgorithm()
+
+    public static HashAlgorithm GetHashAlgorithm()
     {
         return new Column("").Algorithm;
     }

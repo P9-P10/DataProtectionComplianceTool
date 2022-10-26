@@ -13,8 +13,8 @@ public abstract class NamedEntity : Entity
 
     public override IGraph ToGraph()
     {
-        IGraph graph = base.ToGraph();
-        
+        var graph = base.ToGraph();
+
         AddNameToGraph(graph);
 
         return graph;
@@ -22,7 +22,7 @@ public abstract class NamedEntity : Entity
 
     private void AddNameToGraph(IGraph graph)
     {
-        var subj = graph.CreateUriNode(UriFactory.Create(BaseUri + Id));
+        var subj = graph.CreateUriNode(Uri);
         var pred = graph.CreateUriNode("ddl:hasName");
         var obj = graph.CreateLiteralNode(Name);
 

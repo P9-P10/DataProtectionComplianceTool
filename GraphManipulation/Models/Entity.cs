@@ -13,8 +13,6 @@ public abstract class Entity : GraphBased
     {
         ComputeId(toHash);
     }
-    
-    // TODO: Lav ToString
 
     public string? BaseUri { get; protected set; }
 
@@ -25,24 +23,21 @@ public abstract class Entity : GraphBased
         get
         {
             if (!HasBase()) throw new EntityException("Base was null when generating URI");
-            
+
             return UriFactory.Create(BaseUri + Id);
         }
     }
 
+    private byte[] Hash { get; set; } = null!;
+
     public static string HashToId(IEnumerable<byte> hash)
     {
         var stringBuilder = new StringBuilder();
-            
-        foreach (var b in hash)
-        {
-            stringBuilder.Append(b.ToString("x2"));
-        }
+
+        foreach (var b in hash) stringBuilder.Append(b.ToString("x2"));
 
         return stringBuilder.ToString();
     }
-
-    private byte[] Hash { get; set; } = null!;
 
     public abstract void UpdateBaseUri(string baseName);
 
@@ -50,8 +45,8 @@ public abstract class Entity : GraphBased
     {
         return BaseUri is not null;
     }
-    
-    public bool HasSameBase(String b)
+
+    public bool HasSameBase(string b)
     {
         return HasBase() && BaseUri.Equals(b);
     }
@@ -87,33 +82,30 @@ public abstract class Entity : GraphBased
 
     public override IGraph ToGraph()
     {
-        IGraph graph = base.ToGraph();
-        
+        var graph = base.ToGraph();
+
         AddUriBaseToGraph(graph);
         AddTypeToGraph(graph);
 
         return graph;
     }
-    
+
     private void AddUriBaseToGraph(IGraph graph)
     {
-        if (!HasBase())
-        {
-            throw new EntityException("BaseUri was null when computing graph");
-        }
-        
+        if (!HasBase()) throw new EntityException("BaseUri was null when computing graph");
+
         graph.BaseUri = UriFactory.Create(BaseUri);
     }
-    
+
     private void AddTypeToGraph(IGraph graph)
     {
-        var subj = graph.CreateUriNode(UriFactory.Create(BaseUri + Id));
+        var subj = graph.CreateUriNode(Uri);
         var pred = graph.CreateUriNode("rdf:type");
         var obj = graph.CreateUriNode("ddl:" + GetGraphTypeString());
 
         graph.Assert(subj, pred, obj);
     }
-    
+
     protected abstract string GetGraphTypeString();
 }
 

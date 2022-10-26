@@ -4,9 +4,6 @@ namespace GraphManipulation.Models.Structures;
 
 public class Column : Structure
 {
-    public string DataType { get; private set; }
-    public Column? References { get; private set; }
-    
     public Column(string name) : base(name)
     {
         DataType = "";
@@ -16,6 +13,9 @@ public class Column : Structure
     {
         DataType = dataType;
     }
+
+    public string DataType { get; private set; }
+    public Column? References { get; private set; }
 
     public void SetReferences(Column column)
     {
@@ -29,8 +29,20 @@ public class Column : Structure
 
     public override IGraph ToGraph()
     {
-        IGraph graph = base.ToGraph();
+        var graph = base.ToGraph();
+
+        AddDataTypeToGraph(graph);
+
         return graph;
+    }
+
+    private void AddDataTypeToGraph(IGraph graph)
+    {
+        var subj = graph.CreateUriNode(Uri);
+        var pred = graph.CreateUriNode("ddl:hasDataType");
+        var obj = graph.CreateLiteralNode(DataType);
+
+        graph.Assert(subj, pred, obj);
     }
 
     protected override string GetGraphTypeString()
