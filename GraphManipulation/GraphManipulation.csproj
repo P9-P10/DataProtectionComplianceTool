@@ -24,4 +24,8 @@
         <Compile Remove="Models\Structures\FilePath.cs" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Interfaces" />
+    </ItemGroup>
+
 </Project>

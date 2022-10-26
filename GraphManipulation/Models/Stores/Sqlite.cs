@@ -1,4 +1,3 @@
-using GraphManipulation.Interfaces;
 using GraphManipulation.Models.Connections;
 using VDS.RDF;
 

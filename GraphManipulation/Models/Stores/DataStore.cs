@@ -1,11 +1,10 @@
-using GraphManipulation.Interfaces;
 using GraphManipulation.Models.Connections;
 using GraphManipulation.Models.Structures;
 using VDS.RDF;
 
 namespace GraphManipulation.Models.Stores;
 
-public abstract class DataStore : StructuredEntity, IHasStructure
+public abstract class DataStore : StructuredEntity
 {
     protected DataStore(string name) : base(name)
     {
@@ -64,15 +63,4 @@ public abstract class DataStore : StructuredEntity, IHasStructure
 
         return graph;
     }
-
-
-    // private void AddHasStructureToGraph(IGraph graph)
-    // {
-    //     var subj = graph.CreateUriNode(UriFactory.Create(Base + Id));
-    //     var pred = graph.CreateUriNode("ddl:hasStructure");
-    //     
-    //     var obj = graph.CreateUriNode(UriFactory.Create(structure.Base + structure.Id));
-    //
-    //     graph.Assert(subj, pred, obj);
-    // }
 }
