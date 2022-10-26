@@ -18,6 +18,9 @@ ddl:
 ddl:hasStructure
     a rdf:Property .
 
+ddl:hasStore
+    a rdf:Property .
+
 ddl:storedIn
     a rdf:Property .
 
@@ -111,7 +114,11 @@ ddl:ConnectionShape
 
 ddl:Structure
     a               rdfs:Class ;
-    rdfs:subClassOf ddl:NamedEntity .
+    rdfs:subClassOf ddl:NamedEntity ;
+    sh:property     [ sh:path     ddl:hasStore ;
+                      sh:class    ddl:Datastore ;
+                      sh:minCount 1 ;
+                      sh:maxCount 2 ] .
 
 ddl:Schema
     a               rdfs:Class, sh:NodeShape ;

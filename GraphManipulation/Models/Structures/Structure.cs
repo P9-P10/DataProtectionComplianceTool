@@ -65,8 +65,14 @@ public abstract class Structure : StructuredEntity //, IHasStructure
     {
         if (SubStructures.Contains(structure)) return;
 
+        if (!structure.IsTop())
+        {
+            structure.ParentStructure.SubStructures.Remove(structure);
+        }
+
         SubStructures.Add(structure);
         structure.ParentStructure = this;
+        
         if (HasStore())
         {
             UpdateStore(Store);

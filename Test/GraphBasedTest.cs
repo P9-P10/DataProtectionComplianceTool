@@ -103,10 +103,18 @@ public class GraphBasedTest
             var sqlite = new Sqlite("SQLite");
             var table1 = new Table("Table1");
             var table2 = new Table("Table2");
-            
+
             sqlite.UpdateBaseUri(baseURI);
             sqlite.AddStructure(table1);
             sqlite.AddStructure(table2);
+            
+            // To avoid exceptions because of no primary key:
+            var column1 = new Column("Column1");
+            var column2 = new Column("Column2");
+            table1.AddStructure(column1);
+            table2.AddStructure(column2);
+            table1.AddPrimaryKey(column1);
+            table2.AddPrimaryKey(column2);
 
             var graph = sqlite.ToGraph();
             
@@ -138,6 +146,7 @@ public class GraphBasedTest
             schema.AddStructure(table);
             table.AddStructure(column1);
             table.AddStructure(column2);
+            table.AddPrimaryKey(column1);
 
             var graph = schema.ToGraph();
             

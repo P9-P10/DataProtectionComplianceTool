@@ -20,6 +20,16 @@ public abstract class Entity : GraphBased
 
     public string Id => HashToId(Hash);
 
+    public Uri Uri
+    {
+        get
+        {
+            if (!HasBase()) throw new EntityException("Base was null when generating URI");
+            
+            return UriFactory.Create(BaseUri + Id);
+        }
+    }
+
     public static string HashToId(IEnumerable<byte> hash)
     {
         var stringBuilder = new StringBuilder();

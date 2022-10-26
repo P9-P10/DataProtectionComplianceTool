@@ -24,12 +24,13 @@ public abstract class StructuredEntity : NamedEntity
 
     private void AddStructureToGraph(IGraph graph)
     {
+        var subj = graph.CreateUriNode(UriFactory.Create(BaseUri + Id));
+        var pred = graph.CreateUriNode("ddl:hasStructure");
+        
         foreach (var subStructure in SubStructures)
         {
             graph.Merge(subStructure.ToGraph());
-
-            var subj = graph.CreateUriNode(UriFactory.Create(BaseUri + Id));
-            var pred = graph.CreateUriNode("ddl:hasStructure");
+            
             var obj = graph.CreateUriNode(UriFactory.Create(subStructure.BaseUri + subStructure.Id));
 
             graph.Assert(subj, pred, obj);

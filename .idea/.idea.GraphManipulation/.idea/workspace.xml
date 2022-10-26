@@ -7,12 +7,10 @@
     <list default="true" id="c701dcae-c036-4c51-b84d-60162b45a46a" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Entity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Entity.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/NamedEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/NamedEntity.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/DataStore.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/DataStore.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/StructuredEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/StructuredEntity.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Structure.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Structure.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test/DataStoreTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/DataStoreTest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test/EntityTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/EntityTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Table.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Table.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Ontologies/datastore-description-language.ttl" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Ontologies/datastore-description-language.ttl" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/GraphBasedTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/GraphBasedTest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/StructureTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/StructureTest.cs" afterDir="false" />
     </list>
@@ -89,7 +87,7 @@
       <workItem from="1666333363038" duration="15952000" />
       <workItem from="1666592524559" duration="6165000" />
       <workItem from="1666598872271" duration="12316000" />
-      <workItem from="1666765268271" duration="5811000" />
+      <workItem from="1666765268271" duration="12920000" />
     </task>
     <servers />
   </component>
@@ -99,24 +97,5 @@
   <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Test/GraphBasedTest.cs</url>
-          <line>88</line>
-          <properties documentPath="$PROJECT_DIR$/Test/GraphBasedTest.cs" initialLine="88" containingFunctionPresentation="method 'StructuredEntityReturnsGraphWithHasStructure'">
-            <startOffsets>
-              <option value="2628" />
-            </startOffsets>
-            <endOffsets>
-              <option value="2657" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="16" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
