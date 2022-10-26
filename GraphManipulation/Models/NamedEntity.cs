@@ -22,7 +22,7 @@ public abstract class NamedEntity : Entity
 
     private void AddNameToGraph(IGraph graph)
     {
-        var subj = graph.CreateUriNode(UriFactory.Create(Base + Id));
+        var subj = graph.CreateUriNode(UriFactory.Create(BaseUri + Id));
         var pred = graph.CreateUriNode("ddl:hasName");
         var obj = graph.CreateLiteralNode(Name);
 

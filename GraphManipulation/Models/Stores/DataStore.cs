@@ -21,16 +21,14 @@ public abstract class DataStore : StructuredEntity
             structure.UpdateStore(this);
         }
 
-        if (HasBase() && !structure.HasSameBase(Base))
+        if (HasBase() && !structure.HasSameBase(BaseUri))
         {
-            structure.UpdateBase(Base);
+            structure.UpdateBaseUri(BaseUri);
         }
 
         structure.UpdateIdToBottom();
     }
-
     
-
     public abstract Connection GetConnection();
     
     // TODO: Lav FromDataStore metode
@@ -38,21 +36,21 @@ public abstract class DataStore : StructuredEntity
 
     public override string ComputeHash()
     {
-        if (Base is not null)
-            return Base + Name;
-        throw new EntityException("Base was null when computing hash");
+        if (BaseUri is not null)
+            return BaseUri + Name;
+        throw new EntityException("BaseUri was null when computing hash");
     }
 
-    public override void UpdateBase(string baseName)
+    public override void UpdateBaseUri(string baseName)
     {
-        Base = baseName;
+        BaseUri = baseName;
         ComputeId();
 
         foreach (var structure in SubStructures)
         {
             if (!structure.HasSameBase(baseName))
             {
-                structure.UpdateBase(baseName);
+                structure.UpdateBaseUri(baseName);
             }
         }
     }

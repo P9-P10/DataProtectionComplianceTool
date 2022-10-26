@@ -28,9 +28,9 @@ public abstract class StructuredEntity : NamedEntity
         {
             graph.Merge(subStructure.ToGraph());
 
-            var subj = graph.CreateUriNode(UriFactory.Create(Base + Id));
+            var subj = graph.CreateUriNode(UriFactory.Create(BaseUri + Id));
             var pred = graph.CreateUriNode("ddl:hasStructure");
-            var obj = graph.CreateUriNode(UriFactory.Create(subStructure.Base + subStructure.Id));
+            var obj = graph.CreateUriNode(UriFactory.Create(subStructure.BaseUri + subStructure.Id));
 
             graph.Assert(subj, pred, obj);
         }

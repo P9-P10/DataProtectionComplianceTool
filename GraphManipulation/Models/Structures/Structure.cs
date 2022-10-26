@@ -12,13 +12,13 @@ public abstract class Structure : StructuredEntity //, IHasStructure
     {
     }
 
-    public override void UpdateBase(string baseName)
+    public override void UpdateBaseUri(string baseName)
     {
-        Base = baseName;
+        BaseUri = baseName;
 
         if (!IsTop() && !ParentStructure.HasSameBase(baseName))
         {
-            ParentStructure.UpdateBase(baseName);
+            ParentStructure.UpdateBaseUri(baseName);
         }
         if (!IsBottom())
         {
@@ -26,14 +26,14 @@ public abstract class Structure : StructuredEntity //, IHasStructure
             {
                 if (!subStructure.HasSameBase(baseName))
                 {
-                    subStructure.UpdateBase(baseName);
+                    subStructure.UpdateBaseUri(baseName);
                 }
             }
         }
 
         if (IsTop() && HasStore() && !Store.HasSameBase(baseName))
         {
-            Store.UpdateBase(baseName);
+            Store.UpdateBaseUri(baseName);
         }
         
         ComputeId();
@@ -74,7 +74,7 @@ public abstract class Structure : StructuredEntity //, IHasStructure
 
         if (HasBase())
         {
-            UpdateBase(Base);
+            UpdateBaseUri(BaseUri);
         }
         UpdateIdToBottom();
     }
@@ -125,7 +125,7 @@ public abstract class Structure : StructuredEntity //, IHasStructure
             }
             else if (HasBase())
             {
-                result += Base;
+                result += BaseUri;
             }
         }
         else

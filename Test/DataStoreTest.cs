@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using GraphManipulation.Models;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
 using Xunit;
@@ -14,9 +15,9 @@ public class DataStoreTest
         var sqlite = new Sqlite("SQLite");
         const string baseName = "Test";
 
-        sqlite.UpdateBase(baseName);
+        sqlite.UpdateBaseUri(baseName);
 
-        Assert.Equal(baseName, sqlite.Base);
+        Assert.Equal(baseName, sqlite.BaseUri);
     }
 
     [Fact]
@@ -29,7 +30,7 @@ public class DataStoreTest
         var sqlite = new Sqlite(sqliteName);
         var schema = new Schema(schemaName);
 
-        sqlite.UpdateBase(baseNamespace);
+        sqlite.UpdateBaseUri(baseNamespace);
         sqlite.AddStructure(schema);
         Assert.Contains(schema, sqlite.SubStructures);
     }
@@ -44,7 +45,7 @@ public class DataStoreTest
         var sqlite = new Sqlite(sqliteName);
         var schema = new Schema(schemaName);
 
-        sqlite.UpdateBase(baseNamespace);
+        sqlite.UpdateBaseUri(baseNamespace);
         sqlite.AddStructure(schema);
         sqlite.AddStructure(schema);
 
@@ -57,12 +58,12 @@ public class DataStoreTest
         var sqlite = new Sqlite("SQLite");
         var table = new Table("Table");
         
-        sqlite.UpdateBase("Test");
+        sqlite.UpdateBaseUri("Test");
         sqlite.AddStructure(table);
-        sqlite.UpdateBase("Expected");
+        sqlite.UpdateBaseUri("Expected");
         
-        Assert.Equal("Expected", table.Base);
-        Assert.Equal(sqlite.Base, table.Base);
+        Assert.Equal("Expected", table.BaseUri);
+        Assert.Equal(sqlite.BaseUri, table.BaseUri);
     }
 
     [Fact]
@@ -76,18 +77,18 @@ public class DataStoreTest
         
         const string sqliteString = baseNamespace + sqliteName;
         var expectedSqliteHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(sqliteString));
-        var expectedSqliteString = Encoding.ASCII.GetString(expectedSqliteHash);
+        var expectedSqliteString = Entity.HashToId(expectedSqliteHash);
         
         const string tableString = sqliteString + tableName;
         var expectedTableHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableString));
-        var expectedTableString = Encoding.ASCII.GetString(expectedTableHash);
+        var expectedTableString = Entity.HashToId(expectedTableHash);
         
         var sqlite = new Sqlite(sqliteName);
         var table = new Table(tableName);
         
-        sqlite.UpdateBase("Test");
+        sqlite.UpdateBaseUri("Test");
         sqlite.AddStructure(table);
-        sqlite.UpdateBase("Expected");
+        sqlite.UpdateBaseUri("Expected");
         
         Assert.Equal(expectedSqliteString, sqlite.Id);
         Assert.Equal(expectedTableString, table.Id);
@@ -100,11 +101,11 @@ public class DataStoreTest
         var table = new Table("Table");
 
         var expected = "Expected";
-        sqlite.UpdateBase(expected);
+        sqlite.UpdateBaseUri(expected);
         sqlite.AddStructure(table);
         
-        Assert.Equal(expected, sqlite.Base);
-        Assert.Equal(sqlite.Base, table.Base);
+        Assert.Equal(expected, sqlite.BaseUri);
+        Assert.Equal(sqlite.BaseUri, table.BaseUri);
     }
 
     [Fact]
@@ -113,7 +114,7 @@ public class DataStoreTest
         var sqlite = new Sqlite("SQLite");
         var table = new Table("Table");
         
-        sqlite.UpdateBase("Test");
+        sqlite.UpdateBaseUri("Test");
         sqlite.AddStructure(table);
         
         Assert.Equal(sqlite, table.Store);

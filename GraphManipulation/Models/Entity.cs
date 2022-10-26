@@ -16,20 +16,34 @@ public abstract class Entity : GraphBased
     
     // TODO: Lav ToString
 
-    public string? Base { get; protected set; }
-    public string Id => Encoding.ASCII.GetString(Hash);
+    public string? BaseUri { get; protected set; }
+
+    public string Id => HashToId(Hash);
+
+    public static string HashToId(IEnumerable<byte> hash)
+    {
+        var stringBuilder = new StringBuilder();
+            
+        foreach (var b in hash)
+        {
+            stringBuilder.Append(b.ToString("x2"));
+        }
+
+        return stringBuilder.ToString();
+    }
+
     private byte[] Hash { get; set; } = null!;
 
-    public abstract void UpdateBase(string baseName);
+    public abstract void UpdateBaseUri(string baseName);
 
     public bool HasBase()
     {
-        return Base is not null;
+        return BaseUri is not null;
     }
     
     public bool HasSameBase(String b)
     {
-        return HasBase() && Base.Equals(b);
+        return HasBase() && BaseUri.Equals(b);
     }
 
     public abstract string ComputeHash();
@@ -75,15 +89,15 @@ public abstract class Entity : GraphBased
     {
         if (!HasBase())
         {
-            throw new EntityException("Base was null when computing graph");
+            throw new EntityException("BaseUri was null when computing graph");
         }
         
-        graph.BaseUri = UriFactory.Create(Base);
+        graph.BaseUri = UriFactory.Create(BaseUri);
     }
     
     private void AddTypeToGraph(IGraph graph)
     {
-        var subj = graph.CreateUriNode(UriFactory.Create(Base + Id));
+        var subj = graph.CreateUriNode(UriFactory.Create(BaseUri + Id));
         var pred = graph.CreateUriNode("rdf:type");
         var obj = graph.CreateUriNode("ddl:" + GetGraphTypeString());
 

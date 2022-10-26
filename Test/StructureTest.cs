@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using GraphManipulation.Models;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
 using VDS.RDF;
@@ -35,7 +36,7 @@ public class StructureTest
         var sqlite = new Sqlite("SQLite");
         var column = new Column("Column");
 
-        sqlite.UpdateBase("Test");
+        sqlite.UpdateBaseUri("Test");
         column.UpdateStore(sqlite);
         Assert.Equal(sqlite, column.Store);
     }
@@ -46,7 +47,7 @@ public class StructureTest
         var sqlite = new Sqlite("SQLite");
         var table = new Table("Table");
 
-        sqlite.UpdateBase("Test");
+        sqlite.UpdateBaseUri("Test");
         table.UpdateStore(sqlite);
         
         Assert.DoesNotContain(table, sqlite.SubStructures);
@@ -59,7 +60,7 @@ public class StructureTest
         var table = new Table("Table");
         var column = new Column("Column");
         
-        sqlite.UpdateBase("Test");
+        sqlite.UpdateBaseUri("Test");
         
         table.AddStructure(column);
         column.UpdateStore(sqlite);
@@ -75,7 +76,7 @@ public class StructureTest
         var column1 = new Column("Column1");
         var column2 = new Column("Column2");
         
-        sqlite.UpdateBase("Test");
+        sqlite.UpdateBaseUri("Test");
         
         table.AddStructure(column1);
         table.AddStructure(column2);
@@ -98,21 +99,21 @@ public class StructureTest
         
         const string sqliteString = baseNamespace + sqliteName;
         var expectedSqliteHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(sqliteString));
-        var expectedSqliteString = Encoding.ASCII.GetString(expectedSqliteHash);
+        var expectedSqliteString = Entity.HashToId(expectedSqliteHash);
         
         const string tableString = sqliteString + tableName;
         var expectedTableHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableString));
-        var expectedTableString = Encoding.ASCII.GetString(expectedTableHash);
+        var expectedTableString = Entity.HashToId(expectedTableHash);
 
         const string columnString = tableString + columnName;
         var expectedColumnHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString));
-        var expectedColumnString = Encoding.ASCII.GetString(expectedColumnHash);
+        var expectedColumnString = Entity.HashToId(expectedColumnHash);
         
         var sqlite = new Sqlite(sqliteName);
         var table = new Table(tableName);
         var column = new Column(columnName);
         
-        sqlite.UpdateBase(baseNamespace);
+        sqlite.UpdateBaseUri(baseNamespace);
         
         table.AddStructure(column);
         column.UpdateStore(sqlite);
@@ -135,26 +136,26 @@ public class StructureTest
         
         const string sqliteString = baseNamespace + sqliteName;
         var expectedSqliteHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(sqliteString));
-        var expectedSqliteString = Encoding.ASCII.GetString(expectedSqliteHash);
+        var expectedSqliteString = Entity.HashToId(expectedSqliteHash);
         
         const string tableString = sqliteString + tableName;
         var expectedTableHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableString));
-        var expectedTableString = Encoding.ASCII.GetString(expectedTableHash);
+        var expectedTableString = Entity.HashToId(expectedTableHash);
 
         const string columnString1 = tableString + columnName1;
         var expectedColumn1Hash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString1));
-        var expectedColumn1String = Encoding.ASCII.GetString(expectedColumn1Hash);
+        var expectedColumn1String = Entity.HashToId(expectedColumn1Hash);
         
         const string columnString2 = tableString + columnName2;
         var expectedColumn2Hash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString2));
-        var expectedColumn2String = Encoding.ASCII.GetString(expectedColumn2Hash);
+        var expectedColumn2String = Entity.HashToId(expectedColumn2Hash);
         
         var sqlite = new Sqlite(sqliteName);
         var table = new Table(tableName);
         var column1 = new Column(columnName1);
         var column2 = new Column(columnName2);
         
-        sqlite.UpdateBase("Test");
+        sqlite.UpdateBaseUri("Test");
         
         table.AddStructure(column1);
         table.AddStructure(column2);
@@ -174,10 +175,10 @@ public class StructureTest
         var column = new Column("Column");
         
         table.AddStructure(column);
-        column.UpdateBase("Expected");
+        column.UpdateBaseUri("Expected");
         
-        Assert.Equal("Expected", column.Base);
-        Assert.Equal(column.Base, table.Base);
+        Assert.Equal("Expected", column.BaseUri);
+        Assert.Equal(column.BaseUri, table.BaseUri);
     }
 
     [Fact]
@@ -187,12 +188,12 @@ public class StructureTest
         var table = new Table("Table");
         var column = new Column("Column");
         
-        sqlite.UpdateBase("Test");
+        sqlite.UpdateBaseUri("Test");
         sqlite.AddStructure(table);
         table.AddStructure(column);
-        column.UpdateBase("Expected");
+        column.UpdateBaseUri("Expected");
         
-        Assert.Equal("Expected", sqlite.Base);
+        Assert.Equal("Expected", sqlite.BaseUri);
     }
 
     [Fact]
@@ -205,11 +206,11 @@ public class StructureTest
         table.AddStructure(column1);
         table.AddStructure(column2);
         
-        table.UpdateBase("Expected");
+        table.UpdateBaseUri("Expected");
         
-        Assert.Equal("Expected", table.Base);
-        Assert.Equal(table.Base, column1.Base);
-        Assert.Equal(table.Base, column2.Base);
+        Assert.Equal("Expected", table.BaseUri);
+        Assert.Equal(table.BaseUri, column1.BaseUri);
+        Assert.Equal(table.BaseUri, column2.BaseUri);
     }
 
     [Fact]
@@ -223,17 +224,17 @@ public class StructureTest
         
         const string tableString = baseNamespace + tableName;
         var expectedTableHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableString));
-        var expectedTableString = Encoding.ASCII.GetString(expectedTableHash);
+        var expectedTableString = Entity.HashToId(expectedTableHash);
 
         const string columnString = tableString + columnName;
         var expectedColumnHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString));
-        var expectedColumnString = Encoding.ASCII.GetString(expectedColumnHash);
+        var expectedColumnString = Entity.HashToId(expectedColumnHash);
         
         var table = new Table(tableName);
         var column = new Column(columnName);
 
         table.AddStructure(column);
-        column.UpdateBase(baseNamespace);
+        column.UpdateBaseUri(baseNamespace);
         
         Assert.Equal(expectedTableString, table.Id);
         Assert.Equal(expectedColumnString, column.Id);
@@ -251,25 +252,25 @@ public class StructureTest
         
         const string sqliteString = baseNamespace + sqliteName;
         var expectedSqliteHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(sqliteString));
-        var expectedSqliteString = Encoding.ASCII.GetString(expectedSqliteHash);
+        var expectedSqliteString = Entity.HashToId(expectedSqliteHash);
         
         const string tableString = sqliteString + tableName;
         var expectedTableHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableString));
-        var expectedTableString = Encoding.ASCII.GetString(expectedTableHash);
+        var expectedTableString = Entity.HashToId(expectedTableHash);
 
         const string columnString = tableString + columnName;
         var expectedColumnHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString));
-        var expectedColumnString = Encoding.ASCII.GetString(expectedColumnHash);
+        var expectedColumnString = Entity.HashToId(expectedColumnHash);
         
         var sqlite = new Sqlite(sqliteName);
         var table = new Table(tableName);
         var column = new Column(columnName);
         
-        sqlite.UpdateBase("Test");
+        sqlite.UpdateBaseUri("Test");
         
         sqlite.AddStructure(table);
         table.AddStructure(column);
-        column.UpdateBase(baseNamespace);
+        column.UpdateBaseUri(baseNamespace);
         
         Assert.Equal(expectedSqliteString, sqlite.Id);
         Assert.Equal(expectedTableString, table.Id);
@@ -288,15 +289,15 @@ public class StructureTest
 
         const string tableString = baseNamespace + tableName;
         var expectedTableHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableString));
-        var expectedTableString = Encoding.ASCII.GetString(expectedTableHash);
+        var expectedTableString = Entity.HashToId(expectedTableHash);
 
         const string columnString1 = tableString + columnName1;
         var expectedColumn1Hash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString1));
-        var expectedColumn1String = Encoding.ASCII.GetString(expectedColumn1Hash);
+        var expectedColumn1String = Entity.HashToId(expectedColumn1Hash);
         
         const string columnString2 = tableString + columnName2;
         var expectedColumn2Hash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString2));
-        var expectedColumn2String = Encoding.ASCII.GetString(expectedColumn2Hash);
+        var expectedColumn2String = Entity.HashToId(expectedColumn2Hash);
         
         var table = new Table(tableName);
         var column1 = new Column(columnName1);
@@ -305,7 +306,7 @@ public class StructureTest
         table.AddStructure(column1);
         table.AddStructure(column2);
         
-        table.UpdateBase(baseNamespace);
+        table.UpdateBaseUri(baseNamespace);
         
         Assert.Equal(expectedTableString, table.Id);
         Assert.Equal(expectedColumn1String, column1.Id);
@@ -351,7 +352,7 @@ public class StructureTest
         var table = new Table(tableName);
         var column = new Column(columnName);
         
-        sqlite.UpdateBase(baseURI);
+        sqlite.UpdateBaseUri(baseURI);
         sqlite.AddStructure(table);
         
         table.AddStructure(column);
@@ -367,11 +368,11 @@ public class StructureTest
         var table = new Table("Table");
         var column = new Column("Column");
         
-        table.UpdateBase(baseName);
+        table.UpdateBaseUri(baseName);
         table.AddStructure(column);
         
-        Assert.Equal(baseName, table.Base);
-        Assert.Equal(table.Base, column.Base);
+        Assert.Equal(baseName, table.BaseUri);
+        Assert.Equal(table.BaseUri, column.BaseUri);
     }
 
     [Fact]
@@ -382,7 +383,7 @@ public class StructureTest
         var table = new Table("Table");
         var column = new Column("Column");
         
-        sqlite.UpdateBase(baseName);
+        sqlite.UpdateBaseUri(baseName);
         sqlite.AddStructure(table);
         table.AddStructure(column);
         
@@ -400,10 +401,10 @@ public class StructureTest
         
         const string columnString = baseNamespace + columnName;
         var expectedColumnHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString));
-        var expectedColumnString = Encoding.ASCII.GetString(expectedColumnHash);
+        var expectedColumnString = Entity.HashToId(expectedColumnHash);
         
         var column = new Column("Column");
-        column.UpdateBase(baseNamespace);
+        column.UpdateBaseUri(baseNamespace);
         
         Assert.Equal(expectedColumnString, column.Id);
         Assert.Equal("ExpectedColumn", column.HashedFrom);
@@ -411,18 +412,17 @@ public class StructureTest
     
     public class ToGraphTest
     {
-        // TODO: Test at Structures børn bliver lavet til grafer og tilføjet
         [Fact]
         public void BasicTest()
         {
             const string baseName = "http://www.test.com/";
             const string columnName = "TestColumn";
             var column = new Column(columnName);
-            column.UpdateBase(baseName);
+            column.UpdateBaseUri(baseName);
             
             var graph = column.ToGraph();
 
-            var subj = graph.CreateUriNode(UriFactory.Create(column.Base + column.Id));
+            var subj = graph.CreateUriNode(UriFactory.Create(column.BaseUri + column.Id));
             var pred = graph.CreateUriNode("rdf:type");
             var obj = graph.CreateUriNode("ddl:Column");
 
