@@ -38,11 +38,13 @@ public class Column : Structure
 
     private void AddDataTypeToGraph(IGraph graph)
     {
-        var subj = graph.CreateUriNode(Uri);
-        var pred = graph.CreateUriNode("ddl:hasDataType");
-        var obj = graph.CreateLiteralNode(DataType);
+        var triple = new Triple(
+            graph.CreateUriNode(Uri),
+            graph.CreateUriNode("ddl:hasDataType"),
+            graph.CreateLiteralNode(DataType)
+        );
 
-        graph.Assert(subj, pred, obj);
+        graph.Assert(triple);
     }
 
     protected override string GetGraphTypeString()

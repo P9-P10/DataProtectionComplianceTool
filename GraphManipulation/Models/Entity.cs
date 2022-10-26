@@ -92,18 +92,20 @@ public abstract class Entity : GraphBased
 
     private void AddUriBaseToGraph(IGraph graph)
     {
-        if (!HasBase()) throw new EntityException("BaseUri was null when computing graph");
+        if (!HasBase()) throw new EntityException("BaseUri was null when building graph");
 
         graph.BaseUri = UriFactory.Create(BaseUri);
     }
 
     private void AddTypeToGraph(IGraph graph)
     {
-        var subj = graph.CreateUriNode(Uri);
-        var pred = graph.CreateUriNode("rdf:type");
-        var obj = graph.CreateUriNode("ddl:" + GetGraphTypeString());
+        var triple = new Triple(
+            graph.CreateUriNode(Uri),
+            graph.CreateUriNode("rdf:type"),
+            graph.CreateUriNode("ddl:" + GetGraphTypeString())
+        );
 
-        graph.Assert(subj, pred, obj);
+        graph.Assert(triple);
     }
 
     protected abstract string GetGraphTypeString();

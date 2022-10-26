@@ -22,10 +22,12 @@ public abstract class NamedEntity : Entity
 
     private void AddNameToGraph(IGraph graph)
     {
-        var subj = graph.CreateUriNode(Uri);
-        var pred = graph.CreateUriNode("ddl:hasName");
-        var obj = graph.CreateLiteralNode(Name);
+        var triple = new Triple(
+            graph.CreateUriNode(Uri),
+            graph.CreateUriNode("ddl:hasName"),
+            graph.CreateLiteralNode(Name)
+        );
 
-        graph.Assert(subj, pred, obj);
+        graph.Assert(triple);
     }
 }
