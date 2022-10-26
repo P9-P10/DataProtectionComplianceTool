@@ -11,7 +11,7 @@ public abstract class NamedEntity : Entity
 
     public string Name { get; }
 
-    public new IGraph ToGraph()
+    public override IGraph ToGraph()
     {
         IGraph graph = base.ToGraph();
         

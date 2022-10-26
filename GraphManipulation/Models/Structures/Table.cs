@@ -1,3 +1,4 @@
+using GraphManipulation.Interfaces;
 using VDS.RDF;
 
 namespace GraphManipulation.Models.Structures;
@@ -28,12 +29,12 @@ public class Table : Structure
         fromColumn.SetReferences(toColumn);
     }
 
-    public new IGraph ToGraph()
+    public override IGraph ToGraph()
     {
         IGraph graph = base.ToGraph();
         return graph;
     }
-
+    
     protected override string GetGraphTypeString()
     {
         return "Table";

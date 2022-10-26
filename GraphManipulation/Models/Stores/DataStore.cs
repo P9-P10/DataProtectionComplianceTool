@@ -5,26 +5,24 @@ using VDS.RDF;
 
 namespace GraphManipulation.Models.Stores;
 
-public abstract class DataStore : NamedEntity, IHasStructure
+public abstract class DataStore : StructuredEntity, IHasStructure
 {
-    public List<Structure> Structures = new();
-
     protected DataStore(string name) : base(name)
     {
     }
 
-    public void AddStructure(Structure structure)
+    public override void AddStructure(Structure structure)
     {
-        if (Structures.Contains(structure)) return;
+        if (SubStructures.Contains(structure)) return;
 
-        Structures.Add(structure);
+        SubStructures.Add(structure);
 
         if (!structure.HasSameStore(this))
         {
             structure.UpdateStore(this);
         }
 
-        if (!structure.HasSameBase(Base))
+        if (HasBase() && !structure.HasSameBase(Base))
         {
             structure.UpdateBase(Base);
         }
@@ -51,7 +49,7 @@ public abstract class DataStore : NamedEntity, IHasStructure
         Base = baseName;
         ComputeId();
 
-        foreach (var structure in Structures)
+        foreach (var structure in SubStructures)
         {
             if (!structure.HasSameBase(baseName))
             {
@@ -60,18 +58,14 @@ public abstract class DataStore : NamedEntity, IHasStructure
         }
     }
 
-    public new IGraph ToGraph()
+    public override IGraph ToGraph()
     {
         IGraph graph = base.ToGraph();
 
-        foreach (var structure in Structures)
-        {
-            graph.Merge(structure.ToGraph());
-        }
-        
         return graph;
     }
-    
+
+
     // private void AddHasStructureToGraph(IGraph graph)
     // {
     //     var subj = graph.CreateUriNode(UriFactory.Create(Base + Id));

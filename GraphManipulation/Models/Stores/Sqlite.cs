@@ -15,19 +15,7 @@ public class Sqlite : Relational
         throw new NotImplementedException();
     }
 
-    // protected override IGraph ComputeGraph()
-    // {
-    //     IGraph graph = new Graph();
-    //
-    //     foreach (var structure in Structures)
-    //     {
-    //         graph.Merge(structure.ToGraph());
-    //     }
-    //
-    //     return graph;
-    // }
-
-    public new IGraph ToGraph()
+    public override IGraph ToGraph()
     {
         IGraph graph = base.ToGraph();
         return graph;

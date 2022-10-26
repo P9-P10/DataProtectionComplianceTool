@@ -49,7 +49,7 @@ public class StructureTest
         sqlite.UpdateBase("Test");
         table.UpdateStore(sqlite);
         
-        Assert.DoesNotContain(table, sqlite.Structures);
+        Assert.DoesNotContain(table, sqlite.SubStructures);
     }
 
     [Fact]

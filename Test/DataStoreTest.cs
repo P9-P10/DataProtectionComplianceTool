@@ -31,7 +31,7 @@ public class DataStoreTest
 
         sqlite.UpdateBase(baseNamespace);
         sqlite.AddStructure(schema);
-        Assert.Contains(schema, sqlite.Structures);
+        Assert.Contains(schema, sqlite.SubStructures);
     }
 
     [Fact]
@@ -48,7 +48,7 @@ public class DataStoreTest
         sqlite.AddStructure(schema);
         sqlite.AddStructure(schema);
 
-        Assert.Single(sqlite.Structures);
+        Assert.Single(sqlite.SubStructures);
     }
 
     [Fact]

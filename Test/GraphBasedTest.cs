@@ -79,7 +79,7 @@ public class GraphBasedTest
         }
         
         [Fact]
-        public void StoreStructuresAddedToGraph()
+        public void StoreSubStructuresAddedToGraph()
         {
             var sqlite = new Sqlite("SQLite");
             var table1 = new Table("Table1");
@@ -105,6 +105,44 @@ public class GraphBasedTest
 
             Assert.Contains(triple1, graph.Triples);
             Assert.Contains(triple2, graph.Triples);
+        }
+
+        [Fact]
+        public void StructureSubStructuresAddedToGraph()
+        {
+            var schema = new Schema("Schema");
+            var table = new Table("Table");
+            var column1 = new Column("Column1");
+            var column2 = new Column("Column2");
+            
+            schema.UpdateBase(baseURI);
+            schema.AddStructure(table);
+            table.AddStructure(column1);
+            table.AddStructure(column2);
+
+            var graph = schema.ToGraph();
+            
+            var triple1 = new Triple(
+                graph.CreateUriNode(UriFactory.Create(schema.Base + schema.Id)), 
+                graph.CreateUriNode("ddl:hasStructure"), 
+                graph.CreateUriNode(UriFactory.Create(table.Base + table.Id))
+            );
+            
+            var triple2 = new Triple(
+                graph.CreateUriNode(UriFactory.Create(table.Base + table.Id)), 
+                graph.CreateUriNode("ddl:hasStructure"), 
+                graph.CreateUriNode(UriFactory.Create(column1.Base + column1.Id))
+            );
+            
+            var triple3 = new Triple(
+                graph.CreateUriNode(UriFactory.Create(table.Base + table.Id)), 
+                graph.CreateUriNode("ddl:hasStructure"), 
+                graph.CreateUriNode(UriFactory.Create(column2.Base + column2.Id))
+            );
+            
+            Assert.Contains(triple1, graph.Triples);
+            Assert.Contains(triple2, graph.Triples);
+            Assert.Contains(triple3, graph.Triples);
         }
     }
 

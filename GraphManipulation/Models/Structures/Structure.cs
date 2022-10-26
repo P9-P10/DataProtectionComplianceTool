@@ -4,11 +4,10 @@ using VDS.RDF;
 
 namespace GraphManipulation.Models.Structures;
 
-public abstract class Structure : NamedEntity, IHasStructure
+public abstract class Structure : StructuredEntity //, IHasStructure
 {
     public Structure? ParentStructure;
     public DataStore? Store;
-    public List<Structure> SubStructures = new();
 
     protected Structure(string name) : base(name)
     {
@@ -63,7 +62,7 @@ public abstract class Structure : NamedEntity, IHasStructure
         }
     }
 
-    public void AddStructure(Structure structure)
+    public override void AddStructure(Structure structure)
     {
         if (SubStructures.Contains(structure)) return;
 
@@ -140,7 +139,7 @@ public abstract class Structure : NamedEntity, IHasStructure
         return result;
     }
 
-    public new IGraph ToGraph()
+    public override IGraph ToGraph()
     {
         IGraph baseGraph = base.ToGraph();
     

@@ -1,3 +1,4 @@
+using GraphManipulation.Interfaces;
 using VDS.RDF;
 
 namespace GraphManipulation.Models.Structures;
@@ -8,7 +9,7 @@ public class Schema : Structure
     {
     }
 
-    public new IGraph ToGraph()
+    public override IGraph ToGraph()
     {
         IGraph graph = base.ToGraph();
         return graph;

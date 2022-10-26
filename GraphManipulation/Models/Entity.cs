@@ -61,7 +61,7 @@ public abstract class Entity : GraphBased
         return Id.GetHashCode();
     }
 
-    public new IGraph ToGraph()
+    public override IGraph ToGraph()
     {
         IGraph graph = base.ToGraph();
         

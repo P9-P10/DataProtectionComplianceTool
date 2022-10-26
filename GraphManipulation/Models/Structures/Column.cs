@@ -1,3 +1,4 @@
+using GraphManipulation.Interfaces;
 using VDS.RDF;
 
 namespace GraphManipulation.Models.Structures;
@@ -27,7 +28,7 @@ public class Column : Structure
         DataType = dataType;
     }
 
-    public new IGraph ToGraph()
+    public override IGraph ToGraph()
     {
         IGraph graph = base.ToGraph();
         return graph;

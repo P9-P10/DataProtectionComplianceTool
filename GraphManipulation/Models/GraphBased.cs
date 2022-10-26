@@ -3,7 +3,7 @@ using VDS.RDF;
 
 namespace GraphManipulation.Models;
 
-public abstract class GraphBased : IGraphBased
+public abstract class GraphBased
 {
     public Uri OntologyNamespace => UriFactory.Create("http://www.cs-22-dt-9-03.org/datastore-description-language#");
 
@@ -12,7 +12,7 @@ public abstract class GraphBased : IGraphBased
         
     }
 
-    public IGraph ToGraph()
+    public virtual IGraph ToGraph()
     {
         IGraph graph = new Graph();
         AddNamespaces(graph);
@@ -25,7 +25,7 @@ public abstract class GraphBased : IGraphBased
         graph.NamespaceMap.AddNamespace("ddl", OntologyNamespace);
     }
 
-    public GraphBased FromGraph(IGraph graph)
+    public virtual GraphBased FromGraph(IGraph graph)
     {
         throw new NotImplementedException();
     }
