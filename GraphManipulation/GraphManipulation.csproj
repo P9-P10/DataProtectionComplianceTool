@@ -8,7 +8,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="dotNetRdf" Version="3.0.0-rc0004"/>
+        <PackageReference Include="Dapper" Version="2.0.123" />
+        <PackageReference Include="dotNetRdf" Version="3.0.0-rc0004" />
+        <PackageReference Include="System.Data.SQLite" Version="1.0.116" />
     </ItemGroup>
 
     <ItemGroup>
@@ -18,14 +20,14 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="Models\Stores\Csv.cs"/>
-        <Compile Remove="Models\Stores\File.cs"/>
-        <Compile Remove="Models\Stores\Plaintext.cs"/>
-        <Compile Remove="Models\Structures\FilePath.cs"/>
+        <Compile Remove="Models\Stores\Csv.cs" />
+        <Compile Remove="Models\Stores\File.cs" />
+        <Compile Remove="Models\Stores\Plaintext.cs" />
+        <Compile Remove="Models\Structures\FilePath.cs" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Interfaces"/>
+        <Folder Include="Interfaces" />
     </ItemGroup>
 
 </Project>

@@ -1,5 +1,5 @@
 namespace GraphManipulation.Models.Connections;
 
-public class FileConnection : Connection
-{
-}
+// public class FileConnection : Connection
+// {
+// }

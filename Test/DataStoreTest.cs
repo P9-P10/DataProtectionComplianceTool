@@ -1,3 +1,4 @@
+using System.Data.SQLite;
 using System.Text;
 using GraphManipulation.Models;
 using GraphManipulation.Models.Stores;
@@ -8,6 +9,8 @@ namespace Test;
 
 public class DataStoreTest
 {
+    private const string baseUri = "http://www.test.com/";
+    
     [Fact]
     public void UpdateBaseSetsBase()
     {
@@ -117,6 +120,48 @@ public class DataStoreTest
         sqlite.AddStructure(table);
 
         Assert.Equal(sqlite, table.Store);
+    }
+
+    public class BuildTest
+    {
+        [Fact]
+        public void WithoutConnectionThrowsException()
+        {
+            var sqlite = new Sqlite("SQLite");
+            sqlite.UpdateBaseUri(baseUri);
+
+            Assert.Throws<DataStoreException>(() => sqlite.Build());
+        }
+
+        [Fact]
+        public void NamedEntityGetsAName()
+        {
+            var sqlite = new Sqlite("");
+            sqlite.UpdateBaseUri(baseUri);
+            
+            SQLiteConnection connection =
+                new SQLiteConnection("Data Source=/home/ane/Documents/GitHub/Legeplads/Databases/SimpleDatabase.sqlite");
+            
+            sqlite.SetConnection(connection);
+            
+            sqlite.Build();
+            
+            Assert.Equal("SimpleDatabase.sqlite", sqlite.Name);
+        }
+
+        [Fact]
+        public void BasicTest()
+        {
+            var sqlite = new Sqlite("SQLite");
+            sqlite.UpdateBaseUri(baseUri);
+
+            SQLiteConnection connection =
+                new SQLiteConnection("Data Source=/home/ane/Documents/GitHub/Legeplads/Databases/SimpleDatabase.sqlite");
+            
+            sqlite.SetConnection(connection);
+            
+            sqlite.Build();
+        }
     }
 
     public class ToGraphTest

@@ -4,26 +4,61 @@ using VDS.RDF;
 
 namespace GraphManipulation.Models.Stores;
 
+
+public enum SupportedDataStores
+{
+    Sqlite, PostgreSql, MongoDb, Csv
+}
+
 public abstract class DataStore : StructuredEntity
 {
     protected DataStore(string name) : base(name)
     {
     }
+    
+    // Vi skal ikke suportere ALT, vi skal surpotere nogle få ting (SQLite, PostgreSQL, MongoDB, etc.) 
+    // Lad typen af den konkrete DataStore være bestemt af en enum 
+    // Switch ét sted på den enum, og lav forskellige implementeringer til hver 
+    // F.eks. ved Sqlite, den skal kalde DataBase.Build(), Relational.Build(), og SQLite.Build() (ELLER SÅDAN NOGET)
+
+    public virtual string GetConnectionString()
+    {
+        return DataStoreType.ToString();
+    }
+
+    protected SupportedDataStores DataStoreType;
 
     public override void AddStructure(Structure structure)
     {
-        if (SubStructures.Contains(structure)) return;
+        if (SubStructures.Contains(structure))
+        {
+            return;
+        }
 
         SubStructures.Add(structure);
 
-        if (!structure.HasSameStore(this)) structure.UpdateStore(this);
+        if (!structure.HasSameStore(this))
+        {
+            structure.UpdateStore(this);
+        }
 
-        if (HasBase() && !structure.HasSameBase(BaseUri)) structure.UpdateBaseUri(BaseUri);
+        if (HasBase() && !structure.HasSameBase(BaseUri))
+        {
+            structure.UpdateBaseUri(BaseUri);
+        }
 
         structure.UpdateIdToBottom();
     }
 
-    public abstract Connection GetConnection();
+    public virtual void Build()
+    {
+        BuildDataStore();
+    }
+
+    private void BuildDataStore()
+    {
+        
+    }
 
     // TODO: Lav FromDataStore metode
     // TODO: Lav ToDataStore metode?
@@ -31,7 +66,10 @@ public abstract class DataStore : StructuredEntity
     public override string ComputeHash()
     {
         if (BaseUri is not null)
+        {
             return BaseUri + Name;
+        }
+
         throw new EntityException("BaseUri was null when computing hash");
     }
 
@@ -42,7 +80,9 @@ public abstract class DataStore : StructuredEntity
 
         foreach (var structure in SubStructures)
             if (!structure.HasSameBase(baseName))
+            {
                 structure.UpdateBaseUri(baseName);
+            }
     }
 
     public override IGraph ToGraph()
@@ -50,5 +90,12 @@ public abstract class DataStore : StructuredEntity
         var graph = base.ToGraph();
 
         return graph;
+    }
+}
+
+public class DataStoreException : Exception
+{
+    public DataStoreException(string message) : base(message)
+    {
     }
 }

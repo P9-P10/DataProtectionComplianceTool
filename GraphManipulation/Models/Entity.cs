@@ -22,7 +22,10 @@ public abstract class Entity : GraphBased
     {
         get
         {
-            if (!HasBase()) throw new EntityException("Base was null when generating URI");
+            if (!HasBase())
+            {
+                throw new EntityException("Base was null when generating URI");
+            }
 
             return UriFactory.Create(BaseUri + Id);
         }
@@ -66,9 +69,15 @@ public abstract class Entity : GraphBased
 
     public override bool Equals(object? obj)
     {
-        if (obj is null) return false;
+        if (obj is null)
+        {
+            return false;
+        }
 
-        if (!obj.GetType().IsSubclassOf(typeof(Entity))) return false;
+        if (!obj.GetType().IsSubclassOf(typeof(Entity)))
+        {
+            return false;
+        }
 
         var id1 = Id;
         var id2 = (obj as Entity).Id;
@@ -92,7 +101,10 @@ public abstract class Entity : GraphBased
 
     private void AddUriBaseToGraph(IGraph graph)
     {
-        if (!HasBase()) throw new EntityException("BaseUri was null when building graph");
+        if (!HasBase())
+        {
+            throw new EntityException("BaseUri was null when building graph");
+        }
 
         graph.BaseUri = UriFactory.Create(BaseUri);
     }
