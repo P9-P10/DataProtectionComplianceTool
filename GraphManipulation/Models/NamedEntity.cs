@@ -9,7 +9,7 @@ public abstract class NamedEntity : Entity
         Name = name;
     }
 
-    public string Name { get; }
+    public string Name { get; protected set;  }
 
     public override IGraph ToGraph()
     {

@@ -8,9 +8,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="dotNetRdf" Version="3.0.0-rc0004"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0"/>
-        <PackageReference Include="xunit" Version="2.4.1"/>
+        <PackageReference Include="dotNetRdf" Version="3.0.0-rc0004" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+        <PackageReference Include="xunit" Version="2.4.1" />
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
@@ -22,13 +22,16 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\GraphManipulation\GraphManipulation.csproj"/>
+        <ProjectReference Include="..\GraphManipulation\GraphManipulation.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="simpleTestOntology.ttl">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
+      <None Update="TestResources\simpleTestOntology.ttl">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="TestResources\SimpleDatabase.sqlite">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

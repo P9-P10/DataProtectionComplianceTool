@@ -21,11 +21,6 @@ public abstract class DataStore : StructuredEntity
     // Switch ét sted på den enum, og lav forskellige implementeringer til hver 
     // F.eks. ved Sqlite, den skal kalde DataBase.Build(), Relational.Build(), og SQLite.Build() (ELLER SÅDAN NOGET)
 
-    public virtual string GetConnectionString()
-    {
-        return DataStoreType.ToString();
-    }
-
     protected SupportedDataStores DataStoreType;
 
     public override void AddStructure(Structure structure)
@@ -59,9 +54,6 @@ public abstract class DataStore : StructuredEntity
     {
         
     }
-
-    // TODO: Lav FromDataStore metode
-    // TODO: Lav ToDataStore metode?
 
     public override string ComputeHash()
     {

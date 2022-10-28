@@ -5,24 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c701dcae-c036-4c51-b84d-60162b45a46a" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Test/SqliteTest.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Test/TestResources/SimpleDatabase.sqlite" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation.sln.DotSettings.user" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/GraphManipulation.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/GraphManipulation.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Connections/Connection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Connections/Connection.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Connections/FileConnection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Connections/FileConnection.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Connections/UrlConnection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Connections/UrlConnection.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Entity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Entity.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/GraphBased.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/GraphBased.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Graphs/KnowledgeGraph.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Graphs/KnowledgeGraph.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Graphs/Ontology.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Graphs/Ontology.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/NamedEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/NamedEntity.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/DataStore.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/DataStore.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Database.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Database.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Relational.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Relational.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Structure.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Structure.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Table.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Table.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Program.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/DataStoreTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/DataStoreTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/OntologyTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/OntologyTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/Test.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Test/Test.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/simpleTestOntology.ttl" beforeDir="false" afterPath="$PROJECT_DIR$/Test/TestResources/simpleTestOntology.ttl" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,6 +29,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/196b514cc6134f6d93506f3921576e7422f200/49/f9bd4f51/NamespaceMapper.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/582c551e66394e5abdf6cabd080bc771613a0/2b/ec2b7b65/SQLiteDataReader.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/582c551e66394e5abdf6cabd080bc771613a0/4a/ad333000/SQLiteConnection.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/582c551e66394e5abdf6cabd080bc771613a0/b1/a3686d39/SQLiteCommand.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/6818c1ae16684bb6a6533b1e52073ad994de00/21/b645569e/Encoding.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8517f607c12a4b508364c3f896f0fe6f11da8/50/a8a96f81/Assert.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a236d4c1511045da9f45af4b48798b3b13800/a7/63721125/AbstractTrie`3.cs" root0="SKIP_HIGHLIGHTING" />
@@ -55,21 +51,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "/home/ane/Documents/GitHub/GraphManipulation/Test/simpleTestOntology.ttl",
-    "settings.editor.selected.configurable": "SolutionBuilderGeneralOptionsPage",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/ane/Documents/GitHub/Legeplads/Databases/SimpleDatabase.sqlite&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;SolutionBuilderGeneralOptionsPage&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "sqlite"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;sqlite&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Project.GraphManipulation">
     <configuration name="GraphManipulation" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="$PROJECT_DIR$/GraphManipulation/bin/Debug/net6.0/GraphManipulation" />
@@ -113,6 +109,8 @@
       <workItem from="1666765268271" duration="16825000" />
       <workItem from="1666851457038" duration="1427000" />
       <workItem from="1666857704563" duration="16486000" />
+      <workItem from="1666953603444" duration="3585000" />
+      <workItem from="1666957607965" duration="4349000" />
     </task>
     <servers />
   </component>
@@ -122,5 +120,29 @@
   <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs</url>
+          <line>111</line>
+          <properties documentPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs" initialLine="98" containingFunctionPresentation="method 'GetTables'">
+            <startOffsets>
+              <option value="3409" />
+            </startOffsets>
+            <endOffsets>
+              <option value="3410" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="Type#System.Data.SQLite.SQLiteConnection" memberName="Flags" />
+      </pinned-members>
+    </pin-to-top-manager>
   </component>
 </project>
