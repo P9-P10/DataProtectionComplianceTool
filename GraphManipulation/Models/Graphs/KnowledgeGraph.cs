@@ -40,7 +40,10 @@ public abstract class KnowledgeGraph
             _graphReader.Load(resultGraph, _stringReader);
         }
 
-        if (resultGraph.BaseUri is null) throw new KnowledgeGraphException("No base defined");
+        if (resultGraph.BaseUri is null)
+        {
+            throw new KnowledgeGraphException("No base defined");
+        }
 
         GraphVerification(resultGraph);
 

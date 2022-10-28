@@ -13,20 +13,30 @@ public class Table : Structure
 
     public void AddPrimaryKey(Column column)
     {
-        if (PrimaryKeys.Contains(column)) return;
+        if (PrimaryKeys.Contains(column))
+        {
+            return;
+        }
 
         if (!SubStructures.Contains(column))
+        {
             throw new StructureException("Column must be in the list of SubStructures to be a valid primary key");
+        }
 
         PrimaryKeys.Add(column);
     }
 
     public void AddForeignKey(Column fromColumn, Column toColumn)
     {
-        if (!ForeignKeys.Contains(fromColumn)) ForeignKeys.Add(fromColumn);
+        if (!ForeignKeys.Contains(fromColumn))
+        {
+            ForeignKeys.Add(fromColumn);
+        }
 
         if (!SubStructures.Contains(fromColumn))
+        {
             throw new StructureException("Column must be in the list of SubStructures to be a valid foreign key");
+        }
 
         fromColumn.SetReferences(toColumn);
     }
@@ -43,7 +53,10 @@ public class Table : Structure
 
     private void AddPrimaryKeysToGraph(IGraph graph)
     {
-        if (PrimaryKeys.Count == 0) throw new GraphBasedException("No primary keys when creating graph");
+        if (PrimaryKeys.Count == 0)
+        {
+            throw new GraphBasedException("No primary keys when creating graph");
+        }
 
         var subj = graph.CreateUriNode(Uri);
         var pred = graph.CreateUriNode("ddl:primaryKey");
@@ -57,7 +70,10 @@ public class Table : Structure
 
     private void AddForeignKeysToGraph(IGraph graph)
     {
-        if (ForeignKeys.Count == 0) return;
+        if (ForeignKeys.Count == 0)
+        {
+            return;
+        }
 
         var table = graph.CreateUriNode(Uri);
         var foreignKeyRelation = graph.CreateUriNode("ddl:foreignKey");

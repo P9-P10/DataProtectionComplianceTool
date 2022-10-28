@@ -36,7 +36,7 @@ public class OntologyTest
     [Fact]
     public void OntologyToGraphWithOntologyDefinitionIsSuccess()
     {
-        var ontology = new Ontology("simpleTestOntology.ttl", new TurtleParser());
+        var ontology = new Ontology($"TestResources{Path.DirectorySeparatorChar}simpleTestOntology.ttl", new TurtleParser());
 
         var graph = ontology.ToGraph();
 

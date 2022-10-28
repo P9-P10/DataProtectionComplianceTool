@@ -20,7 +20,10 @@ public class Ontology : KnowledgeGraph
 
         var ontologyDefinition = new Triple(subj, pred, obj);
 
-        if (!graph.ContainsTriple(ontologyDefinition)) throw new OntologyException("Missing ontology definition");
+        if (!graph.ContainsTriple(ontologyDefinition))
+        {
+            throw new OntologyException("Missing ontology definition");
+        }
     }
 }
 
