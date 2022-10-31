@@ -5,19 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c701dcae-c036-4c51-b84d-60162b45a46a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Test/SqliteTest.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Test/TestResources/SimpleDatabase.sqlite" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/QueryResults/RelationDatabaseForeignKeysQueryResult.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/QueryResults/RelationalDatabaseStructureQueryResult.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation.sln.DotSettings.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/GraphManipulation.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/GraphManipulation.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/NamedEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/NamedEntity.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/DataStore.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/DataStore.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/da5671a6-ed00-469c-bda1-dcdc029b1441.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/da5671a6-ed00-469c-bda1-dcdc029b1441.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Database.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Database.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Relational.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Relational.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test/DataStoreTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/DataStoreTest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test/OntologyTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/OntologyTest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test/Test.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Test/Test.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test/simpleTestOntology.ttl" beforeDir="false" afterPath="$PROJECT_DIR$/Test/TestResources/simpleTestOntology.ttl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Violation.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/SqliteTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/SqliteTest.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -110,7 +109,8 @@
       <workItem from="1666851457038" duration="1427000" />
       <workItem from="1666857704563" duration="16486000" />
       <workItem from="1666953603444" duration="3585000" />
-      <workItem from="1666957607965" duration="4349000" />
+      <workItem from="1666957607965" duration="4599000" />
+      <workItem from="1667201774398" duration="11349000" />
     </task>
     <servers />
   </component>
@@ -125,22 +125,23 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs</url>
-          <line>111</line>
-          <properties documentPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs" initialLine="98" containingFunctionPresentation="method 'GetTables'">
+          <url>file://$PROJECT_DIR$/Test/SqliteTest.cs</url>
+          <line>233</line>
+          <properties documentPath="$PROJECT_DIR$/Test/SqliteTest.cs" initialLine="233" containingFunctionPresentation="method 'SqliteTableGetsPrimaryKeys'">
             <startOffsets>
-              <option value="3409" />
+              <option value="8430" />
             </startOffsets>
             <endOffsets>
-              <option value="3410" />
+              <option value="8704" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="12" />
+          <option name="timeStamp" value="15" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <pin-to-top-manager>
       <pinned-members>
+        <PinnedItemInfo parentTag="Type#GraphManipulation.Models.Entity" memberName="Id" />
         <PinnedItemInfo parentTag="Type#System.Data.SQLite.SQLiteConnection" memberName="Flags" />
       </pinned-members>
     </pin-to-top-manager>
