@@ -3,6 +3,15 @@
   <component name="ChangeListManager">
     <list default="true" id="79d6fc45-016c-44bd-8426-929f1562bf9f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/GraphBased.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/GraphBased.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/QueryResults/RelationDatabaseForeignKeysQueryResult.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/QueryResults/RelationDatabaseForeignKeysQueryResult.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/QueryResults/RelationalDatabaseStructureQueryResult.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/QueryResults/RelationalDatabaseStructureQueryResult.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Relational.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Relational.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Column.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Column.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Schema.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Schema.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Table.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Table.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/SqliteTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/SqliteTest.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

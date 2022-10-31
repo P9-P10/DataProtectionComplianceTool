@@ -40,7 +40,8 @@ public class Sqlite : Relational
 
     protected override void GetStructureQueryResults()
     {
-        StructureQueryResults = _connection.Query<RelationalDatabaseStructureQueryResult>(@"
+        StructureQueryResults = _connection
+            .Query<RelationalDatabaseStructureQueryResult>(@"
             SELECT tl.schema as schemaName, 
                    m.tbl_name as tableName, 
                    ti.name as columnName, 
@@ -50,6 +51,24 @@ public class Sqlite : Relational
             JOIN pragma_table_info(m.tbl_name) as ti
             JOIN pragma_table_list(m.tbl_name) as tl
             WHERE m.type = 'table' AND m.tbl_name NOT LIKE 'sqlite_%';")
+            .ToList();
+    }
+
+    protected override void GetForeignKeysQueryResults()
+    {
+        ForeignKeysQueryResults = _connection
+            .Query<RelationDatabaseForeignKeysQueryResult>(@"
+            SELECT tl.schema as fromSchema, 
+                   m.tbl_name as fromTable, 
+                   fkl.'from' as fromColumn, 
+                   fk.schema as toSchema, 
+                   fkl.'table' as toTable, 
+                   fkl.'to' as toColumn
+            FROM sqlite_master as m
+            JOIN pragma_foreign_key_list(m.tbl_name) as fkl
+            JOIN pragma_table_list(m.tbl_name) as tl
+            JOIN pragma_table_list(fkl.'table') as fk
+            WHERE m.type = 'table' ;")
             .ToList();
     }
 
@@ -70,7 +89,25 @@ public class Sqlite : Relational
     
     protected override void BuildForeignKeys()
     {
-        
+        ForeignKeysQueryResults.ForEach(result =>
+        {
+            var fromTable = 
+                Table.GetTableFromSchema(result.FromTable, 
+                    Schema.GetSchemaFromDatastore(result.FromSchema, 
+                        this));
+            
+            var fromColumn = 
+                Column.GetColumnFromTable(result.FromColumn, 
+                    fromTable);
+            
+            var toColumn = 
+                Column.GetColumnFromTable(result.ToColumn, 
+                    Table.GetTableFromSchema(result.ToTable, 
+                        Schema.GetSchemaFromDatastore(result.ToSchema, 
+                            this)));
+            
+            fromTable.AddForeignKey(fromColumn, toColumn);
+        });
     }
 
     protected override void BuildStructure()
@@ -101,7 +138,7 @@ public class Sqlite : Relational
         });
     }
 
-    private string GetNameFromDataSource() => _connection.DataSource;
+    private string GetNameFromDataSource() => _connection!.DataSource!;
 
     public override IGraph ToGraph()
     {

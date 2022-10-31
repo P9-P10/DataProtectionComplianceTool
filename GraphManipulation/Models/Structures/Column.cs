@@ -51,4 +51,9 @@ public class Column : Structure
     {
         return "Column";
     }
+    
+    public static Column GetColumnFromTable(string columnName, Table table)
+    {
+        return (table.SubStructures.First(s => s.Name == columnName) as Column)!;
+    }
 }
