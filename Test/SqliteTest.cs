@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
@@ -10,13 +11,13 @@ namespace Test;
 
 public class SqliteTest
 {
-    private const string baseUri = "http://www.test.com/";
+    private const string BaseUri = "http://www.test.com/";
 
-    public class BuildTest
+    public class TestDatabaseFixture : IDisposable
     {
-        private readonly string _testDatabase = $"TestResources{Path.DirectorySeparatorChar}SimpleDatabase.sqlite";
+        private static readonly string _testDatabase = $"TestResources{Path.DirectorySeparatorChar}SimpleDatabase.sqlite";
 
-        private string TestDatabase
+        private static string TestDatabase
         {
             get
             {
@@ -28,12 +29,68 @@ public class SqliteTest
                 return _testDatabase;
             } 
         }
+        
+        private static readonly SQLiteConnection Connection = new($"Data Source={TestDatabase}");
+
+        public readonly Sqlite Sqlite;
+        
+        public readonly Sqlite ExpectedSqlite = new("SimpleDatabase", BaseUri);
+        public readonly Schema ExpectedSchema = new("main");
+        public readonly Table ExpectedTableUsers = new("Users");
+        public readonly Table ExpectedTableUserData = new("UserData");
+        public readonly Column ExpectedColumnUsersId = new("id");
+        public readonly Column ExpectedColumnUserDataId = new("id");
+        public readonly Column ExpectedColumnEmail = new ("email");
+        public readonly Column ExpectedColumnPhone = new ("phone");
+
+
+        public TestDatabaseFixture()
+        {
+            Sqlite = new Sqlite("", BaseUri, Connection);
+            
+            Sqlite.Build();
+            
+            ExpectedSqlite.AddStructure(ExpectedSchema);
+            
+            ExpectedSchema.AddStructure(ExpectedTableUsers);
+            ExpectedSchema.AddStructure(ExpectedTableUserData);
+            
+            ExpectedTableUsers.AddStructure(ExpectedColumnUsersId);
+            ExpectedTableUsers.AddStructure(ExpectedColumnEmail);
+            
+            ExpectedTableUserData.AddStructure(ExpectedColumnUserDataId);
+            ExpectedTableUserData.AddStructure(ExpectedColumnPhone);
+            
+            ExpectedTableUsers.AddPrimaryKey(ExpectedColumnUsersId);
+            ExpectedTableUserData.AddPrimaryKey(ExpectedColumnUserDataId);
+            
+            ExpectedTableUserData.AddForeignKey(ExpectedColumnUserDataId, ExpectedColumnUsersId);
+            
+            ExpectedColumnEmail.SetDataType("VARCHAR");
+            ExpectedColumnPhone.SetDataType("INT");
+        }
+        
+        public void Dispose()
+        {
+            
+        }
+    }
+
+    public class BuildTest : IClassFixture<TestDatabaseFixture>
+    {
+        private readonly TestDatabaseFixture _testDatabaseFixture;
+
+        public BuildTest(TestDatabaseFixture testDatabaseFixture)
+        {
+            _testDatabaseFixture = testDatabaseFixture;
+        }
+
 
         [Fact]
         public void WithoutConnectionThrowsException()
         {
             var sqlite = new Sqlite("SQLite");
-            sqlite.UpdateBaseUri(baseUri);
+            sqlite.UpdateBaseUri(BaseUri);
 
             Assert.Throws<DataStoreException>(() => sqlite.Build());
         }
@@ -41,114 +98,70 @@ public class SqliteTest
         [Fact]
         public void SqliteGetsAName()
         {
-            SQLiteConnection connection =
-                new SQLiteConnection($"Data Source={TestDatabase}");
-            
-            var sqlite = new Sqlite("", baseUri, connection);
-            
-            sqlite.Build();
+            Assert.Equal("SimpleDatabase", _testDatabaseFixture.Sqlite.Name);
+        }
 
-            Assert.Equal("SimpleDatabase", sqlite.Name);
+        private Schema GetSchemaFromDatastore( string schemaName, DataStore store)
+        {
+            return (store.SubStructures.First(s => s.Name == schemaName) as Schema)!;
         }
 
         [Fact]
         public void SqliteGetsSchemas()
         {
-            SQLiteConnection connection =
-                new SQLiteConnection($"Data Source={TestDatabase}");
+            var actualSchema = GetSchemaFromDatastore("main", _testDatabaseFixture.Sqlite);
             
-            var sqlite = new Sqlite("", baseUri, connection);
-            
-            sqlite.Build();
-
-            var expectedSqlite = new Sqlite("SimpleDatabase", baseUri);
-            var expectedSchema = new Schema("main");
-            expectedSqlite.AddStructure(expectedSchema);
-
-            var actualSchema = sqlite.SubStructures.First();
-            
-            Assert.Equal(expectedSchema, actualSchema);
+            Assert.Equal(_testDatabaseFixture.ExpectedSchema, actualSchema);
             Assert.IsType<Schema>(actualSchema);
+        }
+
+        private Table GetTableFromSchema(string tableName, Schema schema)
+        {
+            return (schema.SubStructures.First(s => s.Name == tableName) as Table)!;
         }
 
         [Fact]
         public void SqliteGetsTables()
         {
-            SQLiteConnection connection =
-                new SQLiteConnection($"Data Source={TestDatabase}");
-            
-            var sqlite = new Sqlite("", baseUri, connection);
-            
-            sqlite.Build();
+            var actualUsersTable =
+                GetTableFromSchema("Users", 
+                    GetSchemaFromDatastore("main", 
+                        _testDatabaseFixture.Sqlite));
 
-            var expectedSqlite = new Sqlite("SimpleDatabase", baseUri);
-            var expectedSchema = new Schema("main");
-            var expectedTableUsers = new Table("Users");
-            var expectedTableUserData = new Table("UserData");
-            
-            expectedSqlite.AddStructure(expectedSchema);
-            expectedSchema.AddStructure(expectedTableUsers);
-            expectedSchema.AddStructure(expectedTableUserData);
+            var actualUserDataTable =
+                GetTableFromSchema("UserData", 
+                    GetSchemaFromDatastore("main", 
+                        _testDatabaseFixture.Sqlite));
 
-            var actualUsersTable = sqlite
-                .SubStructures
-                .First()
-                .SubStructures
-                .First(table => table.Name == "Users");
-
-            var actualUserDataTable = sqlite
-                .SubStructures
-                .First()
-                .SubStructures
-                .First(table => table.Name == "UserData");
-
-            Assert.Equal(expectedTableUsers, actualUsersTable);
-            Assert.Equal(expectedTableUserData, actualUserDataTable);
+            Assert.Equal(_testDatabaseFixture.ExpectedTableUsers, actualUsersTable);
+            Assert.Equal(_testDatabaseFixture.ExpectedTableUserData, actualUserDataTable);
             Assert.IsType<Table>(actualUsersTable);
             Assert.IsType<Table>(actualUserDataTable);
+        }
+
+        private Column GetColumnFromTable(string columnName, Table table)
+        {
+            return (table.SubStructures.First(s => s.Name == columnName) as Column)!;
         }
 
         [Fact]
         public void SqliteGetsColumn()
         {
-            SQLiteConnection connection =
-                new SQLiteConnection($"Data Source={TestDatabase}");
+            var actualColumnEmail = 
+                GetColumnFromTable("email", 
+                    GetTableFromSchema("Users", 
+                        GetSchemaFromDatastore("main", 
+                            _testDatabaseFixture.Sqlite)));
             
-            var sqlite = new Sqlite("", baseUri, connection);
-            
-            sqlite.Build();
 
-            var expectedSqlite = new Sqlite("SimpleDatabase", baseUri);
-            var expectedSchema = new Schema("main");
-            var expectedTableUsers = new Table("Users");
-            var expectedTableUserData = new Table("UserData");
-            var expectedColumnEmail = new Column("email");
-            var expectedColumnPhone = new Column("phone");
-            
-            expectedSqlite.AddStructure(expectedSchema);
-            expectedSchema.AddStructure(expectedTableUsers);
-            expectedSchema.AddStructure(expectedTableUserData);
-            expectedTableUsers.AddStructure(expectedColumnEmail);
-            expectedTableUserData.AddStructure(expectedColumnPhone);
+            var actualColumnPhone = 
+                GetColumnFromTable("phone", 
+                    GetTableFromSchema("UserData", 
+                        GetSchemaFromDatastore("main", 
+                            _testDatabaseFixture.Sqlite)));
 
-            var actualColumnEmail = sqlite
-                .SubStructures
-                .First() 
-                .SubStructures
-                .First(table => table.Name == "Users") 
-                .SubStructures
-                .First(column => column.Name == "email"); 
-
-            var actualColumnPhone = sqlite
-                .SubStructures
-                .First()
-                .SubStructures
-                .First(table => table.Name == "UserData")
-                .SubStructures
-                .First(column => column.Name == "phone");
-
-            Assert.Equal(expectedColumnEmail, actualColumnEmail);
-            Assert.Equal(expectedColumnPhone, actualColumnPhone);
+            Assert.Equal(_testDatabaseFixture.ExpectedColumnEmail, actualColumnEmail);
+            Assert.Equal(_testDatabaseFixture.ExpectedColumnPhone, actualColumnPhone);
             Assert.IsType<Column>(actualColumnEmail);
             Assert.IsType<Column>(actualColumnPhone);
         }
@@ -156,109 +169,56 @@ public class SqliteTest
         [Fact]
         public void SqliteColumnsGetDataType()
         {
-            // Test for email and phone
-            SQLiteConnection connection =
-                new SQLiteConnection($"Data Source={TestDatabase}");
-            
-            var sqlite = new Sqlite("", baseUri, connection);
-            
-            sqlite.Build();
+            var actualColumnEmailDataType = 
+                GetColumnFromTable("email", 
+                    GetTableFromSchema("Users", 
+                        GetSchemaFromDatastore("main", 
+                            _testDatabaseFixture.Sqlite)))
+                    .DataType;
 
-            var expectedSqlite = new Sqlite("SimpleDatabase", baseUri);
-            var expectedSchema = new Schema("main");
-            var expectedTableUsers = new Table("Users");
-            var expectedTableUserData = new Table("UserData");
-            var expectedColumnEmail = new Column("email");
-            var expectedColumnPhone = new Column("phone");
-            
-            expectedColumnEmail.SetDataType("VARCHAR");
-            expectedColumnPhone.SetDataType("INT");
-            
-            expectedSqlite.AddStructure(expectedSchema);
-            expectedSchema.AddStructure(expectedTableUsers);
-            expectedSchema.AddStructure(expectedTableUserData);
-            expectedTableUsers.AddStructure(expectedColumnEmail);
-            expectedTableUserData.AddStructure(expectedColumnPhone);
+            var actualColumnPhoneDataType =  
+                GetColumnFromTable("phone", 
+                        GetTableFromSchema("UserData", 
+                            GetSchemaFromDatastore("main", 
+                                _testDatabaseFixture.Sqlite)))
+                    .DataType;
 
-            var actualColumnEmailDataType = sqlite
-                .SubStructures
-                .First() 
-                .SubStructures
-                .First(table => table.Name == "Users") 
-                .SubStructures
-                .Select(s => s as Column)
-                .First(column => column?.Name == "email")
-                ?.DataType; 
-
-            var actualColumnPhoneDataType = sqlite
-                .SubStructures
-                .First()
-                .SubStructures
-                .First(table => table.Name == "UserData")
-                .SubStructures
-                .Select(s => s as Column)
-                .First(column => column?.Name == "phone")
-                ?.DataType;
-
-            Assert.Equal(expectedColumnEmail.DataType, actualColumnEmailDataType);
-            Assert.Equal(expectedColumnPhone.DataType, actualColumnPhoneDataType);
+            Assert.Equal(_testDatabaseFixture.ExpectedColumnEmail.DataType, actualColumnEmailDataType);
+            Assert.Equal(_testDatabaseFixture.ExpectedColumnPhone.DataType, actualColumnPhoneDataType);
         }
 
         [Fact]
         public void SqliteTableGetsPrimaryKeys()
         {
-            SQLiteConnection connection =
-                new SQLiteConnection($"Data Source={TestDatabase}");
-            
-            var sqlite = new Sqlite("", baseUri, connection);
-            
-            sqlite.Build();
+            var actualUsersPrimaryKey =
+                GetTableFromSchema("Users",
+                    GetSchemaFromDatastore("main",
+                        _testDatabaseFixture.Sqlite))
+                    .PrimaryKeys
+                    .First(c => c.Name == "id");
 
-            var expectedSqlite = new Sqlite("SimpleDatabase", baseUri);
-            var expectedSchema = new Schema("main");
-            var expectedTableUsers = new Table("Users");
-            var expectedTableUserData = new Table("UserData");
-            var expectedColumnUsersId = new Column("id");
-            var expectedColumnUserDataId = new Column("id");
-            
-            expectedSqlite.AddStructure(expectedSchema);
-            expectedSchema.AddStructure(expectedTableUsers);
-            expectedSchema.AddStructure(expectedTableUserData);
-            expectedTableUsers.AddStructure(expectedColumnUsersId);
-            expectedTableUserData.AddStructure(expectedColumnUserDataId);
-            
-            expectedTableUsers.AddPrimaryKey(expectedColumnUsersId);
-            expectedTableUserData.AddPrimaryKey(expectedColumnUserDataId);
-            
-            
-            var actualUsersPrimaryKey = sqlite
-                .SubStructures
-                .First()
-                .SubStructures
-                .Select(s => s as Table)
-                .First(table => table?.Name == "Users")
-                ?.PrimaryKeys
-                .First();
-            
-            var actualUserDataPrimaryKey = sqlite
-                .SubStructures
-                .First()
-                .SubStructures
-                .Select(s => s as Table)
-                .First(table => table?.Name == "UserData")
-                ?.PrimaryKeys
-                .First();
+            var actualUserDataPrimaryKey = 
+                GetTableFromSchema("UserData",
+                        GetSchemaFromDatastore("main",
+                            _testDatabaseFixture.Sqlite))
+                    .PrimaryKeys
+                    .First(c => c.Name == "id");
 
-            
-
-            Assert.Equal(expectedColumnUsersId, actualUsersPrimaryKey);
-            Assert.Equal(expectedColumnUserDataId, actualUserDataPrimaryKey);
+            Assert.Equal(_testDatabaseFixture.ExpectedColumnUsersId, actualUsersPrimaryKey);
+            Assert.Equal(_testDatabaseFixture.ExpectedColumnUserDataId, actualUserDataPrimaryKey);
         }
 
         [Fact]
         public void SqliteTableGetsForeignKeys()
         {
+            var actualForeignKey =
+                GetTableFromSchema("UserData",
+                        GetSchemaFromDatastore("main",
+                            _testDatabaseFixture.Sqlite))
+                    .ForeignKeys
+                    .First(c => c.Name == "id");
             
+            Assert.Equal(_testDatabaseFixture.ExpectedColumnUserDataId, actualForeignKey);
         }
 
         [Fact]
