@@ -28,7 +28,7 @@ public class OntologyTest
 
         var ontology = new Ontology(new StringReader(""), badOntology, new TurtleParser());
 
-        var exception = Assert.Throws<KnowledgeGraphException>(() => ontology.ToGraph());
+        var exception = Assert.Throws<KnowledgeGraphException>(() => ontology.Validate());
         Assert.Equal("No base defined", exception.Message);
     }
 
@@ -38,7 +38,7 @@ public class OntologyTest
     {
         var ontology = new Ontology($"TestResources{Path.DirectorySeparatorChar}simpleTestOntology.ttl", new TurtleParser());
 
-        var graph = ontology.ToGraph();
+        var graph = ontology.Validate();
 
         var expected = OntologyDefinitionTriple();
 
@@ -52,7 +52,7 @@ public class OntologyTest
 
         var ontology = new Ontology(new StringReader(""), badOntology, new TurtleParser());
 
-        var exception = Assert.Throws<OntologyException>(() => ontology.ToGraph());
+        var exception = Assert.Throws<OntologyException>(() => ontology.Validate());
         Assert.Equal("Missing ontology definition", exception.Message);
     }
 
@@ -63,6 +63,6 @@ public class OntologyTest
 
         var ontology = new Ontology(new StringReader(""), badOntology, new TurtleParser());
 
-        Assert.Throws<RdfParseException>(() => ontology.ToGraph());
+        Assert.Throws<RdfParseException>(() => ontology.Validate());
     }
 }

@@ -6,7 +6,7 @@ namespace GraphManipulation.Models;
 
 public abstract class Entity : GraphBased
 {
-    public readonly HashAlgorithm Algorithm = SHA256.Create();
+    public readonly HashAlgorithm Algorithm = SHA1.Create();
     public string HashedFrom = null!;
 
     public Entity(string toHash)

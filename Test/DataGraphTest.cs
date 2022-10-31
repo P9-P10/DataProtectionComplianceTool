@@ -50,7 +50,7 @@ public class DataGraphTest
 
         dataGraph.AddShapesGraph(new ShapesGraph(shapesGraph));
 
-        var exception = Assert.Throws<DataGraphException>(() => dataGraph.ToGraph());
+        var exception = Assert.Throws<DataGraphException>(() => dataGraph.Validate());
         Assert.Contains("Conforms", exception.Message);
         Assert.Contains("False", exception.Message);
         Assert.Contains("(1)", exception.Message);
@@ -76,7 +76,7 @@ public class DataGraphTest
 
         dataGraph.AddShapesGraph(new ShapesGraph(shapesGraph));
 
-        var exception = Assert.Throws<DataGraphException>(() => dataGraph.ToGraph());
+        var exception = Assert.Throws<DataGraphException>(() => dataGraph.Validate());
         Assert.Contains("Conforms", exception.Message);
         Assert.Contains("False", exception.Message);
         Assert.Contains("(1)", exception.Message);
@@ -105,7 +105,7 @@ public class DataGraphTest
 
         dataGraph.AddShapesGraph(new ShapesGraph(shapesGraph));
 
-        var exception = Assert.Throws<DataGraphException>(() => dataGraph.ToGraph());
+        var exception = Assert.Throws<DataGraphException>(() => dataGraph.Validate());
         Assert.Contains("Conforms", exception.Message);
         Assert.Contains("False", exception.Message);
         Assert.Contains("(2)", exception.Message);
@@ -130,7 +130,7 @@ public class DataGraphTest
 
         dataGraph.AddShapesGraph(new ShapesGraph(shapesGraph));
 
-        var graph = dataGraph.ToGraph();
+        var graph = dataGraph.Validate();
 
         var subj = graph.CreateUriNode(UriFactory.Create("http://www.example.org/T"));
         var pred = graph.CreateUriNode(UriFactory.Create(NamespaceMapper.RDF + "type"));
@@ -150,7 +150,7 @@ public class DataGraphTest
 
         var dataGraph = new DataGraph(new StringReader(""), data, new TurtleParser());
 
-        var graph = dataGraph.ToGraph();
+        var graph = dataGraph.Validate();
 
         var subj = graph.CreateUriNode(UriFactory.Create("http://www.example.org/T"));
         var pred = graph.CreateUriNode(UriFactory.Create(NamespaceMapper.RDF + "type"));
@@ -163,6 +163,6 @@ public class DataGraphTest
 
         dataGraph.AddShapesGraph(new ShapesGraph(shapesGraph));
 
-        Assert.Throws<DataGraphException>(() => dataGraph.ToGraph());
+        Assert.Throws<DataGraphException>(() => dataGraph.Validate());
     }
 }

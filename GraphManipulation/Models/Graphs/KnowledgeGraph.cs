@@ -26,7 +26,7 @@ public abstract class KnowledgeGraph
 
     protected abstract void GraphVerification(IGraph graph);
 
-    public IGraph ToGraph()
+    public IGraph Validate()
     {
         IGraph resultGraph = new Graph();
 

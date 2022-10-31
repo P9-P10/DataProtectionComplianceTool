@@ -45,6 +45,7 @@ public class DataGraph : KnowledgeGraph
                 }
             }
 
+            Console.WriteLine(message);
             throw new DataGraphException(message);
         }
     }
