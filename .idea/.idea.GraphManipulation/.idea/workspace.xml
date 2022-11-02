@@ -6,12 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="c701dcae-c036-4c51-b84d-60162b45a46a" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Entity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Entity.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Graphs/DataGraph.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Graphs/DataGraph.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Graphs/KnowledgeGraph.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Graphs/KnowledgeGraph.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test/DataGraphTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/DataGraphTest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test/OntologyTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/OntologyTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/QueryResults/RelationDatabaseForeignKeysQueryResult.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/QueryResults/RelationalDatabaseStructureQueryResult.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/DataStore.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/DataStore.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Database.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Database.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Relational.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Relational.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,7 +105,8 @@
       <workItem from="1666857704563" duration="16486000" />
       <workItem from="1666953603444" duration="3585000" />
       <workItem from="1666957607965" duration="4599000" />
-      <workItem from="1667201774398" duration="18774000" />
+      <workItem from="1667201774398" duration="18856000" />
+      <workItem from="1667373690955" duration="996000" />
     </task>
     <servers />
   </component>
@@ -121,13 +122,13 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/GraphManipulation/Program.cs</url>
-          <line>35</line>
+          <line>36</line>
           <properties documentPath="$PROJECT_DIR$/GraphManipulation/Program.cs" initialLine="33" containingFunctionPresentation="">
             <startOffsets>
-              <option value="1043" />
+              <option value="1120" />
             </startOffsets>
             <endOffsets>
-              <option value="1064" />
+              <option value="1141" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="17" />

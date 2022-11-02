@@ -15,6 +15,11 @@ public abstract class DataStore : StructuredEntity
     protected DataStore(string name) : base(name)
     {
     }
+
+    protected DataStore(string name, string baseUri) : this(name)
+    {
+        BaseUri = baseUri;
+    }
     
     // Vi skal ikke suportere ALT, vi skal surpotere nogle få ting (SQLite, PostgreSQL, MongoDB, etc.) 
     // Lad typen af den konkrete DataStore være bestemt af en enum 

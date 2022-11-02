@@ -1,47 +1,29 @@
-using System.Data.SQLite;
+using System.Data.Common;
 using Dapper;
-using GraphManipulation.Models.QueryResults;
-using GraphManipulation.Models.Structures;
 using VDS.RDF;
 
 namespace GraphManipulation.Models.Stores;
 
 public class Sqlite : Relational
 {
-    private SQLiteConnection? _connection;
-
     public Sqlite(string name) : base(name)
     {
         DataStoreType = SupportedDataStores.Sqlite;
     }
 
-    public Sqlite(string name, string baseUri) : this(name)
+    public Sqlite(string name, string baseUri) : base(name, baseUri)
     {
-        BaseUri = baseUri;
     }
 
-    public Sqlite(string name, string baseUri, SQLiteConnection connection) : this(name, baseUri)
+    public Sqlite(string name, string baseUri, DbConnection connection) : base(name, baseUri, connection)
     {
-        _connection = connection;
+        
     }
-
-    public void SetConnection(SQLiteConnection sqLiteConnection)
-    {
-        _connection = sqLiteConnection;
-        // ConnectionString = sqLiteConnection.ConnectionString;
-    }
-
-    // public override string GetConnectionString()
-    // {
-    //     if (_connection is null) throw new DataStoreException("Connection was null when building DataStore");
-    //
-    //     return base.GetConnectionString();
-    // }
 
     protected override void GetStructureQueryResults()
     {
-        StructureQueryResults = _connection
-            .Query<RelationalDatabaseStructureQueryResult>(@"
+        StructureQueryResults = Connection
+            .Query<StructureQueryResult>(@"
             SELECT tl.schema as schemaName, 
                    m.tbl_name as tableName, 
                    ti.name as columnName, 
@@ -56,8 +38,8 @@ public class Sqlite : Relational
 
     protected override void GetForeignKeysQueryResults()
     {
-        ForeignKeysQueryResults = _connection
-            .Query<RelationDatabaseForeignKeysQueryResult>(@"
+        ForeignKeysQueryResults = Connection
+            .Query<ForeignKeysQueryResult>(@"
             SELECT tl.schema as fromSchema, 
                    m.tbl_name as fromTable, 
                    fkl.'from' as fromColumn, 
@@ -74,71 +56,30 @@ public class Sqlite : Relational
 
     public override void Build()
     {
-        if (_connection is null) throw new DataStoreException("Connection was null when building SQLite");
-        
-        _connection.Open();
-        
+        if (Connection is null) throw new DataStoreException("Connection was null when building SQLite");
+
+        Connection.Open();
+
         Name = GetNameFromDataSource();
-        
+
         base.Build();
 
-        _connection.Close();
-        
+        Connection.Close();
+
         ComputeId();
     }
-    
-    protected override void BuildForeignKeys()
+
+    public override string ToCreateStatement()
     {
-        ForeignKeysQueryResults.ForEach(result =>
-        {
-            var fromTable = 
-                Table.GetTableFromSchema(result.FromTable, 
-                    Schema.GetSchemaFromDatastore(result.FromSchema, 
-                        this));
-            
-            var fromColumn = 
-                Column.GetColumnFromTable(result.FromColumn, 
-                    fromTable);
-            
-            var toColumn = 
-                Column.GetColumnFromTable(result.ToColumn, 
-                    Table.GetTableFromSchema(result.ToTable, 
-                        Schema.GetSchemaFromDatastore(result.ToSchema, 
-                            this)));
-            
-            fromTable.AddForeignKey(fromColumn, toColumn);
-        });
+        throw new NotImplementedException();
     }
 
-    protected override void BuildStructure()
+    public override void FromCreateStatement(string createStatement)
     {
-        StructureQueryResults.GroupBy(r => r.SchemaName).ToList().ForEach(schemaGrouping =>
-        {
-            var schema = new Schema(schemaGrouping.Key);
-            AddStructure(schema);
-
-            schemaGrouping.GroupBy(r => r.TableName).ToList().ForEach(tableGrouping =>
-            {
-                var table = new Table(tableGrouping.Key);
-                schema.AddStructure(table);
-                
-                tableGrouping.ToList().ForEach(result =>
-                {
-                    var column = new Column(result.ColumnName);
-                    column.SetDataType(result.DataType);
-                    
-                    table.AddStructure(column);
-
-                    if (result.IsPrimaryKey)
-                    {
-                        table.AddPrimaryKey(column);
-                    }
-                });
-            });
-        });
+        throw new NotImplementedException();
     }
 
-    private string GetNameFromDataSource() => _connection!.DataSource!;
+    private string GetNameFromDataSource() => Connection!.DataSource!;
 
     public override IGraph ToGraph()
     {
