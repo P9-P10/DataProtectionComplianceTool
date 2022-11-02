@@ -4,6 +4,7 @@ using GraphManipulation.Models;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
 using VDS.RDF;
+using VDS.RDF.Parsing;
 using Xunit;
 
 namespace Test;
@@ -672,6 +673,14 @@ public class StructureTest
         }
 
         [Fact]
+        public void SetIsNotNullSetIsNotNull()
+        {
+            var column = new Column("Column");
+            column.SetIsNotNull(true);
+            Assert.True(column.IsNotNull);
+        }
+
+        [Fact]
         public void ToGraphDataTypeAddedToGraph()
         {
             var column = new Column("Column");
@@ -688,6 +697,29 @@ public class StructureTest
             var subj = graph.CreateUriNode(column.Uri);
             var pred = graph.CreateUriNode("ddl:hasDataType");
             var obj = graph.CreateLiteralNode("Test");
+
+            var triple = new Triple(subj, pred, obj);
+
+            Assert.Contains(triple, graph.Triples);
+        }
+
+        [Fact]
+        public void ToGraphIsNotNullAddedToGraph()
+        {
+            var column = new Column("MyColumn");
+            column.UpdateBaseUri(baseUri);
+            column.SetDataType("INT");
+            
+            // Added to avoid StructureException caused by Structure having no Store
+            var sqlite = new Sqlite("SQLite");
+            sqlite.UpdateBaseUri(baseUri);
+            sqlite.AddStructure(column);
+
+            var graph = column.ToGraph();
+
+            var subj = graph.CreateUriNode(column.Uri);
+            var pred = graph.CreateUriNode("ddl:isNotNull");
+            var obj = graph.CreateLiteralNode("false", UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeBoolean));
 
             var triple = new Triple(subj, pred, obj);
 

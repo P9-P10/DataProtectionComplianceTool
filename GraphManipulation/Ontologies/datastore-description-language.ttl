@@ -45,6 +45,14 @@ ddl:foreignKey
 ddl:references
     a rdf:Property .
 
+ddl:isNotNull
+    a rdf:Property .
+
+ddl:isNotNullShape
+    a                  sh:NodeShape ;
+    sh:targetObjectsOf ddl:isNotNull ;
+    sh:datatype        xsd:boolean .
+
 ddl:ReferencesShape
     a                  sh:NodeShape ;
     sh:targetObjectsOf ddl:foreignKey ;

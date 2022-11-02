@@ -1,4 +1,5 @@
 using VDS.RDF;
+using VDS.RDF.Parsing;
 
 namespace GraphManipulation.Models.Structures;
 
@@ -45,6 +46,7 @@ public class Column : Structure
         var graph = base.ToGraph();
 
         AddDataTypeToGraph(graph);
+        AddIsNotNullToGraph(graph);
 
         return graph;
     }
@@ -56,6 +58,16 @@ public class Column : Structure
             graph.CreateUriNode("ddl:hasDataType"),
             graph.CreateLiteralNode(DataType)
         );
+
+        graph.Assert(triple);
+    }
+
+    private void AddIsNotNullToGraph(IGraph graph)
+    {
+        var triple = new Triple(
+            graph.CreateUriNode(Uri),
+            graph.CreateUriNode("ddl:isNotNull"),
+            graph.CreateLiteralNode(IsNotNull.ToString().ToLower(), UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeBoolean)));
 
         graph.Assert(triple);
     }

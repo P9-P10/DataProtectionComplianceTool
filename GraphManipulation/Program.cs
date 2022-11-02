@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using System.Data.SQLite;
+using GraphManipulation.Extensions;
 using GraphManipulation.Models.Stores;
 using VDS.RDF;
 using VDS.RDF.Parsing;
@@ -21,7 +22,10 @@ public static class Program
     {
         string baseUri = "http://www.test.com/";
 
-        using var conn = new SQLiteConnection("Data Source=/home/ane/Documents/GitHub/Legeplads/Databases/OptimizedAdvancedDatabase.sqlite");
+        // string database = "OptimizedAdvancedDatabase.sqlite";
+        string database = "SimpleDatabase.sqlite";
+
+        using var conn = new SQLiteConnection($"Data Source=/home/ane/Documents/GitHub/Legeplads/Databases/{database}");
 
         var sqlite = new Sqlite("", baseUri, conn);
 
@@ -42,6 +46,8 @@ public static class Program
         var shapesGraph = new ShapesGraph(ontology);
 
         PrintReport(shapesGraph.Validate(dataGraph));
+        
+        Console.WriteLine(sqlite.ToSqlCreateStatement());
     }
 
     private static void PrintReport(Report report)

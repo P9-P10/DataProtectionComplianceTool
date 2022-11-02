@@ -60,6 +60,11 @@ public abstract class Relational : Database
                     {
                         table.AddPrimaryKey(column);
                     }
+
+                    if (result.IsNotNull)
+                    {
+                        column.SetIsNotNull(true);
+                    }
                 });
             });
         });
@@ -90,13 +95,14 @@ public abstract class Relational : Database
     
     public class StructureQueryResult
     {
-        public StructureQueryResult(string schemaName, string tableName, string columnName, string dataType, long isPrimaryKey)
+        public StructureQueryResult(string schemaName, string tableName, string columnName, string dataType, long isPrimaryKey, long isNotNull)
         {
             SchemaName = schemaName;
             TableName = tableName;
             ColumnName = columnName;
             DataType = dataType;
             IsPrimaryKey = isPrimaryKey == 1;
+            IsNotNull = isNotNull == 1;
         }
     
         public string SchemaName { get; set; }
@@ -104,6 +110,7 @@ public abstract class Relational : Database
         public string ColumnName { get; set; }
         public string DataType { get; set; }
         public bool IsPrimaryKey { get; set; }
+        public bool IsNotNull { get; set; }
     }
     
     public class ForeignKeysQueryResult

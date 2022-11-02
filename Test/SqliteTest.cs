@@ -68,6 +68,8 @@ public class SqliteTest
             
             ExpectedColumnEmail.SetDataType("VARCHAR");
             ExpectedColumnPhone.SetDataType("INT");
+            
+            ExpectedColumnEmail.SetIsNotNull(true);
         }
         
         public void Dispose()
@@ -165,6 +167,19 @@ public class SqliteTest
 
             Assert.Equal(_testDatabaseFixture.ExpectedColumnEmail.DataType, actualColumnEmailDataType);
             Assert.Equal(_testDatabaseFixture.ExpectedColumnPhone.DataType, actualColumnPhoneDataType);
+        }
+
+        [Fact]
+        public void SqliteColumnsGetIsNotNull()
+        {
+            var actual = 
+                Column.GetColumnFromTable("email", 
+                        Table.GetTableFromSchema("Users", 
+                            Schema.GetSchemaFromDatastore("main", 
+                                _testDatabaseFixture.Sqlite)))
+                    .IsNotNull;
+            
+            Assert.True(actual);
         }
 
         [Fact]

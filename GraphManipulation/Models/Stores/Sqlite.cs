@@ -28,7 +28,8 @@ public class Sqlite : Relational
                    m.tbl_name as tableName, 
                    ti.name as columnName, 
                    ti.type as dataType, 
-                   ti.pk as isPrimaryKey
+                   ti.pk as isPrimaryKey,
+                   ti.'notnull' as isNotNull
             FROM sqlite_master as m
             JOIN pragma_table_info(m.tbl_name) as ti
             JOIN pragma_table_list(m.tbl_name) as tl
