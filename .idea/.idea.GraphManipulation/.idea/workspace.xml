@@ -5,10 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c701dcae-c036-4c51-b84d-60162b45a46a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Graphs/DataGraph.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Graphs/DataGraph.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/test.ttl" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/test.ttl" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,7 +100,7 @@
       <workItem from="1666953603444" duration="3585000" />
       <workItem from="1666957607965" duration="4599000" />
       <workItem from="1667201774398" duration="18856000" />
-      <workItem from="1667373690955" duration="2029000" />
+      <workItem from="1667373690955" duration="2338000" />
     </task>
     <servers />
   </component>
