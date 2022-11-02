@@ -213,4 +213,35 @@ public class SqliteTest
             Assert.Equal(_testDatabaseFixture.ExpectedColumnUserDataId.References, actualReferencedColumn);
         }
     }
+
+    public class CreateStatementTest : IClassFixture<TestDatabaseFixture>
+    {
+        private readonly TestDatabaseFixture _testDatabaseFixture;
+        
+        public CreateStatementTest(TestDatabaseFixture testDatabaseFixture)
+        {
+            _testDatabaseFixture = testDatabaseFixture;
+        }
+        
+        public class To
+        {
+            [Fact]
+            public void BaseTest()
+            {
+                
+            }
+
+
+            [Fact]
+            public void FullTest()
+            {
+                
+            }
+        }
+
+        public class From
+        {
+            
+        }
+    }
 }

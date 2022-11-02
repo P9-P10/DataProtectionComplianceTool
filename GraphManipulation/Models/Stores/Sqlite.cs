@@ -8,7 +8,7 @@ public class Sqlite : Relational
 {
     public Sqlite(string name) : base(name)
     {
-        DataStoreType = SupportedDataStores.Sqlite;
+        // DataStoreType = SupportedDataStores.Sqlite;
     }
 
     public Sqlite(string name, string baseUri) : base(name, baseUri)
@@ -75,6 +75,11 @@ public class Sqlite : Relational
     }
 
     public override void FromCreateStatement(string createStatement)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void GenerateInsertStatements()
     {
         throw new NotImplementedException();
     }

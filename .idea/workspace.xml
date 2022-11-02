@@ -2,16 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="79d6fc45-016c-44bd-8426-929f1562bf9f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Transformations/Transformations.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Test/TransformationsTest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/3df88520-87c2-443f-8a8b-07c7c4872290.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/3df88520-87c2-443f-8a8b-07c7c4872290.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/GraphBased.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/GraphBased.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/QueryResults/RelationDatabaseForeignKeysQueryResult.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/QueryResults/RelationDatabaseForeignKeysQueryResult.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/QueryResults/RelationalDatabaseStructureQueryResult.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/QueryResults/RelationalDatabaseStructureQueryResult.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Relational.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Relational.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/DataStore.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/DataStore.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Database.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Database.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Column.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Column.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Schema.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Schema.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Table.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Table.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/SqliteTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/SqliteTest.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -27,19 +26,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenDatabaseViewOnStart": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "/home/ane/Documents/GitHub/Legeplads/Databases/OptimizedAdvancedDatabase.sqlite"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenDatabaseViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/ane/Documents/GitHub/Legeplads/Databases/OptimizedAdvancedDatabase.sqlite&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "sqlite"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;sqlite&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">

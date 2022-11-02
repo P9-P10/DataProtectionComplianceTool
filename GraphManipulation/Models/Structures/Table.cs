@@ -6,6 +6,8 @@ public class Table : Structure
 {
     public List<Column> ForeignKeys = new();
     public List<Column> PrimaryKeys = new();
+    
+    // TODO: Check at alle foreignkeys refererer til kolonner i den samme tabel
 
     public Table(string name) : base(name)
     {

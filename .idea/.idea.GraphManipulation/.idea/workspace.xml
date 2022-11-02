@@ -5,7 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c701dcae-c036-4c51-b84d-60162b45a46a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Program.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Extensions/StructureNavigation.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/GraphManipulation/Extensions/Transformations.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Test/TransformationsTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/3df88520-87c2-443f-8a8b-07c7c4872290.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/3df88520-87c2-443f-8a8b-07c7c4872290.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/DataStore.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/DataStore.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Database.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Database.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Column.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Column.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Table.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Table.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/SqliteTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/SqliteTest.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,6 +30,8 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/582c551e66394e5abdf6cabd080bc771613a0/4a/ad333000/SQLiteConnection.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/582c551e66394e5abdf6cabd080bc771613a0/b1/a3686d39/SQLiteCommand.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/6818c1ae16684bb6a6533b1e52073ad994de00/21/b645569e/Encoding.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/6818c1ae16684bb6a6533b1e52073ad994de00/80/93a7e547/DefaultInterpolatedStringHandler.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/811c87ebac0e4ae8a81b5df1d7aaf3576e200/bd/08da29f3/Enumerable.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8517f607c12a4b508364c3f896f0fe6f11da8/50/a8a96f81/Assert.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a236d4c1511045da9f45af4b48798b3b13800/a7/63721125/AbstractTrie`3.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/d922388adba941d9b8e94145fefd7a539400/7b/9063f0c0/Ontology.cs" root0="SKIP_HIGHLIGHTING" />
@@ -100,7 +113,7 @@
       <workItem from="1666953603444" duration="3585000" />
       <workItem from="1666957607965" duration="4599000" />
       <workItem from="1667201774398" duration="18856000" />
-      <workItem from="1667373690955" duration="2338000" />
+      <workItem from="1667373690955" duration="17022000" />
     </task>
     <servers />
   </component>

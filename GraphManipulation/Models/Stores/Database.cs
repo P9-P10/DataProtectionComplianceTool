@@ -56,4 +56,6 @@ public abstract class Database : DataStore
     public abstract string ToCreateStatement();
 
     public abstract void FromCreateStatement(string createStatement);
+
+    public abstract void GenerateInsertStatements();
 }

@@ -20,13 +20,8 @@ public abstract class DataStore : StructuredEntity
     {
         BaseUri = baseUri;
     }
-    
-    // Vi skal ikke suportere ALT, vi skal surpotere nogle få ting (SQLite, PostgreSQL, MongoDB, etc.) 
-    // Lad typen af den konkrete DataStore være bestemt af en enum 
-    // Switch ét sted på den enum, og lav forskellige implementeringer til hver 
-    // F.eks. ved Sqlite, den skal kalde DataBase.Build(), Relational.Build(), og SQLite.Build() (ELLER SÅDAN NOGET)
 
-    protected SupportedDataStores DataStoreType;
+    // protected SupportedDataStores DataStoreType;
 
     public override void AddStructure(Structure structure)
     {
