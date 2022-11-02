@@ -72,14 +72,18 @@ public class Column : Structure
         graph.Assert(triple);
     }
 
+    private void AddOptionsToGraph(IGraph graph)
+    {
+        var triple = new Triple(
+            graph.CreateUriNode(Uri),
+            graph.CreateUriNode("ddl:columnOptions"),
+            graph.CreateLiteralNode(Options));
+
+        graph.Assert(triple);
+    }
+
     protected override string GetGraphTypeString()
     {
         return "Column";
-    }
-    
-    // Lav det her til en extension method
-    public static Column GetColumnFromTable(string columnName, Table table)
-    {
-        return (table.SubStructures.First(s => s.Name == columnName) as Column)!;
     }
 }

@@ -97,9 +97,4 @@ public class Table : Structure
     {
         return "Table";
     }
-    
-    public static Table GetTableFromSchema(string tableName, Schema schema)
-    {
-        return (schema.SubStructures.First(s => s.Name == tableName) as Table)!;
-    }
 }

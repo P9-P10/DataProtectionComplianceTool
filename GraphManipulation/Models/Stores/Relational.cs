@@ -1,4 +1,5 @@
 using System.Data.Common;
+using GraphManipulation.Extensions;
 using GraphManipulation.Models.Structures;
 
 namespace GraphManipulation.Models.Stores;
@@ -74,20 +75,16 @@ public abstract class Relational : Database
     {
         ForeignKeysQueryResults.ForEach(result =>
         {
-            var fromTable = 
-                Table.GetTableFromSchema(result.FromTable, 
-                    Schema.GetSchemaFromDatastore(result.FromSchema, 
-                        this));
+            var fromTable = this
+                .FindSchema(result.FromSchema)
+                .FindTable(result.FromTable);
             
-            var fromColumn = 
-                Column.GetColumnFromTable(result.FromColumn, 
-                    fromTable);
+            var fromColumn = fromTable.FindColumn(result.FromColumn);
             
-            var toColumn = 
-                Column.GetColumnFromTable(result.ToColumn, 
-                    Table.GetTableFromSchema(result.ToTable, 
-                        Schema.GetSchemaFromDatastore(result.ToSchema, 
-                            this)));
+            var toColumn = this
+                .FindSchema(result.ToSchema)
+                .FindTable(result.ToTable)
+                .FindColumn(result.ToColumn);
             
             fromTable.AddForeignKey(fromColumn, toColumn);
         });

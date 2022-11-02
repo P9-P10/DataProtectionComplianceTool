@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
+using GraphManipulation.Extensions;
 using Xunit;
 
 namespace Test;
@@ -106,23 +107,20 @@ public class SqliteTest
         [Fact]
         public void SqliteGetsSchemas()
         {
-            var actualSchema = Schema.GetSchemaFromDatastore("main", _testDatabaseFixture.Sqlite);
-            
+            var actualSchema = _testDatabaseFixture.Sqlite.FindSchema("main");
             Assert.Equal(_testDatabaseFixture.ExpectedSchema, actualSchema);
         }
         
         [Fact]
         public void SqliteGetsTables()
         {
-            var actualUsersTable =
-                Table.GetTableFromSchema("Users", 
-                    Schema.GetSchemaFromDatastore("main", 
-                        _testDatabaseFixture.Sqlite));
+            var actualUsersTable = _testDatabaseFixture.Sqlite
+                .FindSchema("main")
+                .FindTable("Users");
 
-            var actualUserDataTable =
-                Table.GetTableFromSchema("UserData", 
-                    Schema.GetSchemaFromDatastore("main", 
-                        _testDatabaseFixture.Sqlite));
+            var actualUserDataTable = _testDatabaseFixture.Sqlite
+                .FindSchema("main")
+                .FindTable("UserData");
 
             Assert.Equal(_testDatabaseFixture.ExpectedTableUsers, actualUsersTable);
             Assert.Equal(_testDatabaseFixture.ExpectedTableUserData, actualUserDataTable);
@@ -131,18 +129,16 @@ public class SqliteTest
         [Fact]
         public void SqliteGetsColumn()
         {
-            var actualColumnEmail = 
-                Column.GetColumnFromTable("email", 
-                    Table.GetTableFromSchema("Users", 
-                        Schema.GetSchemaFromDatastore("main", 
-                            _testDatabaseFixture.Sqlite)));
+            var actualColumnEmail =
+                _testDatabaseFixture.Sqlite
+                    .FindSchema("main")
+                    .FindTable("Users")
+                    .FindColumn("email");
             
-
-            var actualColumnPhone = 
-                Column.GetColumnFromTable("phone", 
-                    Table.GetTableFromSchema("UserData", 
-                        Schema.GetSchemaFromDatastore("main", 
-                            _testDatabaseFixture.Sqlite)));
+            var actualColumnPhone = _testDatabaseFixture.Sqlite
+                    .FindSchema("main")
+                    .FindTable("UserData")
+                    .FindColumn("phone");
 
             Assert.Equal(_testDatabaseFixture.ExpectedColumnEmail, actualColumnEmail);
             Assert.Equal(_testDatabaseFixture.ExpectedColumnPhone, actualColumnPhone);
@@ -151,19 +147,17 @@ public class SqliteTest
         [Fact]
         public void SqliteColumnsGetDataType()
         {
-            var actualColumnEmailDataType = 
-                Column.GetColumnFromTable("email", 
-                    Table.GetTableFromSchema("Users", 
-                        Schema.GetSchemaFromDatastore("main", 
-                            _testDatabaseFixture.Sqlite)))
-                    .DataType;
+            var actualColumnEmailDataType = _testDatabaseFixture.Sqlite
+                .FindSchema("main")
+                .FindTable("Users")
+                .FindColumn("email")
+                .DataType;
 
-            var actualColumnPhoneDataType =  
-                Column.GetColumnFromTable("phone", 
-                    Table.GetTableFromSchema("UserData", 
-                        Schema.GetSchemaFromDatastore("main", 
-                            _testDatabaseFixture.Sqlite)))
-                    .DataType;
+            var actualColumnPhoneDataType = _testDatabaseFixture.Sqlite
+                .FindSchema("main")
+                .FindTable("UserData")
+                .FindColumn("phone")
+                .DataType;
 
             Assert.Equal(_testDatabaseFixture.ExpectedColumnEmail.DataType, actualColumnEmailDataType);
             Assert.Equal(_testDatabaseFixture.ExpectedColumnPhone.DataType, actualColumnPhoneDataType);
@@ -172,33 +166,42 @@ public class SqliteTest
         [Fact]
         public void SqliteColumnsGetIsNotNull()
         {
-            var actual = 
-                Column.GetColumnFromTable("email", 
-                        Table.GetTableFromSchema("Users", 
-                            Schema.GetSchemaFromDatastore("main", 
-                                _testDatabaseFixture.Sqlite)))
-                    .IsNotNull;
+            var actual = _testDatabaseFixture.Sqlite
+                .FindSchema("main")
+                .FindTable("Users")
+                .FindColumn("email")
+                .IsNotNull;
             
             Assert.True(actual);
         }
 
         [Fact]
+        public void SqliteColumnsGetOptions()
+        {
+            var actual = _testDatabaseFixture.Sqlite
+                .FindSchema("main")
+                .FindTable("Users")
+                .FindColumn("id")
+                .Options;
+
+            var expected = "AUTOINCREMENT";
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
         public void SqliteTableGetsPrimaryKeys()
         {
-            var actualUsersPrimaryKey =
-                Table.GetTableFromSchema("Users",
-                    Schema.GetSchemaFromDatastore("main",
-                        _testDatabaseFixture.Sqlite))
-                    .PrimaryKeys
-                    .First(c => c.Name == "id");
+            var actualUsersPrimaryKey = _testDatabaseFixture.Sqlite
+                .FindSchema("main")
+                .FindTable("Users")
+                .FindPrimaryKey("id");
 
-            var actualUserDataPrimaryKey = 
-                Table.GetTableFromSchema("UserData",
-                        Schema.GetSchemaFromDatastore("main",
-                            _testDatabaseFixture.Sqlite))
-                    .PrimaryKeys
-                    .First(c => c.Name == "id");
-
+            var actualUserDataPrimaryKey = _testDatabaseFixture.Sqlite
+                .FindSchema("main")
+                .FindTable("UserData")
+                .FindPrimaryKey("id");
+            
             Assert.Equal(_testDatabaseFixture.ExpectedColumnUsersId, actualUsersPrimaryKey);
             Assert.Equal(_testDatabaseFixture.ExpectedColumnUserDataId, actualUserDataPrimaryKey);
         }
@@ -206,12 +209,10 @@ public class SqliteTest
         [Fact]
         public void SqliteTableGetsForeignKeys()
         {
-            var actualForeignKey =
-                Table.GetTableFromSchema("UserData",
-                        Schema.GetSchemaFromDatastore("main",
-                            _testDatabaseFixture.Sqlite))
-                    .ForeignKeys
-                    .First(c => c.Name == "id");
+            var actualForeignKey = _testDatabaseFixture.Sqlite
+                .FindSchema("main")
+                .FindTable("UserData")
+                .FindForeignKey("id");
             
             Assert.Equal(_testDatabaseFixture.ExpectedColumnUserDataId, actualForeignKey);
         }
@@ -219,12 +220,11 @@ public class SqliteTest
         [Fact]
         public void SqliteForeignKeyColumnsReferencesColumns()
         {
-            var actualReferencedColumn =
-                Column.GetColumnFromTable("id", 
-                    Table.GetTableFromSchema("Users", 
-                        Schema.GetSchemaFromDatastore("main", 
-                            _testDatabaseFixture.Sqlite)));
-            
+            var actualReferencedColumn = _testDatabaseFixture.Sqlite
+                .FindSchema("main")
+                .FindTable("Users")
+                .FindColumn("id");
+
             Assert.Equal(_testDatabaseFixture.ExpectedColumnUserDataId.References, actualReferencedColumn);
         }
     }

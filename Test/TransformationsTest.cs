@@ -56,31 +56,7 @@ public class TransformationsTest
             
             Assert.Equal(expected, actual);
         }
-
-        [Fact]
-        public void TableWithPrimaryKeys()
-        {
-            
-        }
-
-        [Fact]
-        public void TableWithForeignKeysSingle()
-        {
-            
-        }
-
-        [Fact]
-        public void TableWithForeignKeysComposite()
-        {
-            
-        }
-
-        [Fact]
-        public void TableWithForeignKeysCompositeAndSingle()
-        {
-            
-        }
-
+        
         [Fact]
         public void StructuredEntityEmpty()
         {

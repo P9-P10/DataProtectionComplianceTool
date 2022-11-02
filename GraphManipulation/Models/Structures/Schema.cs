@@ -19,9 +19,4 @@ public class Schema : Structure
     {
         return "Schema";
     }
-    
-    public static Schema GetSchemaFromDatastore(string schemaName, DataStore store)
-    {
-        return (store.SubStructures.First(s => s.Name == schemaName) as Schema)!;
-    }
 }
