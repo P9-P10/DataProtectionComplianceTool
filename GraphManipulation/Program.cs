@@ -1,12 +1,12 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using System.Data.SQLite;
-using GraphManipulation.Models.Graphs;
 using GraphManipulation.Models.Stores;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 using VDS.RDF.Writing;
 using VDS.RDF.Shacl;
+using VDS.RDF.Shacl.Validation;
 
 
 string baseUri = "http://www.test.com/";
@@ -20,20 +20,35 @@ sqlite.Build();
 IGraph graph = sqlite.ToGraph();
 
 var writer = new CompressingTurtleWriter();
-
 const string path = "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/test.ttl";
-
-// TODO: Hvordan kan jeg fjerne "hasName" fra grafen, og ikke få at den fejler?
 writer.Save(graph, path);
 
-var dataGraph = new DataGraph(path, new TurtleParser());
-IGraph shapesGraph = new Graph();
+IGraph dataGraph = new Graph();
+dataGraph.LoadFromFile(path);
 
-const string shapesPath = "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/Ontologies/datastore-description-language.ttl";
+IGraph ontology = new Graph();
+const string ontologyPath = "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/Ontologies/datastore-description-language.ttl";
+ontology.LoadFromFile(ontologyPath, new TurtleParser());
+var shapesGraph = new ShapesGraph(ontology);
 
-shapesGraph.LoadFromFile(shapesPath, new TurtleParser());
-dataGraph.AddShapesGraph(new ShapesGraph(shapesGraph));
+PrintReport(shapesGraph.Validate(dataGraph));
 
-dataGraph.Validate();
+
+void PrintReport(Report report)
+{
+    var message = "";
+
+    message += "\nConforms: " + report.Conforms + " (" + report.Results.Count + ")";
+
+    foreach (var result in report.Results)
+    {
+        message += result.FocusNode is not null ? "\nFocus node: " + result.FocusNode.ToString() : "";
+        message += result.ResultPath is not null ? "\nResult path: " + result.ResultPath : "";
+        message += result.ResultValue is not null ? "\nResult value: " + result.ResultValue.ToString() : "";
+        message += "\nMessage: " + result.Message.Value + "\n";
+    }
+
+    Console.WriteLine(message);
+}
 
 

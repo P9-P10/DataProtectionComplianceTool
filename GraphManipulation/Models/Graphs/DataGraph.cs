@@ -25,7 +25,7 @@ public class DataGraph : KnowledgeGraph
         // https://github.com/dotnetrdf/dotnetrdf/blob/maintenance/2.x/Testing/unittest/Shacl/Examples.cs
         var nonconformity = _shapesGraphs
             .Select(shapesGraph => shapesGraph.Validate(graph))
-            .Where(result => !result.Conforms)
+            .Where(report => !report.Conforms)
             .ToList();
 
         if (nonconformity.Count != 0)
