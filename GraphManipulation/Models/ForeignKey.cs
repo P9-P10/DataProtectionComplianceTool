@@ -17,7 +17,7 @@ public class ForeignKey
     public ForeignKey(Column from, Column to, ForeignKeyOnEnum onDelete = ForeignKeyOnEnum.NoAction,
         ForeignKeyOnEnum onUpdate = ForeignKeyOnEnum.NoAction)
     {
-        if (from.ParentStructure == null || to.ParentStructure == null)
+        if (from.ParentStructure is null || to.ParentStructure is null)
         {
             throw new ForeignKeyException("Parent cannot be null");
         }
@@ -31,6 +31,21 @@ public class ForeignKey
         To = to;
         OnDelete = onDelete;
         OnUpdate = onUpdate;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is null)
+        {
+            return false;
+        }
+        
+        return obj.GetType() == typeof(ForeignKey) && From.Equals((obj as ForeignKey).From);
+    }
+
+    public override int GetHashCode()
+    {
+        return From.GetHashCode();
     }
 }
 

@@ -4,7 +4,7 @@ namespace GraphManipulation.Models.Structures;
 
 public class Table : Structure
 {
-    public List<Column> ForeignKeys = new();
+    public List<ForeignKey> ForeignKeys = new();
     public List<Column> PrimaryKeys = new();
     
     // TODO: Check at alle foreignkeys refererer til kolonner i den samme tabel
@@ -27,20 +27,38 @@ public class Table : Structure
 
         PrimaryKeys.Add(column);
     }
-
+    
     public void AddForeignKey(Column fromColumn, Column toColumn)
     {
-        if (!ForeignKeys.Contains(fromColumn))
+        AddForeignKey(new ForeignKey(fromColumn, toColumn));
+    }
+
+    public void AddForeignKey(ForeignKey foreignKey)
+    {
+        if (!SubStructures.Contains(foreignKey.From))
         {
-            ForeignKeys.Add(fromColumn);
+            throw new StructureException("The 'from' part of a foreign key must be in the list of SubStructures");
         }
 
-        if (!SubStructures.Contains(fromColumn))
+        if (!ForeignKeys.Contains(foreignKey))
         {
-            throw new StructureException("Column must be in the list of SubStructures to be a valid foreign key");
+            ForeignKeys.Add(foreignKey);
         }
+    }
 
-        fromColumn.SetReferences(toColumn);
+    public void DeleteForeignKey(ForeignKey foreignKey)
+    {
+        ForeignKeys.Remove(foreignKey);
+    }
+
+    public void DeleteForeignKey(Column from)
+    {
+        DeleteForeignKey(from.Name);
+    }
+
+    public void DeleteForeignKey(string fromName)
+    {
+        ForeignKeys.Remove(ForeignKeys.First(fk => fk.From.Name == fromName));
     }
 
     public override IGraph ToGraph()
@@ -82,12 +100,12 @@ public class Table : Structure
 
         foreach (var foreignKey in ForeignKeys)
         {
-            var from = graph.CreateUriNode(foreignKey.Uri);
+            var from = graph.CreateUriNode(foreignKey.From.Uri);
 
             graph.Assert(table, foreignKeyRelation, from);
 
             var referencesRelation = graph.CreateUriNode("ddl:references");
-            var to = graph.CreateUriNode(foreignKey.References.Uri);
+            var to = graph.CreateUriNode(foreignKey.To.Uri);
 
             graph.Assert(from, referencesRelation, to);
         }

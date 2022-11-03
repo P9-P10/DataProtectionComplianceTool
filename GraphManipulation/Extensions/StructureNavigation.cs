@@ -1,3 +1,4 @@
+using GraphManipulation.Models;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
 
@@ -32,8 +33,8 @@ public static class StructureNavigation
         return table.PrimaryKeys.First(s => s.Name == primaryKeyName);
     }
 
-    public static Column FindForeignKey(this Table table, string foreignKeyName)
+    public static ForeignKey FindForeignKey(this Table table, string foreignKeyFromName)
     {
-        return table.ForeignKeys.First(s => s.Name == foreignKeyName);
+        return table.ForeignKeys.First(s => s.From.Name == foreignKeyFromName);
     }
 }

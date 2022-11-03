@@ -6,6 +6,7 @@ using System.Linq;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
 using GraphManipulation.Extensions;
+using GraphManipulation.Models;
 using Xunit;
 
 namespace Test;
@@ -43,6 +44,7 @@ public class SqliteTest
         public readonly Column ExpectedColumnUserDataId = new("id");
         public readonly Column ExpectedColumnEmail = new ("email");
         public readonly Column ExpectedColumnPhone = new ("phone");
+        public readonly ForeignKey ExpectedForeignKeyUserDataIdUsersId;
 
 
         public TestDatabaseFixture()
@@ -64,8 +66,10 @@ public class SqliteTest
             
             ExpectedTableUsers.AddPrimaryKey(ExpectedColumnUsersId);
             ExpectedTableUserData.AddPrimaryKey(ExpectedColumnUserDataId);
+
+            ExpectedForeignKeyUserDataIdUsersId = new ForeignKey(ExpectedColumnUserDataId, ExpectedColumnUsersId);
             
-            ExpectedTableUserData.AddForeignKey(ExpectedColumnUserDataId, ExpectedColumnUsersId);
+            ExpectedTableUserData.AddForeignKey(ExpectedForeignKeyUserDataIdUsersId);
             
             ExpectedColumnEmail.SetDataType("VARCHAR");
             ExpectedColumnPhone.SetDataType("INT");
@@ -214,7 +218,7 @@ public class SqliteTest
                 .FindTable("UserData")
                 .FindForeignKey("id");
             
-            Assert.Equal(_testDatabaseFixture.ExpectedColumnUserDataId, actualForeignKey);
+            Assert.Equal(_testDatabaseFixture.ExpectedForeignKeyUserDataIdUsersId, actualForeignKey);
         }
 
         [Fact]
@@ -225,7 +229,7 @@ public class SqliteTest
                 .FindTable("Users")
                 .FindColumn("id");
 
-            Assert.Equal(_testDatabaseFixture.ExpectedColumnUserDataId.References, actualReferencedColumn);
+            Assert.Equal(_testDatabaseFixture.ExpectedForeignKeyUserDataIdUsersId.To, actualReferencedColumn);
         }
     }
 

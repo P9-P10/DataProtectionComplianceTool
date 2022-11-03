@@ -15,12 +15,6 @@ public class Column : Structure
     public string Options { get; private set; }
     public string DataType { get; private set; }
     public bool IsNotNull { get; private set; }
-    public Column? References { get; private set; }
-
-    public void SetReferences(Column column)
-    {
-        References = column;
-    }
 
     public void SetDataType(string dataType)
     {
@@ -78,9 +72,4 @@ public class Column : Structure
 
         graph.Assert(triple);
     }
-
-    // protected override string GetGraphTypeString()
-    // {
-    //     return "Column";
-    // }
 }

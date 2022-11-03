@@ -486,9 +486,11 @@ public class StructureTest
             table2.UpdateBaseUri(baseUri);
             table2.AddStructure(column2);
 
-            table1.AddForeignKey(column1, column2);
+            var foreignKey = new ForeignKey(column1, column2);
 
-            Assert.Contains(column1, table1.ForeignKeys);
+            table1.AddForeignKey(foreignKey);
+
+            Assert.Contains(foreignKey, table1.ForeignKeys);
         }
 
         [Fact]
@@ -508,52 +510,111 @@ public class StructureTest
 
             table1.AddForeignKey(column1, column2);
 
-            Assert.Equal(column2, column1.References);
+            Assert.Equal(column2, table1.ForeignKeys.First().To);
         }
 
         [Fact]
         public void AddForeignKeyFromColumnNotInSubStructuresThrowsException()
         {
-            var table = new Table("Table");
-            var column = new Column("Column");
+            var table1 = new Table("Table1");
+            var column1 = new Column("Column1");
 
-            table.UpdateBaseUri(baseUri);
+            var table2 = new Table("Table2");
+            var column2 = new Column("Column2");
 
-            Assert.Throws<StructureException>(() => table.AddForeignKey(column, column));
+            var table3 = new Table("Table3");
+
+            table1.UpdateBaseUri(baseUri);
+
+            table2.UpdateBaseUri(baseUri);
+            table2.AddStructure(column2);
+            
+            table3.UpdateBaseUri(baseUri);
+            table3.AddStructure(column1);
+
+            Assert.Throws<StructureException>(() => table1.AddForeignKey(column1, column2));
         }
 
         [Fact]
         public void AddForeignKeyAlreadyExistsNotAdded()
         {
-            var table = new Table("Table");
-            var column = new Column("Column");
+            var table1 = new Table("Table1");
+            var table2 = new Table("Table2");
+            var column1 = new Column("Column1");
+            var column2 = new Column("Column2");
 
-            table.UpdateBaseUri(baseUri);
-            table.AddStructure(column);
-            table.AddForeignKey(column, column);
-            table.AddForeignKey(column, column);
+            table1.UpdateBaseUri(baseUri);
+            table1.AddStructure(column1);
+            
+            table2.UpdateBaseUri(baseUri);
+            table2.AddStructure(column2);
+            
+            table1.AddForeignKey(column1, column2);
+            table1.AddForeignKey(column1, column2);
 
-            Assert.Single(table.ForeignKeys);
+            Assert.Single(table1.ForeignKeys);
         }
 
         [Fact]
-        public void AddForeignKeyAlreadyExistsChangesReferences()
+        public void DeleteForeignKeyByNameRemovesForeignKey()
         {
-            var table = new Table("Table");
+            var table1 = new Table("Table1");
+            var table2 = new Table("Table2");
             var column1 = new Column("Column1");
             var column2 = new Column("Column2");
-            var column3 = new Column("Column3");
+            
+            table1.UpdateBaseUri(baseUri);
+            table2.UpdateBaseUri(baseUri);
+            
+            table1.AddStructure(column1);
+            table2.AddStructure(column2);
+            
+            table1.AddForeignKey(column1, column2);
+            
+            table1.DeleteForeignKey(column1.Name);
+            Assert.Empty(table1.ForeignKeys);
+        }
 
-            table.UpdateBaseUri(baseUri);
-            table.AddStructure(column1);
-            table.AddForeignKey(column1, column2);
+        [Fact]
+        public void DeleteForeignKeyByColumnRemovesForeignKey()
+        {
+            var table1 = new Table("Table1");
+            var table2 = new Table("Table2");
+            var column1 = new Column("Column1");
+            var column2 = new Column("Column2");
+            
+            table1.UpdateBaseUri(baseUri);
+            table2.UpdateBaseUri(baseUri);
+            
+            table1.AddStructure(column1);
+            table2.AddStructure(column2);
+            
+            table1.AddForeignKey(column1, column2);
+            
+            table1.DeleteForeignKey(column1);
+            Assert.Empty(table1.ForeignKeys);
+        }
 
-            Assert.Equal(column2, column1.References);
+        [Fact]
+        public void DeleteForeignKeyByForeignKeyRemovesForeignKey()
+        {
+            var table1 = new Table("Table1");
+            var table2 = new Table("Table2");
+            var column1 = new Column("Column1");
+            var column2 = new Column("Column2");
+            
+            table1.UpdateBaseUri(baseUri);
+            table2.UpdateBaseUri(baseUri);
+            
+            table1.AddStructure(column1);
+            table2.AddStructure(column2);
 
-            table.AddForeignKey(column1, column3);
-
-            Assert.Equal(column3, column1.References);
-            Assert.Single(table.ForeignKeys);
+            var foreignKey = new ForeignKey(column1, column2);
+            table1.AddForeignKey(foreignKey);
+            
+            table1.DeleteForeignKey(foreignKey);
+            table1.DeleteForeignKey(foreignKey);
+            Assert.Empty(table1.ForeignKeys);
         }
 
         [Fact]
@@ -599,24 +660,34 @@ public class StructureTest
         [Fact]
         public void ToGraphForeignKeysAddedToGraph()
         {
-            var table = new Table("Table");
-            var column = new Column("Column");
+            var table1 = new Table("Table1");
+            var table2 = new Table("Table2");
+            var column1 = new Column("Column1");
+            var column2 = new Column("Column2");
+            
+            table1.UpdateBaseUri(baseUri);
+            table2.UpdateBaseUri(baseUri);
+            
+            table1.AddStructure(column1);
+            table2.AddStructure(column2);
+            
+            table1.AddPrimaryKey(column1);
+            table2.AddPrimaryKey(column2);
 
-            table.UpdateBaseUri(baseUri);
-            table.AddStructure(column);
-            table.AddPrimaryKey(column);
-            table.AddForeignKey(column, column);
+            var foreignKey = new ForeignKey(column1, column2);
+            table1.AddForeignKey(foreignKey);
 
             // Added to avoid StructureException caused by Structure having no Store
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(baseUri);
-            sqlite.AddStructure(table);
+            sqlite.AddStructure(table1);
+            sqlite.AddStructure(table2);
 
-            var graph = table.ToGraph();
+            var graph = table1.ToGraph();
 
-            var subj = graph.CreateUriNode(table.Uri);
+            var subj = graph.CreateUriNode(table1.Uri);
             var pred = graph.CreateUriNode("ddl:foreignKey");
-            var obj = graph.CreateUriNode(column.Uri);
+            var obj = graph.CreateUriNode(column1.Uri);
 
             var triple = new Triple(subj, pred, obj);
 
@@ -626,25 +697,36 @@ public class StructureTest
         [Fact]
         public void ToGraphForeignKeyReferencesAddedToGraph()
         {
-            var table = new Table("Table");
-            var column = new Column("Column");
+            var table1 = new Table("Table1");
+            var table2 = new Table("Table2");
+            var column1 = new Column("Column1");
+            var column2 = new Column("Column2");
+            
+            table1.UpdateBaseUri(baseUri);
+            table2.UpdateBaseUri(baseUri);
+            
+            table1.AddStructure(column1);
+            table2.AddStructure(column2);
+            
+            table1.AddPrimaryKey(column1);
+            table2.AddPrimaryKey(column2);
 
-            table.UpdateBaseUri(baseUri);
-            table.AddStructure(column);
-            table.AddPrimaryKey(column);
-            table.AddForeignKey(column, column);
+            var foreignKey = new ForeignKey(column1, column2);
+            table1.AddForeignKey(foreignKey);
 
             // Added to avoid StructureException caused by Structure having no Store
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(baseUri);
-            sqlite.AddStructure(table);
+            sqlite.AddStructure(table1);
+            sqlite.AddStructure(table2);
 
-            var graph = table.ToGraph();
+            var graph = table1.ToGraph();
 
-            var subj = graph.CreateUriNode(column.Uri);
+            var subj = graph.CreateUriNode(column1.Uri);
             var pred = graph.CreateUriNode("ddl:references");
+            var obj = graph.CreateUriNode(column2.Uri);
 
-            var triple = new Triple(subj, pred, subj);
+            var triple = new Triple(subj, pred, obj);
 
             Assert.Contains(triple, graph.Triples);
         }
@@ -652,16 +734,6 @@ public class StructureTest
 
     public class ColumnTest
     {
-        [Fact]
-        public void SetReferenceSetsReference()
-        {
-            var column = new Column("Column");
-
-            column.SetReferences(column);
-
-            Assert.Equal(column, column.References);
-        }
-
         [Fact]
         public void SetDataTypeSetsDataType()
         {

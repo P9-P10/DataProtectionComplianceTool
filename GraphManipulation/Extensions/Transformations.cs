@@ -19,14 +19,14 @@ public static class Transformations
 
                 var foreignKeys = string.Join(",\n\t", 
                     table.ForeignKeys
-                        .GroupBy(fk => fk.References.ParentStructure)
+                        .GroupBy(fk => fk.To.ParentStructure)
                         .ToList()
                         .Select(parentGrouping =>
                 {
-                    var foreignKeysFrom = $"FOREIGN KEY ({string.Join(", ", table.ForeignKeys.Where(fk => fk.References.ParentStructure.Equals(parentGrouping.Key)).Select(fk => fk.Name))}) ";
+                    var foreignKeysFrom = $"FOREIGN KEY ({string.Join(", ", table.ForeignKeys.Where(fk => fk.To.ParentStructure.Equals(parentGrouping.Key)).Select(fk => fk.From.Name))}) ";
                     var foreignKeysToTable = $"REFERENCES {parentGrouping.Key.Name} ";
                     var foreignKeysToColumns =
-                        $"({string.Join(", ", parentGrouping.Select(fk => fk.References!.Name))})";
+                        $"({string.Join(", ", parentGrouping.Select(fk => fk.To!.Name))})";
 
                     return foreignKeysFrom + foreignKeysToTable + foreignKeysToColumns;
                 }));

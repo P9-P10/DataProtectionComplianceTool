@@ -5,9 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c701dcae-c036-4c51-b84d-60162b45a46a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/GraphManipulation/Models/ForeignKey.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Test/ForeignKeyTest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Extensions/StructureNavigation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Extensions/StructureNavigation.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Extensions/Transformations.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Extensions/Transformations.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/ForeignKey.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/ForeignKey.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Column.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Column.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Table.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Table.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/SqliteTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/SqliteTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/StructureTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/StructureTest.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,6 +27,8 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/582c551e66394e5abdf6cabd080bc771613a0/b1/a3686d39/SQLiteCommand.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/6818c1ae16684bb6a6533b1e52073ad994de00/21/b645569e/Encoding.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/6818c1ae16684bb6a6533b1e52073ad994de00/80/93a7e547/DefaultInterpolatedStringHandler.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/6818c1ae16684bb6a6533b1e52073ad994de00/8f/909993f2/Array.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/6818c1ae16684bb6a6533b1e52073ad994de00/ec/d590625d/List`1.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/811c87ebac0e4ae8a81b5df1d7aaf3576e200/bd/08da29f3/Enumerable.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/8517f607c12a4b508364c3f896f0fe6f11da8/50/a8a96f81/Assert.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a236d4c1511045da9f45af4b48798b3b13800/a7/63721125/AbstractTrie`3.cs" root0="SKIP_HIGHLIGHTING" />
@@ -113,6 +120,36 @@
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
   </component>
   <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Test/StructureTest.cs</url>
+          <line>547</line>
+          <properties documentPath="$PROJECT_DIR$/Test/StructureTest.cs" initialLine="540" containingFunctionPresentation="method 'AddForeignKeyAlreadyExistsNotAdded'">
+            <startOffsets>
+              <option value="17216" />
+            </startOffsets>
+            <endOffsets>
+              <option value="17255" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/GraphManipulation/Models/ForeignKey.cs</url>
+          <line>47</line>
+          <properties documentPath="$PROJECT_DIR$/GraphManipulation/Models/ForeignKey.cs" initialLine="42" containingFunctionPresentation="method 'GetHashCode'">
+            <startOffsets>
+              <option value="1190" />
+            </startOffsets>
+            <endOffsets>
+              <option value="1216" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
     <pin-to-top-manager>
       <pinned-members>
         <PinnedItemInfo parentTag="Type#GraphManipulation.Models.Entity" memberName="Id" />
