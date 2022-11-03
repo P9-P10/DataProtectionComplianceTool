@@ -48,6 +48,19 @@ ddl:references
 ddl:isNotNull
     a rdf:Property .
 
+ddl:columnOptions
+    a rdf:Property .
+
+ddl:columnOptionsSubjectShape
+    a                   sh:NodeShape ;
+    sh:targetSubjectsOf ddl:columnOptions ;
+    sh:class            ddl:Column .
+
+ddl:columnOptionsObjectShape
+    a                  sh:NodeShape ;
+    sh:targetObjectsOf ddl:columnOptions ;
+    sh:datatype        xsd:string .
+
 ddl:isNotNullShape
     a                  sh:NodeShape ;
     sh:targetObjectsOf ddl:isNotNull ;
@@ -157,4 +170,6 @@ ddl:Column
     sh:property     [ sh:path     ddl:hasDataType ;
                       sh:datatype xsd:string ;
                       sh:minCount 1 ;
+                      sh:maxCount 1 ] ;
+    sh:property     [ sh:path     ddl:columnOptions ;
                       sh:maxCount 1 ] .

@@ -5,24 +5,15 @@ namespace GraphManipulation.Models.Structures;
 
 public class Column : Structure
 {
-    public Column(string name) : base(name)
-    {
-        DataType = "";
-    }
-
-    public Column(string name, string dataType) : base(name)
+    public Column(string name, string dataType = "", bool isNotNull = false, string options = "") : base(name)
     {
         DataType = dataType;
-    }
-
-    public Column(string name, string dataType, bool isNotNull) : this(name, dataType)
-    {
         IsNotNull = isNotNull;
+        Options = options;
     }
 
+    public string Options { get; private set; }
     public string DataType { get; private set; }
-    
-    // TODO: Test dette i forhold til grafen
     public bool IsNotNull { get; private set; }
     public Column? References { get; private set; }
 
@@ -41,12 +32,18 @@ public class Column : Structure
         IsNotNull = isNotNull;
     }
 
+    public void SetOptions(string options)
+    {
+        Options = options;
+    }
+
     public override IGraph ToGraph()
     {
         var graph = base.ToGraph();
 
         AddDataTypeToGraph(graph);
         AddIsNotNullToGraph(graph);
+        AddOptionsToGraph(graph);
 
         return graph;
     }
@@ -82,8 +79,8 @@ public class Column : Structure
         graph.Assert(triple);
     }
 
-    protected override string GetGraphTypeString()
-    {
-        return "Column";
-    }
+    // protected override string GetGraphTypeString()
+    // {
+    //     return "Column";
+    // }
 }

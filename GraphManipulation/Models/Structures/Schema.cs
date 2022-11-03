@@ -14,9 +14,4 @@ public class Schema : Structure
         var graph = base.ToGraph();
         return graph;
     }
-
-    protected override string GetGraphTypeString()
-    {
-        return "Schema";
-    }
 }

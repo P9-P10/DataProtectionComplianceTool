@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using VDS.RDF;
+using GraphManipulation.Extensions;
 
 namespace GraphManipulation.Models;
 
@@ -106,7 +107,8 @@ public abstract class Entity : GraphBased
             throw new EntityException("BaseUri was null when building graph");
         }
 
-        graph.BaseUri = UriFactory.Create(BaseUri);
+        var baseUri = UriFactory.Create(BaseUri);
+        graph.BaseUri = baseUri;
     }
 
     private void AddTypeToGraph(IGraph graph)
@@ -114,13 +116,11 @@ public abstract class Entity : GraphBased
         var triple = new Triple(
             graph.CreateUriNode(Uri),
             graph.CreateUriNode("rdf:type"),
-            graph.CreateUriNode("ddl:" + GetGraphTypeString())
+            graph.CreateUriNode("ddl:" + this.GetGraphTypeString())
         );
 
         graph.Assert(triple);
     }
-
-    protected abstract string GetGraphTypeString();
 }
 
 public class EntityException : Exception

@@ -681,6 +681,14 @@ public class StructureTest
         }
 
         [Fact]
+        public void SetOptionsSetsOptions()
+        {
+            var column = new Column("Column");
+            column.SetOptions("Options");
+            Assert.Equal("Options", column.Options);
+        }
+
+        [Fact]
         public void ToGraphDataTypeAddedToGraph()
         {
             var column = new Column("Column");
@@ -720,6 +728,30 @@ public class StructureTest
             var subj = graph.CreateUriNode(column.Uri);
             var pred = graph.CreateUriNode("ddl:isNotNull");
             var obj = graph.CreateLiteralNode("false", UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeBoolean));
+
+            var triple = new Triple(subj, pred, obj);
+
+            Assert.Contains(triple, graph.Triples);
+        }
+
+        [Fact]
+        public void ToGraphOptionsAddedToGraph()
+        {
+            var column = new Column("MyColumn");
+            column.UpdateBaseUri(baseUri);
+            column.SetDataType("INT");
+            column.SetOptions("AUTOINCREMENT");
+            
+            // Added to avoid StructureException caused by Structure having no Store
+            var sqlite = new Sqlite("SQLite");
+            sqlite.UpdateBaseUri(baseUri);
+            sqlite.AddStructure(column);
+
+            var graph = column.ToGraph();
+
+            var subj = graph.CreateUriNode(column.Uri);
+            var pred = graph.CreateUriNode("ddl:columnOptions");
+            var obj = graph.CreateLiteralNode("AUTOINCREMENT");
 
             var triple = new Triple(subj, pred, obj);
 

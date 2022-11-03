@@ -92,9 +92,4 @@ public class Sqlite : Relational
         var graph = base.ToGraph();
         return graph;
     }
-
-    protected override string GetGraphTypeString()
-    {
-        return "SQLite";
-    }
 }

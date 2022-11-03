@@ -92,9 +92,4 @@ public class Table : Structure
             graph.Assert(from, referencesRelation, to);
         }
     }
-
-    protected override string GetGraphTypeString()
-    {
-        return "Table";
-    }
 }
