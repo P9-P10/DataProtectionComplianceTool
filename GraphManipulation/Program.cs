@@ -5,6 +5,7 @@ using GraphManipulation.Extensions;
 using GraphManipulation.Models.Stores;
 using VDS.RDF;
 using VDS.RDF.Parsing;
+using VDS.RDF.Query.Inference;
 using VDS.RDF.Shacl;
 using VDS.RDF.Shacl.Validation;
 using VDS.RDF.Writing;
@@ -22,8 +23,8 @@ public static class Program
     {
         string baseUri = "http://www.test.com/";
 
-        // string database = "OptimizedAdvancedDatabase.sqlite";
-        string database = "SimpleDatabase.sqlite";
+        string database = "OptimizedAdvancedDatabase.sqlite";
+        // string database = "SimpleDatabase.sqlite";
 
         using var conn = new SQLiteConnection($"Data Source=/home/ane/Documents/GitHub/Legeplads/Databases/{database}");
 
@@ -40,14 +41,20 @@ public static class Program
         IGraph dataGraph = new Graph();
         dataGraph.LoadFromFile(path);
 
+        
+
         IGraph ontology = new Graph();
         const string ontologyPath = "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/Ontologies/datastore-description-language.ttl";
         ontology.LoadFromFile(ontologyPath, new TurtleParser());
         var shapesGraph = new ShapesGraph(ontology);
+        
+        StaticRdfsReasoner reasoner = new StaticRdfsReasoner();
+        reasoner.Initialise(ontology);
+        reasoner.Apply(dataGraph);
 
         PrintReport(shapesGraph.Validate(dataGraph));
         
-        Console.WriteLine(sqlite.ToSqlCreateStatement());
+        // Console.WriteLine(sqlite.ToSqlCreateStatement());
     }
 
     private static void PrintReport(Report report)
