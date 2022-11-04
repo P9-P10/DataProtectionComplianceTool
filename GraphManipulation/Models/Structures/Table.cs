@@ -25,7 +25,7 @@ public class Table : Structure
 
         PrimaryKeys.Add(column);
     }
-    
+
     public void AddForeignKey(Column fromColumn, Column toColumn)
     {
         AddForeignKey(new ForeignKey(fromColumn, toColumn));
@@ -50,7 +50,8 @@ public class Table : Structure
     {
         var relevantKeys = ForeignKeys.Where(fk => fk.To.ParentStructure.Equals(foreignKey.To.ParentStructure));
 
-        var onActionsAreSame = relevantKeys.All(fk => fk.OnDelete == foreignKey.OnDelete && fk.OnUpdate == foreignKey.OnUpdate);
+        var onActionsAreSame =
+            relevantKeys.All(fk => fk.OnDelete == foreignKey.OnDelete && fk.OnUpdate == foreignKey.OnUpdate);
 
         if (!onActionsAreSame)
         {
@@ -117,7 +118,7 @@ public class Table : Structure
         {
             var from = graph.CreateUriNode(foreignKey.From.Uri);
             var to = graph.CreateUriNode(foreignKey.To.Uri);
-            
+
             graph.Assert(table, foreignKeyPredicate, from);
             graph.Assert(from, referencesPredicate, to);
 

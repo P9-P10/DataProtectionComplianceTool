@@ -1,9 +1,9 @@
 using System.Security.Cryptography;
 using System.Text;
-using VDS.RDF;
 using GraphManipulation.Extensions;
+using VDS.RDF;
 
-namespace GraphManipulation.Models;
+namespace GraphManipulation.Models.Entity;
 
 public abstract class Entity : GraphBased
 {

@@ -18,7 +18,7 @@ public class StructureNavigationTest
         var column12 = new Column("Column12");
         var column21 = new Column("Column21");
         var column22 = new Column("Column22");
-        
+
         sqlite.AddStructure(schema);
         schema.AddStructure(table1);
         schema.AddStructure(table2);
@@ -27,13 +27,13 @@ public class StructureNavigationTest
         table2.AddStructure(column21);
         table2.AddStructure(column22);
 
-        Assert.Equal(column11, 
+        Assert.Equal(column11,
             sqlite
                 .FindSchema("Schema")
                 .FindTable("Table1")
                 .FindColumn("Column11"));
-        
-        Assert.Equal(column22, 
+
+        Assert.Equal(column22,
             sqlite
                 .FindSchema("Schema")
                 .FindTable("Table2")

@@ -5,6 +5,8 @@ namespace GraphManipulation.Models.Structures;
 
 public class Column : Structure
 {
+    public static readonly List<string> ValidOptions = new() { "AUTOINCREMENT" };
+
     public Column(string name, string dataType = "", bool isNotNull = false, string options = "") : base(name)
     {
         DataType = dataType;
@@ -13,8 +15,6 @@ public class Column : Structure
     }
 
     public string Options { get; private set; }
-
-    public static readonly List<string> ValidOptions = new() { "AUTOINCREMENT" };
     public string DataType { get; private set; }
     public bool IsNotNull { get; private set; }
 
@@ -60,7 +60,8 @@ public class Column : Structure
         var triple = new Triple(
             graph.CreateUriNode(Uri),
             graph.CreateUriNode("ddl:isNotNull"),
-            graph.CreateLiteralNode(IsNotNull.ToString().ToLower(), UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeBoolean)));
+            graph.CreateLiteralNode(IsNotNull.ToString().ToLower(),
+                UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeBoolean)));
 
         graph.Assert(triple);
     }

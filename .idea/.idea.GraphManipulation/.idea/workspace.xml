@@ -5,23 +5,33 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c701dcae-c036-4c51-b84d-60162b45a46a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/da5671a6-ed00-469c-bda1-dcdc029b1441.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/da5671a6-ed00-469c-bda1-dcdc029b1441.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Extensions/StructureNavigation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Extensions/StructureNavigation.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Extensions/GraphDataType.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Extensions/GraphDataType.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Extensions/Transformations.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Extensions/Transformations.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/GraphManipulation.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/GraphManipulation.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Entity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Entity/Entity.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/ForeignKey.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/ForeignKey.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/GraphBased.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/GraphBased.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/NamedEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Entity/NamedEntity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/DataStore.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/DataStore.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Database.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Database.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Relational.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Relational.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/StructuredEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Entity/StructuredEntity.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Column.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Column.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Schema.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Schema.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Structure.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Structure.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Table.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Table.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Ontologies/datastore-description-language.ttl" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Ontologies/datastore-description-language.ttl" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Program.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/test.ttl" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/test.ttl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test/GraphManipulationTest.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/DataStoreTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/DataStoreTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/EntityTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/EntityTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/ForeignKeyTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/ForeignKeyTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/GraphBasedTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/GraphBasedTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/OntologyTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/OntologyTest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/SqliteTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/SqliteTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/StructureNavigationTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/StructureNavigationTest.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/StructureTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/StructureTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/Test.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Test/Test.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/TransformationsTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/TransformationsTest.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -119,7 +129,7 @@
       <workItem from="1666957607965" duration="4599000" />
       <workItem from="1667201774398" duration="18856000" />
       <workItem from="1667373690955" duration="17022000" />
-      <workItem from="1667547185157" duration="7107000" />
+      <workItem from="1667547185157" duration="7432000" />
     </task>
     <servers />
   </component>
@@ -134,40 +144,27 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/GraphManipulation/Models/ForeignKey.cs</url>
-          <line>64</line>
-          <properties documentPath="$PROJECT_DIR$/GraphManipulation/Models/ForeignKey.cs" initialLine="42" containingFunctionPresentation="method 'GetHashCode'">
-            <startOffsets>
-              <option value="1714" />
-            </startOffsets>
-            <endOffsets>
-              <option value="1740" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs</url>
-          <line>79</line>
+          <line>78</line>
           <properties documentPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs" initialLine="79" containingFunctionPresentation="lambda expression inside method 'GetColumnOptionsQueryResults'">
             <startOffsets>
-              <option value="2727" />
+              <option value="2718" />
             </startOffsets>
             <endOffsets>
-              <option value="2940" />
+              <option value="2931" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/GraphManipulation/Models/Stores/Relational.cs</url>
-          <line>32</line>
+          <line>31</line>
           <properties documentPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Relational.cs" initialLine="32" containingFunctionPresentation="method 'Build'">
             <startOffsets>
-              <option value="874" />
+              <option value="849" />
             </startOffsets>
             <endOffsets>
-              <option value="905" />
+              <option value="880" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="9" />

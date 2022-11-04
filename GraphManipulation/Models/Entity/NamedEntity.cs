@@ -1,6 +1,6 @@
 using VDS.RDF;
 
-namespace GraphManipulation.Models;
+namespace GraphManipulation.Models.Entity;
 
 public abstract class NamedEntity : Entity
 {
@@ -9,7 +9,7 @@ public abstract class NamedEntity : Entity
         Name = name;
     }
 
-    public string Name { get; protected set;  }
+    public string Name { get; protected set; }
 
     public override IGraph ToGraph()
     {

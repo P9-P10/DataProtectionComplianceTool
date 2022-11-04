@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
-using System.Linq;
-using GraphManipulation.Models.Stores;
-using GraphManipulation.Models.Structures;
 using GraphManipulation.Extensions;
 using GraphManipulation.Models;
+using GraphManipulation.Models.Stores;
+using GraphManipulation.Models.Structures;
 using Xunit;
 
 namespace Test;
@@ -17,7 +15,54 @@ public class SqliteTest
 
     public class TestDatabaseFixture : IDisposable
     {
-        private static readonly string _testDatabase = $"TestResources{Path.DirectorySeparatorChar}SimpleDatabase.sqlite";
+        private static readonly string _testDatabase =
+            $"TestResources{Path.DirectorySeparatorChar}SimpleDatabase.sqlite";
+
+        private static readonly SQLiteConnection Connection = new($"Data Source={TestDatabase}");
+        public readonly Column ExpectedColumnEmail = new("email");
+        public readonly Column ExpectedColumnPhone = new("phone");
+        public readonly Column ExpectedColumnUserDataId = new("id");
+        public readonly Column ExpectedColumnUsersId = new("id");
+        public readonly ForeignKey ExpectedForeignKeyUserDataIdUsersId;
+        public readonly Schema ExpectedSchema = new("main");
+
+        public readonly Sqlite ExpectedSqlite = new("SimpleDatabase", BaseUri);
+        public readonly Table ExpectedTableUserData = new("UserData");
+        public readonly Table ExpectedTableUsers = new("Users");
+
+        public readonly Sqlite Sqlite;
+
+
+        public TestDatabaseFixture()
+        {
+            Sqlite = new Sqlite("", BaseUri, Connection);
+
+            Sqlite.Build();
+
+            ExpectedSqlite.AddStructure(ExpectedSchema);
+
+            ExpectedSchema.AddStructure(ExpectedTableUsers);
+            ExpectedSchema.AddStructure(ExpectedTableUserData);
+
+            ExpectedTableUsers.AddStructure(ExpectedColumnUsersId);
+            ExpectedTableUsers.AddStructure(ExpectedColumnEmail);
+
+            ExpectedTableUserData.AddStructure(ExpectedColumnUserDataId);
+            ExpectedTableUserData.AddStructure(ExpectedColumnPhone);
+
+            ExpectedTableUsers.AddPrimaryKey(ExpectedColumnUsersId);
+            ExpectedTableUserData.AddPrimaryKey(ExpectedColumnUserDataId);
+
+            ExpectedForeignKeyUserDataIdUsersId = new ForeignKey(ExpectedColumnUserDataId, ExpectedColumnUsersId,
+                ForeignKeyOnEnum.Cascade);
+
+            ExpectedTableUserData.AddForeignKey(ExpectedForeignKeyUserDataIdUsersId);
+
+            ExpectedColumnEmail.SetDataType("VARCHAR");
+            ExpectedColumnPhone.SetDataType("INT");
+
+            ExpectedColumnEmail.SetIsNotNull(true);
+        }
 
         private static string TestDatabase
         {
@@ -27,59 +72,13 @@ public class SqliteTest
                 {
                     throw new FileNotFoundException("File not found: " + _testDatabase);
                 }
-                
+
                 return _testDatabase;
-            } 
+            }
         }
-        
-        private static readonly SQLiteConnection Connection = new($"Data Source={TestDatabase}");
 
-        public readonly Sqlite Sqlite;
-        
-        public readonly Sqlite ExpectedSqlite = new("SimpleDatabase", BaseUri);
-        public readonly Schema ExpectedSchema = new("main");
-        public readonly Table ExpectedTableUsers = new("Users");
-        public readonly Table ExpectedTableUserData = new("UserData");
-        public readonly Column ExpectedColumnUsersId = new("id");
-        public readonly Column ExpectedColumnUserDataId = new("id");
-        public readonly Column ExpectedColumnEmail = new ("email");
-        public readonly Column ExpectedColumnPhone = new ("phone");
-        public readonly ForeignKey ExpectedForeignKeyUserDataIdUsersId;
-
-
-        public TestDatabaseFixture()
-        {
-            Sqlite = new Sqlite("", BaseUri, Connection);
-            
-            Sqlite.Build();
-            
-            ExpectedSqlite.AddStructure(ExpectedSchema);
-            
-            ExpectedSchema.AddStructure(ExpectedTableUsers);
-            ExpectedSchema.AddStructure(ExpectedTableUserData);
-            
-            ExpectedTableUsers.AddStructure(ExpectedColumnUsersId);
-            ExpectedTableUsers.AddStructure(ExpectedColumnEmail);
-            
-            ExpectedTableUserData.AddStructure(ExpectedColumnUserDataId);
-            ExpectedTableUserData.AddStructure(ExpectedColumnPhone);
-            
-            ExpectedTableUsers.AddPrimaryKey(ExpectedColumnUsersId);
-            ExpectedTableUserData.AddPrimaryKey(ExpectedColumnUserDataId);
-
-            ExpectedForeignKeyUserDataIdUsersId = new ForeignKey(ExpectedColumnUserDataId, ExpectedColumnUsersId, onDelete: ForeignKeyOnEnum.Cascade);
-            
-            ExpectedTableUserData.AddForeignKey(ExpectedForeignKeyUserDataIdUsersId);
-            
-            ExpectedColumnEmail.SetDataType("VARCHAR");
-            ExpectedColumnPhone.SetDataType("INT");
-            
-            ExpectedColumnEmail.SetIsNotNull(true);
-        }
-        
         public void Dispose()
         {
-            
         }
     }
 
@@ -114,7 +113,7 @@ public class SqliteTest
             var actualSchema = _testDatabaseFixture.Sqlite.FindSchema("main");
             Assert.Equal(_testDatabaseFixture.ExpectedSchema, actualSchema);
         }
-        
+
         [Fact]
         public void SqliteGetsTables()
         {
@@ -138,11 +137,11 @@ public class SqliteTest
                     .FindSchema("main")
                     .FindTable("Users")
                     .FindColumn("email");
-            
+
             var actualColumnPhone = _testDatabaseFixture.Sqlite
-                    .FindSchema("main")
-                    .FindTable("UserData")
-                    .FindColumn("phone");
+                .FindSchema("main")
+                .FindTable("UserData")
+                .FindColumn("phone");
 
             Assert.Equal(_testDatabaseFixture.ExpectedColumnEmail, actualColumnEmail);
             Assert.Equal(_testDatabaseFixture.ExpectedColumnPhone, actualColumnPhone);
@@ -175,7 +174,7 @@ public class SqliteTest
                 .FindTable("Users")
                 .FindColumn("email")
                 .IsNotNull;
-            
+
             Assert.True(actual);
         }
 
@@ -192,7 +191,7 @@ public class SqliteTest
 
             Assert.Equal(expected, actual);
         }
-        
+
         [Fact]
         public void SqliteTableGetsPrimaryKeys()
         {
@@ -205,7 +204,7 @@ public class SqliteTest
                 .FindSchema("main")
                 .FindTable("UserData")
                 .FindPrimaryKey("id");
-            
+
             Assert.Equal(_testDatabaseFixture.ExpectedColumnUsersId, actualUsersPrimaryKey);
             Assert.Equal(_testDatabaseFixture.ExpectedColumnUserDataId, actualUserDataPrimaryKey);
         }
@@ -217,7 +216,7 @@ public class SqliteTest
                 .FindSchema("main")
                 .FindTable("UserData")
                 .FindForeignKey("id");
-            
+
             Assert.Equal(_testDatabaseFixture.ExpectedForeignKeyUserDataIdUsersId, actualForeignKey);
         }
 
@@ -240,7 +239,7 @@ public class SqliteTest
                 .FindTable("UserData")
                 .FindForeignKey("id")
                 .OnDelete;
-            
+
             Assert.Equal(ForeignKeyOnEnum.Cascade, actual);
         }
 
@@ -252,7 +251,7 @@ public class SqliteTest
                 .FindTable("UserData")
                 .FindForeignKey("id")
                 .OnUpdate;
-            
+
             Assert.Equal(ForeignKeyOnEnum.NoAction, actual);
         }
     }
@@ -260,31 +259,28 @@ public class SqliteTest
     public class CreateStatementTest : IClassFixture<TestDatabaseFixture>
     {
         private readonly TestDatabaseFixture _testDatabaseFixture;
-        
+
         public CreateStatementTest(TestDatabaseFixture testDatabaseFixture)
         {
             _testDatabaseFixture = testDatabaseFixture;
         }
-        
+
         public class To
         {
             [Fact]
             public void BaseTest()
             {
-                
             }
 
 
             [Fact]
             public void FullTest()
             {
-                
             }
         }
 
         public class From
         {
-            
         }
     }
 }

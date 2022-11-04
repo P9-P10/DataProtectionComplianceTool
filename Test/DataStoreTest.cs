@@ -1,7 +1,5 @@
-using System.Data.SQLite;
-using System.IO;
 using System.Text;
-using GraphManipulation.Models;
+using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
 using Xunit;
@@ -11,7 +9,7 @@ namespace Test;
 public class DataStoreTest
 {
     private const string baseUri = "http://www.test.com/";
-    
+
     [Fact]
     public void UpdateBaseSetsBase()
     {

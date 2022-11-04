@@ -1,7 +1,7 @@
 using GraphManipulation.Models.Structures;
 using VDS.RDF;
 
-namespace GraphManipulation.Models;
+namespace GraphManipulation.Models.Entity;
 
 public abstract class StructuredEntity : NamedEntity
 {

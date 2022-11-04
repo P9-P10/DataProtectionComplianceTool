@@ -1,13 +1,15 @@
-using GraphManipulation.Models.Connections;
+using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Structures;
 using VDS.RDF;
 
 namespace GraphManipulation.Models.Stores;
 
-
 public enum SupportedDataStores
 {
-    Sqlite, PostgreSql, MongoDb, Csv
+    Sqlite,
+    PostgreSql,
+    MongoDb,
+    Csv
 }
 
 public abstract class DataStore : StructuredEntity
@@ -52,7 +54,6 @@ public abstract class DataStore : StructuredEntity
 
     private void BuildDataStore()
     {
-        
     }
 
     public override string ComputeHash()

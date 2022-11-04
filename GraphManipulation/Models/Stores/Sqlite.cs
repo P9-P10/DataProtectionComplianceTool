@@ -18,7 +18,6 @@ public class Sqlite : Relational
 
     public Sqlite(string name, string baseUri, DbConnection connection) : base(name, baseUri, connection)
     {
-        
     }
 
     protected override void GetStructureQueryResults()
@@ -88,7 +87,10 @@ public class Sqlite : Relational
 
     public override void Build()
     {
-        if (Connection is null) throw new DataStoreException("Connection was null when building SQLite");
+        if (Connection is null)
+        {
+            throw new DataStoreException("Connection was null when building SQLite");
+        }
 
         Connection.Open();
 
@@ -101,7 +103,10 @@ public class Sqlite : Relational
         ComputeId();
     }
 
-    private string GetNameFromDataSource() => Connection!.DataSource!;
+    private string GetNameFromDataSource()
+    {
+        return Connection!.DataSource!;
+    }
 
     public override IGraph ToGraph()
     {

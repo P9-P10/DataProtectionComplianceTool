@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Text;
 using GraphManipulation.Models;
+using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
 using VDS.RDF;
@@ -528,7 +529,7 @@ public class StructureTest
 
             table2.UpdateBaseUri(baseUri);
             table2.AddStructure(column2);
-            
+
             table3.UpdateBaseUri(baseUri);
             table3.AddStructure(column1);
 
@@ -545,16 +546,16 @@ public class StructureTest
 
             table1.UpdateBaseUri(baseUri);
             table1.AddStructure(column1);
-            
+
             table2.UpdateBaseUri(baseUri);
             table2.AddStructure(column2);
-            
+
             table1.AddForeignKey(column1, column2);
             table1.AddForeignKey(column1, column2);
 
             Assert.Single(table1.ForeignKeys);
         }
-        
+
         [Fact]
         public void AddForeignKeySameToTableDifferentOnActionThrowsException()
         {
@@ -568,14 +569,14 @@ public class StructureTest
             table1.UpdateBaseUri(baseUri);
             table1.AddStructure(column11);
             table1.AddStructure(column12);
-            
+
             table2.UpdateBaseUri(baseUri);
             table2.AddStructure(column21);
             table2.AddStructure(column22);
-            
-            table1.AddForeignKey(new ForeignKey(column11, column21, onDelete: ForeignKeyOnEnum.Cascade));
+
+            table1.AddForeignKey(new ForeignKey(column11, column21, ForeignKeyOnEnum.Cascade));
             Assert.Throws<StructureException>(() =>
-                table1.AddForeignKey(new ForeignKey(column12, column22, onDelete: ForeignKeyOnEnum.NoAction)));
+                table1.AddForeignKey(new ForeignKey(column12, column22)));
         }
 
         [Fact]
@@ -585,15 +586,15 @@ public class StructureTest
             var table2 = new Table("Table2");
             var column1 = new Column("Column1");
             var column2 = new Column("Column2");
-            
+
             table1.UpdateBaseUri(baseUri);
             table2.UpdateBaseUri(baseUri);
-            
+
             table1.AddStructure(column1);
             table2.AddStructure(column2);
-            
+
             table1.AddForeignKey(column1, column2);
-            
+
             table1.DeleteForeignKey(column1.Name);
             Assert.Empty(table1.ForeignKeys);
         }
@@ -605,15 +606,15 @@ public class StructureTest
             var table2 = new Table("Table2");
             var column1 = new Column("Column1");
             var column2 = new Column("Column2");
-            
+
             table1.UpdateBaseUri(baseUri);
             table2.UpdateBaseUri(baseUri);
-            
+
             table1.AddStructure(column1);
             table2.AddStructure(column2);
-            
+
             table1.AddForeignKey(column1, column2);
-            
+
             table1.DeleteForeignKey(column1);
             Assert.Empty(table1.ForeignKeys);
         }
@@ -625,16 +626,16 @@ public class StructureTest
             var table2 = new Table("Table2");
             var column1 = new Column("Column1");
             var column2 = new Column("Column2");
-            
+
             table1.UpdateBaseUri(baseUri);
             table2.UpdateBaseUri(baseUri);
-            
+
             table1.AddStructure(column1);
             table2.AddStructure(column2);
 
             var foreignKey = new ForeignKey(column1, column2);
             table1.AddForeignKey(foreignKey);
-            
+
             table1.DeleteForeignKey(foreignKey);
             table1.DeleteForeignKey(foreignKey);
             Assert.Empty(table1.ForeignKeys);
@@ -687,13 +688,13 @@ public class StructureTest
             var table2 = new Table("Table2");
             var column1 = new Column("Column1");
             var column2 = new Column("Column2");
-            
+
             table1.UpdateBaseUri(baseUri);
             table2.UpdateBaseUri(baseUri);
-            
+
             table1.AddStructure(column1);
             table2.AddStructure(column2);
-            
+
             table1.AddPrimaryKey(column1);
             table2.AddPrimaryKey(column2);
 
@@ -721,8 +722,8 @@ public class StructureTest
         public void ToGraphForeignKeyReferencesAddedToGraph()
         {
             var graph = GenerateGraphWithForeignKey(
-                ForeignKeyOnEnum.Cascade, 
-                ForeignKeyOnEnum.NoAction, 
+                ForeignKeyOnEnum.Cascade,
+                ForeignKeyOnEnum.NoAction,
                 out var column1, out var column2);
 
             var subj = graph.CreateUriNode(column1.Uri);
@@ -738,10 +739,10 @@ public class StructureTest
         public void ToGraphForeignKeyOnDeleteCascadeAddedToGraph()
         {
             var graph = GenerateGraphWithForeignKey(
-                ForeignKeyOnEnum.Cascade, 
-                ForeignKeyOnEnum.NoAction, 
+                ForeignKeyOnEnum.Cascade,
+                ForeignKeyOnEnum.NoAction,
                 out var column1, out var column2);
-            
+
             var subj = graph.CreateUriNode(column1.Uri);
             var pred = graph.CreateUriNode("ddl:foreignKeyOnDelete");
             var obj = graph.CreateLiteralNode("CASCADE");
@@ -755,10 +756,10 @@ public class StructureTest
         public void ToGraphForeignKeyOnDeleteNoActionAddedToGraph()
         {
             var graph = GenerateGraphWithForeignKey(
-                ForeignKeyOnEnum.NoAction, 
-                ForeignKeyOnEnum.NoAction, 
+                ForeignKeyOnEnum.NoAction,
+                ForeignKeyOnEnum.NoAction,
                 out var column1, out var column2);
-            
+
             var subj = graph.CreateUriNode(column1.Uri);
             var pred = graph.CreateUriNode("ddl:foreignKeyOnDelete");
             var obj = graph.CreateLiteralNode("NO ACTION");
@@ -772,10 +773,10 @@ public class StructureTest
         public void ToGraphForeignKeyOnUpdateCascadeAddedToGraph()
         {
             var graph = GenerateGraphWithForeignKey(
-                ForeignKeyOnEnum.NoAction, 
-                ForeignKeyOnEnum.Cascade, 
+                ForeignKeyOnEnum.NoAction,
+                ForeignKeyOnEnum.Cascade,
                 out var column1, out var column2);
-            
+
             var subj = graph.CreateUriNode(column1.Uri);
             var pred = graph.CreateUriNode("ddl:foreignKeyOnUpdate");
             var obj = graph.CreateLiteralNode("CASCADE");
@@ -789,10 +790,10 @@ public class StructureTest
         public void ToGraphForeignKeyOnUpdateNoActionAddedToGraph()
         {
             var graph = GenerateGraphWithForeignKey(
-                ForeignKeyOnEnum.NoAction, 
-                ForeignKeyOnEnum.NoAction, 
+                ForeignKeyOnEnum.NoAction,
+                ForeignKeyOnEnum.NoAction,
                 out var column1, out var column2);
-            
+
             var subj = graph.CreateUriNode(column1.Uri);
             var pred = graph.CreateUriNode("ddl:foreignKeyOnUpdate");
             var obj = graph.CreateLiteralNode("NO ACTION");
@@ -802,19 +803,20 @@ public class StructureTest
             Assert.Contains(triple, graph.Triples);
         }
 
-        private IGraph GenerateGraphWithForeignKey(ForeignKeyOnEnum onDelete, ForeignKeyOnEnum onUpdate, out Column column1, out Column column2)
+        private IGraph GenerateGraphWithForeignKey(ForeignKeyOnEnum onDelete, ForeignKeyOnEnum onUpdate,
+            out Column column1, out Column column2)
         {
             var table1 = new Table("Table1");
             var table2 = new Table("Table2");
             column1 = new Column("Column1");
             column2 = new Column("Column2");
-            
+
             table1.UpdateBaseUri(baseUri);
             table2.UpdateBaseUri(baseUri);
-            
+
             table1.AddStructure(column1);
             table2.AddStructure(column2);
-            
+
             table1.AddPrimaryKey(column1);
             table2.AddPrimaryKey(column2);
 
@@ -890,7 +892,7 @@ public class StructureTest
             var column = new Column("MyColumn");
             column.UpdateBaseUri(baseUri);
             column.SetDataType("INT");
-            
+
             // Added to avoid StructureException caused by Structure having no Store
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(baseUri);
@@ -914,7 +916,7 @@ public class StructureTest
             column.UpdateBaseUri(baseUri);
             column.SetDataType("INT");
             column.SetOptions("AUTOINCREMENT");
-            
+
             // Added to avoid StructureException caused by Structure having no Store
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(baseUri);

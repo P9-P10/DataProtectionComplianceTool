@@ -6,28 +6,27 @@ namespace GraphManipulation.Models.Stores;
 
 public abstract class Relational : Database
 {
+    protected List<ColumnOptionsQueryResult> ColumnOptionsQueryResults = new();
+    protected List<ForeignKeysQueryResult> ForeignKeysQueryResults = new();
+
+    protected List<StructureQueryResult> StructureQueryResults = new();
+
     protected Relational(string name) : base(name)
     {
     }
 
     protected Relational(string name, string baseUri) : base(name, baseUri)
     {
-        
     }
 
     protected Relational(string name, string baseUri, DbConnection connection) : base(name, baseUri, connection)
     {
-        
     }
-
-    protected List<StructureQueryResult> StructureQueryResults = new();
-    protected List<ForeignKeysQueryResult> ForeignKeysQueryResults = new();
-    protected List<ColumnOptionsQueryResult> ColumnOptionsQueryResults = new();
 
     public override void Build()
     {
         base.Build();
-        
+
         GetStructureQueryResults();
         GetForeignKeysQueryResults();
         GetColumnOptionsQueryResults();
@@ -35,7 +34,7 @@ public abstract class Relational : Database
         BuildForeignKeys();
         BuildColumnOptions();
     }
-    
+
     protected abstract void GetStructureQueryResults();
 
     protected abstract void GetForeignKeysQueryResults();
@@ -53,12 +52,12 @@ public abstract class Relational : Database
             {
                 var table = new Table(tableGrouping.Key);
                 schema.AddStructure(table);
-                
+
                 tableGrouping.ToList().ForEach(result =>
                 {
                     var column = new Column(result.ColumnName);
                     column.SetDataType(result.DataType);
-                    
+
                     table.AddStructure(column);
 
                     if (result.IsPrimaryKey)
@@ -82,18 +81,18 @@ public abstract class Relational : Database
             var fromTable = this
                 .FindSchema(result.FromSchema)
                 .FindTable(result.FromTable);
-            
+
             var fromColumn = fromTable.FindColumn(result.FromColumn);
-            
+
             var toColumn = this
                 .FindSchema(result.ToSchema)
                 .FindTable(result.ToTable)
                 .FindColumn(result.ToColumn);
-            
+
             fromTable.AddForeignKey(new ForeignKey(fromColumn, toColumn, result.OnDelete, result.OnUpdate));
         });
     }
-    
+
     private void BuildColumnOptions()
     {
         ColumnOptionsQueryResults.ForEach(result =>
@@ -104,10 +103,11 @@ public abstract class Relational : Database
                 .FindColumn(result.ColumnName)
                 .SetOptions(result.Options);
         });
-    }    
+    }
+
     public class StructureQueryResult
     {
-        public StructureQueryResult(string schemaName, string tableName, string columnName, 
+        public StructureQueryResult(string schemaName, string tableName, string columnName,
             string dataType, long isPrimaryKey, long isNotNull)
         {
             SchemaName = schemaName;
@@ -117,7 +117,7 @@ public abstract class Relational : Database
             IsPrimaryKey = isPrimaryKey == 1;
             IsNotNull = isNotNull == 1;
         }
-    
+
         public string SchemaName { get; set; }
         public string TableName { get; set; }
         public string ColumnName { get; set; }
@@ -125,11 +125,11 @@ public abstract class Relational : Database
         public bool IsPrimaryKey { get; set; }
         public bool IsNotNull { get; set; }
     }
-    
+
     public class ForeignKeysQueryResult
     {
         public ForeignKeysQueryResult(
-            string fromSchema, string fromTable, string fromColumn, 
+            string fromSchema, string fromTable, string fromColumn,
             string toSchema, string toTable, string toColumn,
             string onDelete, string onUpdate)
         {
@@ -146,7 +146,7 @@ public abstract class Relational : Database
                 "NO ACTION" => ForeignKeyOnEnum.NoAction,
                 _ => throw new ForeignKeysQueryResultException("Action not supported: " + onDelete.ToUpper())
             };
-            
+
             OnUpdate = onUpdate.ToUpper() switch
             {
                 "CASCADE" => ForeignKeyOnEnum.Cascade,

@@ -1,4 +1,3 @@
-using System;
 using GraphManipulation.Extensions;
 using GraphManipulation.Models;
 using GraphManipulation.Models.Stores;
@@ -43,28 +42,28 @@ public class TransformationsTest
             var table = new Table("MyTable");
             var column1 = new Column("Column1");
             var column2 = new Column("Column2");
-            
+
             table.AddStructure(column1);
             table.AddStructure(column2);
-            
+
             table.AddPrimaryKey(column1);
-            
+
             column1.SetDataType("int");
             column2.SetDataType("varchar");
 
             var actual = table.ToSqlCreateStatement();
             var expected = "CREATE TABLE MyTable (\n\tColumn1 INT,\n\tColumn2 VARCHAR,\n\tPRIMARY KEY (Column1)\n);";
-            
+
             Assert.Equal(expected, actual);
         }
-        
+
         [Fact]
         public void StructuredEntityEmpty()
         {
             var sqlite = new Sqlite("TestSqlite");
             var actual = sqlite.ToSqlCreateStatement();
             var expected = "";
-            
+
             Assert.Equal(expected, actual);
         }
 
@@ -77,7 +76,7 @@ public class TransformationsTest
             var column11 = new Column("Column11", "daTeTimE", true, "AUTOINCREMENT");
             var column12 = new Column("Column12", "varchar(255)");
             var column13 = new Column("Column13", "int");
-            
+
             var table2 = new Table("MyTable2");
             var column21 = new Column("Column21", "int");
             var column22 = new Column("Column22", "varchar", true);
@@ -90,19 +89,19 @@ public class TransformationsTest
             table1.AddStructure(column11);
             table1.AddStructure(column12);
             table1.AddStructure(column13);
-            
+
             table1.AddPrimaryKey(column11);
 
             sqlite.AddStructure(table2);
             table2.AddStructure(column21);
             table2.AddStructure(column22);
-            
+
             table2.AddPrimaryKey(column22);
-            
+
             sqlite.AddStructure(table3);
             table3.AddStructure(column31);
             table3.AddStructure(column32);
-            
+
             table3.AddPrimaryKey(column31);
             table3.AddPrimaryKey(column32);
 
@@ -111,7 +110,7 @@ public class TransformationsTest
             table1.AddForeignKey(foreignKey);
             table1.AddForeignKey(column12, column31);
             table1.AddForeignKey(column13, column32);
-        
+
             var actual = sqlite.ToSqlCreateStatement();
 
             var expected = "CREATE TABLE MyTable1 " +
@@ -142,27 +141,27 @@ public class TransformationsTest
             var column11 = new Column("Column11", "daTeTimE", true);
             var column12 = new Column("Column12", "varchar(255)");
             var column13 = new Column("Column13", "int");
-            
+
             var table2 = new Table("MyTable2");
             var column21 = new Column("Column21", "varchar(255)");
             var column22 = new Column("Column22", "int", true);
-            
+
             sqlite.AddStructure(table1);
             table1.AddStructure(column11);
             table1.AddStructure(column12);
             table1.AddStructure(column13);
-            
+
             table1.AddPrimaryKey(column11);
 
             sqlite.AddStructure(table2);
             table2.AddStructure(column21);
             table2.AddStructure(column22);
-            
+
             table2.AddPrimaryKey(column22);
 
             var foreignKey1 = new ForeignKey(column12, column21, ForeignKeyOnEnum.Cascade);
             var foreignKey2 = new ForeignKey(column13, column22, ForeignKeyOnEnum.Cascade);
-            
+
             table1.AddForeignKey(foreignKey1);
             table1.AddForeignKey(foreignKey2);
 
@@ -177,8 +176,8 @@ public class TransformationsTest
                            "CREATE TABLE MyTable2 " +
                            "(\n\tColumn21 VARCHAR(255)," +
                            "\n\tColumn22 INT NOT NULL," +
-                           "\n\tPRIMARY KEY (Column22)\n);" ;
-            
+                           "\n\tPRIMARY KEY (Column22)\n);";
+
             Assert.Equal(expected, actual);
         }
 
@@ -190,7 +189,7 @@ public class TransformationsTest
             var expected = "MyColumn INT AUTOINCREMENT NOT NULL";
             Assert.Equal(expected, actual);
         }
-        
+
         [Fact]
         public void DefinitionsCanHaveOptionsAndNotNotNull()
         {

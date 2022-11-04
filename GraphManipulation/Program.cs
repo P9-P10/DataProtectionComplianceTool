@@ -1,7 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using System.Data.SQLite;
-using GraphManipulation.Extensions;
 using GraphManipulation.Models.Stores;
 using VDS.RDF;
 using VDS.RDF.Parsing;
@@ -21,9 +20,9 @@ public static class Program
 
     private static void CreateAndValidateGraph()
     {
-        string baseUri = "http://www.test.com/";
+        var baseUri = "http://www.test.com/";
 
-        string database = "OptimizedAdvancedDatabase.sqlite";
+        var database = "OptimizedAdvancedDatabase.sqlite";
         // string database = "SimpleDatabase.sqlite";
 
         using var conn = new SQLiteConnection($"Data Source=/home/ane/Documents/GitHub/Legeplads/Databases/{database}");
@@ -32,7 +31,7 @@ public static class Program
 
         sqlite.Build();
 
-        IGraph graph = sqlite.ToGraph();
+        var graph = sqlite.ToGraph();
 
         var writer = new CompressingTurtleWriter();
         const string path = "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/test.ttl";
@@ -41,19 +40,19 @@ public static class Program
         IGraph dataGraph = new Graph();
         dataGraph.LoadFromFile(path);
 
-        
 
         IGraph ontology = new Graph();
-        const string ontologyPath = "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/Ontologies/datastore-description-language.ttl";
+        const string ontologyPath =
+            "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/Ontologies/datastore-description-language.ttl";
         ontology.LoadFromFile(ontologyPath, new TurtleParser());
         var shapesGraph = new ShapesGraph(ontology);
-        
-        StaticRdfsReasoner reasoner = new StaticRdfsReasoner();
+
+        var reasoner = new StaticRdfsReasoner();
         reasoner.Initialise(ontology);
         reasoner.Apply(dataGraph);
 
         PrintReport(shapesGraph.Validate(dataGraph));
-        
+
         // Console.WriteLine(sqlite.ToSqlCreateStatement());
     }
 
@@ -61,7 +60,8 @@ public static class Program
     {
         var message = "";
 
-        message += "\nConforms: " + report.Conforms + (report.Results.Count == 0 ? "" : " (" + report.Results.Count + ")");
+        message += "\nConforms: " + report.Conforms +
+                   (report.Results.Count == 0 ? "" : " (" + report.Results.Count + ")");
 
         foreach (var result in report.Results)
         {
