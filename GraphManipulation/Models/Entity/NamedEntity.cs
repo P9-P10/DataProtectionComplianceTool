@@ -23,6 +23,6 @@ public abstract class NamedEntity : Entity
 
     private void AddNameToGraph(IGraph graph)
     {
-        graph.AssertNameTriple(this, Name);
+        graph.AssertNameTriple(this);
     }
 }

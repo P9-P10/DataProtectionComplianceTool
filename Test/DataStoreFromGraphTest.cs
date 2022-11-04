@@ -33,8 +33,7 @@ public class DataStoreFromGraphTest
 
         var graph = CreateBaseTestGraph();
         
-        graph.AssertSqliteTriple(expectedSqlite);
-        graph.AssertNameTriple(expectedSqlite, "TestSQLite");
+        graph.AssertNamedEntityTriple(expectedSqlite);
 
         var actualSqlite = graph.GetDataStores<Sqlite>().First();
         
@@ -60,14 +59,9 @@ public class DataStoreFromGraphTest
         
         var graph = CreateBaseTestGraph();
         
-        graph.AssertSqliteTriple(expectedSqlite);
-        graph.AssertNameTriple(expectedSqlite, expectedSqliteName);
-        
-        graph.AssertSchemaTriple(expectedSchema1);
-        graph.AssertNameTriple(expectedSchema1, expectedSchemaName1);
-
-        graph.AssertSchemaTriple(expectedSchema2);
-        graph.AssertNameTriple(expectedSchema2, expectedSchemaName2);
+        graph.AssertNamedEntityTriple(expectedSqlite);
+        graph.AssertNamedEntityTriple(expectedSchema1);
+        graph.AssertNamedEntityTriple(expectedSchema2);
         
         graph.AssertHasStructureTriple(expectedSqlite, expectedSchema1);
         graph.AssertHasStructureTriple(expectedSqlite, expectedSchema2);
@@ -102,17 +96,10 @@ public class DataStoreFromGraphTest
         
         var graph = CreateBaseTestGraph();
         
-        graph.AssertSqliteTriple(expectedSqlite);
-        graph.AssertNameTriple(expectedSqlite, expectedSqliteName);
-        
-        graph.AssertSchemaTriple(expectedSchema);
-        graph.AssertNameTriple(expectedSchema, expectedSchemaName);
-        
-        graph.AssertTableTriple(expectedTable1);
-        graph.AssertNameTriple(expectedTable1, expectedTableName1);
-        
-        graph.AssertTableTriple(expectedTable2);
-        graph.AssertNameTriple(expectedTable2, expectedTableName2);
+        graph.AssertNamedEntityTriple(expectedSqlite);
+        graph.AssertNamedEntityTriple(expectedSchema);
+        graph.AssertNamedEntityTriple(expectedTable1);
+        graph.AssertNamedEntityTriple(expectedTable2);
         
         graph.AssertHasStructureTriple(expectedSqlite, expectedSchema);
         graph.AssertHasStructureTriple(expectedSchema, expectedTable1);
@@ -126,4 +113,6 @@ public class DataStoreFromGraphTest
     
     
     // TODO: Test with multiple SQLites in the same graph
+    
+    // TODO: Kunne man lave noget i stil med Datastore<Sqlite<Schema<Table<Column>>> ???
 }

@@ -16,46 +16,56 @@ public static class GraphAsserts
         graph.Assert(subj, pred, obj);
     }
 
-    public static void AssertSqliteTriple(this IGraph graph, Entity entity)
-    {
-        graph.AssertTypeTriple(entity, typeof(Sqlite));
-    }
+    // public static void AssertSqliteTriple(this IGraph graph, Entity entity)
+    // {
+    //     graph.AssertTypeTriple(entity, typeof(Sqlite));
+    // }
+    //
+    // public static void AssertSchemaTriple(this IGraph graph, Entity entity)
+    // {
+    //     graph.AssertTypeTriple(entity, typeof(Schema));
+    // }
+    //
+    // public static void AssertTableTriple(this IGraph graph, Entity entity)
+    // {
+    //     graph.AssertTypeTriple(entity, typeof(Table));
+    // }
+    //
+    // public static void AssertColumnTriple(this IGraph graph, Entity entity)
+    // {
+    //     graph.AssertTypeTriple(entity, typeof(Column));
+    // }
 
-    public static void AssertSchemaTriple(this IGraph graph, Entity entity)
-    {
-        graph.AssertTypeTriple(entity, typeof(Schema));
-    }
+    // public static void AssertTypeTriple(this IGraph graph, Entity entity, Type type)
+    // {
+    //     var subj = graph.CreateUriNode(entity.Uri);
+    //     var pred = graph.CreateUriNode("rdf:type");
+    //     var obj = graph.CreateUriNode(GraphDataType.GetGraphTypeString(type));
+    //
+    //     graph.Assert(subj, pred, obj);
+    // }
 
-    public static void AssertTableTriple(this IGraph graph, Entity entity)
-    {
-        graph.AssertTypeTriple(entity, typeof(Table));
-    }
-
-    public static void AssertColumnTriple(this IGraph graph, Entity entity)
-    {
-        graph.AssertTypeTriple(entity, typeof(Column));
-    }
-
-    public static void AssertTypeTriple(this IGraph graph, Entity entity, Type type)
+    public static void AssertTypeTriple(this IGraph graph, Entity entity)
     {
         var subj = graph.CreateUriNode(entity.Uri);
         var pred = graph.CreateUriNode("rdf:type");
-        var obj = graph.CreateUriNode(GraphDataType.GetGraphTypeString(type));
+        var obj = graph.CreateUriNode(GraphDataType.GetGraphTypeString(entity.GetType()));
 
         graph.Assert(subj, pred, obj);
     }
 
     public static void AssertNameTriple(this IGraph graph, NamedEntity entity)
     {
-        graph.AssertNameTriple(entity, entity.Name);
-    }
-
-    public static void AssertNameTriple(this IGraph graph, Entity entity, string name)
-    {
         var subj = graph.CreateUriNode(entity.Uri);
         var pred = graph.CreateUriNode("ddl:hasName");
-        var obj = graph.CreateLiteralNode(name);
-
+        var obj = graph.CreateLiteralNode(entity.Name);
+    
         graph.Assert(subj, pred, obj);
+    }
+
+    public static void AssertNamedEntityTriple(this IGraph graph, NamedEntity entity)
+    {
+        graph.AssertNameTriple(entity);
+        graph.AssertTypeTriple(entity);
     }
 }

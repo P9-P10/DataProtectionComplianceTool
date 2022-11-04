@@ -113,7 +113,7 @@ public abstract class Entity : GraphBased
 
     private void AddTypeToGraph(IGraph graph)
     {
-        graph.AssertTypeTriple(this, GetType());
+        graph.AssertTypeTriple(this);
     }
 }
 
