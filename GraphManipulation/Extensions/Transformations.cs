@@ -10,8 +10,16 @@ public static class Transformations
         switch (entity)
         {
             case Column column:
-                return $"{column.Name} {column.DataType.ToUpper()}{(column.IsNotNull ? " NOT NULL" : "")}";
-            
+                var name = column.Name;
+                var dataType = column.DataType.ToUpper();
+                var isNotNull = column.IsNotNull ? "NOT NULL" : "";
+                var options = !string.IsNullOrEmpty(column.Options) ? column.Options : "";
+
+                var dataTypeOptionsSpacing = !string.IsNullOrEmpty(column.Options) ? " " : "";
+                var optionsIsNotNullSpacing = column.IsNotNull ? " " : ""; 
+
+                return $"{name} {dataType}{dataTypeOptionsSpacing}{options}{optionsIsNotNullSpacing}{isNotNull}";
+
             case Table table:
                 var subStructuresAsStrings = table.SubStructures.Select(ToSqlCreateStatement);
                 var joinedSubStructures = string.Join(",\n\t", subStructuresAsStrings);
@@ -22,13 +30,20 @@ public static class Transformations
                         .GroupBy(fk => fk.To.ParentStructure)
                         .ToList()
                         .Select(parentGrouping =>
-                {
-                    var foreignKeysFrom = $"FOREIGN KEY ({string.Join(", ", table.ForeignKeys.Where(fk => fk.To.ParentStructure.Equals(parentGrouping.Key)).Select(fk => fk.From.Name))}) ";
+                        {
+                    var joinedForeignKeyNames = string.Join(", ",
+                        table.ForeignKeys
+                            .Where(fk => fk.To.ParentStructure.Equals(parentGrouping.Key))
+                            .Select(fk => fk.From.Name));
+                    var foreignKeysFrom = $"FOREIGN KEY ({joinedForeignKeyNames}) ";
                     var foreignKeysToTable = $"REFERENCES {parentGrouping.Key.Name} ";
                     var foreignKeysToColumns =
-                        $"({string.Join(", ", parentGrouping.Select(fk => fk.To!.Name))})";
+                        $"({string.Join(", ", parentGrouping.Select(fk => fk.To.Name))}) ";
 
-                    return foreignKeysFrom + foreignKeysToTable + foreignKeysToColumns;
+                    var foreignKeyOnActions =
+                        $"ON DELETE {parentGrouping.First().OnDeleteString} ON UPDATE {parentGrouping.First().OnUpdateString}";
+
+                    return foreignKeysFrom + foreignKeysToTable + foreignKeysToColumns + foreignKeyOnActions;
                 }));
 
                 var definitions = string.Join(",\n\t",

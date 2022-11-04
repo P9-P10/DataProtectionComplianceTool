@@ -5,25 +5,10 @@ namespace GraphManipulation.Models.Stores;
 
 public abstract class Database : DataStore
 {
-    // protected string ConnectionString;
-    //
-    // public void SetConnectionString(string connectionString)
-    // {
-    //     ConnectionString = connectionString;
-    // }
-    //
-    // public override string GetConnectionString()
-    // {
-    //     if (_connection is null) throw new DataStoreException("Connection was null when building DataStore");
-    //
-    //     return base.GetConnectionString();
-    // }
-
     protected DbConnection? Connection;
     
     protected Database(string name) : base(name)
     {
-        // ConnectionString = "";
     }
 
     protected Database(string name, string baseUri) : base(name, baseUri)
@@ -39,7 +24,6 @@ public abstract class Database : DataStore
     public void SetConnection(DbConnection connection)
     {
         Connection = connection;
-        // ConnectionString = connection.ConnectionString;
     }
     
     public override void Build()
@@ -52,10 +36,4 @@ public abstract class Database : DataStore
     {
         
     }
-
-    public abstract string ToCreateStatement();
-
-    public abstract void FromCreateStatement(string createStatement);
-
-    public abstract void GenerateInsertStatements();
 }

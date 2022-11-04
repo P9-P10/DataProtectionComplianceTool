@@ -13,6 +13,8 @@ public class Column : Structure
     }
 
     public string Options { get; private set; }
+
+    public static readonly List<string> ValidOptions = new() { "AUTOINCREMENT" };
     public string DataType { get; private set; }
     public bool IsNotNull { get; private set; }
 

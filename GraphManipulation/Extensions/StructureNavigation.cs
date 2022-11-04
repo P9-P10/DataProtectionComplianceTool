@@ -6,13 +6,6 @@ namespace GraphManipulation.Extensions;
 
 public static class StructureNavigation
 {
-    // public static Column GetColumnFromTable(this Column column, string columnName, Table table)
-    // {
-    //     return (table.SubStructures.First(s => s.Name == columnName) as Column)!;
-    // }
-
-    
-
     public static Schema FindSchema(this DataStore dataStore, string schemaName)
     {
         return (dataStore.SubStructures.First(s => s.Name == schemaName) as Schema)!;

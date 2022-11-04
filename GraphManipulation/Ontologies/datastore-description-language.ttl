@@ -51,6 +51,27 @@ ddl:isNotNull
 ddl:columnOptions
     a rdf:Property .
 
+ddl:foreignKeyOnAction
+    a rdf:Property .
+
+ddl:foreignKeyOnDelete
+    a                  rdf:Property ;
+    rdfs:subPropertyOf ddl:foreignKeyOnAction .
+
+ddl:foreignKeyOnUpdate
+    a                  rdf:Property ;
+    rdfs:subPropertyOf ddl:foreignKeyOnAction .
+
+ddl:foreignKeyOnSubjectsShape
+    a                   sh:NodeShape ;
+    sh:targetSubjectsOf ddl:foreignKeyOnAction ;
+    sh:class            ddl:Column .
+
+ddl:foreignKeyOnObjectsShape
+    a                  sh:NodeShape ;
+    sh:targetObjectsOf ddl:foreignKeyOnAction ;
+    sh:datatype        xsd:string .
+
 ddl:columnOptionsSubjectShape
     a                   sh:NodeShape ;
     sh:targetSubjectsOf ddl:columnOptions ;
@@ -119,8 +140,7 @@ ddl:Relational
     rdfs:subClassOf ddl:Database ;
     sh:property     [ sh:path     ddl:hasStructure ;
                       sh:class    ddl:Schema ;
-                      sh:minCount 1 ; ] ;
-    sh:property     [ sh:path ddl:hasName ; ] .
+                      sh:minCount 1 ; ] .
 
 
 ddl:SQLite
@@ -142,7 +162,7 @@ ddl:Structure
     sh:property     [ sh:path     ddl:hasStore ;
                       sh:class    ddl:Datastore ;
                       sh:minCount 1 ;
-                      sh:maxCount 2 ] .
+                      sh:maxCount 1 ] .
 
 ddl:Schema
     a               rdfs:Class, sh:NodeShape ;

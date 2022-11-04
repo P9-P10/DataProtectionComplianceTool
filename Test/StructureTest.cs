@@ -554,6 +554,29 @@ public class StructureTest
 
             Assert.Single(table1.ForeignKeys);
         }
+        
+        [Fact]
+        public void AddForeignKeySameToTableDifferentOnActionThrowsException()
+        {
+            var table1 = new Table("Table1");
+            var table2 = new Table("Table2");
+            var column11 = new Column("Column11");
+            var column12 = new Column("Column12");
+            var column21 = new Column("Column21");
+            var column22 = new Column("Column22");
+
+            table1.UpdateBaseUri(baseUri);
+            table1.AddStructure(column11);
+            table1.AddStructure(column12);
+            
+            table2.UpdateBaseUri(baseUri);
+            table2.AddStructure(column21);
+            table2.AddStructure(column22);
+            
+            table1.AddForeignKey(new ForeignKey(column11, column21, onDelete: ForeignKeyOnEnum.Cascade));
+            Assert.Throws<StructureException>(() =>
+                table1.AddForeignKey(new ForeignKey(column12, column22, onDelete: ForeignKeyOnEnum.NoAction)));
+        }
 
         [Fact]
         public void DeleteForeignKeyByNameRemovesForeignKey()
@@ -697,10 +720,94 @@ public class StructureTest
         [Fact]
         public void ToGraphForeignKeyReferencesAddedToGraph()
         {
+            var graph = GenerateGraphWithForeignKey(
+                ForeignKeyOnEnum.Cascade, 
+                ForeignKeyOnEnum.NoAction, 
+                out var column1, out var column2);
+
+            var subj = graph.CreateUriNode(column1.Uri);
+            var pred = graph.CreateUriNode("ddl:references");
+            var obj = graph.CreateUriNode(column2.Uri);
+
+            var triple = new Triple(subj, pred, obj);
+
+            Assert.Contains(triple, graph.Triples);
+        }
+
+        [Fact]
+        public void ToGraphForeignKeyOnDeleteCascadeAddedToGraph()
+        {
+            var graph = GenerateGraphWithForeignKey(
+                ForeignKeyOnEnum.Cascade, 
+                ForeignKeyOnEnum.NoAction, 
+                out var column1, out var column2);
+            
+            var subj = graph.CreateUriNode(column1.Uri);
+            var pred = graph.CreateUriNode("ddl:foreignKeyOnDelete");
+            var obj = graph.CreateLiteralNode("CASCADE");
+
+            var triple = new Triple(subj, pred, obj);
+
+            Assert.Contains(triple, graph.Triples);
+        }
+
+        [Fact]
+        public void ToGraphForeignKeyOnDeleteNoActionAddedToGraph()
+        {
+            var graph = GenerateGraphWithForeignKey(
+                ForeignKeyOnEnum.NoAction, 
+                ForeignKeyOnEnum.NoAction, 
+                out var column1, out var column2);
+            
+            var subj = graph.CreateUriNode(column1.Uri);
+            var pred = graph.CreateUriNode("ddl:foreignKeyOnDelete");
+            var obj = graph.CreateLiteralNode("NO ACTION");
+
+            var triple = new Triple(subj, pred, obj);
+
+            Assert.Contains(triple, graph.Triples);
+        }
+
+        [Fact]
+        public void ToGraphForeignKeyOnUpdateCascadeAddedToGraph()
+        {
+            var graph = GenerateGraphWithForeignKey(
+                ForeignKeyOnEnum.NoAction, 
+                ForeignKeyOnEnum.Cascade, 
+                out var column1, out var column2);
+            
+            var subj = graph.CreateUriNode(column1.Uri);
+            var pred = graph.CreateUriNode("ddl:foreignKeyOnUpdate");
+            var obj = graph.CreateLiteralNode("CASCADE");
+
+            var triple = new Triple(subj, pred, obj);
+
+            Assert.Contains(triple, graph.Triples);
+        }
+
+        [Fact]
+        public void ToGraphForeignKeyOnUpdateNoActionAddedToGraph()
+        {
+            var graph = GenerateGraphWithForeignKey(
+                ForeignKeyOnEnum.NoAction, 
+                ForeignKeyOnEnum.NoAction, 
+                out var column1, out var column2);
+            
+            var subj = graph.CreateUriNode(column1.Uri);
+            var pred = graph.CreateUriNode("ddl:foreignKeyOnUpdate");
+            var obj = graph.CreateLiteralNode("NO ACTION");
+
+            var triple = new Triple(subj, pred, obj);
+
+            Assert.Contains(triple, graph.Triples);
+        }
+
+        private IGraph GenerateGraphWithForeignKey(ForeignKeyOnEnum onDelete, ForeignKeyOnEnum onUpdate, out Column column1, out Column column2)
+        {
             var table1 = new Table("Table1");
             var table2 = new Table("Table2");
-            var column1 = new Column("Column1");
-            var column2 = new Column("Column2");
+            column1 = new Column("Column1");
+            column2 = new Column("Column2");
             
             table1.UpdateBaseUri(baseUri);
             table2.UpdateBaseUri(baseUri);
@@ -711,7 +818,7 @@ public class StructureTest
             table1.AddPrimaryKey(column1);
             table2.AddPrimaryKey(column2);
 
-            var foreignKey = new ForeignKey(column1, column2);
+            var foreignKey = new ForeignKey(column1, column2, onDelete, onUpdate);
             table1.AddForeignKey(foreignKey);
 
             // Added to avoid StructureException caused by Structure having no Store
@@ -722,13 +829,7 @@ public class StructureTest
 
             var graph = table1.ToGraph();
 
-            var subj = graph.CreateUriNode(column1.Uri);
-            var pred = graph.CreateUriNode("ddl:references");
-            var obj = graph.CreateUriNode(column2.Uri);
-
-            var triple = new Triple(subj, pred, obj);
-
-            Assert.Contains(triple, graph.Triples);
+            return graph;
         }
     }
 

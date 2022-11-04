@@ -6,8 +6,6 @@ public class Table : Structure
 {
     public List<ForeignKey> ForeignKeys = new();
     public List<Column> PrimaryKeys = new();
-    
-    // TODO: Check at alle foreignkeys refererer til kolonner i den samme tabel
 
     public Table(string name) : base(name)
     {
@@ -40,9 +38,23 @@ public class Table : Structure
             throw new StructureException("The 'from' part of a foreign key must be in the list of SubStructures");
         }
 
+        CheckForeignKeysWithSameToParentHaveSameOnActions(foreignKey);
+
         if (!ForeignKeys.Contains(foreignKey))
         {
             ForeignKeys.Add(foreignKey);
+        }
+    }
+
+    private void CheckForeignKeysWithSameToParentHaveSameOnActions(ForeignKey foreignKey)
+    {
+        var relevantKeys = ForeignKeys.Where(fk => fk.To.ParentStructure.Equals(foreignKey.To.ParentStructure));
+
+        var onActionsAreSame = relevantKeys.All(fk => fk.OnDelete == foreignKey.OnDelete && fk.OnUpdate == foreignKey.OnUpdate);
+
+        if (!onActionsAreSame)
+        {
+            throw new StructureException("All foreign keys must have the same 'on actions'");
         }
     }
 
@@ -96,18 +108,24 @@ public class Table : Structure
         }
 
         var table = graph.CreateUriNode(Uri);
-        var foreignKeyRelation = graph.CreateUriNode("ddl:foreignKey");
+        var foreignKeyPredicate = graph.CreateUriNode("ddl:foreignKey");
+        var referencesPredicate = graph.CreateUriNode("ddl:references");
+        var foreignKeyOnDeletePredicate = graph.CreateUriNode("ddl:foreignKeyOnDelete");
+        var foreignKeyOnUpdatePredicate = graph.CreateUriNode("ddl:foreignKeyOnUpdate");
 
         foreach (var foreignKey in ForeignKeys)
         {
             var from = graph.CreateUriNode(foreignKey.From.Uri);
-
-            graph.Assert(table, foreignKeyRelation, from);
-
-            var referencesRelation = graph.CreateUriNode("ddl:references");
             var to = graph.CreateUriNode(foreignKey.To.Uri);
+            
+            graph.Assert(table, foreignKeyPredicate, from);
+            graph.Assert(from, referencesPredicate, to);
 
-            graph.Assert(from, referencesRelation, to);
+            var onDelete = graph.CreateLiteralNode(foreignKey.OnDeleteString);
+            var onUpdate = graph.CreateLiteralNode(foreignKey.OnUpdateString);
+
+            graph.Assert(from, foreignKeyOnDeletePredicate, onDelete);
+            graph.Assert(from, foreignKeyOnUpdatePredicate, onUpdate);
         }
     }
 }

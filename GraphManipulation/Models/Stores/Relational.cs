@@ -21,8 +21,8 @@ public abstract class Relational : Database
     }
 
     protected List<StructureQueryResult> StructureQueryResults = new();
-
     protected List<ForeignKeysQueryResult> ForeignKeysQueryResults = new();
+    protected List<ColumnOptionsQueryResult> ColumnOptionsQueryResults = new();
 
     public override void Build()
     {
@@ -30,13 +30,17 @@ public abstract class Relational : Database
         
         GetStructureQueryResults();
         GetForeignKeysQueryResults();
+        GetColumnOptionsQueryResults();
         BuildStructure();
         BuildForeignKeys();
+        BuildColumnOptions();
     }
     
     protected abstract void GetStructureQueryResults();
 
     protected abstract void GetForeignKeysQueryResults();
+
+    protected abstract void GetColumnOptionsQueryResults();
 
     private void BuildStructure()
     {
@@ -86,13 +90,25 @@ public abstract class Relational : Database
                 .FindTable(result.ToTable)
                 .FindColumn(result.ToColumn);
             
-            fromTable.AddForeignKey(fromColumn, toColumn);
+            fromTable.AddForeignKey(new ForeignKey(fromColumn, toColumn, result.OnDelete, result.OnUpdate));
         });
     }
     
+    private void BuildColumnOptions()
+    {
+        ColumnOptionsQueryResults.ForEach(result =>
+        {
+            this
+                .FindSchema(result.SchemaName)
+                .FindTable(result.TableName)
+                .FindColumn(result.ColumnName)
+                .SetOptions(result.Options);
+        });
+    }    
     public class StructureQueryResult
     {
-        public StructureQueryResult(string schemaName, string tableName, string columnName, string dataType, long isPrimaryKey, long isNotNull)
+        public StructureQueryResult(string schemaName, string tableName, string columnName, 
+            string dataType, long isPrimaryKey, long isNotNull)
         {
             SchemaName = schemaName;
             TableName = tableName;
@@ -112,7 +128,10 @@ public abstract class Relational : Database
     
     public class ForeignKeysQueryResult
     {
-        public ForeignKeysQueryResult(string fromSchema, string fromTable, string fromColumn, string toSchema, string toTable, string toColumn)
+        public ForeignKeysQueryResult(
+            string fromSchema, string fromTable, string fromColumn, 
+            string toSchema, string toTable, string toColumn,
+            string onDelete, string onUpdate)
         {
             FromSchema = fromSchema;
             FromTable = fromTable;
@@ -120,6 +139,20 @@ public abstract class Relational : Database
             ToSchema = toSchema;
             ToTable = toTable;
             ToColumn = toColumn;
+
+            OnDelete = onDelete.ToUpper() switch
+            {
+                "CASCADE" => ForeignKeyOnEnum.Cascade,
+                "NO ACTION" => ForeignKeyOnEnum.NoAction,
+                _ => throw new ForeignKeysQueryResultException("Action not supported: " + onDelete.ToUpper())
+            };
+            
+            OnUpdate = onUpdate.ToUpper() switch
+            {
+                "CASCADE" => ForeignKeyOnEnum.Cascade,
+                "NO ACTION" => ForeignKeyOnEnum.NoAction,
+                _ => throw new ForeignKeysQueryResultException("Action not supported: " + onUpdate.ToUpper())
+            };
         }
 
         public string FromSchema { get; set; }
@@ -128,5 +161,30 @@ public abstract class Relational : Database
         public string ToSchema { get; set; }
         public string ToTable { get; set; }
         public string ToColumn { get; set; }
+        public ForeignKeyOnEnum OnDelete { get; set; }
+        public ForeignKeyOnEnum OnUpdate { get; set; }
+    }
+
+    public class ColumnOptionsQueryResult
+    {
+        public ColumnOptionsQueryResult(string schemaName, string tableName, string columnName, string options)
+        {
+            SchemaName = schemaName;
+            TableName = tableName;
+            ColumnName = columnName;
+            Options = options;
+        }
+
+        public string SchemaName { get; set; }
+        public string TableName { get; set; }
+        public string ColumnName { get; set; }
+        public string Options { get; set; }
+    }
+}
+
+public class ForeignKeysQueryResultException : Exception
+{
+    public ForeignKeysQueryResultException(string message) : base(message)
+    {
     }
 }

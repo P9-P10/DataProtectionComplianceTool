@@ -67,7 +67,7 @@ public class SqliteTest
             ExpectedTableUsers.AddPrimaryKey(ExpectedColumnUsersId);
             ExpectedTableUserData.AddPrimaryKey(ExpectedColumnUserDataId);
 
-            ExpectedForeignKeyUserDataIdUsersId = new ForeignKey(ExpectedColumnUserDataId, ExpectedColumnUsersId);
+            ExpectedForeignKeyUserDataIdUsersId = new ForeignKey(ExpectedColumnUserDataId, ExpectedColumnUsersId, onDelete: ForeignKeyOnEnum.Cascade);
             
             ExpectedTableUserData.AddForeignKey(ExpectedForeignKeyUserDataIdUsersId);
             
@@ -180,7 +180,7 @@ public class SqliteTest
         }
 
         [Fact]
-        public void SqliteColumnsGetOptions()
+        public void SqliteColumnsGetValidOptions()
         {
             var actual = _testDatabaseFixture.Sqlite
                 .FindSchema("main")
@@ -192,7 +192,7 @@ public class SqliteTest
 
             Assert.Equal(expected, actual);
         }
-
+        
         [Fact]
         public void SqliteTableGetsPrimaryKeys()
         {
@@ -222,7 +222,7 @@ public class SqliteTest
         }
 
         [Fact]
-        public void SqliteForeignKeyColumnsReferencesColumns()
+        public void SqliteForeignKeyColumnReferenceColumn()
         {
             var actualReferencedColumn = _testDatabaseFixture.Sqlite
                 .FindSchema("main")
@@ -230,6 +230,30 @@ public class SqliteTest
                 .FindColumn("id");
 
             Assert.Equal(_testDatabaseFixture.ExpectedForeignKeyUserDataIdUsersId.To, actualReferencedColumn);
+        }
+
+        [Fact]
+        public void SqliteForeignKeysGetsOnDelete()
+        {
+            var actual = _testDatabaseFixture.Sqlite
+                .FindSchema("main")
+                .FindTable("UserData")
+                .FindForeignKey("id")
+                .OnDelete;
+            
+            Assert.Equal(ForeignKeyOnEnum.Cascade, actual);
+        }
+
+        [Fact]
+        public void SqliteForeignKeysGetsOnUpdate()
+        {
+            var actual = _testDatabaseFixture.Sqlite
+                .FindSchema("main")
+                .FindTable("UserData")
+                .FindForeignKey("id")
+                .OnUpdate;
+            
+            Assert.Equal(ForeignKeyOnEnum.NoAction, actual);
         }
     }
 
