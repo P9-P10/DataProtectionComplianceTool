@@ -1,3 +1,4 @@
+using GraphManipulation.Extensions;
 using VDS.RDF;
 
 namespace GraphManipulation.Models.Entity;
@@ -22,17 +23,6 @@ public abstract class NamedEntity : Entity
 
     private void AddNameToGraph(IGraph graph)
     {
-        var triple = new Triple(
-            graph.CreateUriNode(Uri),
-            graph.CreateUriNode("ddl:hasName"),
-            graph.CreateLiteralNode(Name)
-        );
-
-        graph.Assert(triple);
-    }
-
-    public override void FromGraph(IGraph graph)
-    {
-        base.FromGraph(graph);
+        graph.AssertNameTriple(this, Name);
     }
 }

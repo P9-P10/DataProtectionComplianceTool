@@ -78,11 +78,6 @@ public abstract class DataStore : StructuredEntity
                 structure.UpdateBaseUri(baseUri);
             }
     }
-
-    public override void FromGraph(IGraph graph)
-    {
-        base.FromGraph(graph);
-    }
 }
 
 public class DataStoreException : Exception

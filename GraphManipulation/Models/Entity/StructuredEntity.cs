@@ -1,3 +1,4 @@
+using GraphManipulation.Extensions;
 using GraphManipulation.Models.Structures;
 using VDS.RDF;
 
@@ -24,21 +25,11 @@ public abstract class StructuredEntity : NamedEntity
 
     private void AddStructureToGraph(IGraph graph)
     {
-        var subj = graph.CreateUriNode(Uri);
-        var pred = graph.CreateUriNode("ddl:hasStructure");
-
         foreach (var subStructure in SubStructures)
         {
             graph.Merge(subStructure.ToGraph());
-
-            var obj = graph.CreateUriNode(subStructure.Uri);
-
-            graph.Assert(subj, pred, obj);
+            
+            graph.AssertHasStructureTriple(this, subStructure);
         }
-    }
-
-    public override void FromGraph(IGraph graph)
-    {
-        base.FromGraph(graph);
     }
 }

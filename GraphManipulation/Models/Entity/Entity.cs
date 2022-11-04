@@ -115,13 +115,6 @@ public abstract class Entity : GraphBased
     {
         graph.AssertTypeTriple(this, GetType());
     }
-
-    public override void FromGraph(IGraph graph)
-    {
-        base.FromGraph(graph);
-
-        BaseUri = graph.BaseUri.ToString();
-    }
 }
 
 public class EntityException : Exception

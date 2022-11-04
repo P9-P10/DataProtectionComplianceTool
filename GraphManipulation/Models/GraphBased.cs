@@ -20,11 +20,6 @@ public abstract class GraphBased
     {
         graph.NamespaceMap.AddNamespace("ddl", OntologyNamespace);
     }
-
-    public virtual void FromGraph(IGraph graph)
-    {
-        
-    }
 }
 
 public class GraphBasedException : Exception
