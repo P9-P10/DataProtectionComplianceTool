@@ -23,9 +23,9 @@ public abstract class Relational : Database
     {
     }
 
-    public override void Build()
+    public override void BuildFromDataSource()
     {
-        base.Build();
+        base.BuildFromDataSource();
 
         GetStructureQueryResults();
         GetForeignKeysQueryResults();

@@ -30,4 +30,9 @@ public abstract class NamedEntity : Entity
 
         graph.Assert(triple);
     }
+
+    public override void FromGraph(IGraph graph)
+    {
+        base.FromGraph(graph);
+    }
 }

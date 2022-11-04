@@ -21,6 +21,7 @@ public abstract class DataStore : StructuredEntity
     protected DataStore(string name, string baseUri) : this(name)
     {
         BaseUri = baseUri;
+        ComputeId();
     }
 
     // protected SupportedDataStores DataStoreType;
@@ -47,7 +48,7 @@ public abstract class DataStore : StructuredEntity
         structure.UpdateIdToBottom();
     }
 
-    public virtual void Build()
+    public virtual void BuildFromDataSource()
     {
         BuildDataStore();
     }
@@ -66,23 +67,21 @@ public abstract class DataStore : StructuredEntity
         throw new EntityException("BaseUri was null when computing hash");
     }
 
-    public override void UpdateBaseUri(string baseName)
+    public override void UpdateBaseUri(string baseUri)
     {
-        BaseUri = baseName;
+        BaseUri = baseUri;
         ComputeId();
 
         foreach (var structure in SubStructures)
-            if (!structure.HasSameBase(baseName))
+            if (!structure.HasSameBase(baseUri))
             {
-                structure.UpdateBaseUri(baseName);
+                structure.UpdateBaseUri(baseUri);
             }
     }
 
-    public override IGraph ToGraph()
+    public override void FromGraph(IGraph graph)
     {
-        var graph = base.ToGraph();
-
-        return graph;
+        base.FromGraph(graph);
     }
 }
 

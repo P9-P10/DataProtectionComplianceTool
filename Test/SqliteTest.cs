@@ -37,7 +37,7 @@ public class SqliteTest
         {
             Sqlite = new Sqlite("", BaseUri, Connection);
 
-            Sqlite.Build();
+            Sqlite.BuildFromDataSource();
 
             ExpectedSqlite.AddStructure(ExpectedSchema);
 
@@ -98,7 +98,7 @@ public class SqliteTest
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(BaseUri);
 
-            Assert.Throws<DataStoreException>(() => sqlite.Build());
+            Assert.Throws<DataStoreException>(() => sqlite.BuildFromDataSource());
         }
 
         [Fact]

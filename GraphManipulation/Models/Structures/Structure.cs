@@ -13,27 +13,27 @@ public abstract class Structure : StructuredEntity //, IHasStructure
     {
     }
 
-    public override void UpdateBaseUri(string baseName)
+    public override void UpdateBaseUri(string baseUri)
     {
-        BaseUri = baseName;
+        BaseUri = baseUri;
 
-        if (!IsTop() && !ParentStructure.HasSameBase(baseName))
+        if (!IsTop() && !ParentStructure.HasSameBase(baseUri))
         {
-            ParentStructure.UpdateBaseUri(baseName);
+            ParentStructure.UpdateBaseUri(baseUri);
         }
 
         if (!IsBottom())
         {
             foreach (var subStructure in SubStructures)
-                if (!subStructure.HasSameBase(baseName))
+                if (!subStructure.HasSameBase(baseUri))
                 {
-                    subStructure.UpdateBaseUri(baseName);
+                    subStructure.UpdateBaseUri(baseUri);
                 }
         }
 
-        if (IsTop() && HasStore() && !Store.HasSameBase(baseName))
+        if (IsTop() && HasStore() && !Store.HasSameBase(baseUri))
         {
-            Store.UpdateBaseUri(baseName);
+            Store.UpdateBaseUri(baseUri);
         }
 
         ComputeId();

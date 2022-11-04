@@ -36,4 +36,9 @@ public abstract class StructuredEntity : NamedEntity
             graph.Assert(subj, pred, obj);
         }
     }
+
+    public override void FromGraph(IGraph graph)
+    {
+        base.FromGraph(graph);
+    }
 }

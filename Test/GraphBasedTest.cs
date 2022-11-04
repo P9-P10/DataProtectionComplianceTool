@@ -1,3 +1,4 @@
+using GraphManipulation.Models;
 using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
@@ -234,5 +235,43 @@ public class GraphBasedTest
 
     public class FromGraph
     {
+        // [Fact]
+        // public void ColumnFromGraph()
+        // {
+        //     // var sqlite = new Sqlite("SQLite", baseUri);
+        //     // var schema = new Schema("Schema");
+        //     // var table = new Table("Table");
+        //     // var column1 = new Column("Column1", "INT", true);
+        //     // var column2 = new Column("Column2", "VARCHAR(255)", false, "AUTOINCREMENT");
+        //     //
+        //     // sqlite.AddStructure(schema);
+        //     // schema.AddStructure(table);
+        //     // table.AddStructure(column1);
+        //     // table.AddStructure(column2);
+        //     // table.AddPrimaryKey(column1);
+        //
+        //     var expected = new Column("Column", "INT");
+        //     expected.UpdateBaseUri(baseUri);
+        //     
+        //     IGraph graph = new Graph();
+        //     
+        //     graph.NamespaceMap.AddNamespace("ddl", GraphBased.OntologyNamespace);
+        //     var uri = UriFactory.Create(baseUri);
+        //     graph.BaseUri = uri;
+        //
+        //     var subj = graph.CreateUriNode(expected.Uri);
+        //     var pred = graph.CreateUriNode("rdf:type");
+        //     var obj = graph.CreateUriNode("ddl:Column");
+        //
+        //     graph.Assert(subj, obj, pred);
+        //
+        //     var actual = new Column("");
+        //     actual.FromGraph(graph);
+        //     
+        //     Assert.Equal(expected.BaseUri, actual.BaseUri);
+        //     Assert.Equal(expected.Id, actual.Id);
+        //     Assert.Equal(expected.Name, actual.Name);
+        //     Assert.Equal(expected.DataType, actual.DataType);
+        // }
     }
 }

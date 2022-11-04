@@ -4,7 +4,7 @@ namespace GraphManipulation.Models;
 
 public abstract class GraphBased
 {
-    private static Uri OntologyNamespace =>
+    public static Uri OntologyNamespace =>
         UriFactory.Create("http://www.cs-22-dt-9-03.org/datastore-description-language#");
 
     public virtual IGraph ToGraph()
@@ -21,9 +21,9 @@ public abstract class GraphBased
         graph.NamespaceMap.AddNamespace("ddl", OntologyNamespace);
     }
 
-    public virtual GraphBased FromGraph(IGraph graph)
+    public virtual void FromGraph(IGraph graph)
     {
-        throw new NotImplementedException();
+        
     }
 }
 

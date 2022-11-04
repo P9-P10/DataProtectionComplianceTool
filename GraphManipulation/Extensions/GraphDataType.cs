@@ -1,3 +1,4 @@
+using System.Xml;
 using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
@@ -8,19 +9,21 @@ public static class GraphDataType
 {
     public static string GetGraphTypeString(this Entity entity)
     {
-        switch (entity)
+        return GetGraphTypeString(entity.GetType());
+    }
+
+    public static string GetGraphTypeString(Type type)
+    {
+        const string prefix = "ddl:";
+
+        return prefix + type switch
         {
-            case Column:
-                return "Column";
-            case Table:
-                return "Table";
-            case Schema:
-                return "Schema";
-            case Sqlite:
-                return "SQLite";
-            default:
-                throw new GraphDataTypeException("Type not supported " + entity.GetType());
-        }
+            { } when type == typeof(Column) => "Column",
+            { } when type == typeof(Table) => "Table",
+            { } when type == typeof(Schema) => "Schema",
+            { } when type == typeof(Sqlite) => "SQLite",
+            _ => throw new GraphDataTypeException("Type not supported " + type)
+        };
     }
 }
 

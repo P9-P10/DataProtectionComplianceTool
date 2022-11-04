@@ -24,9 +24,9 @@ public abstract class Database : DataStore
         Connection = connection;
     }
 
-    public override void Build()
+    public override void BuildFromDataSource()
     {
-        base.Build();
+        base.BuildFromDataSource();
         BuildDatabase();
     }
 

@@ -85,7 +85,7 @@ public class Sqlite : Relational
         }).ToList();
     }
 
-    public override void Build()
+    public override void BuildFromDataSource()
     {
         if (Connection is null)
         {
@@ -96,7 +96,7 @@ public class Sqlite : Relational
 
         Name = GetNameFromDataSource();
 
-        base.Build();
+        base.BuildFromDataSource();
 
         Connection.Close();
 
@@ -106,11 +106,5 @@ public class Sqlite : Relational
     private string GetNameFromDataSource()
     {
         return Connection!.DataSource!;
-    }
-
-    public override IGraph ToGraph()
-    {
-        var graph = base.ToGraph();
-        return graph;
     }
 }

@@ -43,7 +43,7 @@ public abstract class Entity : GraphBased
         return stringBuilder.ToString();
     }
 
-    public abstract void UpdateBaseUri(string baseName);
+    public abstract void UpdateBaseUri(string baseUri);
 
     public bool HasBase()
     {
@@ -113,13 +113,14 @@ public abstract class Entity : GraphBased
 
     private void AddTypeToGraph(IGraph graph)
     {
-        var triple = new Triple(
-            graph.CreateUriNode(Uri),
-            graph.CreateUriNode("rdf:type"),
-            graph.CreateUriNode("ddl:" + this.GetGraphTypeString())
-        );
+        graph.AssertTypeTriple(this, GetType());
+    }
 
-        graph.Assert(triple);
+    public override void FromGraph(IGraph graph)
+    {
+        base.FromGraph(graph);
+
+        BaseUri = graph.BaseUri.ToString();
     }
 }
 

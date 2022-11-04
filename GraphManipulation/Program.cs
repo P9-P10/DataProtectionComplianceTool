@@ -29,7 +29,7 @@ public static class Program
 
         var sqlite = new Sqlite("", baseUri, conn);
 
-        sqlite.Build();
+        sqlite.BuildFromDataSource();
 
         var graph = sqlite.ToGraph();
 
