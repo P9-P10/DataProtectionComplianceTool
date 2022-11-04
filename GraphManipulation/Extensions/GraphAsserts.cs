@@ -1,6 +1,4 @@
 using GraphManipulation.Models.Entity;
-using GraphManipulation.Models.Stores;
-using GraphManipulation.Models.Structures;
 using VDS.RDF;
 
 namespace GraphManipulation.Extensions;
@@ -30,7 +28,7 @@ public static class GraphAsserts
         var subj = graph.CreateUriNode(entity.Uri);
         var pred = graph.CreateUriNode("ddl:hasName");
         var obj = graph.CreateLiteralNode(entity.Name);
-    
+
         graph.Assert(subj, pred, obj);
     }
 

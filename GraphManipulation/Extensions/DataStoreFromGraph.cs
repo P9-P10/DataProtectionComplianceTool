@@ -1,12 +1,6 @@
-using System.Linq.Expressions;
-using System.Reflection;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
 using VDS.RDF;
-using VDS.RDF.Parsing;
-using VDS.RDF.Query;
-using VDS.RDF.Query.Datasets;
-using GraphManipulation.Extensions;
 
 namespace GraphManipulation.Extensions;
 
@@ -19,7 +13,7 @@ public static class DataStoreFromGraph
             .Select(triple =>
             {
                 var name = graph.GetNameOfNode(triple.Subject);
-                
+
                 // TODO: Det her er langsomt, men jeg kunne ikke finde andre måder der virkede
                 return (T)Activator.CreateInstance(typeof(T), name, graph.BaseUri.ToString())!;
             })
@@ -68,7 +62,7 @@ public static class DataStoreFromGraph
             .Select(triple => triple.Object)
             .ToList();
     }
-    
+
     //
     // private static List<Table> GetTables(this IGraph graph, Schema schema)
     // {

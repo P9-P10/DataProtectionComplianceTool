@@ -1,6 +1,5 @@
 using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Structures;
-using VDS.RDF;
 
 namespace GraphManipulation.Models.Stores;
 

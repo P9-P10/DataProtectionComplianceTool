@@ -1,7 +1,6 @@
 using System.Data.Common;
 using Dapper;
 using GraphManipulation.Models.Structures;
-using VDS.RDF;
 
 namespace GraphManipulation.Models.Stores;
 

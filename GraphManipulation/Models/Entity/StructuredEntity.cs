@@ -28,7 +28,7 @@ public abstract class StructuredEntity : NamedEntity
         foreach (var subStructure in SubStructures)
         {
             graph.Merge(subStructure.ToGraph());
-            
+
             graph.AssertHasStructureTriple(this, subStructure);
         }
     }

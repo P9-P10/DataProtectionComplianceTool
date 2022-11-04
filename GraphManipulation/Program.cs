@@ -34,7 +34,8 @@ public static class Program
         var graph = sqlite.ToGraph();
 
         var writer = new CompressingTurtleWriter();
-        const string path = "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/test.ttl";
+        const string file = "output.ttl";
+        const string path = $"/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/{file}";
         writer.Save(graph, path);
 
         IGraph dataGraph = new Graph();
