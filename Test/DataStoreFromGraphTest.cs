@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using GraphManipulation.Extensions;
 using GraphManipulation.Models;
@@ -8,16 +10,96 @@ using Xunit;
 
 namespace Test;
 
-public class DataStoreFromGraphTest
+public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestDataStoreFixture>
 {
-    private const string baseUri = "http://www.test.com/";
+    private const string BaseUri = "http://www.test.com/";
+
+    private readonly TestDataStoreFixture _tds;
+
+    public DataStoreFromGraphTest(TestDataStoreFixture tds)
+    {
+        _tds = tds;
+    }
+
+    public class TestDataStoreFixture
+    {
+        public readonly string ExpectedSqlite1Name = "TestSqlite1";
+        public readonly string ExpectedSqlite2Name = "TestSqlite2";
+        public readonly string ExpectedSchema1Name = "TestSchema1";
+        public readonly string ExpectedSchema2Name = "TestSchema2";
+        public readonly string ExpectedTable1Name = "TestTable1";
+        public readonly string ExpectedTable2Name = "TestTable2";
+        public readonly string ExpectedColumn1Name = "TestColumn1";
+        public readonly string ExpectedColumn2Name = "TestColumn2";
+
+        public readonly Sqlite ExpectedSqlite1;
+        public readonly Sqlite ExpectedSqlite2;
+        public readonly Schema ExpectedSchema1;
+        public readonly Schema ExpectedSchema2;
+        public readonly Table ExpectedTable1;
+        public readonly Table ExpectedTable2;
+        public readonly Column ExpectedColumn1;
+        public readonly Column ExpectedColumn2;
+
+        public const string ExpectedColumn1DataType = "INT";
+        public const string ExpectedColumn2DataType = "VARCHAR";
+
+        public IGraph Graph;
+
+        public List<Sqlite> ActualSqlites;
+        
+        public TestDataStoreFixture()
+        {
+            ExpectedSqlite1 = new Sqlite(ExpectedSqlite1Name, BaseUri);
+            ExpectedSqlite2 = new Sqlite(ExpectedSqlite2Name, BaseUri);
+            ExpectedSchema1 = new Schema(ExpectedSchema1Name);
+            ExpectedSchema2 = new Schema(ExpectedSchema2Name);
+            ExpectedTable1 = new Table(ExpectedTable1Name);
+            ExpectedTable2 = new Table(ExpectedTable2Name);
+            ExpectedColumn1 = new Column(ExpectedColumn1Name);
+            ExpectedColumn2 = new Column(ExpectedColumn2Name);
+            
+            ExpectedColumn1.SetDataType(ExpectedColumn1DataType);
+            ExpectedColumn2.SetDataType(ExpectedColumn2DataType);
+            
+            ExpectedSqlite1.AddStructure(ExpectedSchema1);
+            ExpectedSqlite1.AddStructure(ExpectedSchema2);
+            ExpectedSchema1.AddStructure(ExpectedTable1);
+            ExpectedSchema1.AddStructure(ExpectedTable2);
+            ExpectedTable1.AddStructure(ExpectedColumn1);
+            ExpectedTable1.AddStructure(ExpectedColumn2);
+
+            Graph = CreateBaseTestGraph();
+            
+            Graph.AssertNamedEntityTriple(ExpectedSqlite1);
+            Graph.AssertNamedEntityTriple(ExpectedSqlite2);
+            Graph.AssertNamedEntityTriple(ExpectedSchema1);
+            Graph.AssertNamedEntityTriple(ExpectedSchema2);
+            Graph.AssertNamedEntityTriple(ExpectedTable1);
+            Graph.AssertNamedEntityTriple(ExpectedTable2);
+            Graph.AssertNamedEntityTriple(ExpectedColumn1);
+            Graph.AssertNamedEntityTriple(ExpectedColumn2);
+            
+            Graph.AssertHasStructureTriple(ExpectedSqlite1, ExpectedSchema1);
+            Graph.AssertHasStructureTriple(ExpectedSqlite1, ExpectedSchema2);
+            Graph.AssertHasStructureTriple(ExpectedSchema1, ExpectedTable1);
+            Graph.AssertHasStructureTriple(ExpectedSchema1, ExpectedTable2);
+            Graph.AssertHasStructureTriple(ExpectedTable1, ExpectedColumn1);
+            Graph.AssertHasStructureTriple(ExpectedTable1, ExpectedColumn2);
+            
+            Graph.AssertHasDataTypeTriple(ExpectedColumn1);
+            Graph.AssertHasDataTypeTriple(ExpectedColumn2);
+
+            ActualSqlites = Graph.GetDataStores<Sqlite>();
+        }
+    }
 
     private static IGraph CreateBaseTestGraph()
     {
         IGraph graph = new Graph();
 
         graph.NamespaceMap.AddNamespace("ddl", GraphBased.OntologyNamespace);
-        var uri = UriFactory.Create(baseUri);
+        var uri = UriFactory.Create(BaseUri);
         graph.BaseUri = uri;
 
         return graph;
@@ -27,152 +109,62 @@ public class DataStoreFromGraphTest
     [Fact]
     public void GetDataStoresCreatesTheListOfDataStoresOfGivenType()
     {
-        var expectedSqlite = new Sqlite("TestSQLite", baseUri);
-
-        var graph = CreateBaseTestGraph();
-
-        graph.AssertNamedEntityTriple(expectedSqlite);
-
-        var actualSqlite = graph.GetDataStores<Sqlite>().First();
-
-        Assert.Equal(expectedSqlite, actualSqlite);
-        Assert.Equal(expectedSqlite.Uri, actualSqlite.Uri);
-        Assert.Equal(expectedSqlite.BaseUri, actualSqlite.BaseUri);
-        Assert.Equal(expectedSqlite.Name, actualSqlite.Name);
+        Assert.Equal(_tds.ExpectedSqlite1, _tds.ActualSqlites.First());
+        Assert.Equal(_tds.ExpectedSqlite1.Uri, _tds.ActualSqlites.First().Uri);
+        Assert.Equal(_tds.ExpectedSqlite1.BaseUri, _tds.ActualSqlites.First().BaseUri);
+        Assert.Equal(_tds.ExpectedSqlite1.Name, _tds.ActualSqlites.First().Name);
+        
+        Assert.Equal(_tds.ExpectedSqlite2, _tds.ActualSqlites.Skip(1).First());
+        Assert.Equal(_tds.ExpectedSqlite2.Uri, _tds.ActualSqlites.Skip(1).First().Uri);
+        Assert.Equal(_tds.ExpectedSqlite2.BaseUri, _tds.ActualSqlites.Skip(1).First().BaseUri);
+        Assert.Equal(_tds.ExpectedSqlite2.Name, _tds.ActualSqlites.Skip(1).First().Name);
     }
 
     [Fact]
     public void GetDataStoresTypeSqliteReturnsSqliteWithSchemas()
     {
-        const string expectedSqliteName = "TestSQLite";
-        const string expectedSchemaName1 = "TestSchema1";
-        const string expectedSchemaName2 = "TestSchema2";
+        var actualSchema1 = _tds.ActualSqlites.First().FindSchema(_tds.ExpectedSchema1Name);
+        var actualSchema2 = _tds.ActualSqlites.First().FindSchema(_tds.ExpectedSchema2Name);
 
-        var expectedSqlite = new Sqlite(expectedSqliteName, baseUri);
-        var expectedSchema1 = new Schema(expectedSchemaName1);
-        var expectedSchema2 = new Schema(expectedSchemaName2);
+        Assert.Equal(_tds.ExpectedSchema1, actualSchema1);
+        Assert.Equal(_tds.ExpectedSchema1.Uri, actualSchema1.Uri);
+        Assert.Equal(_tds.ExpectedSchema1.Name, actualSchema1.Name);
 
-        expectedSqlite.AddStructure(expectedSchema1);
-        expectedSqlite.AddStructure(expectedSchema2);
-
-        var graph = CreateBaseTestGraph();
-
-        graph.AssertNamedEntityTriple(expectedSqlite);
-        graph.AssertNamedEntityTriple(expectedSchema1);
-        graph.AssertNamedEntityTriple(expectedSchema2);
-
-        graph.AssertHasStructureTriple(expectedSqlite, expectedSchema1);
-        graph.AssertHasStructureTriple(expectedSqlite, expectedSchema2);
-
-        var actualSqlite = graph.GetDataStores<Sqlite>().First();
-
-        var actualSchema1 = actualSqlite.FindSchema(expectedSchemaName1);
-        var actualSchema2 = actualSqlite.FindSchema(expectedSchemaName2);
-
-        Assert.Equal(expectedSchema1, actualSchema1);
-        Assert.Equal(expectedSchema1.Uri, actualSchema1.Uri);
-        Assert.Equal(expectedSchema1.Name, actualSchema1.Name);
-
-        Assert.Equal(expectedSchema2, actualSchema2);
-        Assert.Equal(expectedSchema2.Uri, actualSchema2.Uri);
-        Assert.Equal(expectedSchema2.Name, actualSchema2.Name);
+        Assert.Equal(_tds.ExpectedSchema2, actualSchema2);
+        Assert.Equal(_tds.ExpectedSchema2.Uri, actualSchema2.Uri);
+        Assert.Equal(_tds.ExpectedSchema2.Name, actualSchema2.Name);
     }
 
     [Fact]
     public void GetDataStoresTypeSqliteReturnsSqliteWithTables()
     {
-        const string expectedSqliteName = "TestSQLite";
-        const string expectedSchemaName = "TestSchema";
-        const string expectedTableName1 = "TestTable1";
-        const string expectedTableName2 = "TestTable2";
+        var actualTable1 = _tds.ActualSqlites.First()
+            .FindSchema(_tds.ExpectedSchema1Name)
+            .FindTable(_tds.ExpectedTable1Name);
 
-        var expectedSqlite = new Sqlite(expectedSqliteName, baseUri);
-        var expectedSchema = new Schema(expectedSchemaName);
-        var expectedTable1 = new Table(expectedTableName1);
-        var expectedTable2 = new Table(expectedTableName2);
+        var actualTable2 = _tds.ActualSqlites.First()
+            .FindSchema(_tds.ExpectedSchema1Name)
+            .FindTable(_tds.ExpectedTable2Name);
 
-        expectedSqlite.AddStructure(expectedSchema);
-        expectedSchema.AddStructure(expectedTable1);
-        expectedSchema.AddStructure(expectedTable2);
-
-        var graph = CreateBaseTestGraph();
-
-        graph.AssertNamedEntityTriple(expectedSqlite);
-        graph.AssertNamedEntityTriple(expectedSchema);
-        graph.AssertNamedEntityTriple(expectedTable1);
-        graph.AssertNamedEntityTriple(expectedTable2);
-
-        graph.AssertHasStructureTriple(expectedSqlite, expectedSchema);
-        graph.AssertHasStructureTriple(expectedSchema, expectedTable1);
-        graph.AssertHasStructureTriple(expectedSchema, expectedTable2);
-
-        var actualSqlite = graph.GetDataStores<Sqlite>().First();
-
-        var actualTable1 = actualSqlite
-            .FindSchema(expectedSchemaName)
-            .FindTable(expectedTableName1);
-
-        var actualTable2 = actualSqlite
-            .FindSchema(expectedSchemaName)
-            .FindTable(expectedTableName2);
-
-        Assert.Equal(expectedTable1, actualTable1);
-        Assert.Equal(expectedTable2, actualTable2);
+        Assert.Equal(_tds.ExpectedTable1, actualTable1);
+        Assert.Equal(_tds.ExpectedTable2, actualTable2);
     }
 
     [Fact]
     public void GetDataStoresTypeSqliteReturnsSqliteWithColumns()
     {
-        const string expectedSqliteName = "TestSQLite";
-        const string expectedSchemaName = "TestSchema";
-        const string expectedTableName = "TestTable";
-        const string expectedColumnName1 = "TestColumn1";
-        const string expectedColumnName2 = "TestColumn2";
+        var actualColumn1 = _tds.ActualSqlites.First()
+            .FindSchema(_tds.ExpectedSchema1Name)
+            .FindTable(_tds.ExpectedTable1Name)
+            .FindColumn(_tds.ExpectedColumn1Name);
 
-        var expectedSqlite = new Sqlite(expectedSqliteName, baseUri);
-        var expectedSchema = new Schema(expectedSchemaName);
-        var expectedTable = new Table(expectedTableName);
-        var expectedColumn1 = new Column(expectedColumnName1);
-        var expectedColumn2 = new Column(expectedColumnName2);
-        
-        expectedColumn1.SetDataType("INT");
-        expectedColumn2.SetDataType("VARCHAR");
+        var actualColumn2 = _tds.ActualSqlites.First()
+            .FindSchema(_tds.ExpectedSchema1Name)
+            .FindTable(_tds.ExpectedTable1Name)
+            .FindColumn(_tds.ExpectedColumn2Name);
 
-        expectedSqlite.AddStructure(expectedSchema);
-        expectedSchema.AddStructure(expectedTable);
-        expectedTable.AddStructure(expectedColumn1);
-        expectedTable.AddStructure(expectedColumn2);
-
-        var graph = CreateBaseTestGraph();
-
-        graph.AssertNamedEntityTriple(expectedSqlite);
-        graph.AssertNamedEntityTriple(expectedSchema);
-        graph.AssertNamedEntityTriple(expectedTable);
-        graph.AssertNamedEntityTriple(expectedColumn1);
-        graph.AssertNamedEntityTriple(expectedColumn2);
-
-        graph.AssertHasStructureTriple(expectedSqlite, expectedSchema);
-        graph.AssertHasStructureTriple(expectedSchema, expectedTable);
-        graph.AssertHasStructureTriple(expectedTable, expectedColumn1);
-        graph.AssertHasStructureTriple(expectedTable, expectedColumn2);
-        
-        graph.AssertHasDataTypeTriple(expectedColumn1);
-        graph.AssertHasDataTypeTriple(expectedColumn2);
-
-        var actualSqlite = graph.GetDataStores<Sqlite>().First();
-
-        var actualColumn1 = actualSqlite
-            .FindSchema(expectedSchemaName)
-            .FindTable(expectedTableName)
-            .FindColumn(expectedColumnName1);
-
-        var actualColumn2 = actualSqlite
-            .FindSchema(expectedSchemaName)
-            .FindTable(expectedTableName)
-            .FindColumn(expectedColumnName2);
-
-        Assert.Equal(expectedColumn1, actualColumn1);
-        Assert.Equal(expectedColumn2, actualColumn2);
+        Assert.Equal(_tds.ExpectedColumn1, actualColumn1);
+        Assert.Equal(_tds.ExpectedColumn2, actualColumn2);
     }
 
     [Fact]
@@ -207,44 +199,13 @@ public class DataStoreFromGraphTest
     [Fact]
     public void GetDataStoresTypeSqliteReturnsSqliteWithColumnsWithDataType()
     {
-        const string expectedSqliteName = "TestSQLite";
-        const string expectedSchemaName = "TestSchema";
-        const string expectedTableName = "TestTable";
-        const string expectedColumnName = "TestColumn";
-        
-        var expectedSqlite = new Sqlite(expectedSqliteName, baseUri);
-        var expectedSchema = new Schema(expectedSchemaName);
-        var expectedTable = new Table(expectedTableName);
-        var expectedColumn = new Column(expectedColumnName);
-        
-        expectedColumn.SetDataType("INT");
-        
-        expectedSqlite.AddStructure(expectedSchema);
-        expectedSchema.AddStructure(expectedTable);
-        expectedTable.AddStructure(expectedColumn);
-        
-        var graph = CreateBaseTestGraph();
-
-        graph.AssertNamedEntityTriple(expectedSqlite);
-        graph.AssertNamedEntityTriple(expectedSchema);
-        graph.AssertNamedEntityTriple(expectedTable);
-        graph.AssertNamedEntityTriple(expectedColumn);
-
-        graph.AssertHasStructureTriple(expectedSqlite, expectedSchema);
-        graph.AssertHasStructureTriple(expectedSchema, expectedTable);
-        graph.AssertHasStructureTriple(expectedTable, expectedColumn);
-        
-        graph.AssertHasDataTypeTriple(expectedColumn);
-
-        var actualSqlite = graph.GetDataStores<Sqlite>().First();
-        
-        var actual = actualSqlite
-            .FindSchema(expectedSchemaName)
-            .FindTable(expectedTableName)
-            .FindColumn(expectedColumnName)
+        var actual = _tds.ActualSqlites.First()
+            .FindSchema(_tds.ExpectedSchema1Name)
+            .FindTable(_tds.ExpectedTable1Name)
+            .FindColumn(_tds.ExpectedColumn1Name)
             .DataType;
         
-        Assert.Equal(expectedColumn.DataType, actual);
+        Assert.Equal(_tds.ExpectedColumn1.DataType, actual);
     }
 
     [Fact]

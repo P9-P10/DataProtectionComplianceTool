@@ -13,7 +13,7 @@ public class SqliteTest
 {
     private const string BaseUri = "http://www.test.com/";
 
-    public class TestDatabaseFixture : IDisposable
+    public class TestDatabaseFixture
     {
         private static readonly string _testDatabase =
             $"TestResources{Path.DirectorySeparatorChar}SimpleDatabase.sqlite";
@@ -75,10 +75,6 @@ public class SqliteTest
 
                 return _testDatabase;
             }
-        }
-
-        public void Dispose()
-        {
         }
     }
 
