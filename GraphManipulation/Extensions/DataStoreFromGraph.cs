@@ -1,3 +1,4 @@
+using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
 using VDS.RDF;
@@ -21,7 +22,7 @@ public static class DataStoreFromGraph
             {
                 if (typeof(T).IsSubclassOf(typeof(Relational)))
                 {
-                    graph.GetSchemas((datastore as Relational)!).ForEach(datastore.AddStructure);
+                    graph.GetSchemas((datastore as Relational)!);
                 }
 
                 return datastore;
@@ -33,46 +34,66 @@ public static class DataStoreFromGraph
     {
         return graph
             .GetTriplesWithSubjectPredicate(subject, graph.CreateUriNode("ddl:hasName"))
-            .Select(nodeTriple => nodeTriple.Object as LiteralNode)
+            .Select(triple => triple.Object as LiteralNode)
             .First()!
             .Value;
     }
 
-    private static List<Schema> GetSchemas(this IGraph graph, Relational relational)
+    private static void GetSchemas(this IGraph graph, Relational relational)
     {
-        return graph
-            .GetSubStructures(graph.CreateUriNode(relational.Uri))
-            .Select(sub =>
+        graph
+            .GetSubStructures(relational)
+            .ForEach(sub =>
             {
                 var name = graph.GetNameOfNode(sub);
-                return new Schema(name);
-            })
-            .Select(schema =>
-            {
-                // graph.GetTa
-                return schema;
-            })
-            .ToList();
+                var schema = new Schema(name);
+                relational.AddStructure(schema);
+                graph.GetTables(schema);
+            });
     }
 
-    private static List<INode> GetSubStructures(this IGraph graph, INode subject)
+    private static List<INode> GetSubStructures(this IGraph graph, StructuredEntity subject)
     {
         return graph
-            .GetTriplesWithSubjectPredicate(subject, graph.CreateUriNode("ddl:hasStructure"))
+            .GetTriplesWithSubjectPredicate(graph.CreateUriNode(subject.Uri), graph.CreateUriNode("ddl:hasStructure"))
             .Select(triple => triple.Object)
             .ToList();
     }
+    
+    private static void GetTables(this IGraph graph, Schema schema)
+    {
+        graph
+            .GetSubStructures(schema)
+            .ForEach(sub =>
+            {
+                var name = graph.GetNameOfNode(sub);
+                var table = new Table(name);
+                schema.AddStructure(table);
+                graph.GetColumns(table);
+            });
+    }
 
-    //
-    // private static List<Table> GetTables(this IGraph graph, Schema schema)
-    // {
-    //     
-    // }
-    //
-    // private static List<Column> GetColumns(this IGraph graph, Table table)
-    // {
-    //     
-    // }
+    private static void GetColumns(this IGraph graph, Table table)
+    {
+        graph
+            .GetSubStructures(table)
+            .ForEach(sub =>
+            {
+                var name = graph.GetNameOfNode(sub);
+                var column = new Column(name);
+                table.AddStructure(column);
+                column.SetDataType(graph.GetColumnDataType(column));
+            });
+    }
+
+    private static string GetColumnDataType(this IGraph graph, Column column)
+    {
+        return graph
+            .GetTriplesWithSubjectPredicate(graph.CreateUriNode(column.Uri), graph.CreateUriNode("ddl:hasDataType"))
+            .Select(triple => triple.Object as LiteralNode)
+            .First()!
+            .Value;
+    }
 
 
     // https://dotnetrdf.org/docs/stable/user_guide/Querying-With-SPARQL.html

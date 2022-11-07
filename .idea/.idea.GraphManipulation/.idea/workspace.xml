@@ -6,9 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="c701dcae-c036-4c51-b84d-60162b45a46a" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Extensions/DataStoreFromGraph.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Extensions/DataStoreFromGraph.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GraphManipulation/Extensions/GraphAsserts.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Extensions/GraphAsserts.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Entity/Entity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Entity/Entity.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Entity/NamedEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Entity/NamedEntity.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/DataStoreFromGraphTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/DataStoreFromGraphTest.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -110,7 +110,8 @@
       <workItem from="1666957607965" duration="4599000" />
       <workItem from="1667201774398" duration="18856000" />
       <workItem from="1667373690955" duration="17022000" />
-      <workItem from="1667547185157" duration="22993000" />
+      <workItem from="1667547185157" duration="23322000" />
+      <workItem from="1667823017604" duration="4322000" />
     </task>
     <servers />
   </component>
@@ -126,13 +127,13 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs</url>
-          <line>78</line>
+          <line>77</line>
           <properties documentPath="$PROJECT_DIR$/GraphManipulation/Models/Stores/Sqlite.cs" initialLine="79" containingFunctionPresentation="lambda expression inside method 'GetColumnOptionsQueryResults'">
             <startOffsets>
-              <option value="2718" />
+              <option value="2703" />
             </startOffsets>
             <endOffsets>
-              <option value="2931" />
+              <option value="2916" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="8" />
@@ -152,13 +153,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/GraphManipulation/Extensions/DataStoreFromGraph.cs</url>
-          <line>29</line>
+          <line>24</line>
           <properties documentPath="$PROJECT_DIR$/GraphManipulation/Extensions/DataStoreFromGraph.cs" initialLine="29" containingFunctionPresentation="lambda expression inside method 'GetDataStores'">
             <startOffsets>
-              <option value="1035" />
+              <option value="892" />
             </startOffsets>
             <endOffsets>
-              <option value="1112" />
+              <option value="936" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="14" />
