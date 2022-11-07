@@ -23,14 +23,14 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
 
     public class TestDataStoreFixture
     {
-        public readonly string ExpectedSqlite1Name = "TestSqlite1";
-        public readonly string ExpectedSqlite2Name = "TestSqlite2";
-        public readonly string ExpectedSchema1Name = "TestSchema1";
-        public readonly string ExpectedSchema2Name = "TestSchema2";
-        public readonly string ExpectedTable1Name = "TestTable1";
-        public readonly string ExpectedTable2Name = "TestTable2";
-        public readonly string ExpectedColumn1Name = "TestColumn1";
-        public readonly string ExpectedColumn2Name = "TestColumn2";
+        public const string ExpectedSqlite1Name = "TestSqlite1";
+        public const string ExpectedSqlite2Name = "TestSqlite2";
+        public const string ExpectedSchema1Name = "TestSchema1";
+        public const string ExpectedSchema2Name = "TestSchema2";
+        public const string ExpectedTable1Name = "TestTable1";
+        public const string ExpectedTable2Name = "TestTable2";
+        public const string ExpectedColumn1Name = "TestColumn1";
+        public const string ExpectedColumn2Name = "TestColumn2";
 
         public readonly Sqlite ExpectedSqlite1;
         public readonly Sqlite ExpectedSqlite2;
@@ -123,8 +123,11 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     [Fact]
     public void GetDataStoresTypeSqliteReturnsSqliteWithSchemas()
     {
-        var actualSchema1 = _tds.ActualSqlites.First().FindSchema(_tds.ExpectedSchema1Name);
-        var actualSchema2 = _tds.ActualSqlites.First().FindSchema(_tds.ExpectedSchema2Name);
+        var actualSchema1 = _tds.ActualSqlites.First()
+            .FindSchema(TestDataStoreFixture.ExpectedSchema1Name);
+        
+        var actualSchema2 = _tds.ActualSqlites.First()
+            .FindSchema(TestDataStoreFixture.ExpectedSchema2Name);
 
         Assert.Equal(_tds.ExpectedSchema1, actualSchema1);
         Assert.Equal(_tds.ExpectedSchema1.Uri, actualSchema1.Uri);
@@ -139,12 +142,12 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     public void GetDataStoresTypeSqliteReturnsSqliteWithTables()
     {
         var actualTable1 = _tds.ActualSqlites.First()
-            .FindSchema(_tds.ExpectedSchema1Name)
-            .FindTable(_tds.ExpectedTable1Name);
+            .FindSchema(TestDataStoreFixture.ExpectedSchema1Name)
+            .FindTable(TestDataStoreFixture.ExpectedTable1Name);
 
         var actualTable2 = _tds.ActualSqlites.First()
-            .FindSchema(_tds.ExpectedSchema1Name)
-            .FindTable(_tds.ExpectedTable2Name);
+            .FindSchema(TestDataStoreFixture.ExpectedSchema1Name)
+            .FindTable(TestDataStoreFixture.ExpectedTable2Name);
 
         Assert.Equal(_tds.ExpectedTable1, actualTable1);
         Assert.Equal(_tds.ExpectedTable2, actualTable2);
@@ -154,14 +157,14 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     public void GetDataStoresTypeSqliteReturnsSqliteWithColumns()
     {
         var actualColumn1 = _tds.ActualSqlites.First()
-            .FindSchema(_tds.ExpectedSchema1Name)
-            .FindTable(_tds.ExpectedTable1Name)
-            .FindColumn(_tds.ExpectedColumn1Name);
+            .FindSchema(TestDataStoreFixture.ExpectedSchema1Name)
+            .FindTable(TestDataStoreFixture.ExpectedTable1Name)
+            .FindColumn(TestDataStoreFixture.ExpectedColumn1Name);
 
         var actualColumn2 = _tds.ActualSqlites.First()
-            .FindSchema(_tds.ExpectedSchema1Name)
-            .FindTable(_tds.ExpectedTable1Name)
-            .FindColumn(_tds.ExpectedColumn2Name);
+            .FindSchema(TestDataStoreFixture.ExpectedSchema1Name)
+            .FindTable(TestDataStoreFixture.ExpectedTable1Name)
+            .FindColumn(TestDataStoreFixture.ExpectedColumn2Name);
 
         Assert.Equal(_tds.ExpectedColumn1, actualColumn1);
         Assert.Equal(_tds.ExpectedColumn2, actualColumn2);
@@ -200,12 +203,12 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     public void GetDataStoresTypeSqliteReturnsSqliteWithColumnsWithDataType()
     {
         var actual = _tds.ActualSqlites.First()
-            .FindSchema(_tds.ExpectedSchema1Name)
-            .FindTable(_tds.ExpectedTable1Name)
-            .FindColumn(_tds.ExpectedColumn1Name)
+            .FindSchema(TestDataStoreFixture.ExpectedSchema1Name)
+            .FindTable(TestDataStoreFixture.ExpectedTable1Name)
+            .FindColumn(TestDataStoreFixture.ExpectedColumn1Name)
             .DataType;
         
-        Assert.Equal(_tds.ExpectedColumn1.DataType, actual);
+        Assert.Equal(TestDataStoreFixture.ExpectedColumn1DataType, actual);
     }
 
     [Fact]
@@ -221,8 +224,6 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     }
     
     // TODO: Table Primary og Foreign keys bør nok tilføjes til grafen som en liste, da rækkefølgen af dem er vigtig
-    
-    // TODO: Test with multiple SQLites in the same graph
 
     // TODO: Kunne man lave noget i stil med Datastore<Sqlite<Schema<Table<Column>>> ???
     // TODO: Det ville potentielt afskære fra at have flere forskellige typer
