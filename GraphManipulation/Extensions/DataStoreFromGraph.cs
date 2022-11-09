@@ -1,3 +1,4 @@
+using AngleSharp.Text;
 using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
@@ -7,7 +8,7 @@ namespace GraphManipulation.Extensions;
 
 public static class DataStoreFromGraph
 {
-    public static List<T> GetDataStores<T>(this IGraph graph) where T : DataStore
+    public static List<T> ConstructDataStores<T>(this IGraph graph) where T : DataStore
     {
         return graph
             .GetTriplesWithObject(graph.CreateUriNode(GraphDataType.GetGraphTypeString(typeof(T))))
@@ -20,14 +21,21 @@ public static class DataStoreFromGraph
             })
             .Select(datastore =>
             {
-                if (typeof(T).IsSubclassOf(typeof(Relational)))
+                // TODO: graph.ConstructSubStructures(datastore);
+                if (datastore is Relational relational)
                 {
-                    graph.GetSchemas((datastore as Relational)!);
+                    graph.ConstructRelational(relational);
                 }
 
                 return datastore;
             })
             .ToList();
+    }
+
+    private static void ConstructRelational(this IGraph graph, Relational relational)
+    {
+        graph.ConstructSchemas(relational);
+        graph.ConstructForeignKeys(relational);
     }
 
     private static string GetNameOfNode(this IGraph graph, INode subject)
@@ -39,7 +47,7 @@ public static class DataStoreFromGraph
             .Value;
     }
 
-    private static void GetSchemas(this IGraph graph, Relational relational)
+    private static void ConstructSchemas(this IGraph graph, Relational relational)
     {
         graph
             .GetSubStructures(relational)
@@ -48,7 +56,7 @@ public static class DataStoreFromGraph
                 var name = graph.GetNameOfNode(sub);
                 var schema = new Schema(name);
                 relational.AddStructure(schema);
-                graph.GetTables(schema);
+                graph.ConstructTables(schema);
             });
     }
 
@@ -60,7 +68,7 @@ public static class DataStoreFromGraph
             .ToList();
     }
 
-    private static void GetTables(this IGraph graph, Schema schema)
+    private static void ConstructTables(this IGraph graph, Schema schema)
     {
         graph
             .GetSubStructures(schema)
@@ -69,11 +77,54 @@ public static class DataStoreFromGraph
                 var name = graph.GetNameOfNode(sub);
                 var table = new Table(name);
                 schema.AddStructure(table);
-                graph.GetColumns(table);
+                graph.ConstructColumns(table);
+                graph.ConstructPrimaryKeys(table);
             });
     }
 
-    private static void GetColumns(this IGraph graph, Table table)
+    private static void ConstructPrimaryKeys(this IGraph graph, Table table)
+    {
+        graph
+            .GetTriplesWithSubjectPredicate(graph.CreateUriNode(table.Uri), graph.CreateUriNode("ddl:primaryKey"))
+            .Select(triple => triple.Object as UriNode)
+            .ToList()
+            .ForEach(columnNode =>
+            {
+                var matchingColumn = table.SubStructures.First(sub => sub.Uri == columnNode!.Uri) as Column;
+                table.AddPrimaryKey(matchingColumn!);
+            });
+    }
+
+    private static void ConstructForeignKeys(this IGraph graph, Relational relational)
+    {
+        
+    }
+
+    // private static void GetForeignKeys(this IGraph graph, Table table)
+    // {
+    //     graph
+    //         .GetTriplesWithSubjectPredicate(graph.CreateUriNode(table.Uri), graph.CreateUriNode("ddl:foreignKey"))
+    //         .Select(triple => triple.Object as UriNode)
+    //         .ToList()
+    //         .ForEach(columnNode =>
+    //         {
+    //             var matchingColumn = table.SubStructures.First(sub => sub.Uri == columnNode!.Uri) as Column;
+    //             var referencedNode = graph
+    //                 .GetTriplesWithSubjectPredicate(graph.CreateUriNode(matchingColumn.Uri),
+    //                     graph.CreateUriNode("ddl:references"))
+    //                 .Select(triple => triple.Object as UriNode)
+    //                 .First();
+    //
+    //
+    //         });
+    // }
+    //
+    // private static Column ConstructColumn(this IGraph graph, Uri columnUri)
+    // {
+    //     
+    // }
+
+    private static void ConstructColumns(this IGraph graph, Table table)
     {
         graph
             .GetSubStructures(table)
@@ -83,6 +134,8 @@ public static class DataStoreFromGraph
                 var column = new Column(name);
                 table.AddStructure(column);
                 column.SetDataType(graph.GetColumnDataType(column));
+                column.SetIsNotNull(graph.GetColumnIsNotNull(column));
+                column.SetOptions(graph.GetColumnOptions(column));
             });
     }
 
@@ -90,6 +143,25 @@ public static class DataStoreFromGraph
     {
         return graph
             .GetTriplesWithSubjectPredicate(graph.CreateUriNode(column.Uri), graph.CreateUriNode("ddl:hasDataType"))
+            .Select(triple => triple.Object as LiteralNode)
+            .First()!
+            .Value;
+    }
+
+    private static bool GetColumnIsNotNull(this IGraph graph, Column column)
+    {
+        return graph
+            .GetTriplesWithSubjectPredicate(graph.CreateUriNode(column.Uri), graph.CreateUriNode("ddl:isNotNull"))
+            .Select(triple => triple.Object as LiteralNode)
+            .First()!
+            .Value
+            .ToBoolean();
+    }
+
+    private static string GetColumnOptions(this IGraph graph, Column column)
+    {
+        return graph
+            .GetTriplesWithSubjectPredicate(graph.CreateUriNode(column.Uri), graph.CreateUriNode("ddl:columnOptions"))
             .Select(triple => triple.Object as LiteralNode)
             .First()!
             .Value;

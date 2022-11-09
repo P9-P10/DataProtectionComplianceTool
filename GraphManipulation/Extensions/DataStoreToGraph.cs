@@ -97,48 +97,12 @@ public static class DataStoreToGraph
 
     private static void AddPrimaryKeys(this IGraph graph, Table table)
     {
-        if (table.PrimaryKeys.Count == 0)
-        {
-            throw new DataStoreToGraphException("No primary keys when creating graph");
-        }
-
-        var subj = graph.CreateUriNode(table.Uri);
-        var pred = graph.CreateUriNode("ddl:primaryKey");
-
-        foreach (var primaryKey in table.PrimaryKeys)
-        {
-            var obj = graph.CreateUriNode(primaryKey.Uri);
-            graph.Assert(subj, pred, obj);
-        }
+        graph.AssertPrimaryKeys(table);
     }
 
     private static void AddForeignKeys(this IGraph graph, Table table)
     {
-        if (table.ForeignKeys.Count == 0)
-        {
-            return;
-        }
-
-        var tableUri = graph.CreateUriNode(table.Uri);
-        var foreignKeyPredicate = graph.CreateUriNode("ddl:foreignKey");
-        var referencesPredicate = graph.CreateUriNode("ddl:references");
-        var foreignKeyOnDeletePredicate = graph.CreateUriNode("ddl:foreignKeyOnDelete");
-        var foreignKeyOnUpdatePredicate = graph.CreateUriNode("ddl:foreignKeyOnUpdate");
-
-        foreach (var foreignKey in table.ForeignKeys)
-        {
-            var from = graph.CreateUriNode(foreignKey.From.Uri);
-            var to = graph.CreateUriNode(foreignKey.To.Uri);
-
-            graph.Assert(tableUri, foreignKeyPredicate, from);
-            graph.Assert(from, referencesPredicate, to);
-
-            var onDelete = graph.CreateLiteralNode(foreignKey.OnDeleteString);
-            var onUpdate = graph.CreateLiteralNode(foreignKey.OnUpdateString);
-
-            graph.Assert(from, foreignKeyOnDeletePredicate, onDelete);
-            graph.Assert(from, foreignKeyOnUpdatePredicate, onUpdate);
-        }
+        graph.AssertForeignKeys(table);
     }
 
     private static void AddDataType(this IGraph graph, Column column)

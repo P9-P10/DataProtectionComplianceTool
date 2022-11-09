@@ -3,7 +3,7 @@ using GraphManipulation.Models.Structures;
 
 namespace GraphManipulation.Extensions;
 
-public static class Transformations
+public static class DataStoreToSqlCreateStatement
 {
     public static string ToSqlCreateStatement(this Entity entity)
     {
@@ -28,7 +28,6 @@ public static class Transformations
                 var foreignKeys = string.Join(",\n\t",
                     table.ForeignKeys
                         .GroupBy(fk => fk.To.ParentStructure)
-                        .ToList()
                         .Select(parentGrouping =>
                         {
                             var joinedForeignKeyNames = string.Join(", ",
