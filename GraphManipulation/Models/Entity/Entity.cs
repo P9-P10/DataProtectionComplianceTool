@@ -4,7 +4,7 @@ using VDS.RDF;
 
 namespace GraphManipulation.Models.Entity;
 
-public abstract class Entity
+public abstract class Entity : IEquatable<Entity>
 {
     public readonly HashAlgorithm Algorithm = SHA1.Create();
     public string HashedFrom = null!;
@@ -65,6 +65,11 @@ public abstract class Entity
     public void ComputeId()
     {
         ComputeId(ComputeHash());
+    }
+
+    public bool Equals(Entity? other)
+    {
+        return other is not null && Id == other.Id;
     }
 
     public override bool Equals(object? obj)

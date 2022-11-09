@@ -105,7 +105,7 @@ public class SqliteTest
         [Fact]
         public void SqliteGetsSchemas()
         {
-            var actualSchema = _testDatabaseFixture.Sqlite.FindSchema("main");
+            var actualSchema = _testDatabaseFixture.Sqlite.Find<Schema>(_testDatabaseFixture.ExpectedSchema);
             Assert.Equal(_testDatabaseFixture.ExpectedSchema, actualSchema);
         }
 
@@ -113,12 +113,10 @@ public class SqliteTest
         public void SqliteGetsTables()
         {
             var actualUsersTable = _testDatabaseFixture.Sqlite
-                .FindSchema("main")
-                .FindTable("Users");
+                .Find<Table>(_testDatabaseFixture.ExpectedTableUsers);
 
             var actualUserDataTable = _testDatabaseFixture.Sqlite
-                .FindSchema("main")
-                .FindTable("UserData");
+                .Find<Table>(_testDatabaseFixture.ExpectedTableUserData);
 
             Assert.Equal(_testDatabaseFixture.ExpectedTableUsers, actualUsersTable);
             Assert.Equal(_testDatabaseFixture.ExpectedTableUserData, actualUserDataTable);
@@ -127,16 +125,11 @@ public class SqliteTest
         [Fact]
         public void SqliteGetsColumn()
         {
-            var actualColumnEmail =
-                _testDatabaseFixture.Sqlite
-                    .FindSchema("main")
-                    .FindTable("Users")
-                    .FindColumn("email");
+            var actualColumnEmail = _testDatabaseFixture.Sqlite
+                .Find<Column>(_testDatabaseFixture.ExpectedColumnEmail);
 
             var actualColumnPhone = _testDatabaseFixture.Sqlite
-                .FindSchema("main")
-                .FindTable("UserData")
-                .FindColumn("phone");
+                .Find<Column>(_testDatabaseFixture.ExpectedColumnPhone);
 
             Assert.Equal(_testDatabaseFixture.ExpectedColumnEmail, actualColumnEmail);
             Assert.Equal(_testDatabaseFixture.ExpectedColumnPhone, actualColumnPhone);
@@ -146,15 +139,11 @@ public class SqliteTest
         public void SqliteColumnsGetDataType()
         {
             var actualColumnEmailDataType = _testDatabaseFixture.Sqlite
-                .FindSchema("main")
-                .FindTable("Users")
-                .FindColumn("email")
+                .Find<Column>(_testDatabaseFixture.ExpectedColumnEmail)!
                 .DataType;
 
             var actualColumnPhoneDataType = _testDatabaseFixture.Sqlite
-                .FindSchema("main")
-                .FindTable("UserData")
-                .FindColumn("phone")
+                .Find<Column>(_testDatabaseFixture.ExpectedColumnPhone)!
                 .DataType;
 
             Assert.Equal(_testDatabaseFixture.ExpectedColumnEmail.DataType, actualColumnEmailDataType);
@@ -165,9 +154,7 @@ public class SqliteTest
         public void SqliteColumnsGetIsNotNull()
         {
             var actual = _testDatabaseFixture.Sqlite
-                .FindSchema("main")
-                .FindTable("Users")
-                .FindColumn("email")
+                .Find<Column>(_testDatabaseFixture.ExpectedColumnEmail)!
                 .IsNotNull;
 
             Assert.True(actual);
@@ -177,9 +164,7 @@ public class SqliteTest
         public void SqliteColumnsGetValidOptions()
         {
             var actual = _testDatabaseFixture.Sqlite
-                .FindSchema("main")
-                .FindTable("Users")
-                .FindColumn("id")
+                .Find<Column>(_testDatabaseFixture.ExpectedColumnUsersId)!
                 .Options;
 
             var expected = "AUTOINCREMENT";
@@ -191,13 +176,11 @@ public class SqliteTest
         public void SqliteTableGetsPrimaryKeys()
         {
             var actualUsersPrimaryKey = _testDatabaseFixture.Sqlite
-                .FindSchema("main")
-                .FindTable("Users")
+                .Find<Table>(_testDatabaseFixture.ExpectedTableUsers)!
                 .FindPrimaryKey("id");
 
             var actualUserDataPrimaryKey = _testDatabaseFixture.Sqlite
-                .FindSchema("main")
-                .FindTable("UserData")
+                .Find<Table>(_testDatabaseFixture.ExpectedTableUserData)!
                 .FindPrimaryKey("id");
 
             Assert.Equal(_testDatabaseFixture.ExpectedColumnUsersId, actualUsersPrimaryKey);
@@ -208,8 +191,7 @@ public class SqliteTest
         public void SqliteTableGetsForeignKeys()
         {
             var actualForeignKey = _testDatabaseFixture.Sqlite
-                .FindSchema("main")
-                .FindTable("UserData")
+                .Find<Table>(_testDatabaseFixture.ExpectedTableUserData)!
                 .FindForeignKey("id");
 
             Assert.Equal(_testDatabaseFixture.ExpectedForeignKeyUserDataIdUsersId, actualForeignKey);
@@ -219,9 +201,7 @@ public class SqliteTest
         public void SqliteForeignKeyColumnReferenceColumn()
         {
             var actualReferencedColumn = _testDatabaseFixture.Sqlite
-                .FindSchema("main")
-                .FindTable("Users")
-                .FindColumn("id");
+                .Find<Column>(_testDatabaseFixture.ExpectedColumnUsersId);
 
             Assert.Equal(_testDatabaseFixture.ExpectedForeignKeyUserDataIdUsersId.To, actualReferencedColumn);
         }
@@ -230,9 +210,8 @@ public class SqliteTest
         public void SqliteForeignKeysGetsOnDelete()
         {
             var actual = _testDatabaseFixture.Sqlite
-                .FindSchema("main")
-                .FindTable("UserData")
-                .FindForeignKey("id")
+                .Find<Table>(_testDatabaseFixture.ExpectedTableUserData)!
+                .FindForeignKey("id")!
                 .OnDelete;
 
             Assert.Equal(ForeignKeyOnEnum.Cascade, actual);
@@ -242,9 +221,8 @@ public class SqliteTest
         public void SqliteForeignKeysGetsOnUpdate()
         {
             var actual = _testDatabaseFixture.Sqlite
-                .FindSchema("main")
-                .FindTable("UserData")
-                .FindForeignKey("id")
+                .Find<Table>(_testDatabaseFixture.ExpectedTableUserData)!
+                .FindForeignKey("id")!
                 .OnUpdate;
 
             Assert.Equal(ForeignKeyOnEnum.NoAction, actual);

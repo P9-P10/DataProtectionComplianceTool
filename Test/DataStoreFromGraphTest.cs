@@ -49,10 +49,10 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     public void GetDataStoresTypeSqliteReturnsSqliteWithSchemas()
     {
         var actualSchema1 = _tds.ActualSqlites.First()
-            .FindSchema(TestDataStoreFixture.ExpectedSchema1Name);
+            .Find<Schema>(_tds.ExpectedSchema1);
 
         var actualSchema2 = _tds.ActualSqlites.First()
-            .FindSchema(TestDataStoreFixture.ExpectedSchema2Name);
+            .Find<Schema>(_tds.ExpectedSchema2);
 
         Assert.Equal(_tds.ExpectedSchema1, actualSchema1);
         Assert.Equal(_tds.ExpectedSchema1.Uri, actualSchema1.Uri);
@@ -67,12 +67,10 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     public void GetDataStoresTypeSqliteReturnsSqliteWithTables()
     {
         var actualTable1 = _tds.ActualSqlites.First()
-            .FindSchema(TestDataStoreFixture.ExpectedSchema1Name)
-            .FindTable(TestDataStoreFixture.ExpectedTable1Name);
+            .Find<Table>(_tds.ExpectedTable1);
 
         var actualTable2 = _tds.ActualSqlites.First()
-            .FindSchema(TestDataStoreFixture.ExpectedSchema1Name)
-            .FindTable(TestDataStoreFixture.ExpectedTable2Name);
+            .Find<Table>(_tds.ExpectedTable2);
 
         Assert.Equal(_tds.ExpectedTable1, actualTable1);
         Assert.Equal(_tds.ExpectedTable2, actualTable2);
@@ -82,14 +80,10 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     public void GetDataStoresTypeSqliteReturnsSqliteWithColumns()
     {
         var actualColumn1 = _tds.ActualSqlites.First()
-            .FindSchema(TestDataStoreFixture.ExpectedSchema1Name)
-            .FindTable(TestDataStoreFixture.ExpectedTable1Name)
-            .FindColumn(TestDataStoreFixture.ExpectedColumn11Name);
+            .Find<Column>(_tds.ExpectedColumn11);
 
         var actualColumn2 = _tds.ActualSqlites.First()
-            .FindSchema(TestDataStoreFixture.ExpectedSchema1Name)
-            .FindTable(TestDataStoreFixture.ExpectedTable1Name)
-            .FindColumn(TestDataStoreFixture.ExpectedColumn12Name);
+            .Find<Column>(_tds.ExpectedColumn12);
 
         Assert.Equal(_tds.ExpectedColumn11, actualColumn1);
         Assert.Equal(_tds.ExpectedColumn12, actualColumn2);
@@ -99,8 +93,7 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     public void GetDataStoresTypeSqliteReturnsSqliteWithTablesWithSinglePrimaryKey()
     {
         var actual = _tds.ActualSqlites.First()
-            .FindSchema(TestDataStoreFixture.ExpectedSchema1Name)
-            .FindTable(TestDataStoreFixture.ExpectedTable1Name)
+            .Find<Table>(_tds.ExpectedTable1)!
             .PrimaryKeys;
 
         Assert.Single(actual);
@@ -111,22 +104,19 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     public void GetDataStoresTypeSqliteReturnsSqliteWithTablesWithCompositePrimaryKey()
     {
         var actual = _tds.ActualSqlites.First()
-            .FindSchema(TestDataStoreFixture.ExpectedSchema3Name)
-            .FindTable(TestDataStoreFixture.ExpectedTable3Name)
+            .Find<Table>(_tds.ExpectedTable3.Uri)!
             .PrimaryKeys;
         
+        
         Assert.Equal(3, actual.Count);
-        Assert.Equal(_tds.ExpectedTable3.PrimaryKeys.First(), actual.First());
-        Assert.Equal(_tds.ExpectedTable3.PrimaryKeys.Skip(1).First(), actual.Skip(1).First());
-        Assert.Equal(_tds.ExpectedTable3.PrimaryKeys.Skip(1).Skip(1).First(), actual.Skip(1).Skip(1).First());
+        Assert.True(_tds.ExpectedTable3.PrimaryKeys.SequenceEqual(actual));
     }
 
     [Fact]
     public void GetDataStoresTypeSqliteReturnsSqliteWithTablesWithSingleForeignKey()
     {
         var actual = _tds.ActualSqlites.First()
-            .FindSchema(TestDataStoreFixture.ExpectedSchema1Name)
-            .FindTable(TestDataStoreFixture.ExpectedTable1Name)
+            .Find<Table>(_tds.ExpectedTable1)!
             .ForeignKeys;
 
         Assert.Single(actual);
@@ -143,9 +133,7 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     public void GetDataStoresTypeSqliteReturnsSqliteWithColumnsWithDataType()
     {
         var actualDataType = _tds.ActualSqlites.First()
-            .FindSchema(TestDataStoreFixture.ExpectedSchema1Name)
-            .FindTable(TestDataStoreFixture.ExpectedTable1Name)
-            .FindColumn(TestDataStoreFixture.ExpectedColumn11Name)
+            .Find<Column>(_tds.ExpectedColumn11)!
             .DataType;
 
         Assert.Equal(TestDataStoreFixture.ExpectedColumn11DataType, actualDataType);
@@ -155,15 +143,11 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     public void GetDataStoresTypeSqliteReturnsSqliteWithColumnsWithIsNotNull()
     {
         var actualIsNotNull1 = _tds.ActualSqlites.First()
-            .FindSchema(TestDataStoreFixture.ExpectedSchema1Name)
-            .FindTable(TestDataStoreFixture.ExpectedTable1Name)
-            .FindColumn(TestDataStoreFixture.ExpectedColumn11Name)
+            .Find<Column>(_tds.ExpectedColumn11)!
             .IsNotNull;
         
         var actualIsNotNull2 = _tds.ActualSqlites.First()
-            .FindSchema(TestDataStoreFixture.ExpectedSchema1Name)
-            .FindTable(TestDataStoreFixture.ExpectedTable1Name)
-            .FindColumn(TestDataStoreFixture.ExpectedColumn12Name)
+            .Find<Column>(_tds.ExpectedColumn12)!
             .IsNotNull;
 
         Assert.Equal(_tds.ExpectedColumn11.IsNotNull, actualIsNotNull1);
@@ -174,15 +158,11 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     public void GetDataStoresTypeSqliteReturnsSqliteWithColumnsWithOptions()
     {
         var actualOptions1 = _tds.ActualSqlites.First()
-            .FindSchema(TestDataStoreFixture.ExpectedSchema1Name)
-            .FindTable(TestDataStoreFixture.ExpectedTable1Name)
-            .FindColumn(TestDataStoreFixture.ExpectedColumn11Name)
+            .Find<Column>(_tds.ExpectedColumn11)!
             .Options;
-        
+
         var actualOptions2 = _tds.ActualSqlites.First()
-            .FindSchema(TestDataStoreFixture.ExpectedSchema1Name)
-            .FindTable(TestDataStoreFixture.ExpectedTable1Name)
-            .FindColumn(TestDataStoreFixture.ExpectedColumn12Name)
+            .Find<Column>(_tds.ExpectedColumn12)!
             .Options;
 
         Assert.Equal(_tds.ExpectedColumn11.Options, actualOptions1);

@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using GraphManipulation.Models.Entity;
@@ -14,6 +15,42 @@ public class EntityTest
     public static HashAlgorithm GetHashAlgorithm()
     {
         return new Column("").Algorithm;
+    }
+
+    [Fact]
+    public void ListEqualitySanityCheckCorrectOrder()
+    {
+        var table1 = new Table("Table");
+        var table2 = new Table("Table");
+        var column11 = new Column("Column1");
+        var column12 = new Column("Column2");
+        var column21 = new Column("Column1");
+        var column22 = new Column("Column2");
+        
+        table1.AddStructure(column11);
+        table1.AddStructure(column12);
+        table2.AddStructure(column21);
+        table2.AddStructure(column22);
+        
+        Assert.True(table1.SubStructures.SequenceEqual(table2.SubStructures));
+    }
+    
+    [Fact]
+    public void ListEqualitySanityCheckWrongOrder()
+    {
+        var table1 = new Table("Table");
+        var table2 = new Table("Table");
+        var column11 = new Column("Column1");
+        var column12 = new Column("Column2");
+        var column21 = new Column("Column1");
+        var column22 = new Column("Column2");
+        
+        table1.AddStructure(column11);
+        table1.AddStructure(column12);
+        table2.AddStructure(column22);
+        table2.AddStructure(column21);
+        
+        Assert.False(table1.SubStructures.SequenceEqual(table2.SubStructures));
     }
 
 

@@ -1,4 +1,5 @@
 using GraphManipulation.Models;
+using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
 
@@ -6,6 +7,44 @@ namespace GraphManipulation.Extensions;
 
 public static class StructureNavigation
 {
+    public static T? Find<T>(this StructuredEntity structuredEntity, Uri uri) where T : Structure
+    {
+        if (structuredEntity.SubStructures.Count == 0)
+        {
+            return null;
+        }
+    
+        var result = structuredEntity.SubStructures
+            .FirstOrDefault(sub => sub.Uri == uri);
+    
+        if (result is T r)
+        {
+            return r;
+        }
+    
+        structuredEntity.SubStructures
+            .ForEach(sub =>
+            {
+                var n = sub.Find<T>(uri);
+                if (n != null)
+                {
+                    result = n;
+                }
+            });
+
+        if (result is T k)
+        {
+            return k;
+        }
+        
+        return null;
+    }
+
+    public static T? Find<T>(this StructuredEntity structuredEntity, Structure structure) where T : Structure
+    {
+        return structuredEntity.Find<T>(structure.Uri);
+    }
+    
     public static Schema? FindSchema(this DataStore dataStore, string schemaName)
     {
         return dataStore.SubStructures.Select(sub => (sub as Schema)!).FirstOrDefault(s => s.Name == schemaName);
