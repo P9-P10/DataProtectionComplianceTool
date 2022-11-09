@@ -87,13 +87,19 @@ ddl:isNotNullShape
     sh:targetObjectsOf ddl:isNotNull ;
     sh:datatype        xsd:boolean .
 
-ddl:ReferencesShape
+ddl:ForeignKeyObjectShape
     a                  sh:NodeShape ;
     sh:targetObjectsOf ddl:foreignKey ;
     sh:property        [ sh:path     ddl:references ;
                          sh:class    ddl:Column ;
                          sh:minCount 1 ;
                          sh:maxCount 1 ; ] .
+
+ddl:ReferencesSubjectObjectShape
+    a                   sh:NodeShape ;
+    sh:targetSubjectsOf ddl:references ;
+    sh:targetObjectsOf  ddl:references ;
+    sh:class            ddl:Column .
 
 ### DataEntry
 

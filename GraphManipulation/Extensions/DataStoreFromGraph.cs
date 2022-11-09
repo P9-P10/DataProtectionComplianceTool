@@ -21,7 +21,6 @@ public static class DataStoreFromGraph
             })
             .Select(datastore =>
             {
-                // TODO: graph.ConstructSubStructures(datastore);
                 if (datastore is Relational relational)
                 {
                     graph.ConstructRelational(relational);
@@ -31,7 +30,7 @@ public static class DataStoreFromGraph
             })
             .ToList();
     }
-
+    
     private static void ConstructRelational(this IGraph graph, Relational relational)
     {
         graph.ConstructSchemas(relational);
@@ -95,34 +94,45 @@ public static class DataStoreFromGraph
             });
     }
 
+    private static Triple? GetTripleWithSubjectPredicateObject(this IGraph graph, INode subj, INode pred, INode obj)
+    {
+        return graph.Triples
+            .FirstOrDefault(triple => triple.Subject.Equals(subj) &&
+                             triple.Predicate.Equals(pred) &&
+                             triple.Object.Equals(obj));
+    } 
+
     private static void ConstructForeignKeys(this IGraph graph, Relational relational)
     {
-        
-    }
+        graph
+            .GetTriplesWithPredicate(graph.CreateUriNode("ddl:references"))
+            .Where(triple =>
+            {
+                var subjStore = graph.GetTripleWithSubjectPredicateObject(
+                    triple.Subject, 
+                    graph.CreateUriNode("ddl:hasStore"), 
+                    graph.CreateUriNode(relational.Uri));
+                
+                var objStore = graph.GetTripleWithSubjectPredicateObject(
+                    triple.Object,
+                    graph.CreateUriNode("ddl:hasStore"),
+                    graph.CreateUriNode(relational.Uri));
 
-    // private static void GetForeignKeys(this IGraph graph, Table table)
-    // {
-    //     graph
-    //         .GetTriplesWithSubjectPredicate(graph.CreateUriNode(table.Uri), graph.CreateUriNode("ddl:foreignKey"))
-    //         .Select(triple => triple.Object as UriNode)
-    //         .ToList()
-    //         .ForEach(columnNode =>
-    //         {
-    //             var matchingColumn = table.SubStructures.First(sub => sub.Uri == columnNode!.Uri) as Column;
-    //             var referencedNode = graph
-    //                 .GetTriplesWithSubjectPredicate(graph.CreateUriNode(matchingColumn.Uri),
-    //                     graph.CreateUriNode("ddl:references"))
-    //                 .Select(triple => triple.Object as UriNode)
-    //                 .First();
-    //
-    //
-    //         });
-    // }
-    //
-    // private static Column ConstructColumn(this IGraph graph, Uri columnUri)
-    // {
-    //     
-    // }
+                return subjStore != null && objStore != null;
+
+            })
+            .ToList()
+            .ForEach(triple =>
+            {
+                var subj = (triple.Subject as UriNode)!;
+                var obj = (triple.Object as UriNode)!;
+
+                var from = relational.Find<Column>(subj.Uri)!;
+                var to = relational.Find<Column>(obj.Uri)!;
+        
+                (from.ParentStructure as Table)!.AddForeignKey(from, to);
+            });
+    }
 
     private static void ConstructColumns(this IGraph graph, Table table)
     {

@@ -126,7 +126,12 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     [Fact]
     public void GetDataStoresTypeSqliteReturnsSqliteWithTablesWithCompositeForeignKey()
     {
-        Assert.True(false);
+        var actual = _tds.ActualSqlites.First()
+            .Find<Table>(_tds.ExpectedTable2)!
+            .ForeignKeys;
+        
+        Assert.Equal(3, actual.Count);
+        Assert.True(_tds.ExpectedTable2.ForeignKeys.SequenceEqual(actual));
     }
 
     [Fact]
@@ -171,22 +176,22 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
 
     public class TestDataStoreFixture
     {
-        public const string ExpectedSqlite1Name = "TestSqlite1";
-        public const string ExpectedSqlite2Name = "TestSqlite2";
-        public const string ExpectedSchema1Name = "TestSchema1";
-        public const string ExpectedSchema2Name = "TestSchema2";
-        public const string ExpectedSchema3Name = "TestSchema3";
-        public const string ExpectedTable1Name = "TestTable1";
-        public const string ExpectedTable2Name = "TestTable2";
-        public const string ExpectedTable3Name = "TestTable3";
-        public const string ExpectedColumn11Name = "TestColumn11";
-        public const string ExpectedColumn12Name = "TestColumn12";
-        public const string ExpectedColumn21Name = "TestColumn21";
-        public const string ExpectedColumn22Name = "TestColumn22";
-        public const string ExpectedColumn23Name = "TestColumn23";
-        public const string ExpectedColumn31Name = "TestColumn31";
-        public const string ExpectedColumn32Name = "TestColumn32";
-        public const string ExpectedColumn33Name = "TestColumn33";
+        private const string ExpectedSqlite1Name = "TestSqlite1";
+        private const string ExpectedSqlite2Name = "TestSqlite2";
+        private const string ExpectedSchema1Name = "TestSchema1";
+        private const string ExpectedSchema2Name = "TestSchema2";
+        private const string ExpectedSchema3Name = "TestSchema3";
+        private const string ExpectedTable1Name = "TestTable1";
+        private const string ExpectedTable2Name = "TestTable2";
+        private const string ExpectedTable3Name = "TestTable3";
+        private const string ExpectedColumn11Name = "TestColumn11";
+        private const string ExpectedColumn12Name = "TestColumn12";
+        private const string ExpectedColumn21Name = "TestColumn21";
+        private const string ExpectedColumn22Name = "TestColumn22";
+        private const string ExpectedColumn23Name = "TestColumn23";
+        private const string ExpectedColumn31Name = "TestColumn31";
+        private const string ExpectedColumn32Name = "TestColumn32";
+        private const string ExpectedColumn33Name = "TestColumn33";
 
         public const string ExpectedColumn11DataType = "INT";
         public const string ExpectedColumn12DataType = "VARCHAR";
@@ -269,82 +274,11 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
             ExpectedTable2.AddForeignKey(ExpectedColumn23, ExpectedColumn33);
 
             Graph = CreateBaseTestGraph();
-
-            Graph.AssertNamedEntityTriple(ExpectedSqlite1);
-            Graph.AssertNamedEntityTriple(ExpectedSqlite2);
-            Graph.AssertNamedEntityTriple(ExpectedSchema1);
-            Graph.AssertNamedEntityTriple(ExpectedSchema2);
-            Graph.AssertNamedEntityTriple(ExpectedSchema3);
-            Graph.AssertNamedEntityTriple(ExpectedTable1);
-            Graph.AssertNamedEntityTriple(ExpectedTable2);
-            Graph.AssertNamedEntityTriple(ExpectedTable3);
-            Graph.AssertNamedEntityTriple(ExpectedColumn11);
-            Graph.AssertNamedEntityTriple(ExpectedColumn12);
-            Graph.AssertNamedEntityTriple(ExpectedColumn21);
-            Graph.AssertNamedEntityTriple(ExpectedColumn22);
-            Graph.AssertNamedEntityTriple(ExpectedColumn23);
-            Graph.AssertNamedEntityTriple(ExpectedColumn31);
-            Graph.AssertNamedEntityTriple(ExpectedColumn32);
-            Graph.AssertNamedEntityTriple(ExpectedColumn33);
-
-            Graph.AssertHasStructureTriple(ExpectedSqlite1, ExpectedSchema1);
-            Graph.AssertHasStructureTriple(ExpectedSqlite1, ExpectedSchema2);
-            Graph.AssertHasStructureTriple(ExpectedSqlite1, ExpectedSchema3);
-            Graph.AssertHasStructureTriple(ExpectedSchema1, ExpectedTable1);
-            Graph.AssertHasStructureTriple(ExpectedSchema1, ExpectedTable2);
-            Graph.AssertHasStructureTriple(ExpectedSchema3, ExpectedTable3);
-            Graph.AssertHasStructureTriple(ExpectedTable1, ExpectedColumn11);
-            Graph.AssertHasStructureTriple(ExpectedTable1, ExpectedColumn12);
-            Graph.AssertHasStructureTriple(ExpectedTable2, ExpectedColumn21);
-            Graph.AssertHasStructureTriple(ExpectedTable2, ExpectedColumn22);
-            Graph.AssertHasStructureTriple(ExpectedTable2, ExpectedColumn23);
-            Graph.AssertHasStructureTriple(ExpectedTable3, ExpectedColumn31);
-            Graph.AssertHasStructureTriple(ExpectedTable3, ExpectedColumn32);
-            Graph.AssertHasStructureTriple(ExpectedTable3, ExpectedColumn33);
             
-            Graph.AssertPrimaryKeys(ExpectedTable1);
-            Graph.AssertPrimaryKeys(ExpectedTable2);
-            Graph.AssertPrimaryKeys(ExpectedTable3);
-            
-            Graph.AssertForeignKeys(ExpectedTable1);
-            Graph.AssertForeignKeys(ExpectedTable2);
-            Graph.AssertForeignKeys(ExpectedTable3);
-
-            Graph.AssertHasDataTypeTriple(ExpectedColumn11);
-            Graph.AssertHasDataTypeTriple(ExpectedColumn12);
-            Graph.AssertHasDataTypeTriple(ExpectedColumn21);
-            Graph.AssertHasDataTypeTriple(ExpectedColumn22);
-            Graph.AssertHasDataTypeTriple(ExpectedColumn23);
-            Graph.AssertHasDataTypeTriple(ExpectedColumn31);
-            Graph.AssertHasDataTypeTriple(ExpectedColumn32);
-            Graph.AssertHasDataTypeTriple(ExpectedColumn33);
-            
-            Graph.AssertIsNotNullTriple(ExpectedColumn11);
-            Graph.AssertIsNotNullTriple(ExpectedColumn12);
-            Graph.AssertIsNotNullTriple(ExpectedColumn21);
-            Graph.AssertIsNotNullTriple(ExpectedColumn22);
-            Graph.AssertIsNotNullTriple(ExpectedColumn23);
-            Graph.AssertIsNotNullTriple(ExpectedColumn31);
-            Graph.AssertIsNotNullTriple(ExpectedColumn32);
-            Graph.AssertIsNotNullTriple(ExpectedColumn33);
-            
-            Graph.AssertOptionsTriple(ExpectedColumn11);
-            Graph.AssertOptionsTriple(ExpectedColumn12);
-            Graph.AssertOptionsTriple(ExpectedColumn21);
-            Graph.AssertOptionsTriple(ExpectedColumn22);
-            Graph.AssertOptionsTriple(ExpectedColumn23);
-            Graph.AssertOptionsTriple(ExpectedColumn31);
-            Graph.AssertOptionsTriple(ExpectedColumn32);
-            Graph.AssertOptionsTriple(ExpectedColumn33);
+            Graph.Merge(ExpectedSqlite1.ToGraph());
+            Graph.Merge(ExpectedSqlite2.ToGraph());
 
             ActualSqlites = Graph.ConstructDataStores<Sqlite>();
         }
     }
-
-    // TODO: Table Primary og Foreign keys bør nok tilføjes til grafen som en liste, da rækkefølgen af dem er vigtig
-
-    // TODO: Kunne man lave noget i stil med Datastore<Sqlite<Schema<Table<Column>>> ???
-    // TODO: Det ville potentielt afskære fra at have flere forskellige typer
-    // af Structure (f.eks. Table og Column) i samme niveau. Måske kan man dog lave et system så
-    // man kan komponere nye typer nemt, så man f.eks. nemt kan lave en TableAndColumns type  
 }
