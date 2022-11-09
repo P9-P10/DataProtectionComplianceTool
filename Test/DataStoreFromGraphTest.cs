@@ -178,25 +178,25 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
         const string expectedTableName = "TestTable";
         const string expectedColumnName = "TestColumn";
         
-        
+        Assert.True(false);
     }
 
     [Fact]
     public void GetDataStoresTypeSqliteReturnsSqliteWithTablesWithCompositePrimaryKey()
     {
-        
+        Assert.True(false);
     }
 
     [Fact]
     public void GetDataStoresTypeSqliteReturnsSqliteWithTablesWithSingleForeignKey()
     {
-        
+        Assert.True(false);
     }
     
     [Fact]
     public void GetDataStoresTypeSqliteReturnsSqliteWithTablesWithCompositeForeignKey()
     {
-        
+        Assert.True(false);
     }
 
     [Fact]
@@ -214,13 +214,13 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     [Fact]
     public void GetDataStoresTypeSqliteReturnsSqliteWithColumnsWithIsNotNull()
     {
-        
+        Assert.True(false);
     }
 
     [Fact]
     public void GetDataStoresTypeSqliteReturnsSqliteWithColumnsWithOptions()
     {
-        
+        Assert.True(false);
     }
     
     // TODO: Table Primary og Foreign keys bør nok tilføjes til grafen som en liste, da rækkefølgen af dem er vigtig
