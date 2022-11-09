@@ -79,15 +79,15 @@ public abstract class Relational : Database
         ForeignKeysQueryResults.ForEach(result =>
         {
             var fromTable = this
-                .FindSchema(result.FromSchema)
-                .FindTable(result.FromTable);
+                .FindSchema(result.FromSchema)!
+                .FindTable(result.FromTable)!;
 
-            var fromColumn = fromTable.FindColumn(result.FromColumn);
+            var fromColumn = fromTable.FindColumn(result.FromColumn)!;
 
             var toColumn = this
-                .FindSchema(result.ToSchema)
-                .FindTable(result.ToTable)
-                .FindColumn(result.ToColumn);
+                .FindSchema(result.ToSchema)!
+                .FindTable(result.ToTable)!
+                .FindColumn(result.ToColumn)!;
 
             fromTable.AddForeignKey(new ForeignKey(fromColumn, toColumn, result.OnDelete, result.OnUpdate));
         });
@@ -98,9 +98,9 @@ public abstract class Relational : Database
         ColumnOptionsQueryResults.ForEach(result =>
         {
             this
-                .FindSchema(result.SchemaName)
-                .FindTable(result.TableName)
-                .FindColumn(result.ColumnName)
+                .FindSchema(result.SchemaName)!
+                .FindTable(result.TableName)!
+                .FindColumn(result.ColumnName)!
                 .SetOptions(result.Options);
         });
     }

@@ -30,7 +30,7 @@ public static class DataStoreFromGraph
             })
             .ToList();
     }
-    
+
     private static void ConstructRelational(this IGraph graph, Relational relational)
     {
         graph.ConstructSchemas(relational);
@@ -98,9 +98,9 @@ public static class DataStoreFromGraph
     {
         return graph.Triples
             .FirstOrDefault(triple => triple.Subject.Equals(subj) &&
-                             triple.Predicate.Equals(pred) &&
-                             triple.Object.Equals(obj));
-    } 
+                                      triple.Predicate.Equals(pred) &&
+                                      triple.Object.Equals(obj));
+    }
 
     private static void ConstructForeignKeys(this IGraph graph, Relational relational)
     {
@@ -109,17 +109,16 @@ public static class DataStoreFromGraph
             .Where(triple =>
             {
                 var subjStore = graph.GetTripleWithSubjectPredicateObject(
-                    triple.Subject, 
-                    graph.CreateUriNode("ddl:hasStore"), 
+                    triple.Subject,
+                    graph.CreateUriNode("ddl:hasStore"),
                     graph.CreateUriNode(relational.Uri));
-                
+
                 var objStore = graph.GetTripleWithSubjectPredicateObject(
                     triple.Object,
                     graph.CreateUriNode("ddl:hasStore"),
                     graph.CreateUriNode(relational.Uri));
 
-                return subjStore != null && objStore != null;
-
+                return subjStore is not null && objStore is not null;
             })
             .ToList()
             .ForEach(triple =>
@@ -129,7 +128,7 @@ public static class DataStoreFromGraph
 
                 var from = relational.Find<Column>(subj.Uri)!;
                 var to = relational.Find<Column>(obj.Uri)!;
-        
+
                 (from.ParentStructure as Table)!.AddForeignKey(from, to);
             });
     }

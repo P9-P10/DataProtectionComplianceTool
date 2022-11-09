@@ -13,15 +13,15 @@ public static class StructureNavigation
         {
             return null;
         }
-    
+
         var result = structuredEntity.SubStructures
             .FirstOrDefault(sub => sub.Uri == uri);
-    
+
         if (result is T r)
         {
             return r;
         }
-    
+
         structuredEntity.SubStructures
             .ForEach(sub =>
             {
@@ -36,7 +36,7 @@ public static class StructureNavigation
         {
             return k;
         }
-        
+
         return null;
     }
 
@@ -44,7 +44,7 @@ public static class StructureNavigation
     {
         return structuredEntity.Find<T>(structure.Uri);
     }
-    
+
     public static Schema? FindSchema(this DataStore dataStore, string schemaName)
     {
         return dataStore.SubStructures.Select(sub => (sub as Schema)!).FirstOrDefault(s => s.Name == schemaName);

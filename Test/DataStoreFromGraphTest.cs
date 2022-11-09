@@ -106,8 +106,8 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
         var actual = _tds.ActualSqlites.First()
             .Find<Table>(_tds.ExpectedTable3.Uri)!
             .PrimaryKeys;
-        
-        
+
+
         Assert.Equal(3, actual.Count);
         Assert.True(_tds.ExpectedTable3.PrimaryKeys.SequenceEqual(actual));
     }
@@ -129,7 +129,7 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
         var actual = _tds.ActualSqlites.First()
             .Find<Table>(_tds.ExpectedTable2)!
             .ForeignKeys;
-        
+
         Assert.Equal(3, actual.Count);
         Assert.True(_tds.ExpectedTable2.ForeignKeys.SequenceEqual(actual));
     }
@@ -150,7 +150,7 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
         var actualIsNotNull1 = _tds.ActualSqlites.First()
             .Find<Column>(_tds.ExpectedColumn11)!
             .IsNotNull;
-        
+
         var actualIsNotNull2 = _tds.ActualSqlites.First()
             .Find<Column>(_tds.ExpectedColumn12)!
             .IsNotNull;
@@ -202,15 +202,6 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
         public const string ExpectedColumn32DataType = "VARCHAR";
         public const string ExpectedColumn33DataType = "DATETIME";
 
-        public readonly Sqlite ExpectedSqlite1;
-        public readonly Sqlite ExpectedSqlite2;
-        public readonly Schema ExpectedSchema1;
-        public readonly Schema ExpectedSchema2;
-        public readonly Schema ExpectedSchema3;
-        public readonly Table ExpectedTable1;
-        public readonly Table ExpectedTable2;
-        public readonly Table ExpectedTable3;
-        
         public readonly Column ExpectedColumn11;
         public readonly Column ExpectedColumn12;
         public readonly Column ExpectedColumn21;
@@ -219,6 +210,15 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
         public readonly Column ExpectedColumn31;
         public readonly Column ExpectedColumn32;
         public readonly Column ExpectedColumn33;
+        public readonly Schema ExpectedSchema1;
+        public readonly Schema ExpectedSchema2;
+        public readonly Schema ExpectedSchema3;
+
+        public readonly Sqlite ExpectedSqlite1;
+        public readonly Sqlite ExpectedSqlite2;
+        public readonly Table ExpectedTable1;
+        public readonly Table ExpectedTable2;
+        public readonly Table ExpectedTable3;
 
         public List<Sqlite> ActualSqlites;
 
@@ -257,24 +257,24 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
             ExpectedTable3.AddStructure(ExpectedColumn31);
             ExpectedTable3.AddStructure(ExpectedColumn32);
             ExpectedTable3.AddStructure(ExpectedColumn33);
-            
+
             ExpectedTable1.AddPrimaryKey(ExpectedColumn11);
-            
+
             ExpectedTable2.AddPrimaryKey(ExpectedColumn21);
             ExpectedTable2.AddPrimaryKey(ExpectedColumn22);
-            
+
             ExpectedTable3.AddPrimaryKey(ExpectedColumn31);
             ExpectedTable3.AddPrimaryKey(ExpectedColumn32);
             ExpectedTable3.AddPrimaryKey(ExpectedColumn33);
-            
+
             ExpectedTable1.AddForeignKey(ExpectedColumn11, ExpectedColumn21);
-            
+
             ExpectedTable2.AddForeignKey(ExpectedColumn21, ExpectedColumn31);
             ExpectedTable2.AddForeignKey(ExpectedColumn22, ExpectedColumn32);
             ExpectedTable2.AddForeignKey(ExpectedColumn23, ExpectedColumn33);
 
             Graph = CreateBaseTestGraph();
-            
+
             Graph.Merge(ExpectedSqlite1.ToGraph());
             Graph.Merge(ExpectedSqlite2.ToGraph());
 
