@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Text;
+using GraphManipulation.Extensions;
 using GraphManipulation.Models;
 using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Stores;
@@ -652,7 +653,7 @@ public class StructureTest
             sqlite.UpdateBaseUri(baseUri);
             sqlite.AddStructure(table);
 
-            Assert.Throws<GraphBasedException>(() => table.ToGraph());
+            Assert.Throws<DataStoreToGraphException>(() => table.ToGraph());
         }
 
         [Fact]

@@ -1,3 +1,4 @@
+using GraphManipulation.Extensions;
 using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
@@ -50,7 +51,7 @@ public class GraphBasedTest
         {
             var column = new Column("Column");
 
-            Assert.Throws<EntityException>(() => column.ToGraph());
+            Assert.Throws<DataStoreToGraphException>(() => column.ToGraph());
         }
 
         [Fact]
@@ -228,7 +229,7 @@ public class GraphBasedTest
 
             column.UpdateBaseUri(baseUri);
 
-            Assert.Throws<StructureException>(() => column.ToGraph());
+            Assert.Throws<DataStoreToGraphException>(() => column.ToGraph());
         }
     }
 

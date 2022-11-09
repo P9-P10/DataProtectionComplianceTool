@@ -19,34 +19,34 @@ public static class DataStoreToGraph
         graph.AddUriBase(entity);
         graph.AddEntityType(entity);
 
-        if (entity.GetType().IsSubclassOf(typeof(NamedEntity)))
+        if (entity is NamedEntity namedEntity)
         {
-            graph.AddName(entity as NamedEntity);
+            graph.AddName(namedEntity);
         }
 
-        if (entity.GetType().IsSubclassOf(typeof(StructuredEntity)))
+        if (entity is StructuredEntity structuredEntity)
         {
-            graph.AddSubStructures(entity as StructuredEntity);
+            graph.AddSubStructures(structuredEntity);
         }
 
-        if (entity.GetType().IsSubclassOf(typeof(Structure)))
+        if (entity is Structure structure)
         {
-            graph.AddHasStore(entity as Structure);
+            graph.AddHasStore(structure);
         }
 
-        if (entity is Table table)
+        switch (entity)
         {
-            graph.AddPrimaryKeys(table);
-            graph.AddForeignKeys(table);
+            case Table table:
+                graph.AddPrimaryKeys(table);
+                graph.AddForeignKeys(table);
+                break;
+            case Column column:
+                graph.AddDataType(column);
+                graph.AddIsNotNull(column);
+                graph.AddOptions(column);
+                break;
         }
 
-        if (entity is Column column)
-        {
-            graph.AddDataType(column);
-            graph.AddIsNotNull(column);
-            graph.AddOptions(column);
-        }
-        
 
         return graph;
     }
@@ -58,7 +58,7 @@ public static class DataStoreToGraph
 
     private static void AddUriBase(this IGraph graph, Entity entity)
     {
-        if (entity.HasBase())
+        if (!entity.HasBase())
         {
             throw new DataStoreToGraphException("BaseUri was null when building graph");
         }
@@ -89,17 +89,12 @@ public static class DataStoreToGraph
 
     private static void AddHasStore(this IGraph graph, Structure structure)
     {
-        if (structure.HasStore())
+        if (!structure.HasStore())
         {
             throw new DataStoreToGraphException("Store was null when building graph");
         }
 
-        var triple = new Triple(
-            graph.CreateUriNode(structure.Uri),
-            graph.CreateUriNode("ddl:hasStore"),
-            graph.CreateUriNode(structure.Store.Uri));
-
-        graph.Assert(triple);
+        graph.AssertHasStoreTriple(structure);
     }
 
     private static void AddPrimaryKeys(this IGraph graph, Table table)
@@ -150,34 +145,17 @@ public static class DataStoreToGraph
 
     private static void AddDataType(this IGraph graph, Column column)
     {
-        var triple = new Triple(
-            graph.CreateUriNode(column.Uri),
-            graph.CreateUriNode("ddl:hasDataType"),
-            graph.CreateLiteralNode(column.DataType)
-        );
-
-        graph.Assert(triple);
+        graph.AssertHasDataTypeTriple(column);
     }
 
     private static void AddIsNotNull(this IGraph graph, Column column)
     {
-        var triple = new Triple(
-            graph.CreateUriNode(column.Uri),
-            graph.CreateUriNode("ddl:isNotNull"),
-            graph.CreateLiteralNode(column.IsNotNull.ToString().ToLower(),
-                UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeBoolean)));
-
-        graph.Assert(triple);
+        graph.AssertIsNotNullTriple(column);
     }
 
     private static void AddOptions(this IGraph graph, Column column)
     {
-        var triple = new Triple(
-            graph.CreateUriNode(column.Uri),
-            graph.CreateUriNode("ddl:columnOptions"),
-            graph.CreateLiteralNode(column.Options));
-
-        graph.Assert(triple);
+        graph.AssertOptionsTriple(column);
     }
 }
 

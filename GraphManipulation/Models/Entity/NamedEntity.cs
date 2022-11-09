@@ -11,18 +11,4 @@ public abstract class NamedEntity : Entity
     }
 
     public string Name { get; protected set; }
-
-    public override IGraph ToGraph()
-    {
-        var graph = base.ToGraph();
-
-        AddNameToGraph(graph);
-
-        return graph;
-    }
-
-    private void AddNameToGraph(IGraph graph)
-    {
-        graph.AssertNameTriple(this);
-    }
 }

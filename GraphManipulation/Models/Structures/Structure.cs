@@ -145,30 +145,6 @@ public abstract class Structure : StructuredEntity //, IHasStructure
 
         return result;
     }
-
-    public override IGraph ToGraph()
-    {
-        var baseGraph = base.ToGraph();
-
-        AddHasStoreToGraph(baseGraph);
-
-        return baseGraph;
-    }
-
-    private void AddHasStoreToGraph(IGraph graph)
-    {
-        if (!HasStore())
-        {
-            throw new StructureException("Store was null when building graph");
-        }
-
-        var triple = new Triple(
-            graph.CreateUriNode(Uri),
-            graph.CreateUriNode("ddl:hasStore"),
-            graph.CreateUriNode(Store.Uri));
-
-        graph.Assert(triple);
-    }
 }
 
 public class StructureException : Exception

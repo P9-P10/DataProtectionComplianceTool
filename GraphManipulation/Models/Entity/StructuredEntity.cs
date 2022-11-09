@@ -13,23 +13,4 @@ public abstract class StructuredEntity : NamedEntity
     }
 
     public abstract void AddStructure(Structure structure);
-
-    public override IGraph ToGraph()
-    {
-        var graph = base.ToGraph();
-
-        AddStructureToGraph(graph);
-
-        return graph;
-    }
-
-    private void AddStructureToGraph(IGraph graph)
-    {
-        foreach (var subStructure in SubStructures)
-        {
-            graph.Merge(subStructure.ToGraph());
-
-            graph.AssertHasStructureTriple(this, subStructure);
-        }
-    }
 }

@@ -5,7 +5,7 @@ using VDS.RDF;
 
 namespace GraphManipulation.Models.Entity;
 
-public abstract class Entity : GraphBased
+public abstract class Entity
 {
     public readonly HashAlgorithm Algorithm = SHA1.Create();
     public string HashedFrom = null!;
@@ -70,50 +70,24 @@ public abstract class Entity : GraphBased
 
     public override bool Equals(object? obj)
     {
-        if (obj is null)
+        switch (obj)
         {
-            return false;
+            case null:
+                return false;
+            case Entity entity:
+            {
+                var id1 = Id;
+                var id2 = entity.Id;
+                return id1 == id2;
+            }
+            default:
+                return false;
         }
-
-        if (!obj.GetType().IsSubclassOf(typeof(Entity)))
-        {
-            return false;
-        }
-
-        var id1 = Id;
-        var id2 = (obj as Entity).Id;
-        return id1 == id2;
     }
 
     public override int GetHashCode()
     {
         return Id.GetHashCode();
-    }
-
-    public override IGraph ToGraph()
-    {
-        var graph = base.ToGraph();
-
-        AddUriBaseToGraph(graph);
-        AddTypeToGraph(graph);
-
-        return graph;
-    }
-
-    private void AddUriBaseToGraph(IGraph graph)
-    {
-        if (!HasBase())
-        {
-            throw new EntityException("BaseUri was null when building graph");
-        }
-
-        var baseUri = UriFactory.Create(BaseUri);
-        graph.BaseUri = baseUri;
-    }
-
-    private void AddTypeToGraph(IGraph graph)
-    {
-        graph.AssertTypeTriple(this);
     }
 }
 

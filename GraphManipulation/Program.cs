@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using System.Data.SQLite;
+using GraphManipulation.Extensions;
 using GraphManipulation.Models.Stores;
 using VDS.RDF;
 using VDS.RDF.Parsing;

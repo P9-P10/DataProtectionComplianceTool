@@ -5,10 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c701dcae-c036-4c51-b84d-60162b45a46a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/GraphManipulation/Extensions/DataStoreToGraph.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GraphManipulation/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Extensions/DataStoreToGraph.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Extensions/DataStoreToGraph.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Extensions/GraphAsserts.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Extensions/GraphAsserts.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Entity/Entity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Entity/Entity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Entity/NamedEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Entity/NamedEntity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Entity/StructuredEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Entity/StructuredEntity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/GraphBased.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Column.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Column.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Structure.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Structure.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Table.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Models/Structures/Table.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphManipulation/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/GraphManipulation/Program.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/DataStoreFromGraphTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/DataStoreFromGraphTest.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test/EntityTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/EntityTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/GraphBasedTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/GraphBasedTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/StructureTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Test/StructureTest.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -111,7 +121,7 @@
       <workItem from="1667373690955" duration="17022000" />
       <workItem from="1667547185157" duration="23322000" />
       <workItem from="1667823017604" duration="7086000" />
-      <workItem from="1667978085386" duration="2061000" />
+      <workItem from="1667978085386" duration="3187000" />
     </task>
     <servers />
   </component>
@@ -163,6 +173,19 @@
             </endOffsets>
           </properties>
           <option name="timeStamp" value="14" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Test/GraphBasedTest.cs</url>
+          <line>89</line>
+          <properties documentPath="$PROJECT_DIR$/Test/GraphBasedTest.cs" initialLine="89" containingFunctionPresentation="method 'EntityReturnGraphWithType'">
+            <startOffsets>
+              <option value="2804" />
+            </startOffsets>
+            <endOffsets>
+              <option value="2833" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="15" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

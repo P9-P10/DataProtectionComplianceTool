@@ -1,6 +1,7 @@
 using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Structures;
 using VDS.RDF;
+using VDS.RDF.Parsing;
 
 namespace GraphManipulation.Extensions;
 
@@ -31,6 +32,25 @@ public static class GraphAsserts
     public static void AssertHasDataTypeTriple(this IGraph graph, Column column)
     {
         graph.AssertSubjectPredicateObjectTriple(column, "ddl:hasDataType", column.DataType);
+    }
+
+    public static void AssertIsNotNullTriple(this IGraph graph, Column column)
+    {
+        graph.AssertSubjectPredicateObjectTriple(
+            column, 
+            "ddl:isNotNull", 
+            graph.CreateLiteralNode(column.IsNotNull.ToString().ToLower(),
+                UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeBoolean)));
+    }
+
+    public static void AssertHasStoreTriple(this IGraph graph, Structure structure)
+    {
+        graph.AssertSubjectPredicateObjectTriple(structure, "ddl:hasStore", structure.Store!);
+    }
+
+    public static void AssertOptionsTriple(this IGraph graph, Column column)
+    {
+        graph.AssertSubjectPredicateObjectTriple(column, "ddl:columnOptions", column.Options);
     }
 
     private static void AssertSubjectPredicateObjectTriple(this IGraph graph, Entity entity, string predicate,

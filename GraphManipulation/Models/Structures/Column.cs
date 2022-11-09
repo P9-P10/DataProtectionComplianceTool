@@ -32,47 +32,4 @@ public class Column : Structure
     {
         Options = options;
     }
-
-    public override IGraph ToGraph()
-    {
-        var graph = base.ToGraph();
-
-        AddDataTypeToGraph(graph);
-        AddIsNotNullToGraph(graph);
-        AddOptionsToGraph(graph);
-
-        return graph;
-    }
-
-    private void AddDataTypeToGraph(IGraph graph)
-    {
-        var triple = new Triple(
-            graph.CreateUriNode(Uri),
-            graph.CreateUriNode("ddl:hasDataType"),
-            graph.CreateLiteralNode(DataType)
-        );
-
-        graph.Assert(triple);
-    }
-
-    private void AddIsNotNullToGraph(IGraph graph)
-    {
-        var triple = new Triple(
-            graph.CreateUriNode(Uri),
-            graph.CreateUriNode("ddl:isNotNull"),
-            graph.CreateLiteralNode(IsNotNull.ToString().ToLower(),
-                UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeBoolean)));
-
-        graph.Assert(triple);
-    }
-
-    private void AddOptionsToGraph(IGraph graph)
-    {
-        var triple = new Triple(
-            graph.CreateUriNode(Uri),
-            graph.CreateUriNode("ddl:columnOptions"),
-            graph.CreateLiteralNode(Options));
-
-        graph.Assert(triple);
-    }
 }

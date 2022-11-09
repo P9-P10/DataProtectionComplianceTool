@@ -98,7 +98,7 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     {
         IGraph graph = new Graph();
 
-        graph.NamespaceMap.AddNamespace("ddl", GraphBased.OntologyNamespace);
+        graph.NamespaceMap.AddNamespace("ddl", DataStoreToGraph.OntologyNamespace);
         var uri = UriFactory.Create(BaseUri);
         graph.BaseUri = uri;
 
