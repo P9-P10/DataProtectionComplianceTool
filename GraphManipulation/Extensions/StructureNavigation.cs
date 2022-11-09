@@ -6,28 +6,28 @@ namespace GraphManipulation.Extensions;
 
 public static class StructureNavigation
 {
-    public static Schema FindSchema(this DataStore dataStore, string schemaName)
+    public static Schema? FindSchema(this DataStore dataStore, string schemaName)
     {
-        return (dataStore.SubStructures.First(s => s.Name == schemaName) as Schema)!;
+        return dataStore.SubStructures.Select(sub => (sub as Schema)!).FirstOrDefault(s => s.Name == schemaName);
     }
 
-    public static Table FindTable(this Schema schema, string tableName)
+    public static Table? FindTable(this Schema schema, string tableName)
     {
-        return (schema.SubStructures.First(s => s.Name == tableName) as Table)!;
+        return schema.SubStructures.Select(sub => (sub as Table)!).FirstOrDefault(s => s.Name == tableName);
     }
 
-    public static Column FindColumn(this Table table, string columnName)
+    public static Column? FindColumn(this Table table, string columnName)
     {
-        return (table.SubStructures.First(s => s.Name == columnName) as Column)!;
+        return table.SubStructures.Select(sub => (sub as Column)!).FirstOrDefault(s => s.Name == columnName);
     }
 
-    public static Column FindPrimaryKey(this Table table, string primaryKeyName)
+    public static Column? FindPrimaryKey(this Table table, string primaryKeyName)
     {
-        return table.PrimaryKeys.First(s => s.Name == primaryKeyName);
+        return table.PrimaryKeys.FirstOrDefault(s => s.Name == primaryKeyName);
     }
 
-    public static ForeignKey FindForeignKey(this Table table, string foreignKeyFromName)
+    public static ForeignKey? FindForeignKey(this Table table, string foreignKeyFromName)
     {
-        return table.ForeignKeys.First(s => s.From.Name == foreignKeyFromName);
+        return table.ForeignKeys.FirstOrDefault(s => s.From.Name == foreignKeyFromName);
     }
 }
