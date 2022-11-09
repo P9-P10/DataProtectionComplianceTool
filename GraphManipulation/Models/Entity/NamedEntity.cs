@@ -1,6 +1,3 @@
-using GraphManipulation.Extensions;
-using VDS.RDF;
-
 namespace GraphManipulation.Models.Entity;
 
 public abstract class NamedEntity : Entity

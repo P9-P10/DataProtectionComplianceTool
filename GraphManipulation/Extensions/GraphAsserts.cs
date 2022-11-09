@@ -37,8 +37,8 @@ public static class GraphAsserts
     public static void AssertIsNotNullTriple(this IGraph graph, Column column)
     {
         graph.AssertSubjectPredicateObjectTriple(
-            column, 
-            "ddl:isNotNull", 
+            column,
+            "ddl:isNotNull",
             graph.CreateLiteralNode(column.IsNotNull.ToString().ToLower(),
                 UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeBoolean)));
     }

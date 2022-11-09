@@ -1,6 +1,5 @@
 using System.Security.Cryptography;
 using System.Text;
-using GraphManipulation.Extensions;
 using VDS.RDF;
 
 namespace GraphManipulation.Models.Entity;

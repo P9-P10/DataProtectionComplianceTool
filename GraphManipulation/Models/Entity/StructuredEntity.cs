@@ -1,6 +1,4 @@
-using GraphManipulation.Extensions;
 using GraphManipulation.Models.Structures;
-using VDS.RDF;
 
 namespace GraphManipulation.Models.Entity;
 

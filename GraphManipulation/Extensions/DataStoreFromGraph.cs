@@ -59,7 +59,7 @@ public static class DataStoreFromGraph
             .Select(triple => triple.Object)
             .ToList();
     }
-    
+
     private static void GetTables(this IGraph graph, Schema schema)
     {
         graph

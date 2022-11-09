@@ -15,7 +15,7 @@ public class EntityTest
     {
         return new Column("").Algorithm;
     }
-    
+
 
     [Fact]
     public void HashingSanityCheckSameInstance()

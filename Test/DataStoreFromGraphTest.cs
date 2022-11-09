@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using GraphManipulation.Extensions;
-using GraphManipulation.Models;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
 using VDS.RDF;
@@ -19,79 +17,6 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     public DataStoreFromGraphTest(TestDataStoreFixture tds)
     {
         _tds = tds;
-    }
-
-    public class TestDataStoreFixture
-    {
-        public const string ExpectedSqlite1Name = "TestSqlite1";
-        public const string ExpectedSqlite2Name = "TestSqlite2";
-        public const string ExpectedSchema1Name = "TestSchema1";
-        public const string ExpectedSchema2Name = "TestSchema2";
-        public const string ExpectedTable1Name = "TestTable1";
-        public const string ExpectedTable2Name = "TestTable2";
-        public const string ExpectedColumn1Name = "TestColumn1";
-        public const string ExpectedColumn2Name = "TestColumn2";
-
-        public readonly Sqlite ExpectedSqlite1;
-        public readonly Sqlite ExpectedSqlite2;
-        public readonly Schema ExpectedSchema1;
-        public readonly Schema ExpectedSchema2;
-        public readonly Table ExpectedTable1;
-        public readonly Table ExpectedTable2;
-        public readonly Column ExpectedColumn1;
-        public readonly Column ExpectedColumn2;
-
-        public const string ExpectedColumn1DataType = "INT";
-        public const string ExpectedColumn2DataType = "VARCHAR";
-
-        public IGraph Graph;
-
-        public List<Sqlite> ActualSqlites;
-        
-        public TestDataStoreFixture()
-        {
-            ExpectedSqlite1 = new Sqlite(ExpectedSqlite1Name, BaseUri);
-            ExpectedSqlite2 = new Sqlite(ExpectedSqlite2Name, BaseUri);
-            ExpectedSchema1 = new Schema(ExpectedSchema1Name);
-            ExpectedSchema2 = new Schema(ExpectedSchema2Name);
-            ExpectedTable1 = new Table(ExpectedTable1Name);
-            ExpectedTable2 = new Table(ExpectedTable2Name);
-            ExpectedColumn1 = new Column(ExpectedColumn1Name);
-            ExpectedColumn2 = new Column(ExpectedColumn2Name);
-            
-            ExpectedColumn1.SetDataType(ExpectedColumn1DataType);
-            ExpectedColumn2.SetDataType(ExpectedColumn2DataType);
-            
-            ExpectedSqlite1.AddStructure(ExpectedSchema1);
-            ExpectedSqlite1.AddStructure(ExpectedSchema2);
-            ExpectedSchema1.AddStructure(ExpectedTable1);
-            ExpectedSchema1.AddStructure(ExpectedTable2);
-            ExpectedTable1.AddStructure(ExpectedColumn1);
-            ExpectedTable1.AddStructure(ExpectedColumn2);
-
-            Graph = CreateBaseTestGraph();
-            
-            Graph.AssertNamedEntityTriple(ExpectedSqlite1);
-            Graph.AssertNamedEntityTriple(ExpectedSqlite2);
-            Graph.AssertNamedEntityTriple(ExpectedSchema1);
-            Graph.AssertNamedEntityTriple(ExpectedSchema2);
-            Graph.AssertNamedEntityTriple(ExpectedTable1);
-            Graph.AssertNamedEntityTriple(ExpectedTable2);
-            Graph.AssertNamedEntityTriple(ExpectedColumn1);
-            Graph.AssertNamedEntityTriple(ExpectedColumn2);
-            
-            Graph.AssertHasStructureTriple(ExpectedSqlite1, ExpectedSchema1);
-            Graph.AssertHasStructureTriple(ExpectedSqlite1, ExpectedSchema2);
-            Graph.AssertHasStructureTriple(ExpectedSchema1, ExpectedTable1);
-            Graph.AssertHasStructureTriple(ExpectedSchema1, ExpectedTable2);
-            Graph.AssertHasStructureTriple(ExpectedTable1, ExpectedColumn1);
-            Graph.AssertHasStructureTriple(ExpectedTable1, ExpectedColumn2);
-            
-            Graph.AssertHasDataTypeTriple(ExpectedColumn1);
-            Graph.AssertHasDataTypeTriple(ExpectedColumn2);
-
-            ActualSqlites = Graph.GetDataStores<Sqlite>();
-        }
     }
 
     private static IGraph CreateBaseTestGraph()
@@ -113,7 +38,7 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
         Assert.Equal(_tds.ExpectedSqlite1.Uri, _tds.ActualSqlites.First().Uri);
         Assert.Equal(_tds.ExpectedSqlite1.BaseUri, _tds.ActualSqlites.First().BaseUri);
         Assert.Equal(_tds.ExpectedSqlite1.Name, _tds.ActualSqlites.First().Name);
-        
+
         Assert.Equal(_tds.ExpectedSqlite2, _tds.ActualSqlites.Skip(1).First());
         Assert.Equal(_tds.ExpectedSqlite2.Uri, _tds.ActualSqlites.Skip(1).First().Uri);
         Assert.Equal(_tds.ExpectedSqlite2.BaseUri, _tds.ActualSqlites.Skip(1).First().BaseUri);
@@ -125,7 +50,7 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     {
         var actualSchema1 = _tds.ActualSqlites.First()
             .FindSchema(TestDataStoreFixture.ExpectedSchema1Name);
-        
+
         var actualSchema2 = _tds.ActualSqlites.First()
             .FindSchema(TestDataStoreFixture.ExpectedSchema2Name);
 
@@ -177,7 +102,7 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
         const string expectedSchemaName = "TestSchema";
         const string expectedTableName = "TestTable";
         const string expectedColumnName = "TestColumn";
-        
+
         Assert.True(false);
     }
 
@@ -192,7 +117,7 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     {
         Assert.True(false);
     }
-    
+
     [Fact]
     public void GetDataStoresTypeSqliteReturnsSqliteWithTablesWithCompositeForeignKey()
     {
@@ -207,7 +132,7 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
             .FindTable(TestDataStoreFixture.ExpectedTable1Name)
             .FindColumn(TestDataStoreFixture.ExpectedColumn1Name)
             .DataType;
-        
+
         Assert.Equal(TestDataStoreFixture.ExpectedColumn1DataType, actual);
     }
 
@@ -222,7 +147,80 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     {
         Assert.True(false);
     }
-    
+
+    public class TestDataStoreFixture
+    {
+        public const string ExpectedSqlite1Name = "TestSqlite1";
+        public const string ExpectedSqlite2Name = "TestSqlite2";
+        public const string ExpectedSchema1Name = "TestSchema1";
+        public const string ExpectedSchema2Name = "TestSchema2";
+        public const string ExpectedTable1Name = "TestTable1";
+        public const string ExpectedTable2Name = "TestTable2";
+        public const string ExpectedColumn1Name = "TestColumn1";
+        public const string ExpectedColumn2Name = "TestColumn2";
+
+        public const string ExpectedColumn1DataType = "INT";
+        public const string ExpectedColumn2DataType = "VARCHAR";
+        public readonly Column ExpectedColumn1;
+        public readonly Column ExpectedColumn2;
+        public readonly Schema ExpectedSchema1;
+        public readonly Schema ExpectedSchema2;
+
+        public readonly Sqlite ExpectedSqlite1;
+        public readonly Sqlite ExpectedSqlite2;
+        public readonly Table ExpectedTable1;
+        public readonly Table ExpectedTable2;
+
+        public List<Sqlite> ActualSqlites;
+
+        public IGraph Graph;
+
+        public TestDataStoreFixture()
+        {
+            ExpectedSqlite1 = new Sqlite(ExpectedSqlite1Name, BaseUri);
+            ExpectedSqlite2 = new Sqlite(ExpectedSqlite2Name, BaseUri);
+            ExpectedSchema1 = new Schema(ExpectedSchema1Name);
+            ExpectedSchema2 = new Schema(ExpectedSchema2Name);
+            ExpectedTable1 = new Table(ExpectedTable1Name);
+            ExpectedTable2 = new Table(ExpectedTable2Name);
+            ExpectedColumn1 = new Column(ExpectedColumn1Name);
+            ExpectedColumn2 = new Column(ExpectedColumn2Name);
+
+            ExpectedColumn1.SetDataType(ExpectedColumn1DataType);
+            ExpectedColumn2.SetDataType(ExpectedColumn2DataType);
+
+            ExpectedSqlite1.AddStructure(ExpectedSchema1);
+            ExpectedSqlite1.AddStructure(ExpectedSchema2);
+            ExpectedSchema1.AddStructure(ExpectedTable1);
+            ExpectedSchema1.AddStructure(ExpectedTable2);
+            ExpectedTable1.AddStructure(ExpectedColumn1);
+            ExpectedTable1.AddStructure(ExpectedColumn2);
+
+            Graph = CreateBaseTestGraph();
+
+            Graph.AssertNamedEntityTriple(ExpectedSqlite1);
+            Graph.AssertNamedEntityTriple(ExpectedSqlite2);
+            Graph.AssertNamedEntityTriple(ExpectedSchema1);
+            Graph.AssertNamedEntityTriple(ExpectedSchema2);
+            Graph.AssertNamedEntityTriple(ExpectedTable1);
+            Graph.AssertNamedEntityTriple(ExpectedTable2);
+            Graph.AssertNamedEntityTriple(ExpectedColumn1);
+            Graph.AssertNamedEntityTriple(ExpectedColumn2);
+
+            Graph.AssertHasStructureTriple(ExpectedSqlite1, ExpectedSchema1);
+            Graph.AssertHasStructureTriple(ExpectedSqlite1, ExpectedSchema2);
+            Graph.AssertHasStructureTriple(ExpectedSchema1, ExpectedTable1);
+            Graph.AssertHasStructureTriple(ExpectedSchema1, ExpectedTable2);
+            Graph.AssertHasStructureTriple(ExpectedTable1, ExpectedColumn1);
+            Graph.AssertHasStructureTriple(ExpectedTable1, ExpectedColumn2);
+
+            Graph.AssertHasDataTypeTriple(ExpectedColumn1);
+            Graph.AssertHasDataTypeTriple(ExpectedColumn2);
+
+            ActualSqlites = Graph.GetDataStores<Sqlite>();
+        }
+    }
+
     // TODO: Table Primary og Foreign keys bør nok tilføjes til grafen som en liste, da rækkefølgen af dem er vigtig
 
     // TODO: Kunne man lave noget i stil med Datastore<Sqlite<Schema<Table<Column>>> ???

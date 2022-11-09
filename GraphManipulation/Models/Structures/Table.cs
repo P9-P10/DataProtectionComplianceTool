@@ -1,5 +1,3 @@
-using VDS.RDF;
-
 namespace GraphManipulation.Models.Structures;
 
 public class Table : Structure

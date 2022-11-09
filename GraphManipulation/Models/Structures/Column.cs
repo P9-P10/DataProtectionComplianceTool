@@ -1,6 +1,3 @@
-using VDS.RDF;
-using VDS.RDF.Parsing;
-
 namespace GraphManipulation.Models.Structures;
 
 public class Column : Structure
