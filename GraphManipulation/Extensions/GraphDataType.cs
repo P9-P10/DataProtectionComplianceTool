@@ -1,6 +1,7 @@
 using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
+using GraphManipulation.Ontologies;
 
 namespace GraphManipulation.Extensions;
 
@@ -13,14 +14,12 @@ public static class GraphDataType
 
     public static string GetGraphTypeString(Type type)
     {
-        const string prefix = "ddl:";
-
-        return prefix + type switch
+        return type switch
         {
-            { } when type == typeof(Column) => "Column",
-            { } when type == typeof(Table) => "Table",
-            { } when type == typeof(Schema) => "Schema",
-            { } when type == typeof(Sqlite) => "SQLite",
+            { } when type == typeof(Column) => DataStoreDescriptionLanguage.Column,
+            { } when type == typeof(Table) => DataStoreDescriptionLanguage.Table,
+            { } when type == typeof(Schema) => DataStoreDescriptionLanguage.Schema,
+            { } when type == typeof(Sqlite) => DataStoreDescriptionLanguage.Sqlite,
             _ => throw new GraphDataTypeException("Type not supported " + type)
         };
     }

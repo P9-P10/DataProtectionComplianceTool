@@ -5,17 +5,42 @@ using GraphManipulation.Extensions;
 using GraphManipulation.Models.Stores;
 using VDS.RDF;
 using VDS.RDF.Parsing;
-using VDS.RDF.Query.Inference;
-using VDS.RDF.Shacl;
+using VDS.RDF.Query;
+using VDS.RDF.Query.Datasets;
 using VDS.RDF.Writing;
 
 namespace GraphManipulation;
 
 public static class Program
 {
+    private const string File = "output.ttl";
+    private const string Path = $"/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/{File}";
+    
     public static void Main()
     {
-        CreateAndValidateGraph();
+        // CreateAndValidateGraph();
+        SparqlExperiment();
+    }
+
+    private static void SparqlExperiment()
+    {
+        // https://dotnetrdf.org/docs/stable/user_guide/Querying-With-SPARQL.html
+        var graph = new Graph();
+        graph.LoadFromFile(Path);
+        
+        var parser = new SparqlQueryParser();
+        var query = parser.ParseFromString("SELECT ?relational WHERE { ?relational a ddl:Relational }");
+        
+        TripleStore tripleStore = new TripleStore();
+        tripleStore.Add(graph);
+        
+        InMemoryDataset dataset = new InMemoryDataset(tripleStore);
+        
+        var processor = new LeviathanQueryProcessor(dataset);
+        
+        var results = processor.ProcessQuery(query);
+
+        int a = 3;
     }
 
     private static void CreateAndValidateGraph()
@@ -34,13 +59,11 @@ public static class Program
         var graph = sqlite.ToGraph();
 
         var writer = new CompressingTurtleWriter();
-        const string file = "output.ttl";
-        const string path = $"/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/{file}";
-        writer.Save(graph, path);
+        
+        writer.Save(graph, Path);
 
         IGraph dataGraph = new Graph();
-        dataGraph.LoadFromFile(path);
-
+        dataGraph.LoadFromFile(Path);
 
         IGraph ontology = new Graph();
         const string ontologyPath =

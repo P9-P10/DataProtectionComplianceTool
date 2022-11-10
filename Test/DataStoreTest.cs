@@ -14,24 +14,22 @@ public class DataStoreTest
     public void UpdateBaseSetsBase()
     {
         var sqlite = new Sqlite("SQLite");
-        const string baseName = "Test";
 
-        sqlite.UpdateBaseUri(baseName);
+        sqlite.UpdateBaseUri(baseUri);
 
-        Assert.Equal(baseName, sqlite.BaseUri);
+        Assert.Equal(baseUri, sqlite.BaseUri);
     }
 
     [Fact]
     public void AddStructureAddsGivenStructureToListOfStructures()
     {
-        const string baseNamespace = "Test";
         const string sqliteName = "SQLite";
         const string schemaName = "Schema";
 
         var sqlite = new Sqlite(sqliteName);
         var schema = new Schema(schemaName);
 
-        sqlite.UpdateBaseUri(baseNamespace);
+        sqlite.UpdateBaseUri(baseUri);
         sqlite.AddStructure(schema);
         Assert.Contains(schema, sqlite.SubStructures);
     }
@@ -39,14 +37,13 @@ public class DataStoreTest
     [Fact]
     public void StructureCannotBeAddedMultipleTimesToStoreListOfStructures()
     {
-        const string baseNamespace = "Test";
         const string sqliteName = "SQLite";
         const string schemaName = "Schema";
 
         var sqlite = new Sqlite(sqliteName);
         var schema = new Schema(schemaName);
 
-        sqlite.UpdateBaseUri(baseNamespace);
+        sqlite.UpdateBaseUri(baseUri);
         sqlite.AddStructure(schema);
         sqlite.AddStructure(schema);
 
@@ -59,18 +56,18 @@ public class DataStoreTest
         var sqlite = new Sqlite("SQLite");
         var table = new Table("Table");
 
-        sqlite.UpdateBaseUri("Test");
+        sqlite.UpdateBaseUri(baseUri + "/Test/");
         sqlite.AddStructure(table);
-        sqlite.UpdateBaseUri("Expected");
+        sqlite.UpdateBaseUri(baseUri + "/Expected/");
 
-        Assert.Equal("Expected", table.BaseUri);
+        Assert.Equal(baseUri + "/Expected/", table.BaseUri);
         Assert.Equal(sqlite.BaseUri, table.BaseUri);
     }
 
     [Fact]
     public void UpdateBaseUpdatesOwnAndStructuresId()
     {
-        const string baseNamespace = "Expected";
+        const string baseNamespace = baseUri + "/Expected/";
         const string sqliteName = "SQLite";
         const string tableName = "Table";
 
@@ -87,9 +84,9 @@ public class DataStoreTest
         var sqlite = new Sqlite(sqliteName);
         var table = new Table(tableName);
 
-        sqlite.UpdateBaseUri("Test");
+        sqlite.UpdateBaseUri(baseUri + "/Test/");
         sqlite.AddStructure(table);
-        sqlite.UpdateBaseUri("Expected");
+        sqlite.UpdateBaseUri(baseNamespace);
 
         Assert.Equal(expectedSqliteString, sqlite.Id);
         Assert.Equal(expectedTableString, table.Id);
@@ -101,7 +98,7 @@ public class DataStoreTest
         var sqlite = new Sqlite("SQLite");
         var table = new Table("Table");
 
-        var expected = "Expected";
+        const string expected = baseUri + "/Expected/";
         sqlite.UpdateBaseUri(expected);
         sqlite.AddStructure(table);
 
@@ -115,17 +112,9 @@ public class DataStoreTest
         var sqlite = new Sqlite("SQLite");
         var table = new Table("Table");
 
-        sqlite.UpdateBaseUri("Test");
+        sqlite.UpdateBaseUri(baseUri);
         sqlite.AddStructure(table);
 
         Assert.Equal(sqlite, table.Store);
-    }
-
-    public class ToGraphTest
-    {
-    }
-
-    public class FromGraphTest
-    {
     }
 }

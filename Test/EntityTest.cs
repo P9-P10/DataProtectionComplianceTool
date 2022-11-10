@@ -10,7 +10,7 @@ namespace Test;
 
 public class EntityTest
 {
-    // TODO: Test at BaseUri er det rigtige Uri format
+    private const string baseUri = "http://www.test.com/";
 
     public static HashAlgorithm GetHashAlgorithm()
     {
@@ -109,7 +109,6 @@ public class EntityTest
     [Fact]
     public void EntityCompositionTest()
     {
-        const string baseNamespace = "Test";
         const string sqliteName = "SQLite";
         const string schemaName = "Schema";
         const string tableName = "Table";
@@ -117,7 +116,7 @@ public class EntityTest
 
         var algorithm = GetHashAlgorithm();
 
-        const string sqliteString = baseNamespace + sqliteName;
+        const string sqliteString = baseUri + sqliteName;
         var expectedSqliteHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(sqliteString));
         var expectedSqliteString = Entity.HashToId(expectedSqliteHash);
 
@@ -138,7 +137,7 @@ public class EntityTest
         var table = new Table(tableName);
         var column = new Column(columnName);
 
-        sqlite.UpdateBaseUri(baseNamespace);
+        sqlite.UpdateBaseUri(baseUri);
         sqlite.AddStructure(schema);
         schema.AddStructure(table);
         table.AddStructure(column);
@@ -152,19 +151,18 @@ public class EntityTest
     [Fact]
     public void DataStoreStructureChaining()
     {
-        const string baseNamespace = "Test";
         const string sqliteName = "SQLite";
         const string schemaName = "Schema";
         const string tableName = "Table";
 
         var algorithm = GetHashAlgorithm();
 
-        const string sqliteString = baseNamespace + sqliteName;
+        const string sqliteString = baseUri + sqliteName;
         var expectedSqliteHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(sqliteString));
         var expectedSqliteString = Entity.HashToId(expectedSqliteHash);
 
         var sqlite = new Sqlite(sqliteName);
-        sqlite.UpdateBaseUri(baseNamespace);
+        sqlite.UpdateBaseUri(baseUri);
 
         Assert.Equal(expectedSqliteString, sqlite.Id);
 

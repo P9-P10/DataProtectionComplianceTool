@@ -1,5 +1,6 @@
 using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Structures;
+using GraphManipulation.Ontologies;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 
@@ -9,7 +10,7 @@ public static class GraphAsserts
 {
     public static void AssertHasStructureTriple(this IGraph graph, Entity parent, Entity child)
     {
-        graph.AssertSubjectPredicateObjectTriple(parent, "ddl:hasStructure", child);
+        graph.AssertSubjectPredicateObjectTriple(parent, DataStoreDescriptionLanguage.HasStructure, child);
     }
 
     public static void AssertTypeTriple(this IGraph graph, Entity entity)
@@ -20,7 +21,7 @@ public static class GraphAsserts
 
     public static void AssertNameTriple(this IGraph graph, NamedEntity entity)
     {
-        graph.AssertSubjectPredicateObjectTriple(entity, "ddl:hasName", entity.Name);
+        graph.AssertSubjectPredicateObjectTriple(entity, DataStoreDescriptionLanguage.HasName, entity.Name);
     }
 
     public static void AssertNamedEntityTriple(this IGraph graph, NamedEntity entity)
@@ -31,26 +32,26 @@ public static class GraphAsserts
 
     public static void AssertHasDataTypeTriple(this IGraph graph, Column column)
     {
-        graph.AssertSubjectPredicateObjectTriple(column, "ddl:hasDataType", column.DataType);
+        graph.AssertSubjectPredicateObjectTriple(column, DataStoreDescriptionLanguage.HasDataType, column.DataType);
     }
 
     public static void AssertIsNotNullTriple(this IGraph graph, Column column)
     {
         graph.AssertSubjectPredicateObjectTriple(
             column,
-            "ddl:isNotNull",
+            DataStoreDescriptionLanguage.IsNotNull,
             graph.CreateLiteralNode(column.IsNotNull.ToString().ToLower(),
                 UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeBoolean)));
     }
 
     public static void AssertHasStoreTriple(this IGraph graph, Structure structure)
     {
-        graph.AssertSubjectPredicateObjectTriple(structure, "ddl:hasStore", structure.Store!);
+        graph.AssertSubjectPredicateObjectTriple(structure, DataStoreDescriptionLanguage.HasStore, structure.Store!);
     }
 
     public static void AssertOptionsTriple(this IGraph graph, Column column)
     {
-        graph.AssertSubjectPredicateObjectTriple(column, "ddl:columnOptions", column.Options);
+        graph.AssertSubjectPredicateObjectTriple(column, DataStoreDescriptionLanguage.ColumnOptions, column.Options);
     }
 
     public static void AssertPrimaryKeys(this IGraph graph, Table table)
@@ -61,7 +62,7 @@ public static class GraphAsserts
         }
 
         var subj = graph.CreateUriNode(table.Uri);
-        var pred = graph.CreateUriNode("ddl:primaryKey");
+        var pred = graph.CreateUriNode(DataStoreDescriptionLanguage.PrimaryKey);
 
         foreach (var primaryKey in table.PrimaryKeys)
         {
@@ -78,10 +79,10 @@ public static class GraphAsserts
         }
 
         var tableUri = graph.CreateUriNode(table.Uri);
-        var foreignKeyPredicate = graph.CreateUriNode("ddl:foreignKey");
-        var referencesPredicate = graph.CreateUriNode("ddl:references");
-        var foreignKeyOnDeletePredicate = graph.CreateUriNode("ddl:foreignKeyOnDelete");
-        var foreignKeyOnUpdatePredicate = graph.CreateUriNode("ddl:foreignKeyOnUpdate");
+        var foreignKeyPredicate = graph.CreateUriNode(DataStoreDescriptionLanguage.ForeignKey);
+        var referencesPredicate = graph.CreateUriNode(DataStoreDescriptionLanguage.References);
+        var foreignKeyOnDeletePredicate = graph.CreateUriNode(DataStoreDescriptionLanguage.ForeignKeyOnDelete);
+        var foreignKeyOnUpdatePredicate = graph.CreateUriNode(DataStoreDescriptionLanguage.ForeignKeyOnUpdate);
 
         foreach (var foreignKey in table.ForeignKeys)
         {

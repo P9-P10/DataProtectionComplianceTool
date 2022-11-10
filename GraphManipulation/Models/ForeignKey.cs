@@ -40,15 +40,12 @@ public class ForeignKey
 
     private string ForeignKeyEnumToString(ForeignKeyOnEnum e)
     {
-        switch (e)
+        return e switch
         {
-            case ForeignKeyOnEnum.Cascade:
-                return "CASCADE";
-            case ForeignKeyOnEnum.NoAction:
-                return "NO ACTION";
-            default:
-                throw new ForeignKeyException("Enum not supported: " + OnDelete);
-        }
+            ForeignKeyOnEnum.Cascade => "CASCADE",
+            ForeignKeyOnEnum.NoAction => "NO ACTION",
+            _ => throw new ForeignKeyException("Enum not supported: " + OnDelete)
+        };
     }
 
     public override bool Equals(object? obj)
@@ -58,7 +55,7 @@ public class ForeignKey
             return false;
         }
 
-        return obj.GetType() == typeof(ForeignKey) && From.Equals((obj as ForeignKey).From);
+        return obj.GetType() == typeof(ForeignKey) && From.Equals((obj as ForeignKey)!.From);
     }
 
     public override int GetHashCode()

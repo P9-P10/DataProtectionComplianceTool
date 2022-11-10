@@ -1,6 +1,7 @@
 using GraphManipulation.Extensions;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
+using GraphManipulation.Ontologies;
 using VDS.RDF;
 using Xunit;
 
@@ -68,7 +69,7 @@ public class GraphBasedTest
             var graph = column.ToGraph();
 
             var subj = graph.CreateUriNode(column.Uri);
-            var pred = graph.CreateUriNode("ddl:hasName");
+            var pred = graph.CreateUriNode(DataStoreDescriptionLanguage.HasName);
             var obj = graph.CreateLiteralNode(columnName);
 
             Assert.Contains(new Triple(subj, pred, obj), graph.Triples);
@@ -113,7 +114,7 @@ public class GraphBasedTest
 
             var triple = new Triple(
                 graph.CreateUriNode(parent.Uri),
-                graph.CreateUriNode("ddl:hasStructure"),
+                graph.CreateUriNode(DataStoreDescriptionLanguage.HasStructure),
                 graph.CreateUriNode(child.Uri)
             );
 
@@ -143,13 +144,13 @@ public class GraphBasedTest
 
             var triple1 = new Triple(
                 graph.CreateUriNode(sqlite.Uri),
-                graph.CreateUriNode("ddl:hasStructure"),
+                graph.CreateUriNode(DataStoreDescriptionLanguage.HasStructure),
                 graph.CreateUriNode(table1.Uri)
             );
 
             var triple2 = new Triple(
                 graph.CreateUriNode(sqlite.Uri),
-                graph.CreateUriNode("ddl:hasStructure"),
+                graph.CreateUriNode(DataStoreDescriptionLanguage.HasStructure),
                 graph.CreateUriNode(table2.Uri)
             );
 
@@ -180,19 +181,19 @@ public class GraphBasedTest
 
             var triple1 = new Triple(
                 graph.CreateUriNode(schema.Uri),
-                graph.CreateUriNode("ddl:hasStructure"),
+                graph.CreateUriNode(DataStoreDescriptionLanguage.HasStructure),
                 graph.CreateUriNode(table.Uri)
             );
 
             var triple2 = new Triple(
                 graph.CreateUriNode(table.Uri),
-                graph.CreateUriNode("ddl:hasStructure"),
+                graph.CreateUriNode(DataStoreDescriptionLanguage.HasStructure),
                 graph.CreateUriNode(column1.Uri)
             );
 
             var triple3 = new Triple(
                 graph.CreateUriNode(table.Uri),
-                graph.CreateUriNode("ddl:hasStructure"),
+                graph.CreateUriNode(DataStoreDescriptionLanguage.HasStructure),
                 graph.CreateUriNode(column2.Uri)
             );
 
@@ -214,7 +215,7 @@ public class GraphBasedTest
 
             var triple = new Triple(
                 graph.CreateUriNode(column.Uri),
-                graph.CreateUriNode("ddl:hasStore"),
+                graph.CreateUriNode(DataStoreDescriptionLanguage.HasStore),
                 graph.CreateUriNode(sqlite.Uri)
             );
 
@@ -230,47 +231,5 @@ public class GraphBasedTest
 
             Assert.Throws<DataStoreToGraphException>(() => column.ToGraph());
         }
-    }
-
-    public class FromGraph
-    {
-        // [Fact]
-        // public void ColumnFromGraph()
-        // {
-        //     // var sqlite = new Sqlite("SQLite", baseUri);
-        //     // var schema = new Schema("Schema");
-        //     // var table = new Table("Table");
-        //     // var column1 = new Column("Column1", "INT", true);
-        //     // var column2 = new Column("Column2", "VARCHAR(255)", false, "AUTOINCREMENT");
-        //     //
-        //     // sqlite.AddStructure(schema);
-        //     // schema.AddStructure(table);
-        //     // table.AddStructure(column1);
-        //     // table.AddStructure(column2);
-        //     // table.AddPrimaryKey(column1);
-        //
-        //     var expected = new Column("Column", "INT");
-        //     expected.UpdateBaseUri(baseUri);
-        //     
-        //     IGraph graph = new Graph();
-        //     
-        //     graph.NamespaceMap.AddNamespace("ddl", GraphBased.OntologyNamespace);
-        //     var uri = UriFactory.Create(baseUri);
-        //     graph.BaseUri = uri;
-        //
-        //     var subj = graph.CreateUriNode(expected.Uri);
-        //     var pred = graph.CreateUriNode("rdf:type");
-        //     var obj = graph.CreateUriNode("ddl:Column");
-        //
-        //     graph.Assert(subj, obj, pred);
-        //
-        //     var actual = new Column("");
-        //     actual.FromGraph(graph);
-        //     
-        //     Assert.Equal(expected.BaseUri, actual.BaseUri);
-        //     Assert.Equal(expected.Id, actual.Id);
-        //     Assert.Equal(expected.Name, actual.Name);
-        //     Assert.Equal(expected.DataType, actual.DataType);
-        // }
     }
 }

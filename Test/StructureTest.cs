@@ -5,6 +5,7 @@ using GraphManipulation.Models;
 using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
+using GraphManipulation.Ontologies;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 using Xunit;
@@ -267,7 +268,7 @@ public class StructureTest
         var table = new Table(tableName);
         var column = new Column(columnName);
 
-        sqlite.UpdateBaseUri("Test");
+        sqlite.UpdateBaseUri(baseUri + "/Test/");
 
         sqlite.AddStructure(table);
         table.AddStructure(column);
@@ -674,7 +675,7 @@ public class StructureTest
             var graph = table.ToGraph();
 
             var subj = graph.CreateUriNode(table.Uri);
-            var pred = graph.CreateUriNode("ddl:primaryKey");
+            var pred = graph.CreateUriNode(DataStoreDescriptionLanguage.PrimaryKey);
             var obj = graph.CreateUriNode(column.Uri);
 
             var triple = new Triple(subj, pred, obj);
@@ -711,7 +712,7 @@ public class StructureTest
             var graph = table1.ToGraph();
 
             var subj = graph.CreateUriNode(table1.Uri);
-            var pred = graph.CreateUriNode("ddl:foreignKey");
+            var pred = graph.CreateUriNode(DataStoreDescriptionLanguage.ForeignKey);
             var obj = graph.CreateUriNode(column1.Uri);
 
             var triple = new Triple(subj, pred, obj);
@@ -728,7 +729,7 @@ public class StructureTest
                 out var column1, out var column2);
 
             var subj = graph.CreateUriNode(column1.Uri);
-            var pred = graph.CreateUriNode("ddl:references");
+            var pred = graph.CreateUriNode(DataStoreDescriptionLanguage.References);
             var obj = graph.CreateUriNode(column2.Uri);
 
             var triple = new Triple(subj, pred, obj);
@@ -745,7 +746,7 @@ public class StructureTest
                 out var column1, out var column2);
 
             var subj = graph.CreateUriNode(column1.Uri);
-            var pred = graph.CreateUriNode("ddl:foreignKeyOnDelete");
+            var pred = graph.CreateUriNode(DataStoreDescriptionLanguage.ForeignKeyOnDelete);
             var obj = graph.CreateLiteralNode("CASCADE");
 
             var triple = new Triple(subj, pred, obj);
@@ -762,7 +763,7 @@ public class StructureTest
                 out var column1, out var column2);
 
             var subj = graph.CreateUriNode(column1.Uri);
-            var pred = graph.CreateUriNode("ddl:foreignKeyOnDelete");
+            var pred = graph.CreateUriNode(DataStoreDescriptionLanguage.ForeignKeyOnDelete);
             var obj = graph.CreateLiteralNode("NO ACTION");
 
             var triple = new Triple(subj, pred, obj);
@@ -779,7 +780,7 @@ public class StructureTest
                 out var column1, out var column2);
 
             var subj = graph.CreateUriNode(column1.Uri);
-            var pred = graph.CreateUriNode("ddl:foreignKeyOnUpdate");
+            var pred = graph.CreateUriNode(DataStoreDescriptionLanguage.ForeignKeyOnUpdate);
             var obj = graph.CreateLiteralNode("CASCADE");
 
             var triple = new Triple(subj, pred, obj);
@@ -796,7 +797,7 @@ public class StructureTest
                 out var column1, out var column2);
 
             var subj = graph.CreateUriNode(column1.Uri);
-            var pred = graph.CreateUriNode("ddl:foreignKeyOnUpdate");
+            var pred = graph.CreateUriNode(DataStoreDescriptionLanguage.ForeignKeyOnUpdate);
             var obj = graph.CreateLiteralNode("NO ACTION");
 
             var triple = new Triple(subj, pred, obj);
@@ -879,7 +880,7 @@ public class StructureTest
             var graph = column.ToGraph();
 
             var subj = graph.CreateUriNode(column.Uri);
-            var pred = graph.CreateUriNode("ddl:hasDataType");
+            var pred = graph.CreateUriNode(DataStoreDescriptionLanguage.HasDataType);
             var obj = graph.CreateLiteralNode("Test");
 
             var triple = new Triple(subj, pred, obj);
@@ -902,7 +903,7 @@ public class StructureTest
             var graph = column.ToGraph();
 
             var subj = graph.CreateUriNode(column.Uri);
-            var pred = graph.CreateUriNode("ddl:isNotNull");
+            var pred = graph.CreateUriNode(DataStoreDescriptionLanguage.IsNotNull);
             var obj = graph.CreateLiteralNode("false", UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeBoolean));
 
             var triple = new Triple(subj, pred, obj);
@@ -926,7 +927,7 @@ public class StructureTest
             var graph = column.ToGraph();
 
             var subj = graph.CreateUriNode(column.Uri);
-            var pred = graph.CreateUriNode("ddl:columnOptions");
+            var pred = graph.CreateUriNode(DataStoreDescriptionLanguage.ColumnOptions);
             var obj = graph.CreateLiteralNode("AUTOINCREMENT");
 
             var triple = new Triple(subj, pred, obj);

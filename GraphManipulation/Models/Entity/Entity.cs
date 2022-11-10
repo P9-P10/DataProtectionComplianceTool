@@ -14,7 +14,29 @@ public abstract class Entity : IEquatable<Entity>
         ComputeId(toHash);
     }
 
-    public string? BaseUri { get; protected set; }
+    private string _baseUri = "";
+
+    public string? BaseUri
+    {
+        get => string.IsNullOrEmpty(_baseUri) ? null : _baseUri;
+        protected set
+        {
+            if (value is null)
+            {
+                _baseUri = "";
+                return;
+            }
+            
+            if (Uri.TryCreate(value, UriKind.Absolute, out var uri))
+            {
+                _baseUri = value;
+            }
+            else
+            {
+                throw new EntityException("Uri given as BaseUri not valid Uri: " + value);
+            }
+        }
+    }
 
     public string Id => HashToId(Hash);
 
@@ -27,7 +49,14 @@ public abstract class Entity : IEquatable<Entity>
                 throw new EntityException("Base was null when generating URI");
             }
 
-            return UriFactory.Create(BaseUri + Id);
+            var baseUri = UriFactory.Create(BaseUri);
+
+            if (Uri.TryCreate(baseUri, Id, out var uri))
+            {
+                return uri;
+            }
+
+            throw new EntityException("Something went wrong when creating uri from: " + BaseUri + Id);
         }
     }
 

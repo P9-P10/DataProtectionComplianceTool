@@ -2,6 +2,7 @@ using AngleSharp.Text;
 using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
+using GraphManipulation.Ontologies;
 using VDS.RDF;
 
 namespace GraphManipulation.Extensions;
@@ -16,7 +17,7 @@ public static class DataStoreFromGraph
             {
                 var name = graph.GetNameOfNode(triple.Subject);
 
-                // TODO: Det her er langsomt, men jeg kunne ikke finde andre måder der virkede
+                // TODO: Det her er åbenbart langsomt, men jeg kunne ikke finde andre måder der virkede
                 return (T)Activator.CreateInstance(typeof(T), name, graph.BaseUri.ToString())!;
             })
             .Select(datastore =>
@@ -40,7 +41,7 @@ public static class DataStoreFromGraph
     private static string GetNameOfNode(this IGraph graph, INode subject)
     {
         return graph
-            .GetTriplesWithSubjectPredicate(subject, graph.CreateUriNode("ddl:hasName"))
+            .GetTriplesWithSubjectPredicate(subject, graph.CreateUriNode(DataStoreDescriptionLanguage.HasName))
             .Select(triple => triple.Object as LiteralNode)
             .First()!
             .Value;
@@ -58,7 +59,9 @@ public static class DataStoreFromGraph
     private static IEnumerable<INode> GetSubStructures(this IGraph graph, StructuredEntity subject)
     {
         return graph
-            .GetTriplesWithSubjectPredicate(graph.CreateUriNode(subject.Uri), graph.CreateUriNode("ddl:hasStructure"))
+            .GetTriplesWithSubjectPredicate(
+                graph.CreateUriNode(subject.Uri), 
+                graph.CreateUriNode(DataStoreDescriptionLanguage.HasStructure))
             .Select(triple => triple.Object);
     }
 
@@ -67,6 +70,7 @@ public static class DataStoreFromGraph
         return graph
             .GetSubStructures(subject)
             .Select(graph.GetNameOfNode)
+            // TODO: Det her er åbenbart langsomt, men jeg kunne ikke finde andre måder der virkede
             .Select(name => (T)Activator.CreateInstance(typeof(T), name)!);
     }
 
@@ -85,7 +89,7 @@ public static class DataStoreFromGraph
         foreach (var columnNode in graph
                      .GetTriplesWithSubjectPredicate(
                          graph.CreateUriNode(table.Uri), 
-                         graph.CreateUriNode("ddl:primaryKey"))
+                         graph.CreateUriNode(DataStoreDescriptionLanguage.PrimaryKey))
                      .Select(triple => (triple.Object as UriNode)!))
         {
             var matchingColumn = table.SubStructures.First(sub => sub.Uri == columnNode.Uri) as Column;
@@ -104,17 +108,17 @@ public static class DataStoreFromGraph
     private static void ConstructForeignKeys(this IGraph graph, Relational relational)
     {
         var triples = graph
-            .GetTriplesWithPredicate(graph.CreateUriNode("ddl:references"))
+            .GetTriplesWithPredicate(graph.CreateUriNode(DataStoreDescriptionLanguage.References))
             .Where(triple =>
             {
                 var subjStore = graph.GetTripleWithSubjectPredicateObject(
                     triple.Subject,
-                    graph.CreateUriNode("ddl:hasStore"),
+                    graph.CreateUriNode(DataStoreDescriptionLanguage.HasStore),
                     graph.CreateUriNode(relational.Uri));
 
                 var objStore = graph.GetTripleWithSubjectPredicateObject(
                     triple.Object,
-                    graph.CreateUriNode("ddl:hasStore"),
+                    graph.CreateUriNode(DataStoreDescriptionLanguage.HasStore),
                     graph.CreateUriNode(relational.Uri));
 
                 return subjStore is not null && objStore is not null;
@@ -146,7 +150,7 @@ public static class DataStoreFromGraph
     private static string GetColumnDataType(this IGraph graph, Column column)
     {
         return graph
-            .GetTriplesWithSubjectPredicate(graph.CreateUriNode(column.Uri), graph.CreateUriNode("ddl:hasDataType"))
+            .GetTriplesWithSubjectPredicate(graph.CreateUriNode(column.Uri), graph.CreateUriNode(DataStoreDescriptionLanguage.HasDataType))
             .Select(triple => triple.Object as LiteralNode)
             .First()!
             .Value;
@@ -155,7 +159,7 @@ public static class DataStoreFromGraph
     private static bool GetColumnIsNotNull(this IGraph graph, Column column)
     {
         return graph
-            .GetTriplesWithSubjectPredicate(graph.CreateUriNode(column.Uri), graph.CreateUriNode("ddl:isNotNull"))
+            .GetTriplesWithSubjectPredicate(graph.CreateUriNode(column.Uri), graph.CreateUriNode(DataStoreDescriptionLanguage.IsNotNull))
             .Select(triple => triple.Object as LiteralNode)
             .First()!
             .Value
@@ -165,23 +169,12 @@ public static class DataStoreFromGraph
     private static string GetColumnOptions(this IGraph graph, Column column)
     {
         return graph
-            .GetTriplesWithSubjectPredicate(graph.CreateUriNode(column.Uri), graph.CreateUriNode("ddl:columnOptions"))
+            .GetTriplesWithSubjectPredicate(graph.CreateUriNode(column.Uri), graph.CreateUriNode(DataStoreDescriptionLanguage.ColumnOptions))
             .Select(triple => triple.Object as LiteralNode)
             .First()!
             .Value;
     }
 
 
-    // https://dotnetrdf.org/docs/stable/user_guide/Querying-With-SPARQL.html
-    // var parser = new SparqlQueryParser();
-    // var query = parser.ParseFromString("SELECT ?relational WHERE { ?relational a ddl:Relational }");
-    //
-    // TripleStore tripleStore = new TripleStore();
-    // tripleStore.Add(graph);
-    //
-    // InMemoryDataset dataset = new InMemoryDataset(tripleStore);
-    //
-    // var processor = new LeviathanQueryProcessor(dataset);
-    //
-    // var results = processor.ProcessQuery(query);
+    
 }
