@@ -48,50 +48,49 @@ public static class DataStoreFromGraph
 
     private static void ConstructSchemas(this IGraph graph, Relational relational)
     {
-        graph
-            .GetSubStructures(relational)
-            .ForEach(sub =>
-            {
-                var name = graph.GetNameOfNode(sub);
-                var schema = new Schema(name);
-                relational.AddStructure(schema);
-                graph.ConstructTables(schema);
-            });
+        foreach (var schema in graph.GetSubStructures<Schema>(relational))
+        {
+            relational.AddStructure(schema);
+            graph.ConstructTables(schema);
+        }
     }
 
-    private static List<INode> GetSubStructures(this IGraph graph, StructuredEntity subject)
+    private static IEnumerable<INode> GetSubStructures(this IGraph graph, StructuredEntity subject)
     {
         return graph
             .GetTriplesWithSubjectPredicate(graph.CreateUriNode(subject.Uri), graph.CreateUriNode("ddl:hasStructure"))
-            .Select(triple => triple.Object)
-            .ToList();
+            .Select(triple => triple.Object);
+    }
+
+    private static IEnumerable<T> GetSubStructures<T>(this IGraph graph, StructuredEntity subject) where T : Structure
+    {
+        return graph
+            .GetSubStructures(subject)
+            .Select(graph.GetNameOfNode)
+            .Select(name => (T)Activator.CreateInstance(typeof(T), name)!);
     }
 
     private static void ConstructTables(this IGraph graph, Schema schema)
     {
-        graph
-            .GetSubStructures(schema)
-            .ForEach(sub =>
-            {
-                var name = graph.GetNameOfNode(sub);
-                var table = new Table(name);
-                schema.AddStructure(table);
-                graph.ConstructColumns(table);
-                graph.ConstructPrimaryKeys(table);
-            });
+        foreach (var table in graph.GetSubStructures<Table>(schema))
+        {
+            schema.AddStructure(table);
+            graph.ConstructColumns(table);
+            graph.ConstructPrimaryKeys(table);
+        }
     }
 
     private static void ConstructPrimaryKeys(this IGraph graph, Table table)
     {
-        graph
-            .GetTriplesWithSubjectPredicate(graph.CreateUriNode(table.Uri), graph.CreateUriNode("ddl:primaryKey"))
-            .Select(triple => triple.Object as UriNode)
-            .ToList()
-            .ForEach(columnNode =>
-            {
-                var matchingColumn = table.SubStructures.First(sub => sub.Uri == columnNode!.Uri) as Column;
-                table.AddPrimaryKey(matchingColumn!);
-            });
+        foreach (var columnNode in graph
+                     .GetTriplesWithSubjectPredicate(
+                         graph.CreateUriNode(table.Uri), 
+                         graph.CreateUriNode("ddl:primaryKey"))
+                     .Select(triple => (triple.Object as UriNode)!))
+        {
+            var matchingColumn = table.SubStructures.First(sub => sub.Uri == columnNode.Uri) as Column;
+            table.AddPrimaryKey(matchingColumn!);
+        }
     }
 
     private static Triple? GetTripleWithSubjectPredicateObject(this IGraph graph, INode subj, INode pred, INode obj)
@@ -104,7 +103,7 @@ public static class DataStoreFromGraph
 
     private static void ConstructForeignKeys(this IGraph graph, Relational relational)
     {
-        graph
+        var triples = graph
             .GetTriplesWithPredicate(graph.CreateUriNode("ddl:references"))
             .Where(triple =>
             {
@@ -119,33 +118,29 @@ public static class DataStoreFromGraph
                     graph.CreateUriNode(relational.Uri));
 
                 return subjStore is not null && objStore is not null;
-            })
-            .ToList()
-            .ForEach(triple =>
-            {
-                var subj = (triple.Subject as UriNode)!;
-                var obj = (triple.Object as UriNode)!;
-
-                var from = relational.Find<Column>(subj.Uri)!;
-                var to = relational.Find<Column>(obj.Uri)!;
-
-                (from.ParentStructure as Table)!.AddForeignKey(from, to);
             });
+
+        foreach (var triple in triples)
+        {
+            var subj = (triple.Subject as UriNode)!;
+            var obj = (triple.Object as UriNode)!;
+
+            var from = relational.Find<Column>(subj.Uri)!;
+            var to = relational.Find<Column>(obj.Uri)!;
+
+            (from.ParentStructure as Table)!.AddForeignKey(from, to);
+        }
     }
 
     private static void ConstructColumns(this IGraph graph, Table table)
     {
-        graph
-            .GetSubStructures(table)
-            .ForEach(sub =>
-            {
-                var name = graph.GetNameOfNode(sub);
-                var column = new Column(name);
-                table.AddStructure(column);
-                column.SetDataType(graph.GetColumnDataType(column));
-                column.SetIsNotNull(graph.GetColumnIsNotNull(column));
-                column.SetOptions(graph.GetColumnOptions(column));
-            });
+        foreach (var column in graph.GetSubStructures<Column>(table))
+        {
+            table.AddStructure(column);
+            column.SetDataType(graph.GetColumnDataType(column));
+            column.SetIsNotNull(graph.GetColumnIsNotNull(column));
+            column.SetOptions(graph.GetColumnOptions(column));
+        }
     }
 
     private static string GetColumnDataType(this IGraph graph, Column column)

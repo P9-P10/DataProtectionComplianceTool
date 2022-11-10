@@ -24,10 +24,12 @@ public abstract class Structure : StructuredEntity //, IHasStructure
         if (!IsBottom())
         {
             foreach (var subStructure in SubStructures)
+            {
                 if (!subStructure.HasSameBase(baseUri))
                 {
                     subStructure.UpdateBaseUri(baseUri);
                 }
+            }
         }
 
         if (IsTop() && HasStore() && !Store.HasSameBase(baseUri))
@@ -55,10 +57,12 @@ public abstract class Structure : StructuredEntity //, IHasStructure
         }
 
         foreach (var subStructure in SubStructures)
+        {
             if (!subStructure.HasSameStore(store))
             {
                 subStructure.UpdateStore(store);
             }
+        }
     }
 
     public override void AddStructure(Structure structure)

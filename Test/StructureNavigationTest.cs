@@ -29,14 +29,14 @@ public class StructureNavigationTest
 
         Assert.Equal(column11,
             sqlite
-                .FindSchema("Schema")
-                .FindTable("Table1")
+                .FindSchema("Schema")!
+                .FindTable("Table1")!
                 .FindColumn("Column11"));
 
         Assert.Equal(column22,
             sqlite
-                .FindSchema("Schema")
-                .FindTable("Table2")
+                .FindSchema("Schema")!
+                .FindTable("Table2")!
                 .FindColumn("Column22"));
     }
 }

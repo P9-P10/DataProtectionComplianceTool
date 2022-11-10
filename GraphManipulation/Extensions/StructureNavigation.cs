@@ -17,27 +17,14 @@ public static class StructureNavigation
         var result = structuredEntity.SubStructures
             .FirstOrDefault(sub => sub.Uri == uri);
 
-        if (result is T r)
+        if (result is T foundAtFirstLevel)
         {
-            return r;
+            return foundAtFirstLevel;
         }
 
-        structuredEntity.SubStructures
-            .ForEach(sub =>
-            {
-                var n = sub.Find<T>(uri);
-                if (n != null)
-                {
-                    result = n;
-                }
-            });
-
-        if (result is T k)
-        {
-            return k;
-        }
-
-        return null;
+        return structuredEntity.SubStructures
+            .Select(subStructure => subStructure.Find<T>(uri))
+            .FirstOrDefault(found => found != null);
     }
 
     public static T? Find<T>(this StructuredEntity structuredEntity, Structure structure) where T : Structure

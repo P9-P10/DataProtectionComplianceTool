@@ -7,7 +7,6 @@ using VDS.RDF;
 using VDS.RDF.Parsing;
 using VDS.RDF.Query.Inference;
 using VDS.RDF.Shacl;
-using VDS.RDF.Shacl.Validation;
 using VDS.RDF.Writing;
 
 namespace GraphManipulation;
@@ -47,32 +46,11 @@ public static class Program
         const string ontologyPath =
             "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/Ontologies/datastore-description-language.ttl";
         ontology.LoadFromFile(ontologyPath, new TurtleParser());
-        var shapesGraph = new ShapesGraph(ontology);
 
-        var reasoner = new StaticRdfsReasoner();
-        reasoner.Initialise(ontology);
-        reasoner.Apply(dataGraph);
+        var report = dataGraph.ValidateUsing(ontology);
 
-        PrintReport(shapesGraph.Validate(dataGraph));
+        Validation.PrintValidationReport(report);
 
         // Console.WriteLine(sqlite.ToSqlCreateStatement());
-    }
-
-    private static void PrintReport(Report report)
-    {
-        var message = "";
-
-        message += "\nConforms: " + report.Conforms +
-                   (report.Results.Count == 0 ? "" : " (" + report.Results.Count + ")");
-
-        foreach (var result in report.Results)
-        {
-            message += result.FocusNode is not null ? "\nFocus node: " + result.FocusNode.ToString() : "";
-            message += result.ResultPath is not null ? "\nResult path: " + result.ResultPath : "";
-            message += result.ResultValue is not null ? "\nResult value: " + result.ResultValue.ToString() : "";
-            message += "\nMessage: " + result.Message.Value + "\n";
-        }
-
-        Console.WriteLine(message);
     }
 }

@@ -33,11 +33,6 @@ public abstract class Entity : IEquatable<Entity>
 
     private byte[] Hash { get; set; } = null!;
 
-    public bool Equals(Entity? other)
-    {
-        return other is not null && Id == other.Id;
-    }
-
     public static string HashToId(IEnumerable<byte> hash)
     {
         var stringBuilder = new StringBuilder();
@@ -70,6 +65,11 @@ public abstract class Entity : IEquatable<Entity>
     public void ComputeId()
     {
         ComputeId(ComputeHash());
+    }
+    
+    public bool Equals(Entity? other)
+    {
+        return other is not null && Id == other.Id;
     }
 
     public override bool Equals(object? obj)

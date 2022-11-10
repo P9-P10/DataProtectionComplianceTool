@@ -4,6 +4,13 @@ public class Column : Structure
 {
     public static readonly List<string> ValidOptions = new() { "AUTOINCREMENT" };
 
+    public Column(string name) : base(name)
+    {
+        DataType = "";
+        IsNotNull = false;
+        Options = "";
+    }
+
     public Column(string name, string dataType = "", bool isNotNull = false, string options = "") : base(name)
     {
         DataType = dataType;

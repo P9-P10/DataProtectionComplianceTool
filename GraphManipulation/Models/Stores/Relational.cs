@@ -43,17 +43,17 @@ public abstract class Relational : Database
 
     private void BuildStructure()
     {
-        StructureQueryResults.GroupBy(r => r.SchemaName).ToList().ForEach(schemaGrouping =>
+        foreach (var schemaGrouping in StructureQueryResults.GroupBy(r => r.SchemaName))
         {
             var schema = new Schema(schemaGrouping.Key);
             AddStructure(schema);
 
-            schemaGrouping.GroupBy(r => r.TableName).ToList().ForEach(tableGrouping =>
+            foreach (var tableGrouping in schemaGrouping.GroupBy(r => r.TableName))
             {
                 var table = new Table(tableGrouping.Key);
                 schema.AddStructure(table);
 
-                tableGrouping.ToList().ForEach(result =>
+                foreach (var result in tableGrouping)
                 {
                     var column = new Column(result.ColumnName);
                     column.SetDataType(result.DataType);
@@ -69,14 +69,14 @@ public abstract class Relational : Database
                     {
                         column.SetIsNotNull(true);
                     }
-                });
-            });
-        });
+                }
+            }
+        }
     }
 
     private void BuildForeignKeys()
     {
-        ForeignKeysQueryResults.ForEach(result =>
+        foreach (var result in ForeignKeysQueryResults)
         {
             var fromTable = this
                 .FindSchema(result.FromSchema)!
@@ -90,19 +90,19 @@ public abstract class Relational : Database
                 .FindColumn(result.ToColumn)!;
 
             fromTable.AddForeignKey(new ForeignKey(fromColumn, toColumn, result.OnDelete, result.OnUpdate));
-        });
+        }
     }
 
     private void BuildColumnOptions()
     {
-        ColumnOptionsQueryResults.ForEach(result =>
+        foreach (var result in ColumnOptionsQueryResults)
         {
             this
                 .FindSchema(result.SchemaName)!
                 .FindTable(result.TableName)!
                 .FindColumn(result.ColumnName)!
                 .SetOptions(result.Options);
-        });
+        }
     }
 
     public class StructureQueryResult
