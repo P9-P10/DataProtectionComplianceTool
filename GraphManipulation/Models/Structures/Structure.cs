@@ -16,7 +16,7 @@ public abstract class Structure : StructuredEntity //, IHasStructure
     {
         BaseUri = baseUri;
 
-        if (!IsTop() && !ParentStructure.HasSameBase(baseUri))
+        if (!IsTop() && !ParentStructure!.HasSameBase(baseUri))
         {
             ParentStructure.UpdateBaseUri(baseUri);
         }
@@ -32,7 +32,7 @@ public abstract class Structure : StructuredEntity //, IHasStructure
             }
         }
 
-        if (IsTop() && HasStore() && !Store.HasSameBase(baseUri))
+        if (IsTop() && HasStore() && !Store!.HasSameBase(baseUri))
         {
             Store.UpdateBaseUri(baseUri);
         }
@@ -44,7 +44,7 @@ public abstract class Structure : StructuredEntity //, IHasStructure
     {
         Store = store;
 
-        if (!IsTop() && !ParentStructure.HasSameStore(store))
+        if (!IsTop() && !ParentStructure!.HasSameStore(store))
         {
             ParentStructure.UpdateStore(store);
         }
@@ -74,7 +74,7 @@ public abstract class Structure : StructuredEntity //, IHasStructure
 
         if (!structure.IsTop())
         {
-            structure.ParentStructure.SubStructures.Remove(structure);
+            structure.ParentStructure!.SubStructures.Remove(structure);
         }
 
         SubStructures.Add(structure);
@@ -82,12 +82,12 @@ public abstract class Structure : StructuredEntity //, IHasStructure
 
         if (HasStore())
         {
-            UpdateStore(Store);
+            UpdateStore(Store!);
         }
 
         if (HasBase())
         {
-            UpdateBaseUri(BaseUri);
+            UpdateBaseUri(BaseUri!);
         }
 
         UpdateIdToBottom();
@@ -121,7 +121,7 @@ public abstract class Structure : StructuredEntity //, IHasStructure
 
     public bool HasSameStore(DataStore store)
     {
-        return HasStore() && Store.Equals(store);
+        return HasStore() && Store!.Equals(store);
     }
 
     public override string ComputeHash()
@@ -132,7 +132,7 @@ public abstract class Structure : StructuredEntity //, IHasStructure
         {
             if (HasStore())
             {
-                result += Store.ComputeHash();
+                result += Store!.ComputeHash();
             }
             else if (HasBase())
             {
@@ -141,7 +141,7 @@ public abstract class Structure : StructuredEntity //, IHasStructure
         }
         else
         {
-            result += ParentStructure.ComputeHash();
+            result += ParentStructure!.ComputeHash();
         }
 
         result += Name;

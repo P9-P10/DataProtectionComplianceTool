@@ -73,8 +73,6 @@ public class Sqlite : Relational
             var columnName = tuple.Item3;
             var sql = tuple.Item4;
 
-            var relevantLine = sql.Split("\n").Where(s => s.Contains(columnName));
-
             var options = sql
                 .Split('\n')
                 .Where(s => s.Contains(columnName))
@@ -104,6 +102,6 @@ public class Sqlite : Relational
 
     private string GetNameFromDataSource()
     {
-        return Connection!.DataSource!;
+        return Connection!.DataSource;
     }
 }

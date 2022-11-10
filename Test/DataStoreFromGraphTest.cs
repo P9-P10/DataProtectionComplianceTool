@@ -3,6 +3,7 @@ using System.Linq;
 using GraphManipulation.Extensions;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
+using GraphManipulation.Ontologies;
 using VDS.RDF;
 using Xunit;
 
@@ -23,7 +24,7 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     {
         IGraph graph = new Graph();
 
-        graph.NamespaceMap.AddNamespace("ddl", DataStoreToGraph.OntologyNamespace);
+        graph.NamespaceMap.AddNamespace("ddl", DataStoreDescriptionLanguage.OntologyUri);
         var uri = UriFactory.Create(BaseUri);
         graph.BaseUri = uri;
 
@@ -49,10 +50,10 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     public void GetDataStoresTypeSqliteReturnsSqliteWithSchemas()
     {
         var actualSchema1 = _tds.ActualSqlites.First()
-            .Find<Schema>(_tds.ExpectedSchema1);
+            .Find<Schema>(_tds.ExpectedSchema1)!;
 
         var actualSchema2 = _tds.ActualSqlites.First()
-            .Find<Schema>(_tds.ExpectedSchema2);
+            .Find<Schema>(_tds.ExpectedSchema2)!;
 
         Assert.Equal(_tds.ExpectedSchema1, actualSchema1);
         Assert.Equal(_tds.ExpectedSchema1.Uri, actualSchema1.Uri);

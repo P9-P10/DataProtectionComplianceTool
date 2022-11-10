@@ -39,9 +39,9 @@ public abstract class DataStore : StructuredEntity
             structure.UpdateStore(this);
         }
 
-        if (HasBase() && !structure.HasSameBase(BaseUri))
+        if (HasBase() && !structure.HasSameBase(BaseUri!))
         {
-            structure.UpdateBaseUri(BaseUri);
+            structure.UpdateBaseUri(BaseUri!);
         }
 
         structure.UpdateIdToBottom();

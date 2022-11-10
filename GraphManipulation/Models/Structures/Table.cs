@@ -46,7 +46,7 @@ public class Table : Structure
 
     private void CheckForeignKeysWithSameToParentHaveSameOnActions(ForeignKey foreignKey)
     {
-        var relevantKeys = ForeignKeys.Where(fk => fk.To.ParentStructure.Equals(foreignKey.To.ParentStructure));
+        var relevantKeys = ForeignKeys.Where(fk => fk.To.ParentStructure!.Equals(foreignKey.To.ParentStructure));
 
         var onActionsAreSame =
             relevantKeys.All(fk => fk.OnDelete == foreignKey.OnDelete && fk.OnUpdate == foreignKey.OnUpdate);

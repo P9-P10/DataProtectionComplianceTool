@@ -1,14 +1,12 @@
 using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Structures;
+using GraphManipulation.Ontologies;
 using VDS.RDF;
 
 namespace GraphManipulation.Extensions;
 
 public static class DataStoreToGraph
 {
-    public static Uri OntologyNamespace =>
-        UriFactory.Create("http://www.cs-22-dt-9-03.org/datastore-description-language#");
-
     public static IGraph ToGraph(this Entity entity)
     {
         IGraph graph = new Graph();
@@ -51,7 +49,7 @@ public static class DataStoreToGraph
 
     private static void AddNameSpaces(this IGraph graph)
     {
-        graph.NamespaceMap.AddNamespace("ddl", OntologyNamespace);
+        graph.NamespaceMap.AddNamespace("ddl", DataStoreDescriptionLanguage.OntologyUri);
     }
 
     private static void AddUriBase(this IGraph graph, Entity entity)

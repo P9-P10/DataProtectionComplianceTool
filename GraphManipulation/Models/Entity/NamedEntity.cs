@@ -2,7 +2,7 @@ namespace GraphManipulation.Models.Entity;
 
 public abstract class NamedEntity : Entity
 {
-    public NamedEntity(string name) : base(name)
+    protected NamedEntity(string name) : base(name)
     {
         Name = name;
     }

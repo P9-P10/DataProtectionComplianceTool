@@ -27,7 +27,7 @@ public abstract class Entity : IEquatable<Entity>
                 return;
             }
             
-            if (Uri.TryCreate(value, UriKind.Absolute, out var uri))
+            if (Uri.TryCreate(value, UriKind.Absolute, out _))
             {
                 _baseUri = value;
             }
@@ -80,7 +80,7 @@ public abstract class Entity : IEquatable<Entity>
 
     public bool HasSameBase(string b)
     {
-        return HasBase() && BaseUri.Equals(b);
+        return HasBase() && BaseUri!.Equals(b);
     }
 
     public abstract string ComputeHash();

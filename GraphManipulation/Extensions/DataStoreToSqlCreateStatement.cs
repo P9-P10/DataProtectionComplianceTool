@@ -32,10 +32,10 @@ public static class DataStoreToSqlCreateStatement
                         {
                             var joinedForeignKeyNames = string.Join(", ",
                                 table.ForeignKeys
-                                    .Where(fk => fk.To.ParentStructure.Equals(parentGrouping.Key))
+                                    .Where(fk => fk.To.ParentStructure!.Equals(parentGrouping.Key))
                                     .Select(fk => fk.From.Name));
                             var foreignKeysFrom = $"FOREIGN KEY ({joinedForeignKeyNames}) ";
-                            var foreignKeysToTable = $"REFERENCES {parentGrouping.Key.Name} ";
+                            var foreignKeysToTable = $"REFERENCES {parentGrouping.Key!.Name} ";
                             var foreignKeysToColumns =
                                 $"({string.Join(", ", parentGrouping.Select(fk => fk.To.Name))}) ";
 

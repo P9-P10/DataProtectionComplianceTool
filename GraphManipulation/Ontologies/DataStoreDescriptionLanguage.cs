@@ -1,7 +1,12 @@
+using VDS.RDF;
+
 namespace GraphManipulation.Ontologies;
 
 public static class DataStoreDescriptionLanguage
 {
+    public static Uri OntologyUri =>
+        UriFactory.Create("http://www.cs-22-dt-9-03.org/datastore-description-language#");
+    
     // Predicates
     public static string HasStructure => "ddl:hasStructure";
     public static string HasDataType => "ddl:hasDataType";
