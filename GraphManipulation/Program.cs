@@ -5,6 +5,7 @@ using GraphManipulation.Extensions;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Ontologies;
 using VDS.RDF;
+using VDS.RDF.Nodes;
 using VDS.RDF.Parsing;
 using VDS.RDF.Query;
 using VDS.RDF.Query.Datasets;
@@ -30,12 +31,13 @@ public static class Program
         // var arguments = Environment.GetCommandLineArgs();
         // Console.WriteLine(string.Join(", ", arguments));
         CreateAndValidateGraph();
+        SparqlExperiment();
         // SparqlExperiment("SELECT * WHERE { ?s ?p ?o }");
-        SparqlExperiment("SELECT ?datastore ?name WHERE { ?datastore a ddl:Datastore . ?datastore ddl:hasName ?name }");
+        // SparqlExperiment(@"SELECT ?name ?o WHERE { ?datastore a ddl:Datastore . ?datastore ddl:hasName ?name . ?datastore ?p ?o }");
         // SparqlExperiment("SELECT ?something ?name WHERE { ?something a ddl:Column . ?something ddl:Datastore ?name }");
     }
 
-    private static void SparqlExperiment(string commandText)
+    private static void SparqlExperiment(/* string commandText */)
     {
         var graph = new Graph();
         graph.LoadFromFile(OutputPath);
@@ -45,15 +47,17 @@ public static class Program
 
         graph.ValidateUsing(ontology);
 
-        var queryString = new SparqlParameterizedString();
-        queryString.Namespaces.AddNamespace(
-            DataStoreDescriptionLanguage.OntologyPrefix, 
-            DataStoreDescriptionLanguage.OntologyUri);
-        queryString.CommandText = commandText;
+        // var queryString = new SparqlParameterizedString();
+        // queryString.Namespaces.AddNamespace(
+        //     DataStoreDescriptionLanguage.OntologyPrefix, 
+        //     DataStoreDescriptionLanguage.OntologyUri);
+        // queryString.CommandText = commandText;
         
         
         var parser = new SparqlQueryParser();
-        var query = parser.ParseFromString(queryString);
+        // var query = parser.ParseFromString(queryString);
+        var query = parser.ParseFromFile(
+            "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/sparqlQuery.rq");
         
         var tripleStore = new TripleStore();
         tripleStore.Add(graph);
@@ -63,7 +67,7 @@ public static class Program
         var processor = new LeviathanQueryProcessor(dataset);
         
         var results = (processor.ProcessQuery(query) as SparqlResultSet)!;
-
+        
         foreach (var result in results)
         {
             Console.WriteLine(result);

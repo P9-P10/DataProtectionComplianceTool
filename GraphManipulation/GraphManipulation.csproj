@@ -17,6 +17,9 @@
         <None Update="Ontologies\datastore-description-language.ttl">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="sparqlQuery.rq">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
