@@ -49,7 +49,9 @@ public static class DataStoreToGraph
 
     private static void AddNameSpaces(this IGraph graph)
     {
-        graph.NamespaceMap.AddNamespace("ddl", DataStoreDescriptionLanguage.OntologyUri);
+        graph.NamespaceMap.AddNamespace(
+            DataStoreDescriptionLanguage.OntologyPrefix, 
+            DataStoreDescriptionLanguage.OntologyUri);
     }
 
     private static void AddUriBase(this IGraph graph, Entity entity)

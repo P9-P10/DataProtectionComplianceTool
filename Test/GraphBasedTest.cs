@@ -43,7 +43,7 @@ public class GraphBasedTest
             var graph = column.ToGraph();
 
             Assert.True(graph.NamespaceMap.HasNamespace("rdf"));
-            Assert.True(graph.NamespaceMap.HasNamespace("ddl"));
+            Assert.True(graph.NamespaceMap.HasNamespace(DataStoreDescriptionLanguage.OntologyPrefix));
         }
 
         [Fact]
@@ -91,7 +91,7 @@ public class GraphBasedTest
 
             var subj = graph.CreateUriNode(column.Uri);
             var pred = graph.CreateUriNode("rdf:type");
-            var obj = graph.CreateUriNode("ddl:Column");
+            var obj = graph.CreateUriNode(DataStoreDescriptionLanguage.Column);
 
             Assert.Contains(new Triple(subj, pred, obj), graph.Triples);
         }
