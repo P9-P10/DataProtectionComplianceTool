@@ -14,23 +14,31 @@ namespace GraphManipulation;
 
 public static class Program
 {
+    private const string OptimizedDatabaseName = "OptimizedAdvancedDatabase.sqlite";
+    private const string SimpleDatabaseName = "SimpleDatabase.sqlite";
+    private const string OptimizedDatabasePath = $"/home/ane/Documents/GitHub/Legeplads/Databases/{OptimizedDatabaseName}";
+    private const string SimpleDatabasePath = $"/home/ane/Documents/GitHub/Legeplads/Databases/{SimpleDatabaseName}";
     private const string BaseUri = "http://www.test.com/";
-    private const string File = "output.ttl";
-    private const string Path = $"/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/{File}";
+    private const string OutputFileName = "output.ttl";
+    private const string OutputPath = $"/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/{OutputFileName}";
     private const string OntologyPath =
         "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/Ontologies/datastore-description-language.ttl";
     
     public static void Main()
     {
+        // Console.WriteLine();
+        // var arguments = Environment.GetCommandLineArgs();
+        // Console.WriteLine(string.Join(", ", arguments));
         CreateAndValidateGraph();
-        SparqlExperiment("SELECT ?something WHERE { ?something a ddl:Column }");
+        // SparqlExperiment("SELECT * WHERE { ?s ?p ?o }");
+        SparqlExperiment("SELECT ?datastore ?name WHERE { ?datastore a ddl:Datastore . ?datastore ddl:hasName ?name }");
+        // SparqlExperiment("SELECT ?something ?name WHERE { ?something a ddl:Column . ?something ddl:Datastore ?name }");
     }
 
     private static void SparqlExperiment(string commandText)
     {
-        // https://dotnetrdf.org/docs/stable/user_guide/Querying-With-SPARQL.html
         var graph = new Graph();
-        graph.LoadFromFile(Path);
+        graph.LoadFromFile(OutputPath);
         
         IGraph ontology = new Graph();
         ontology.LoadFromFile(OntologyPath, new TurtleParser());
@@ -38,7 +46,9 @@ public static class Program
         graph.ValidateUsing(ontology);
 
         var queryString = new SparqlParameterizedString();
-        queryString.Namespaces.AddNamespace("ddl", DataStoreDescriptionLanguage.OntologyUri);
+        queryString.Namespaces.AddNamespace(
+            DataStoreDescriptionLanguage.OntologyPrefix, 
+            DataStoreDescriptionLanguage.OntologyUri);
         queryString.CommandText = commandText;
         
         
@@ -62,23 +72,28 @@ public static class Program
 
     private static void CreateAndValidateGraph()
     {
-        var database = "OptimizedAdvancedDatabase.sqlite";
-        // string database = "SimpleDatabase.sqlite";
+        using var optimizedConn = new SQLiteConnection($"Data Source={OptimizedDatabasePath}");
+        using var simpleConn = new SQLiteConnection($"Data Source={SimpleDatabasePath}");
 
-        using var conn = new SQLiteConnection($"Data Source=/home/ane/Documents/GitHub/Legeplads/Databases/{database}");
+        var optimizedSqlite = new Sqlite("", BaseUri, optimizedConn);
+        var simpleSqlite = new Sqlite("", BaseUri, simpleConn);
 
-        var sqlite = new Sqlite("", BaseUri, conn);
+        optimizedSqlite.BuildFromDataSource();
+        simpleSqlite.BuildFromDataSource();
 
-        sqlite.BuildFromDataSource();
+        var optimizedGraph = optimizedSqlite.ToGraph();
+        var simpleGraph = simpleSqlite.ToGraph();
 
-        var graph = sqlite.ToGraph();
+        var combinedGraph = new Graph();
+        combinedGraph.Merge(optimizedGraph);
+        combinedGraph.Merge(simpleGraph);
 
         var writer = new CompressingTurtleWriter();
         
-        writer.Save(graph, Path);
+        writer.Save(combinedGraph, OutputPath);
 
         IGraph dataGraph = new Graph();
-        dataGraph.LoadFromFile(Path);
+        dataGraph.LoadFromFile(OutputPath);
 
         IGraph ontology = new Graph();
         ontology.LoadFromFile(OntologyPath, new TurtleParser());
