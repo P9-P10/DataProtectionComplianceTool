@@ -9,7 +9,7 @@ namespace GraphManipulation.Extensions;
 
 public static class DataStoreFromGraph
 {
-    public static List<T> ConstructDataStores<T>(this IGraph graph) where T : DataStore
+    public static T? ConstructDataStore<T>(this IGraph graph) where T : DataStore
     {
         return graph
             .GetTriplesWithObject(graph.CreateUriNode(GraphDataType.GetGraphTypeString(typeof(T))))
@@ -29,7 +29,7 @@ public static class DataStoreFromGraph
 
                 return datastore;
             })
-            .ToList();
+            .FirstOrDefault();
     }
 
     private static void ConstructRelational(this IGraph graph, Relational relational)

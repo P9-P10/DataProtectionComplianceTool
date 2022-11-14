@@ -137,6 +137,12 @@ ddl:Datastore
                       sh:class    ddl:Structure ;
                       sh:minCount 1 ; ] .
 
+ddl:DataStoreShape
+    a             sh:NodeShape ;
+    sh:targetNode ddl:Datastore ;
+    sh:property   [ sh:path     [ sh:inversePath rdf:type ] ;
+                    sh:maxCount 1 ] .
+
 ddl:Database
     a               rdfs:Class ;
     rdfs:subClassOf ddl:Datastore .
