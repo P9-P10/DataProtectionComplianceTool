@@ -3,7 +3,10 @@ using System.Data.SQLite;
 using Dapper;
 using GraphManipulation.Extensions;
 using GraphManipulation.Models.Stores;
+using Newtonsoft.Json;
 using VDS.RDF;
+using JsonSerializer = Newtonsoft.Json.JsonSerializer;
+
 
 namespace GraphManipulation.Manipulation;
 
@@ -49,9 +52,11 @@ public class GraphStorage
             throw new GraphStorageException("Graph does not conform");
         }
 
+        var jsonChanges = JsonConvert.SerializeObject(changes);
+
         var insertStatement = $@"
             INSERT INTO DatastoreGraphs (uri, graph, operations) 
-            VALUES ('{datastoreUri}', '{graph.ToStorageString()}', '{string.Join(", ", changes)}')
+            VALUES ('{datastoreUri}', '{graph.ToStorageString()}', '{string.Join(", ", jsonChanges)}')
         ";
         
         _dbConnection.Open();

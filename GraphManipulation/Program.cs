@@ -4,6 +4,7 @@ using System.Data.SQLite;
 using GraphManipulation.Extensions;
 using GraphManipulation.Manipulation;
 using GraphManipulation.Models.Stores;
+using GraphManipulation.Models.Structures;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 using VDS.RDF.Query;
@@ -51,13 +52,32 @@ public static class Program
         var simpleSqlite = new Sqlite("", BaseUri, simpleConn);
         simpleSqlite.BuildFromDataSource();
         var simpleGraph = simpleSqlite.ToGraph();
-        graphStorage.Insert(simpleSqlite, simpleGraph, new List<string>{"Hello", "World"});
+
+        var graphManipulator = new GraphManipulator<Sqlite>(simpleGraph);
+
+        var userDataTable = simpleSqlite
+            .FindSchema("main")!
+            .FindTable("UserData")!;
+
+        var emailColumn = simpleSqlite
+            .FindSchema("main")!
+            .FindTable("Users")!
+            .FindColumn("email")!;
+
+        var columnUri = emailColumn.Uri.ToString();
+        
+        userDataTable.AddStructure(emailColumn);
+        
+        graphManipulator.Move(new Uri(columnUri), emailColumn);
+
+        graphStorage.Insert(simpleSqlite, graphManipulator.Graph, graphManipulator.Changes);
 
         IGraph dataGraph = graphStorage.GetLatest(simpleSqlite);
         
         var writer = new CompressingTurtleWriter();
         
         Console.WriteLine(StringWriter.Write(dataGraph, writer));
+        Console.WriteLine(simpleSqlite.ToSqlCreateStatement());
     }
 
     private static void SparqlExperiment(/* string commandText */)
