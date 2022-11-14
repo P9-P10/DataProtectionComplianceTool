@@ -6,7 +6,7 @@ using VDS.RDF.Shacl.Validation;
 
 namespace GraphManipulation.Extensions;
 
-public static class Validation
+public static class GraphValidation
 {
     public static Report ValidateUsing(this DataStore dataStore, IGraph ontology)
     {

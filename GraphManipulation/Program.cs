@@ -2,14 +2,14 @@
 
 using System.Data.SQLite;
 using GraphManipulation.Extensions;
+using GraphManipulation.Manipulation;
 using GraphManipulation.Models.Stores;
-using GraphManipulation.Ontologies;
 using VDS.RDF;
-using VDS.RDF.Nodes;
 using VDS.RDF.Parsing;
 using VDS.RDF.Query;
 using VDS.RDF.Query.Datasets;
 using VDS.RDF.Writing;
+using StringWriter = VDS.RDF.Writing.StringWriter;
 
 namespace GraphManipulation;
 
@@ -30,11 +30,34 @@ public static class Program
         // Console.WriteLine();
         // var arguments = Environment.GetCommandLineArgs();
         // Console.WriteLine(string.Join(", ", arguments));
-        CreateAndValidateGraph();
-        SparqlExperiment();
+      
+        // SparqlExperiment();
         // SparqlExperiment("SELECT * WHERE { ?s ?p ?o }");
         // SparqlExperiment(@"SELECT ?name ?o WHERE { ?datastore a ddl:Datastore . ?datastore ddl:hasName ?name . ?datastore ?p ?o }");
         // SparqlExperiment("SELECT ?something ?name WHERE { ?something a ddl:Column . ?something ddl:Datastore ?name }");
+
+        // CreateAndValidateGraph();
+        WorkingWithGraphStorage();
+    }
+
+    private static void WorkingWithGraphStorage()
+    {
+        IGraph ontology = new Graph();
+        ontology.LoadFromFile(OntologyPath, new TurtleParser());
+
+        var graphStorage = new GraphStorage(ontology);
+
+        using var simpleConn = new SQLiteConnection($"Data Source={SimpleDatabasePath}");
+        var simpleSqlite = new Sqlite("", BaseUri, simpleConn);
+        simpleSqlite.BuildFromDataSource();
+        var simpleGraph = simpleSqlite.ToGraph();
+        graphStorage.Insert(simpleSqlite, simpleGraph, new List<string>{"Hello", "World"});
+
+        IGraph dataGraph = graphStorage.GetLatest(simpleSqlite);
+        
+        var writer = new CompressingTurtleWriter();
+        
+        Console.WriteLine(StringWriter.Write(dataGraph, writer));
     }
 
     private static void SparqlExperiment(/* string commandText */)
@@ -104,6 +127,6 @@ public static class Program
 
         var report = dataGraph.ValidateUsing(ontology);
 
-        Validation.PrintValidationReport(report);
+        GraphValidation.PrintValidationReport(report);
     }
 }
