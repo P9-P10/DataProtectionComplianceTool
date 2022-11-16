@@ -38,19 +38,15 @@ public abstract class Entity : IEquatable<Entity>
     }
 
     private List<string> _id;
-
-    public string Id
+    
+    public void ComputeId()
     {
-        get
-        {
-            if (BaseUri is null)
-            {
-                return string.Join(IdSeparator, _id);
-            }
+        var names = ConstructIdString();
 
-            return BaseUri + string.Join(IdSeparator, _id);
-        }
+        _id = BaseUri is null ? names : names.Prepend(BaseUri.TrimEnd(IdSeparator, '#')).ToList();
     }
+
+    public string Id => string.Join(IdSeparator, _id);
 
     public Uri Uri
     {
@@ -84,10 +80,7 @@ public abstract class Entity : IEquatable<Entity>
 
     public abstract List<string> ConstructIdString();
 
-    public void ComputeId()
-    {
-        _id = ConstructIdString();
-    }
+    
     
     public bool Equals(Entity? other)
     {

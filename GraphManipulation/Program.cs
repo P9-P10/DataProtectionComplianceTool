@@ -68,7 +68,7 @@ public static class Program
         
         userDataTable.AddStructure(emailColumn);
         
-        graphManipulator.Move(new Uri(columnUri), emailColumn);
+        graphManipulator.Move(new Uri(columnUri), emailColumn.Uri);
 
         graphStorage.Insert(simpleSqlite, graphManipulator.Graph, graphManipulator.Changes);
 

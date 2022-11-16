@@ -1,4 +1,5 @@
 using GraphManipulation.Extensions;
+using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
 using GraphManipulation.Ontologies;
@@ -19,38 +20,25 @@ public class GraphManipulator<T> where T : DataStore
         Changes = new List<string>();
     }
 
-    public void MoveToNewParent(Uri from, Uri parent)
+    public void Move(Uri from, Uri to)
     {
         CheckMoveValidity(from);
+
         var dataStore = GetDataStoreFromGraph();
-        
+
         var structure = dataStore.Find<Structure>(from)!;
-        var parentStructure = dataStore.Find<Structure>(parent)!;
+
+        var newParentUri = UriFactory.Create(string.Join(Entity.IdSeparator, to.ToString().Split(Entity.IdSeparator).SkipLast(1)));
+
+        var parentStructure = dataStore.Find<Structure>(newParentUri)!;
         
         parentStructure.AddStructure(structure);
-        
-        Changes.Add($"MOVE({from}, {structure.Uri})");
+
+        Changes.Add($"MOVE({from}, {to})");
         
         AddMoveChangesForSubStructures(from, structure.SubStructures);
         
         Graph = dataStore.ToGraph();
-    }
-
-    public void Move(Uri from, Structure to)
-    {
-        CheckMoveValidity(from);
-
-        var dataStore = GetDataStoreFromGraph();
-
-        var structure = dataStore.Find<Structure>(from)!;
-
-        var parentStructure = dataStore.Find<Structure>(to.ParentStructure!)!;
-        
-        parentStructure.AddStructure(structure);
-
-        Graph = dataStore.ToGraph();
-        
-        Changes.Add($"MOVE({from}, {to.Uri})");
     }
 
     private void CheckMoveValidity(Uri from)

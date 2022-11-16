@@ -24,7 +24,7 @@ public class GraphManipulatorTest
         tds.ExpectedTable2.AddStructure(tds.ExpectedColumn);
         var columnUriAfter = tds.ExpectedColumn.Uri.ToString();
         
-        graphManipulator.Move(new Uri(columnUriBefore), tds.ExpectedColumn);
+        graphManipulator.Move(new Uri(columnUriBefore), tds.ExpectedColumn.Uri);
         
         var subj = graphManipulator.Graph.CreateUriNode(tds.ExpectedTable2.Uri);
         var pred = graphManipulator.Graph.CreateUriNode("ddl:hasStructure");
@@ -45,7 +45,7 @@ public class GraphManipulatorTest
         var columnUriBefore = tds.ExpectedColumn.Uri.ToString();
         tds.ExpectedTable2.AddStructure(tds.ExpectedColumn);
         
-        graphManipulator.Move(new Uri(columnUriBefore), tds.ExpectedColumn);
+        graphManipulator.Move(new Uri(columnUriBefore), tds.ExpectedColumn.Uri);
         
         var subj = graphManipulator.Graph.CreateUriNode(tds.ExpectedColumn.Uri);
         var pred = graphManipulator.Graph.CreateUriNode("ddl:hasDataType");
@@ -55,29 +55,7 @@ public class GraphManipulatorTest
     }
 
     [Fact]
-    public void MoveToNewParentMovesStructure()
-    {
-        var tds = CreateDatastore();
-        var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
-        
-        var columnUriBefore = tds.ExpectedColumn.Uri.ToString();
-        tds.ExpectedTable2.AddStructure(tds.ExpectedColumn);
-        var columnUriAfter = tds.ExpectedColumn.Uri.ToString();
-        
-        graphManipulator.MoveToNewParent(new Uri(columnUriBefore), tds.ExpectedTable2.Uri);
-        
-        var subj = graphManipulator.Graph.CreateUriNode(tds.ExpectedTable2.Uri);
-        var pred = graphManipulator.Graph.CreateUriNode("ddl:hasStructure");
-        var obj = graphManipulator.Graph.CreateUriNode(tds.ExpectedColumn.Uri);
-
-        Assert.Contains(new Triple(subj, pred, obj), graphManipulator.Graph.Triples);
-        
-        Assert.Single(graphManipulator.Changes);
-        Assert.Contains($"MOVE({columnUriBefore}, {columnUriAfter})", graphManipulator.Changes);
-    }
-    
-    [Fact]
-    public void MoveToNewParentChildrenMoved()
+    public void MoveChildrenMoved()
     {
         var tds = CreateDatastore();
         var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
@@ -90,7 +68,7 @@ public class GraphManipulatorTest
         var column1UriAfter = tds.ExpectedColumn.Uri.ToString();
         var column2UriAfter = tds.ExpectedPrimaryColumn1.Uri.ToString();
         
-        graphManipulator.MoveToNewParent(new Uri(tableUriBefore), tds.ExpectedSchema2.Uri);
+        graphManipulator.Move(new Uri(tableUriBefore), new Uri(tableUriAfter));
         
         var subj = graphManipulator.Graph.CreateUriNode(tds.ExpectedSchema2.Uri);
         var pred = graphManipulator.Graph.CreateUriNode("ddl:hasStructure");
