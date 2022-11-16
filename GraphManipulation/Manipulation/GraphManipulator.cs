@@ -1,6 +1,7 @@
 using GraphManipulation.Extensions;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
+using GraphManipulation.Ontologies;
 using VDS.RDF;
 
 namespace GraphManipulation.Manipulation;
@@ -20,6 +21,7 @@ public class GraphManipulator<T> where T : DataStore
 
     public void MoveToNewParent(Uri from, Uri parent)
     {
+        CheckMoveValidity(from);
         var dataStore = GetDataStoreFromGraph();
         
         var structure = dataStore.Find<Structure>(from)!;
@@ -34,18 +36,50 @@ public class GraphManipulator<T> where T : DataStore
         Graph = dataStore.ToGraph();
     }
 
-    public void Move(Uri from, Column to)
+    public void Move(Uri from, Structure to)
     {
-        var dataStore = GetDataStoreFromGraph(); 
+        CheckMoveValidity(from);
 
-        var structure = dataStore.Find<Column>(from)!;
-        var parentStructure = dataStore.Find<Table>(to.ParentStructure!)!;
+        var dataStore = GetDataStoreFromGraph();
+
+        var structure = dataStore.Find<Structure>(from)!;
+
+        var parentStructure = dataStore.Find<Structure>(to.ParentStructure!)!;
         
         parentStructure.AddStructure(structure);
 
         Graph = dataStore.ToGraph();
         
         Changes.Add($"MOVE({from}, {to.Uri})");
+    }
+
+    private void CheckMoveValidity(Uri from)
+    {
+        var triples = Graph.GetTriplesWithPredicateObject(
+            Graph.CreateUriNode(DataStoreDescriptionLanguage.HasStructure),
+            Graph.CreateUriNode(from)
+        ).ToList();
+
+        if (!triples.Any())
+        {
+            throw new GraphManipulatorException("Cannot move structure without parent");
+        }
+        
+        if (triples.Count > 1)
+        {
+            throw new GraphManipulatorException("Multiple parents found, something went wrong");
+        }
+
+        var parentTypeTriple = Graph.GetTripleWithSubjectPredicateObject(
+            triples.First().Subject,
+            Graph.CreateUriNode("rdf:type"),
+            Graph.CreateUriNode(DataStoreDescriptionLanguage.Datastore)
+        );
+
+        if (parentTypeTriple is not null)
+        {
+            throw new GraphManipulatorException("Cannot move structure whose parent is a Datastore");
+        }
     }
 
     public void Rename(Uri uri, string newName)

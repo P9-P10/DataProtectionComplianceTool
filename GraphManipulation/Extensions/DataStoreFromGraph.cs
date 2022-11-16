@@ -97,7 +97,7 @@ public static class DataStoreFromGraph
         }
     }
 
-    private static Triple? GetTripleWithSubjectPredicateObject(this IGraph graph, INode subj, INode pred, INode obj)
+    public static Triple? GetTripleWithSubjectPredicateObject(this IGraph graph, INode subj, INode pred, INode obj)
     {
         return graph.Triples
             .FirstOrDefault(triple => triple.Subject.Equals(subj) &&

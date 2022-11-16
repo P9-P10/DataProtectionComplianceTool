@@ -25,6 +25,7 @@ public static class DataStoreDescriptionLanguage
     public static string ForeignKeyOnUpdate => $"{OntologyPrefix}:foreignKeyOnUpdate";
     
     // Classes
+    public static string Datastore = $"{OntologyPrefix}:Datastore";
     public static string Sqlite => $"{OntologyPrefix}:SQLite";
     public static string Schema => $"{OntologyPrefix}:Schema";
     public static string Table => $"{OntologyPrefix}:Table";
