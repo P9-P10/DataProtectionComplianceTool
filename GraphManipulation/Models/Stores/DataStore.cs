@@ -57,14 +57,9 @@ public abstract class DataStore : StructuredEntity
     {
     }
 
-    public override string ConstructIdString()
+    public override List<string> ConstructIdString()
     {
-        if (BaseUri is not null)
-        {
-            return BaseUri + Name + "/";
-        }
-
-        throw new DataException("BaseUri was null when generating Datastore Id");
+        return new List<string> { Name };
     }
 
     public override void UpdateBaseUri(string baseUri)

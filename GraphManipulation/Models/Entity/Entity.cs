@@ -10,7 +10,7 @@ public abstract class Entity : IEquatable<Entity>
     
     protected Entity(string id)
     {
-        Id = id;
+        _id = new List<string> { id };
     }
 
     private string _baseUri = "";
@@ -37,7 +37,20 @@ public abstract class Entity : IEquatable<Entity>
         }
     }
 
-    public string Id;
+    private List<string> _id;
+
+    public string Id
+    {
+        get
+        {
+            if (BaseUri is null)
+            {
+                return string.Join(IdSeparator, _id);
+            }
+
+            return BaseUri + string.Join(IdSeparator, _id);
+        }
+    }
 
     public Uri Uri
     {
@@ -53,7 +66,7 @@ public abstract class Entity : IEquatable<Entity>
                 return uri;
             }
 
-            throw new EntityException("Something went wrong when creating uri from: " + BaseUri + Id);
+            throw new EntityException("Something went wrong when creating uri from: " + Id);
         }
     }
 
@@ -69,11 +82,11 @@ public abstract class Entity : IEquatable<Entity>
         return HasBase() && BaseUri!.Equals(b);
     }
 
-    public abstract string ConstructIdString();
+    public abstract List<string> ConstructIdString();
 
     public void ComputeId()
     {
-        Id = ConstructIdString().TrimEnd(IdSeparator);
+        _id = ConstructIdString();
     }
     
     public bool Equals(Entity? other)

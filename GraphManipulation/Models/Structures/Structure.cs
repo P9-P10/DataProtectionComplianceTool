@@ -43,10 +43,15 @@ public abstract class Structure : StructuredEntity //, IHasStructure
     public void UpdateStore(DataStore store)
     {
         Store = store;
-
+        
         if (!IsTop() && !ParentStructure!.HasSameStore(store))
         {
             ParentStructure.UpdateStore(store);
+        }
+
+        if (store.HasBase())
+        {
+            UpdateBaseUri(store.BaseUri);
         }
 
         ComputeId();
@@ -108,29 +113,25 @@ public abstract class Structure : StructuredEntity //, IHasStructure
         return HasStore() && Store!.Equals(store);
     }
 
-    public override string ConstructIdString()
+    public override List<string> ConstructIdString()
     {
-        var result = "";
+        var result = new List<string>();
 
         if (IsTop())
         {
             if (HasStore())
             {
-                result += Store!.ConstructIdString();
-            }
-            else if (HasBase())
-            {
-                result += BaseUri;
+                result = Store!.ConstructIdString();
             }
         }
         else
         {
-            result += ParentStructure!.ConstructIdString();
+            result = ParentStructure!.ConstructIdString();
         }
 
-        result += Name;
+        result.Add(Name);
 
-        return result + IdSeparator;
+        return result;
     }
 }
 
