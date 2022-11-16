@@ -54,12 +54,6 @@ public class GraphManipulatorTest
         Assert.Contains(new Triple(subj, pred, obj), graphManipulator.Graph.Triples);
     }
 
-    [Fact (Skip = "Future work")]
-    public void MoveTableChildrenMoved()
-    {
-        
-    }
-
     [Fact]
     public void MoveToNewParentMovesStructure()
     {
@@ -70,7 +64,7 @@ public class GraphManipulatorTest
         tds.ExpectedTable2.AddStructure(tds.ExpectedColumn);
         var columnUriAfter = tds.ExpectedColumn.Uri.ToString();
         
-        graphManipulator.MoveToNewParent(new Uri(columnUriBefore), tds.ExpectedTable2);
+        graphManipulator.MoveToNewParent(new Uri(columnUriBefore), tds.ExpectedTable2.Uri);
         
         var subj = graphManipulator.Graph.CreateUriNode(tds.ExpectedTable2.Uri);
         var pred = graphManipulator.Graph.CreateUriNode("ddl:hasStructure");
@@ -80,6 +74,40 @@ public class GraphManipulatorTest
         
         Assert.Single(graphManipulator.Changes);
         Assert.Contains($"MOVE({columnUriBefore}, {columnUriAfter})", graphManipulator.Changes);
+    }
+    
+    [Fact]
+    public void MoveToNewParentChildrenMoved()
+    {
+        var tds = CreateDatastore();
+        var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
+
+        var tableUriBefore = tds.ExpectedTable1.Uri.ToString();
+        var column1UriBefore = tds.ExpectedColumn.Uri.ToString();
+        var column2UriBefore = tds.ExpectedPrimaryColumn1.Uri.ToString();
+        tds.ExpectedSchema2.AddStructure(tds.ExpectedTable1);
+        var tableUriAfter = tds.ExpectedTable1.Uri.ToString();
+        var column1UriAfter = tds.ExpectedColumn.Uri.ToString();
+        var column2UriAfter = tds.ExpectedPrimaryColumn1.Uri.ToString();
+        
+        graphManipulator.MoveToNewParent(new Uri(tableUriBefore), tds.ExpectedSchema2.Uri);
+        
+        var subj = graphManipulator.Graph.CreateUriNode(tds.ExpectedSchema2.Uri);
+        var pred = graphManipulator.Graph.CreateUriNode("ddl:hasStructure");
+        var obj = graphManipulator.Graph.CreateUriNode(tds.ExpectedTable1.Uri);
+        
+        Assert.Contains(new Triple(subj, pred, obj), graphManipulator.Graph.Triples);
+        
+        var move1 = $"MOVE({tableUriBefore}, {tableUriAfter})";
+        var move2 = $"MOVE({column1UriBefore}, {column1UriAfter})";
+        var move3 = $"MOVE({column2UriBefore}, {column2UriAfter})";
+        var expectedChanges = new List<string> { move1, move2, move3 };
+        
+        Assert.Equal(3, graphManipulator.Changes.Count);
+        Assert.Contains(move1, graphManipulator.Changes);
+        Assert.Contains(move2, graphManipulator.Changes);
+        Assert.Contains(move3, graphManipulator.Changes);
+        Assert.True(expectedChanges.SequenceEqual(graphManipulator.Changes));
     }
 
     [Fact]
@@ -157,14 +185,14 @@ public class GraphManipulatorTest
         
         var newName = "NewName";
 
-        var schemaUriBefore = tds.ExpectedSchema.Uri.ToString();
+        var schemaUriBefore = tds.ExpectedSchema1.Uri.ToString();
         var table1UriBefore = tds.ExpectedTable1.Uri.ToString();
         var table2UriBefore = tds.ExpectedTable2.Uri.ToString();
         var column1UriBefore = tds.ExpectedColumn.Uri.ToString();
         var column2UriBefore = tds.ExpectedPrimaryColumn1.Uri.ToString();
         var column3UriBefore = tds.ExpectedPrimaryColumn2.Uri.ToString();
-        tds.ExpectedSchema.UpdateName(newName);
-        var schemaUriAfter = tds.ExpectedSchema.Uri.ToString();
+        tds.ExpectedSchema1.UpdateName(newName);
+        var schemaUriAfter = tds.ExpectedSchema1.Uri.ToString();
         var table1UriAfter = tds.ExpectedTable1.Uri.ToString();
         var table2UriAfter = tds.ExpectedTable2.Uri.ToString();
         var column1UriAfter = tds.ExpectedColumn.Uri.ToString();
@@ -199,7 +227,8 @@ public class GraphManipulatorTest
     public class TestDataStoreFixture
     {
         private const string ExpectedSqliteName = "TestSqlite";
-        private const string ExpectedSchemaName = "TestSchema";
+        private const string ExpectedSchema1Name = "TestSchema1";
+        private const string ExpectedSchema2Name = "TestSchema2";
         private const string ExpectedTable1Name = "TestTable1";
         private const string ExpectedTable2Name = "TestTable2";
         private const string ExpectedColumnName = "TestColumn";
@@ -207,7 +236,8 @@ public class GraphManipulatorTest
         private const string ExpectedPrimaryColumn2Name = "PrimaryColumn2";
 
         public readonly Sqlite ExpectedSqlite;
-        public readonly Schema ExpectedSchema;
+        public readonly Schema ExpectedSchema1;
+        public readonly Schema ExpectedSchema2;
         public readonly Table ExpectedTable1;
         public readonly Table ExpectedTable2;
         public readonly Column ExpectedColumn;
@@ -217,16 +247,18 @@ public class GraphManipulatorTest
         public TestDataStoreFixture()
         {
             ExpectedSqlite = new Sqlite(ExpectedSqliteName, BaseUri);
-            ExpectedSchema = new Schema(ExpectedSchemaName);
+            ExpectedSchema1 = new Schema(ExpectedSchema1Name);
+            ExpectedSchema2 = new Schema(ExpectedSchema2Name);
             ExpectedTable1 = new Table(ExpectedTable1Name);
             ExpectedTable2 = new Table(ExpectedTable2Name);
             ExpectedColumn = new Column(ExpectedColumnName, "INT");
             ExpectedPrimaryColumn1 = new Column(ExpectedPrimaryColumn1Name);
             ExpectedPrimaryColumn2 = new Column(ExpectedPrimaryColumn2Name);
             
-            ExpectedSqlite.AddStructure(ExpectedSchema);
-            ExpectedSchema.AddStructure(ExpectedTable1);
-            ExpectedSchema.AddStructure(ExpectedTable2);
+            ExpectedSqlite.AddStructure(ExpectedSchema1);
+            ExpectedSqlite.AddStructure(ExpectedSchema2);
+            ExpectedSchema1.AddStructure(ExpectedTable1);
+            ExpectedSchema1.AddStructure(ExpectedTable2);
             ExpectedTable1.AddStructure(ExpectedColumn);
             
             ExpectedTable1.AddStructure(ExpectedPrimaryColumn1);

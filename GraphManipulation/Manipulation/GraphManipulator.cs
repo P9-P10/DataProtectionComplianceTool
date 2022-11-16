@@ -18,9 +18,20 @@ public class GraphManipulator<T> where T : DataStore
         Changes = new List<string>();
     }
 
-    public void MoveToNewParent(Uri from, Structure parent)
+    public void MoveToNewParent(Uri from, Uri parent)
     {
-        throw new NotImplementedException();
+        var dataStore = GetDataStoreFromGraph();
+        
+        var structure = dataStore.Find<Structure>(from)!;
+        var parentStructure = dataStore.Find<Structure>(parent)!;
+        
+        parentStructure.AddStructure(structure);
+        
+        Changes.Add($"MOVE({from}, {structure.Uri})");
+        
+        AddMoveChangesForSubStructures(from, structure.SubStructures);
+        
+        Graph = dataStore.ToGraph();
     }
 
     public void Move(Uri from, Column to)
