@@ -1,3 +1,4 @@
+using System.Data;
 using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Structures;
 
@@ -56,14 +57,14 @@ public abstract class DataStore : StructuredEntity
     {
     }
 
-    public override string ComputeHash()
+    public override string ConstructIdString()
     {
         if (BaseUri is not null)
         {
-            return BaseUri + Name;
+            return BaseUri + Name + "/";
         }
 
-        throw new EntityException("BaseUri was null when computing hash");
+        throw new DataException("BaseUri was null when generating Datastore Id");
     }
 
     public override void UpdateBaseUri(string baseUri)

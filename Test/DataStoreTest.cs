@@ -1,4 +1,5 @@
 using System.Text;
+using System.Xml;
 using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
@@ -71,15 +72,8 @@ public class DataStoreTest
         const string sqliteName = "SQLite";
         const string tableName = "Table";
 
-        var algorithm = EntityTest.GetHashAlgorithm();
-
-        const string sqliteString = baseNamespace + sqliteName;
-        var expectedSqliteHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(sqliteString));
-        var expectedSqliteString = Entity.HashToId(expectedSqliteHash);
-
-        const string tableString = sqliteString + tableName;
-        var expectedTableHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableString));
-        var expectedTableString = Entity.HashToId(expectedTableHash);
+        var expectedSqliteString = baseNamespace + sqliteName;
+        var expectedTableString = expectedSqliteString + Entity.IdSeparator + tableName;
 
         var sqlite = new Sqlite(sqliteName);
         var table = new Table(tableName);

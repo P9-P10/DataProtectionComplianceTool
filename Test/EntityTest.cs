@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Xml;
 using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
@@ -11,11 +12,6 @@ namespace Test;
 public class EntityTest
 {
     private const string baseUri = "http://www.test.com/";
-
-    public static HashAlgorithm GetHashAlgorithm()
-    {
-        return new Column("").Algorithm;
-    }
 
     [Fact]
     public void ListEqualitySanityCheckCorrectOrder()
@@ -53,31 +49,6 @@ public class EntityTest
         Assert.False(table1.SubStructures.SequenceEqual(table2.SubStructures));
     }
 
-
-    [Fact]
-    public void HashingSanityCheckSameInstance()
-    {
-        const string testString = "testString";
-
-        var algorithm = GetHashAlgorithm();
-
-        var a = Entity.HashToId(algorithm.ComputeHash(Encoding.ASCII.GetBytes(testString)));
-        var b = Entity.HashToId(algorithm.ComputeHash(Encoding.ASCII.GetBytes(testString)));
-
-        Assert.Equal(a, b);
-    }
-
-    [Fact]
-    public void HashingSanityCheckDifferentInstances()
-    {
-        const string testString = "testString";
-
-        var a = Entity.HashToId(GetHashAlgorithm().ComputeHash(Encoding.ASCII.GetBytes(testString)));
-        var b = Entity.HashToId(GetHashAlgorithm().ComputeHash(Encoding.ASCII.GetBytes(testString)));
-
-        Assert.Equal(a, b);
-    }
-
     [Fact]
     public void EntityComparison()
     {
@@ -89,21 +60,17 @@ public class EntityTest
         Assert.Equal(columnA, columnB);
     }
 
+    // TODO: Denne test skal muligvis bare slettes
     [Fact]
-    public void EntityHashesToExpectedValue()
+    public void EntityIdExpectedValue()
     {
         const string columnName = "Column";
-
-        var algorithm = GetHashAlgorithm();
-
-        var expectedHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnName));
-        var expectedString = Entity.HashToId(expectedHash);
 
         var column = new Column(columnName);
 
         var actualString = column.Id;
 
-        Assert.Equal(expectedString, actualString);
+        Assert.Equal(columnName, actualString);
     }
 
     [Fact]
@@ -114,23 +81,11 @@ public class EntityTest
         const string tableName = "Table";
         const string columnName = "Column";
 
-        var algorithm = GetHashAlgorithm();
-
-        const string sqliteString = baseUri + sqliteName;
-        var expectedSqliteHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(sqliteString));
-        var expectedSqliteString = Entity.HashToId(expectedSqliteHash);
-
-        const string schemaString = sqliteString + schemaName;
-        var expectedSchemaHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(schemaString));
-        var expectedSchemaString = Entity.HashToId(expectedSchemaHash);
-
-        const string tableString = schemaString + tableName;
-        var expectedTableHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableString));
-        var expectedTableString = Entity.HashToId(expectedTableHash);
-
-        const string columnString = tableString + columnName;
-        var expectedColumnHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString));
-        var expectedColumnString = Entity.HashToId(expectedColumnHash);
+        
+        var expectedSqliteString = string.Join("", baseUri, sqliteName);
+        var expectedSchemaString = string.Join(Entity.IdSeparator, expectedSqliteString, schemaName);
+        var expectedTableString = string.Join(Entity.IdSeparator, expectedSchemaString, tableName);
+        var expectedColumnString = string.Join(Entity.IdSeparator, expectedTableString, columnName);
 
         var sqlite = new Sqlite(sqliteName);
         var schema = new Schema(schemaName);
@@ -148,143 +103,100 @@ public class EntityTest
         Assert.Equal(expectedColumnString, column.Id);
     }
 
-    [Fact]
-    public void DataStoreStructureChaining()
-    {
-        const string sqliteName = "SQLite";
-        const string schemaName = "Schema";
-        const string tableName = "Table";
+     [Fact]
+     public void DataStoreStructureChaining()
+     {
+         const string sqliteName = "SQLite";
+         const string schemaName = "Schema";
+         const string tableName = "Table";
 
-        var algorithm = GetHashAlgorithm();
+         var expectedSqliteString = string.Join("", baseUri, sqliteName);
 
-        const string sqliteString = baseUri + sqliteName;
-        var expectedSqliteHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(sqliteString));
-        var expectedSqliteString = Entity.HashToId(expectedSqliteHash);
+         var sqlite = new Sqlite(sqliteName);
+         sqlite.UpdateBaseUri(baseUri);
 
-        var sqlite = new Sqlite(sqliteName);
-        sqlite.UpdateBaseUri(baseUri);
+         Assert.Equal(expectedSqliteString, sqlite.Id);
 
-        Assert.Equal(expectedSqliteString, sqlite.Id);
+         var expectedSchemaStringBefore = schemaName;
+         var expectedTableStringBefore = string.Join(Entity.IdSeparator, expectedSchemaStringBefore, tableName);
+         
+         var schema = new Schema(schemaName);
+         var table = new Table(tableName);
 
-        const string schemaStringBefore = schemaName;
-        var expectedSchemaHashBefore = algorithm.ComputeHash(Encoding.ASCII.GetBytes(schemaStringBefore));
-        var expectedSchemaStringBefore = Entity.HashToId(expectedSchemaHashBefore);
+         schema.AddStructure(table);
 
-        const string tableStringBefore = schemaStringBefore + tableName;
-        var expectedTableHashBefore = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableStringBefore));
-        var expectedTableStringBefore = Entity.HashToId(expectedTableHashBefore);
+         Assert.Equal(expectedSchemaStringBefore, schema.Id);
+         Assert.Equal(expectedTableStringBefore, table.Id);
 
-        var schema = new Schema(schemaName);
-        var table = new Table(tableName);
+         var expectedSchemaStringAfter = string.Join(Entity.IdSeparator, expectedSqliteString, schemaName);
+         var expectedTableStringAfter = string.Join(Entity.IdSeparator, expectedSchemaStringAfter, tableName);
 
-        schema.AddStructure(table);
+         sqlite.AddStructure(schema);
 
-        Assert.Equal(expectedSchemaStringBefore, schema.Id);
-        Assert.Equal(expectedTableStringBefore, table.Id);
+         Assert.Equal(expectedSqliteString, sqlite.Id);
+         Assert.Equal(expectedSchemaStringAfter, schema.Id);
+         Assert.Equal(expectedTableStringAfter, table.Id);
+     }
 
-        const string schemaStringAfter = sqliteString + schemaName;
-        var expectedSchemaHashAfter = algorithm.ComputeHash(Encoding.ASCII.GetBytes(schemaStringAfter));
-        var expectedSchemaStringAfter = Entity.HashToId(expectedSchemaHashAfter);
+     [Fact]
+     public void StructureStructureChaining()
+     {
+         const string schemaName = "Schema";
+         const string tableName = "Table";
+         
+         var expectedSchemaStringBefore = schemaName;
+         var expectedTableStringBefore = tableName;
 
-        const string tableStringAfter = schemaStringAfter + tableName;
-        var expectedTableHashAfter = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableStringAfter));
-        var expectedTableStringAfter = Entity.HashToId(expectedTableHashAfter);
+         var schema = new Schema(schemaName);
+         var table = new Table(tableName);
 
-        sqlite.AddStructure(schema);
+         Assert.Equal(expectedSchemaStringBefore, schema.Id);
+         Assert.Equal(expectedTableStringBefore, table.Id);
 
-        Assert.Equal(expectedSqliteString, sqlite.Id);
-        Assert.Equal(expectedSchemaStringAfter, schema.Id);
-        Assert.Equal(expectedTableStringAfter, table.Id);
-    }
+         var expectedTableStringAfter = string.Join(Entity.IdSeparator, expectedSchemaStringBefore, tableName);
 
-    [Fact]
-    public void StructureStructureChaining()
-    {
-        const string schemaName = "Schema";
-        const string tableName = "Table";
+         schema.AddStructure(table);
 
-        var algorithm = GetHashAlgorithm();
+         Assert.Equal(expectedSchemaStringBefore, schema.Id);
+         Assert.Equal(expectedTableStringAfter, table.Id);
+     }
 
-        const string schemaStringBefore = schemaName;
-        var expectedSchemaHashBefore = algorithm.ComputeHash(Encoding.ASCII.GetBytes(schemaStringBefore));
-        var expectedSchemaStringBefore = Entity.HashToId(expectedSchemaHashBefore);
+     [Fact]
+     public void SubStructuresAreUpdatedWhenParentStructureIsAdded()
+     {
+         const string schemaName = "Schema";
+         const string tableName = "Table";
+         const string columnName1 = "Column1";
+         const string columnName2 = "Column2";
 
-        const string tableStringBefore = tableName;
-        var expectedTableHashBefore = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableStringBefore));
-        var expectedTableStringBefore = Entity.HashToId(expectedTableHashBefore);
+         const string expectedSchemaString = schemaName;
 
-        var schema = new Schema(schemaName);
-        var table = new Table(tableName);
+         var expectedTableStringBefore = tableName;
+         var expectedColumnString1Before = expectedTableStringBefore + Entity.IdSeparator + columnName1;
+         var expectedColumnString2Before = expectedTableStringBefore + Entity.IdSeparator + columnName2;
 
-        Assert.Equal(expectedSchemaStringBefore, schema.Id);
-        Assert.Equal(expectedTableStringBefore, table.Id);
+         var schema = new Schema(schemaName);
+         var table = new Table(tableName);
+         var column1 = new Column(columnName1);
+         var column2 = new Column(columnName2);
 
-        const string tableStringAfter = schemaStringBefore + tableName;
-        var expectedTableHashAfter = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableStringAfter));
-        var expectedTableStringAfter = Entity.HashToId(expectedTableHashAfter);
+         table.AddStructure(column1);
+         table.AddStructure(column2);
 
-        schema.AddStructure(table);
+         Assert.Equal(expectedSchemaString, schema.Id);
+         Assert.Equal(expectedTableStringBefore, table.Id);
+         Assert.Equal(expectedColumnString1Before, column1.Id);
+         Assert.Equal(expectedColumnString2Before, column2.Id);
+         
+         var expectedTableStringAfter = expectedSchemaString + Entity.IdSeparator + tableName;
+         var expectedColumnString1After = expectedTableStringAfter + Entity.IdSeparator + columnName1;
+         var expectedColumnString2After = expectedTableStringAfter + Entity.IdSeparator + columnName2;
 
-        Assert.Equal(expectedSchemaStringBefore, schema.Id);
-        Assert.Equal(expectedTableStringAfter, table.Id);
-    }
+         schema.AddStructure(table);
 
-    [Fact]
-    public void SubStructuresAreUpdatedWhenParentStructureIsAdded()
-    {
-        const string schemaName = "Schema";
-        const string tableName = "Table";
-        const string columnName1 = "Column1";
-        const string columnName2 = "Column2";
-
-        var algorithm = GetHashAlgorithm();
-
-        const string schemaString = schemaName;
-        var expectedSchemaHash = algorithm.ComputeHash(Encoding.ASCII.GetBytes(schemaString));
-        var expectedSchemaString = Entity.HashToId(expectedSchemaHash);
-
-        const string tableStringBefore = tableName;
-        var expectedTableHashBefore = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableStringBefore));
-        var expectedTableStringBefore = Entity.HashToId(expectedTableHashBefore);
-
-        const string columnString1Before = tableStringBefore + columnName1;
-        var expectedColumnHash1Before = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString1Before));
-        var expectedColumnString1Before = Entity.HashToId(expectedColumnHash1Before);
-
-        const string columnString2Before = tableStringBefore + columnName2;
-        var expectedColumnHash2Before = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString2Before));
-        var expectedColumnString2Before = Entity.HashToId(expectedColumnHash2Before);
-
-        var schema = new Schema(schemaName);
-        var table = new Table(tableName);
-        var column1 = new Column(columnName1);
-        var column2 = new Column(columnName2);
-
-        table.AddStructure(column1);
-        table.AddStructure(column2);
-
-        Assert.Equal(expectedSchemaString, schema.Id);
-        Assert.Equal(expectedTableStringBefore, table.Id);
-        Assert.Equal(expectedColumnString1Before, column1.Id);
-        Assert.Equal(expectedColumnString2Before, column2.Id);
-
-        const string tableStringAfter = schemaString + tableName;
-        var expectedTableHashAfter = algorithm.ComputeHash(Encoding.ASCII.GetBytes(tableStringAfter));
-        var expectedTableStringAfter = Entity.HashToId(expectedTableHashAfter);
-
-        const string columnString1After = tableStringAfter + columnName1;
-        var expectedColumnHash1After = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString1After));
-        var expectedColumnString1After = Entity.HashToId(expectedColumnHash1After);
-
-        const string columnString2After = tableStringAfter + columnName2;
-        var expectedColumnHash2After = algorithm.ComputeHash(Encoding.ASCII.GetBytes(columnString2After));
-        var expectedColumnString2After = Entity.HashToId(expectedColumnHash2After);
-
-        schema.AddStructure(table);
-
-        Assert.Equal(expectedSchemaString, schema.Id);
-        Assert.Equal(expectedTableStringAfter, table.Id);
-        Assert.Equal(expectedColumnString1After, column1.Id);
-        Assert.Equal(expectedColumnString2After, column2.Id);
-    }
+         Assert.Equal(expectedSchemaString, schema.Id);
+         Assert.Equal(expectedTableStringAfter, table.Id);
+         Assert.Equal(expectedColumnString1After, column1.Id);
+         Assert.Equal(expectedColumnString2After, column2.Id);
+     }
 }

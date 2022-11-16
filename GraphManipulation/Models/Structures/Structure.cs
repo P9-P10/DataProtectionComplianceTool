@@ -108,7 +108,7 @@ public abstract class Structure : StructuredEntity //, IHasStructure
         return HasStore() && Store!.Equals(store);
     }
 
-    public override string ComputeHash()
+    public override string ConstructIdString()
     {
         var result = "";
 
@@ -116,7 +116,7 @@ public abstract class Structure : StructuredEntity //, IHasStructure
         {
             if (HasStore())
             {
-                result += Store!.ComputeHash();
+                result += Store!.ConstructIdString();
             }
             else if (HasBase())
             {
@@ -125,12 +125,12 @@ public abstract class Structure : StructuredEntity //, IHasStructure
         }
         else
         {
-            result += ParentStructure!.ComputeHash();
+            result += ParentStructure!.ConstructIdString();
         }
 
         result += Name;
 
-        return result;
+        return result + IdSeparator;
     }
 }
 

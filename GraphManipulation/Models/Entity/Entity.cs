@@ -6,12 +6,11 @@ namespace GraphManipulation.Models.Entity;
 
 public abstract class Entity : IEquatable<Entity>
 {
-    public readonly HashAlgorithm Algorithm = SHA1.Create();
-    public string HashedFrom = null!;
-
-    public Entity(string toHash)
+    public static readonly char IdSeparator = '/'; 
+    
+    protected Entity(string id)
     {
-        ComputeId(toHash);
+        Id = id;
     }
 
     private string _baseUri = "";
@@ -38,7 +37,7 @@ public abstract class Entity : IEquatable<Entity>
         }
     }
 
-    public string Id => HashToId(Hash);
+    public string Id;
 
     public Uri Uri
     {
@@ -49,26 +48,13 @@ public abstract class Entity : IEquatable<Entity>
                 throw new EntityException("Base was null when generating URI");
             }
 
-            var baseUri = UriFactory.Create(BaseUri);
-
-            if (Uri.TryCreate(baseUri, Id, out var uri))
+            if (Uri.TryCreate(Id, UriKind.Absolute, out var uri))
             {
                 return uri;
             }
 
             throw new EntityException("Something went wrong when creating uri from: " + BaseUri + Id);
         }
-    }
-
-    private byte[] Hash { get; set; } = null!;
-
-    public static string HashToId(IEnumerable<byte> hash)
-    {
-        var stringBuilder = new StringBuilder();
-
-        foreach (var b in hash) stringBuilder.Append(b.ToString("x2"));
-
-        return stringBuilder.ToString();
     }
 
     public abstract void UpdateBaseUri(string baseUri);
@@ -83,17 +69,11 @@ public abstract class Entity : IEquatable<Entity>
         return HasBase() && BaseUri!.Equals(b);
     }
 
-    public abstract string ComputeHash();
-
-    protected void ComputeId(string toHash)
-    {
-        Hash = Algorithm.ComputeHash(Encoding.ASCII.GetBytes(toHash));
-        HashedFrom = toHash;
-    }
+    public abstract string ConstructIdString();
 
     public void ComputeId()
     {
-        ComputeId(ComputeHash());
+        Id = ConstructIdString().TrimEnd(IdSeparator);
     }
     
     public bool Equals(Entity? other)
@@ -120,7 +100,7 @@ public abstract class Entity : IEquatable<Entity>
 
     public override int GetHashCode()
     {
-        return Id.GetHashCode();
+        return string.GetHashCode(Id);
     }
 }
 
