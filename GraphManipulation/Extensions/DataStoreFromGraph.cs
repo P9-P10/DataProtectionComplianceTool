@@ -38,7 +38,7 @@ public static class DataStoreFromGraph
         graph.ConstructForeignKeys(relational);
     }
 
-    private static string GetNameOfNode(this IGraph graph, INode subject)
+    public static string GetNameOfNode(this IGraph graph, INode subject)
     {
         return graph
             .GetTriplesWithSubjectPredicate(subject, graph.CreateUriNode(DataStoreDescriptionLanguage.HasName))

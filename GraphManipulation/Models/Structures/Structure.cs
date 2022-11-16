@@ -93,25 +93,9 @@ public abstract class Structure : StructuredEntity //, IHasStructure
         UpdateIdToBottom();
     }
 
-    public void UpdateIdToBottom()
-    {
-        ComputeId();
-
-        if (!IsBottom())
-        {
-            foreach (var subStructure in SubStructures)
-                subStructure.UpdateIdToBottom();
-        }
-    }
-
     public bool IsTop()
     {
         return ParentStructure is null;
-    }
-
-    public bool IsBottom()
-    {
-        return SubStructures.Count == 0;
     }
 
     public bool HasStore()

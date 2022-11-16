@@ -8,9 +8,8 @@ public abstract class NamedEntity : Entity
     }
 
     public string Name { get; protected set; }
-
-    // TODO: Dette skal også opdatere børns ID
-    public void UpdateName(string name)
+    
+    public virtual void UpdateName(string name)
     {
         Name = name;
     }

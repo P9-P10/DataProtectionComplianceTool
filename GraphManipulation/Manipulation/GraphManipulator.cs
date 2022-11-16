@@ -18,15 +18,15 @@ public class GraphManipulator<T> where T : DataStore
         Changes = new List<string>();
     }
 
+    public void MoveToNewParent(Uri from, Structure parent)
+    {
+        throw new NotImplementedException();
+    }
+
     public void Move(Uri from, Column to)
     {
-        DataStore? dataStore = Graph.ConstructDataStore<T>();
+        var dataStore = GetDataStoreFromGraph(); 
 
-        if (dataStore is null)
-        {
-            throw new GraphManipulatorException("Could not construct datastore from graph");
-        }
-        
         var structure = dataStore.Find<Column>(from)!;
         var parentStructure = dataStore.Find<Table>(to.ParentStructure!)!;
         
@@ -39,7 +39,44 @@ public class GraphManipulator<T> where T : DataStore
 
     public void Rename(Uri uri, string newName)
     {
-        throw new NotImplementedException();
+        var dataStore = GetDataStoreFromGraph();
+        var structure = dataStore.Find<Structure>(uri)!;
+        
+        structure.UpdateName(newName);
+        Changes.Add($"RENAME({uri}, {structure.Uri})");
+
+        AddMoveChangesForSubStructures(uri, structure.SubStructures);
+
+        Graph = dataStore.ToGraph();
+    }
+
+    private void AddMoveChangesForSubStructures(Uri uri, IReadOnlyCollection<Structure> newSubstructures)
+    {
+        var dataStore = GetDataStoreFromGraph();
+        var structure = dataStore.Find<Structure>(uri)!;
+        
+        var substructureUris = new List<string>(structure.SubStructures.Select(sub => sub.Uri.ToString()));
+        
+        foreach (var subUri in substructureUris.Select(UriFactory.Create))
+        {
+            var oldName = Graph.GetNameOfNode(Graph.CreateUriNode(subUri));
+            var newSub = newSubstructures.First(sub => sub.Name == oldName);
+            Changes.Add($"MOVE({subUri}, {newSub.Uri})");
+
+            AddMoveChangesForSubStructures(subUri, newSub.SubStructures);
+        }
+    }
+
+    private DataStore GetDataStoreFromGraph()
+    {
+        DataStore? dataStore = Graph.ConstructDataStore<T>();
+
+        if (dataStore is null)
+        {
+            throw new GraphManipulatorException("Could not construct datastore from graph");
+        }
+
+        return dataStore;
     }
 
     public void Undo()
