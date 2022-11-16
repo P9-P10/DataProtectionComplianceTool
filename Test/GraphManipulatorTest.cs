@@ -10,31 +10,25 @@ using Xunit;
 
 namespace Test;
 
-public class GraphManipulatorTest : IClassFixture<GraphManipulatorTest.TestDataStoreFixture>
+public class GraphManipulatorTest
 {
     private const string BaseUri = "http://www.test.com/";
-
-    private readonly TestDataStoreFixture _tds;
-
-    public GraphManipulatorTest(TestDataStoreFixture tds)
-    {
-        _tds = tds;
-    }
 
     [Fact]
     public void MoveColumnChangesItsParent()
     {
-        var graphManipulator = new GraphManipulator<Sqlite>(_tds.ExpectedSqlite.ToGraph());
+        var tds = CreateDatastore();
+        var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
         
-        var columnUriBefore = _tds.ExpectedColumn.Uri.ToString();
-        _tds.ExpectedTable2.AddStructure(_tds.ExpectedColumn);
-        var columnUriAfter = _tds.ExpectedColumn.Uri.ToString();
+        var columnUriBefore = tds.ExpectedColumn.Uri.ToString();
+        tds.ExpectedTable2.AddStructure(tds.ExpectedColumn);
+        var columnUriAfter = tds.ExpectedColumn.Uri.ToString();
         
-        graphManipulator.Move(new Uri(columnUriBefore), _tds.ExpectedColumn);
+        graphManipulator.Move(new Uri(columnUriBefore), tds.ExpectedColumn);
         
-        var subj = graphManipulator.Graph.CreateUriNode(_tds.ExpectedTable2.Uri);
+        var subj = graphManipulator.Graph.CreateUriNode(tds.ExpectedTable2.Uri);
         var pred = graphManipulator.Graph.CreateUriNode("ddl:hasStructure");
-        var obj = graphManipulator.Graph.CreateUriNode(_tds.ExpectedColumn.Uri);
+        var obj = graphManipulator.Graph.CreateUriNode(tds.ExpectedColumn.Uri);
 
         Assert.Contains(new Triple(subj, pred, obj), graphManipulator.Graph.Triples);
         
@@ -45,14 +39,15 @@ public class GraphManipulatorTest : IClassFixture<GraphManipulatorTest.TestDataS
     [Fact]
     public void MoveColumnKeepsAttributesSuchAsColumnType()
     {
-        var graphManipulator = new GraphManipulator<Sqlite>(_tds.ExpectedSqlite.ToGraph());
+        var tds = CreateDatastore();
+        var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
 
-        var columnUriBefore = _tds.ExpectedColumn.Uri.ToString();
-        _tds.ExpectedTable2.AddStructure(_tds.ExpectedColumn);
+        var columnUriBefore = tds.ExpectedColumn.Uri.ToString();
+        tds.ExpectedTable2.AddStructure(tds.ExpectedColumn);
         
-        graphManipulator.Move(new Uri(columnUriBefore), _tds.ExpectedColumn);
+        graphManipulator.Move(new Uri(columnUriBefore), tds.ExpectedColumn);
         
-        var subj = graphManipulator.Graph.CreateUriNode(_tds.ExpectedColumn.Uri);
+        var subj = graphManipulator.Graph.CreateUriNode(tds.ExpectedColumn.Uri);
         var pred = graphManipulator.Graph.CreateUriNode("ddl:hasDataType");
         var obj = graphManipulator.Graph.CreateLiteralNode("INT");
 
@@ -68,17 +63,18 @@ public class GraphManipulatorTest : IClassFixture<GraphManipulatorTest.TestDataS
     [Fact]
     public void MoveToNewParentMovesStructure()
     {
-        var graphManipulator = new GraphManipulator<Sqlite>(_tds.ExpectedSqlite.ToGraph());
+        var tds = CreateDatastore();
+        var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
         
-        var columnUriBefore = _tds.ExpectedColumn.Uri.ToString();
-        _tds.ExpectedTable2.AddStructure(_tds.ExpectedColumn);
-        var columnUriAfter = _tds.ExpectedColumn.Uri.ToString();
+        var columnUriBefore = tds.ExpectedColumn.Uri.ToString();
+        tds.ExpectedTable2.AddStructure(tds.ExpectedColumn);
+        var columnUriAfter = tds.ExpectedColumn.Uri.ToString();
         
-        graphManipulator.MoveToNewParent(new Uri(columnUriBefore), _tds.ExpectedTable2);
+        graphManipulator.MoveToNewParent(new Uri(columnUriBefore), tds.ExpectedTable2);
         
-        var subj = graphManipulator.Graph.CreateUriNode(_tds.ExpectedTable2.Uri);
+        var subj = graphManipulator.Graph.CreateUriNode(tds.ExpectedTable2.Uri);
         var pred = graphManipulator.Graph.CreateUriNode("ddl:hasStructure");
-        var obj = graphManipulator.Graph.CreateUriNode(_tds.ExpectedColumn.Uri);
+        var obj = graphManipulator.Graph.CreateUriNode(tds.ExpectedColumn.Uri);
 
         Assert.Contains(new Triple(subj, pred, obj), graphManipulator.Graph.Triples);
         
@@ -89,14 +85,16 @@ public class GraphManipulatorTest : IClassFixture<GraphManipulatorTest.TestDataS
     [Fact]
     public void RenameRenamesStructure()
     {
-        var graphManipulator = new GraphManipulator<Sqlite>(_tds.ExpectedSqlite.ToGraph());
+        var tds = CreateDatastore();
+        var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
         
-        var columnUriBefore = _tds.ExpectedColumn.Uri.ToString();
+        var columnUriBefore = tds.ExpectedColumn.Uri.ToString();
         var newName = "NewName";
+        tds.ExpectedColumn.UpdateName(newName);
         
         graphManipulator.Rename(new Uri(columnUriBefore), newName);
         
-        var subj = graphManipulator.Graph.CreateUriNode(_tds.ExpectedColumn.Uri);
+        var subj = graphManipulator.Graph.CreateUriNode(tds.ExpectedColumn.Uri);
         var pred = graphManipulator.Graph.CreateUriNode("ddl:hasName");
         var obj = graphManipulator.Graph.CreateLiteralNode(newName);
         
@@ -106,13 +104,14 @@ public class GraphManipulatorTest : IClassFixture<GraphManipulatorTest.TestDataS
     [Fact]
     public void RenameAddsChange()
     {
-        var graphManipulator = new GraphManipulator<Sqlite>(_tds.ExpectedSqlite.ToGraph());
+        var tds = CreateDatastore();
+        var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
         
         var newName = "NewName";
         
-        var columnUriBefore = _tds.ExpectedColumn.Uri.ToString();
-        _tds.ExpectedColumn.UpdateName(newName);
-        var columnUriAfter = _tds.ExpectedColumn.Uri.ToString();
+        var columnUriBefore = tds.ExpectedColumn.Uri.ToString();
+        tds.ExpectedColumn.UpdateName(newName);
+        var columnUriAfter = tds.ExpectedColumn.Uri.ToString();
 
         graphManipulator.Rename(new Uri(columnUriBefore), newName);
         
@@ -123,17 +122,18 @@ public class GraphManipulatorTest : IClassFixture<GraphManipulatorTest.TestDataS
     [Fact]
     public void RenameAddsChangesForChildrenIdRecomputes()
     {
-        var graphManipulator = new GraphManipulator<Sqlite>(_tds.ExpectedSqlite.ToGraph());
+        var tds = CreateDatastore();
+        var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
         
         var newName = "NewName";
 
-        var tableUriBefore = _tds.ExpectedTable1.Uri.ToString();
-        var column1UriBefore = _tds.ExpectedColumn.Uri.ToString();
-        var column2UriBefore = _tds.ExpectedPrimaryColumn1.Uri.ToString();
-        _tds.ExpectedTable1.UpdateName(newName);
-        var tableUriAfter = _tds.ExpectedTable1.Uri.ToString();
-        var column1UriAfter = _tds.ExpectedColumn.Uri.ToString();
-        var column2UriAfter = _tds.ExpectedPrimaryColumn1.Uri.ToString();
+        var tableUriBefore = tds.ExpectedTable1.Uri.ToString();
+        var column1UriBefore = tds.ExpectedColumn.Uri.ToString();
+        var column2UriBefore = tds.ExpectedPrimaryColumn1.Uri.ToString();
+        tds.ExpectedTable1.UpdateName(newName);
+        var tableUriAfter = tds.ExpectedTable1.Uri.ToString();
+        var column1UriAfter = tds.ExpectedColumn.Uri.ToString();
+        var column2UriAfter = tds.ExpectedPrimaryColumn1.Uri.ToString();
         
         graphManipulator.Rename(new Uri(tableUriBefore), newName);
 
@@ -152,23 +152,24 @@ public class GraphManipulatorTest : IClassFixture<GraphManipulatorTest.TestDataS
     [Fact]
     public void RenameAddsChangesForChildrensChildrenIdRecomputes()
     {
-        var graphManipulator = new GraphManipulator<Sqlite>(_tds.ExpectedSqlite.ToGraph());
+        var tds = CreateDatastore();
+        var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
         
         var newName = "NewName";
 
-        var schemaUriBefore = _tds.ExpectedSchema.Uri.ToString();
-        var table1UriBefore = _tds.ExpectedTable1.Uri.ToString();
-        var table2UriBefore = _tds.ExpectedTable2.Uri.ToString();
-        var column1UriBefore = _tds.ExpectedColumn.Uri.ToString();
-        var column2UriBefore = _tds.ExpectedPrimaryColumn1.Uri.ToString();
-        var column3UriBefore = _tds.ExpectedPrimaryColumn2.Uri.ToString();
-        _tds.ExpectedSchema.UpdateName(newName);
-        var schemaUriAfter = _tds.ExpectedSchema.Uri.ToString();
-        var table1UriAfter = _tds.ExpectedTable1.Uri.ToString();
-        var table2UriAfter = _tds.ExpectedTable2.Uri.ToString();
-        var column1UriAfter = _tds.ExpectedColumn.Uri.ToString();
-        var column2UriAfter = _tds.ExpectedPrimaryColumn1.Uri.ToString();
-        var column3UriAfter = _tds.ExpectedPrimaryColumn2.Uri.ToString();
+        var schemaUriBefore = tds.ExpectedSchema.Uri.ToString();
+        var table1UriBefore = tds.ExpectedTable1.Uri.ToString();
+        var table2UriBefore = tds.ExpectedTable2.Uri.ToString();
+        var column1UriBefore = tds.ExpectedColumn.Uri.ToString();
+        var column2UriBefore = tds.ExpectedPrimaryColumn1.Uri.ToString();
+        var column3UriBefore = tds.ExpectedPrimaryColumn2.Uri.ToString();
+        tds.ExpectedSchema.UpdateName(newName);
+        var schemaUriAfter = tds.ExpectedSchema.Uri.ToString();
+        var table1UriAfter = tds.ExpectedTable1.Uri.ToString();
+        var table2UriAfter = tds.ExpectedTable2.Uri.ToString();
+        var column1UriAfter = tds.ExpectedColumn.Uri.ToString();
+        var column2UriAfter = tds.ExpectedPrimaryColumn1.Uri.ToString();
+        var column3UriAfter = tds.ExpectedPrimaryColumn2.Uri.ToString();
         
         graphManipulator.Rename(new Uri(schemaUriBefore), newName);
 
@@ -188,6 +189,11 @@ public class GraphManipulatorTest : IClassFixture<GraphManipulatorTest.TestDataS
         Assert.Contains(move4, graphManipulator.Changes);
         Assert.Contains(move5, graphManipulator.Changes);
         Assert.True(expectedChanges.SequenceEqual(graphManipulator.Changes));
+    }
+
+    private TestDataStoreFixture CreateDatastore()
+    {
+        return new TestDataStoreFixture();
     }
 
     public class TestDataStoreFixture
