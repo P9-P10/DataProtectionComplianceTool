@@ -38,15 +38,6 @@ public static class DataStoreFromGraph
         graph.ConstructForeignKeys(relational);
     }
 
-    public static string GetNameOfNode(this IGraph graph, INode subject)
-    {
-        return graph
-            .GetTriplesWithSubjectPredicate(subject, graph.CreateUriNode(DataStoreDescriptionLanguage.HasName))
-            .Select(triple => triple.Object as LiteralNode)
-            .First()!
-            .Value;
-    }
-
     private static void ConstructSchemas(this IGraph graph, Relational relational)
     {
         foreach (var schema in graph.GetSubStructures<Schema>(relational))
@@ -54,24 +45,6 @@ public static class DataStoreFromGraph
             relational.AddStructure(schema);
             graph.ConstructTables(schema);
         }
-    }
-
-    private static IEnumerable<INode> GetSubStructures(this IGraph graph, StructuredEntity subject)
-    {
-        return graph
-            .GetTriplesWithSubjectPredicate(
-                graph.CreateUriNode(subject.Uri), 
-                graph.CreateUriNode(DataStoreDescriptionLanguage.HasStructure))
-            .Select(triple => triple.Object);
-    }
-
-    private static IEnumerable<T> GetSubStructures<T>(this IGraph graph, StructuredEntity subject) where T : Structure
-    {
-        return graph
-            .GetSubStructures(subject)
-            .Select(graph.GetNameOfNode)
-            // TODO: Det her er åbenbart langsomt, men jeg kunne ikke finde andre måder der virkede
-            .Select(name => (T)Activator.CreateInstance(typeof(T), name)!);
     }
 
     private static void ConstructTables(this IGraph graph, Schema schema)
@@ -95,14 +68,6 @@ public static class DataStoreFromGraph
             var matchingColumn = table.SubStructures.First(sub => sub.Uri == columnNode.Uri) as Column;
             table.AddPrimaryKey(matchingColumn!);
         }
-    }
-
-    public static Triple? GetTripleWithSubjectPredicateObject(this IGraph graph, INode subj, INode pred, INode obj)
-    {
-        return graph.Triples
-            .FirstOrDefault(triple => triple.Subject.Equals(subj) &&
-                                      triple.Predicate.Equals(pred) &&
-                                      triple.Object.Equals(obj));
     }
 
     private static void ConstructForeignKeys(this IGraph graph, Relational relational)
@@ -146,35 +111,4 @@ public static class DataStoreFromGraph
             column.SetOptions(graph.GetColumnOptions(column));
         }
     }
-
-    private static string GetColumnDataType(this IGraph graph, Column column)
-    {
-        return graph
-            .GetTriplesWithSubjectPredicate(graph.CreateUriNode(column.Uri), graph.CreateUriNode(DataStoreDescriptionLanguage.HasDataType))
-            .Select(triple => triple.Object as LiteralNode)
-            .First()!
-            .Value;
-    }
-
-    private static bool GetColumnIsNotNull(this IGraph graph, Column column)
-    {
-        return graph
-            .GetTriplesWithSubjectPredicate(graph.CreateUriNode(column.Uri), graph.CreateUriNode(DataStoreDescriptionLanguage.IsNotNull))
-            .Select(triple => triple.Object as LiteralNode)
-            .First()!
-            .Value
-            .ToBoolean();
-    }
-
-    private static string GetColumnOptions(this IGraph graph, Column column)
-    {
-        return graph
-            .GetTriplesWithSubjectPredicate(graph.CreateUriNode(column.Uri), graph.CreateUriNode(DataStoreDescriptionLanguage.ColumnOptions))
-            .Select(triple => triple.Object as LiteralNode)
-            .First()!
-            .Value;
-    }
-
-
-    
 }
