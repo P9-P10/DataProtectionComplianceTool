@@ -23,6 +23,18 @@ public static class GraphDataType
             _ => throw new GraphDataTypeException("Type not supported " + type)
         };
     }
+
+    public static Type GetTypeFromString(string typeString)
+    {
+        return typeString switch
+        {
+            DataStoreDescriptionLanguage.Column => typeof(Column),
+            DataStoreDescriptionLanguage.Table => typeof(Table),
+            DataStoreDescriptionLanguage.Schema => typeof(Schema),
+            DataStoreDescriptionLanguage.Sqlite => typeof(Sqlite),
+            _ => throw new GraphDataTypeException("Type string could not be converted to type: " + typeString)
+        };
+    }
 }
 
 public class GraphDataTypeException : Exception

@@ -12,31 +12,42 @@ namespace GraphManipulation.Manipulation;
 
 public class GraphStorage
 {
-    private const string ConnectionString = "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/GraphStorage.sqlite";
-    private DbConnection _dbConnection;
-    private IGraph _ontology;
+    private readonly DbConnection _dbConnection;
+    private readonly IGraph _ontology;
 
     private const string SqlCreateStatement = @"
         CREATE TABLE IF NOT EXISTS DatastoreGraphs (
            id INTEGER PRIMARY KEY AUTOINCREMENT,
            uri VARCHAR NOT NULL,
-           from_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+           datastoreType VARCHAR NOT NULL,
+           from_date DATETIME DEFAULT(STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')),
            graph VARCHAR NOT NULL,
            operations VARCHAR
         );
     ";
 
-    public GraphStorage(IGraph ontology)
+    private const string SqlCreateStatementWithDrop =
+        $"DROP TABLE IF EXISTS DatastoreGraphs;\n{SqlCreateStatement}";
+
+    public GraphStorage(string connectionString, IGraph ontology, bool withDrop = false)
     {
         _ontology = ontology;
         
-        if (!File.Exists(ConnectionString))
+        if (!File.Exists(connectionString))
         {
-            SQLiteConnection.CreateFile(ConnectionString);
+            SQLiteConnection.CreateFile(connectionString);
         }
-        _dbConnection = new SQLiteConnection($"Data source={ConnectionString};Version=3;");
+        _dbConnection = new SQLiteConnection($"Data source={connectionString};Version=3;");
         _dbConnection.Open();
-        _dbConnection.Execute(SqlCreateStatement);
+        if (withDrop)
+        {
+            _dbConnection.Execute(SqlCreateStatementWithDrop);
+            Console.WriteLine("DROPPING TABLES");
+        }
+        else
+        {
+            _dbConnection.Execute(SqlCreateStatement);
+        }
         _dbConnection.Close();
     }
 
@@ -44,19 +55,21 @@ public class GraphStorage
     {
         Insert(dataStore.Uri, graph, changes);
     }
-    
-    public void Insert(Uri datastoreUri, IGraph graph, List<string> changes)
+
+    private void Insert(Uri datastoreUri, IGraph graph, List<string> changes)
     {
         if (!graph.ValidateUsing(_ontology).Conforms)
         {
             throw new GraphStorageException("Graph does not conform");
         }
 
+        var datastoreType = graph.GetDataStoreDescriptionLanguageTypeFromUri(datastoreUri)!;
+
         var jsonChanges = JsonConvert.SerializeObject(changes);
 
         var insertStatement = $@"
-            INSERT INTO DatastoreGraphs (uri, graph, operations) 
-            VALUES ('{datastoreUri}', '{graph.ToStorageString()}', '{string.Join(", ", jsonChanges)}')
+            INSERT INTO DatastoreGraphs (uri, datastoreType, graph, operations) 
+            VALUES ('{datastoreUri}', '{datastoreType}', '{graph.ToStorageString()}', '{string.Join(", ", jsonChanges)}')
         ";
         
         _dbConnection.Open();
@@ -93,6 +106,17 @@ public class GraphStorage
         }
         
         result.LoadFromString(queryResult);
+
+        return result;
+    }
+
+    public List<(string, string)> GetListOfManagedDataStoresWithType()
+    {
+        const string query = "SELECT DISTINCT uri, datastoreType FROM DatastoreGraphs; ";
+        
+        _dbConnection.Open();
+        var result = _dbConnection.Query<(string, string)>(query).ToList();
+        _dbConnection.Close();
 
         return result;
     }

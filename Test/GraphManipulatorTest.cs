@@ -181,10 +181,27 @@ public class GraphManipulatorTest
         }
 
         [Fact]
-        public void TopLevelCanMoveName()
+        public void ColumnMovedToDifferentSchemaIsPossible()
         {
+            var tds = CreateDatastore();
+            var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
             
+            var columnUriBefore = tds.ExpectedColumn.Uri.ToString();
+            tds.ExpectedTable3.AddStructure(tds.ExpectedColumn);
+            var columnUriAfter = tds.ExpectedColumn.Uri.ToString();
+            
+            graphManipulator.Move(new Uri(columnUriBefore), tds.ExpectedColumn.Uri);
+
+            var subj = graphManipulator.Graph.CreateUriNode(tds.ExpectedTable3.Uri);
+            var pred = graphManipulator.Graph.CreateUriNode("ddl:hasStructure");
+            var obj = graphManipulator.Graph.CreateUriNode(tds.ExpectedColumn.Uri);
+
+            Assert.Contains(new Triple(subj, pred, obj), graphManipulator.Graph.Triples);
+
+            Assert.Single(graphManipulator.Changes);
+            Assert.Contains($"MOVE({columnUriBefore}, {columnUriAfter})", graphManipulator.Changes);
         }
+
     }
 
     public class Rename
@@ -323,18 +340,22 @@ public class GraphManipulatorTest
         private const string ExpectedSchema2Name = "TestSchema2";
         private const string ExpectedTable1Name = "TestTable1";
         private const string ExpectedTable2Name = "TestTable2";
+        private const string ExpectedTable3Name = "TestTable3";
         private const string ExpectedColumnName = "TestColumn";
         private const string ExpectedPrimaryColumn1Name = "PrimaryColumn1";
         private const string ExpectedPrimaryColumn2Name = "PrimaryColumn2";
+        private const string ExpectedPrimaryColumn3Name = "PrimaryColumn3";
 
         public readonly Sqlite ExpectedSqlite;
         public readonly Schema ExpectedSchema1;
         public readonly Schema ExpectedSchema2;
         public readonly Table ExpectedTable1;
         public readonly Table ExpectedTable2;
+        public readonly Table ExpectedTable3;
         public readonly Column ExpectedColumn;
         public readonly Column ExpectedPrimaryColumn1;
         public readonly Column ExpectedPrimaryColumn2;
+        public readonly Column ExpectedPrimaryColumn3;
 
         public TestDataStoreFixture()
         {
@@ -343,20 +364,26 @@ public class GraphManipulatorTest
             ExpectedSchema2 = new Schema(ExpectedSchema2Name);
             ExpectedTable1 = new Table(ExpectedTable1Name);
             ExpectedTable2 = new Table(ExpectedTable2Name);
+            ExpectedTable3 = new Table(ExpectedTable3Name);
             ExpectedColumn = new Column(ExpectedColumnName, "INT");
             ExpectedPrimaryColumn1 = new Column(ExpectedPrimaryColumn1Name);
             ExpectedPrimaryColumn2 = new Column(ExpectedPrimaryColumn2Name);
+            ExpectedPrimaryColumn3 = new Column(ExpectedPrimaryColumn3Name);
 
             ExpectedSqlite.AddStructure(ExpectedSchema1);
             ExpectedSqlite.AddStructure(ExpectedSchema2);
             ExpectedSchema1.AddStructure(ExpectedTable1);
             ExpectedSchema1.AddStructure(ExpectedTable2);
+            ExpectedSchema2.AddStructure(ExpectedTable3);
+            
             ExpectedTable1.AddStructure(ExpectedColumn);
 
             ExpectedTable1.AddStructure(ExpectedPrimaryColumn1);
             ExpectedTable2.AddStructure(ExpectedPrimaryColumn2);
+            ExpectedTable3.AddStructure(ExpectedPrimaryColumn3);
             ExpectedTable1.AddPrimaryKey(ExpectedPrimaryColumn1);
             ExpectedTable2.AddPrimaryKey(ExpectedPrimaryColumn2);
+            ExpectedTable3.AddPrimaryKey(ExpectedPrimaryColumn3);
         }
     }
 }

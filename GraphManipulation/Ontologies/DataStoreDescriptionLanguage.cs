@@ -4,30 +4,30 @@ namespace GraphManipulation.Ontologies;
 
 public static class DataStoreDescriptionLanguage
 {
-    public static string OntologyPrefix = "ddl";
+    public const string OntologyPrefix = "ddl";
     public static Uri OntologyUri =>
         UriFactory.Create("http://www.cs-22-dt-9-03.org/datastore-description-language#");
     
     // Predicates
-    public static string HasStructure => $"{OntologyPrefix}:hasStructure";
-    public static string HasDataType => $"{OntologyPrefix}:hasDataType";
-    public static string HasStore => $"{OntologyPrefix}:hasStore";
-    public static string StoredIn => $"{OntologyPrefix}:storedIn";
-    public static string HasName => $"{OntologyPrefix}:hasName";
-    public static string HasValue => $"{OntologyPrefix}:hasValue";
-    public static string WithConnection => $"{OntologyPrefix}:withConnection";
-    public static string PrimaryKey => $"{OntologyPrefix}:primaryKey";
-    public static string ForeignKey => $"{OntologyPrefix}:foreignKey";
-    public static string References => $"{OntologyPrefix}:references";
-    public static string IsNotNull => $"{OntologyPrefix}:isNotNull";
-    public static string ColumnOptions => $"{OntologyPrefix}:columnOptions";
-    public static string ForeignKeyOnDelete => $"{OntologyPrefix}:foreignKeyOnDelete";
-    public static string ForeignKeyOnUpdate => $"{OntologyPrefix}:foreignKeyOnUpdate";
+    public const string HasStructure = $"{OntologyPrefix}:hasStructure";
+    public const string HasDataType = $"{OntologyPrefix}:hasDataType";
+    public const string HasStore = $"{OntologyPrefix}:hasStore";
+    public const string StoredIn = $"{OntologyPrefix}:storedIn";
+    public const string HasName = $"{OntologyPrefix}:hasName";
+    public const string HasValue = $"{OntologyPrefix}:hasValue";
+    public const string WithConnection = $"{OntologyPrefix}:withConnection";
+    public const string PrimaryKey = $"{OntologyPrefix}:primaryKey";
+    public const string ForeignKey = $"{OntologyPrefix}:foreignKey";
+    public const string References = $"{OntologyPrefix}:references";
+    public const string IsNotNull = $"{OntologyPrefix}:isNotNull";
+    public const string ColumnOptions = $"{OntologyPrefix}:columnOptions";
+    public const string ForeignKeyOnDelete = $"{OntologyPrefix}:foreignKeyOnDelete";
+    public const string ForeignKeyOnUpdate = $"{OntologyPrefix}:foreignKeyOnUpdate";
     
     // Classes
-    public static string Datastore = $"{OntologyPrefix}:Datastore";
-    public static string Sqlite => $"{OntologyPrefix}:SQLite";
-    public static string Schema => $"{OntologyPrefix}:Schema";
-    public static string Table => $"{OntologyPrefix}:Table";
-    public static string Column => $"{OntologyPrefix}:Column";
+    public const string Datastore = $"{OntologyPrefix}:Datastore";
+    public const string Sqlite = $"{OntologyPrefix}:SQLite";
+    public const string Schema = $"{OntologyPrefix}:Schema";
+    public const string Table = $"{OntologyPrefix}:Table";
+    public const string Column = $"{OntologyPrefix}:Column";
 }

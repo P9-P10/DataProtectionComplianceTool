@@ -16,6 +16,7 @@ namespace GraphManipulation;
 
 public static class Program
 {
+    private const string GraphStoragePath = "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/GraphStorage.sqlite";
     private const string OptimizedDatabaseName = "OptimizedAdvancedDatabase.sqlite";
     private const string SimpleDatabaseName = "SimpleDatabase.sqlite";
     private const string OptimizedDatabasePath = $"/home/ane/Documents/GitHub/Legeplads/Databases/{OptimizedDatabaseName}";
@@ -42,6 +43,14 @@ public static class Program
 
         InitGraphStorage();
         MakeChangeToGraph();
+
+        Interactive();
+    }
+
+    private static void Interactive()
+    {
+        var interactive = new InteractiveMode();
+        interactive.Run();
     }
 
     private static void InitGraphStorage()
@@ -49,7 +58,7 @@ public static class Program
         IGraph ontology = new Graph();
         ontology.LoadFromFile(OntologyPath, new TurtleParser());
 
-        var graphStorage = new GraphStorage(ontology);
+        var graphStorage = new GraphStorage(GraphStoragePath, ontology, true);
         
         using var simpleConn = new SQLiteConnection($"Data Source={SimpleDatabasePath}");
         var simpleSqlite = new Sqlite("", BaseUri, simpleConn);
@@ -64,7 +73,7 @@ public static class Program
         IGraph ontology = new Graph();
         ontology.LoadFromFile(OntologyPath, new TurtleParser());
 
-        var graphStorage = new GraphStorage(ontology);
+        var graphStorage = new GraphStorage(GraphStoragePath, ontology);
         
         using var simpleConn = new SQLiteConnection($"Data Source={SimpleDatabasePath}");
         var simpleSqlite = new Sqlite("", BaseUri, simpleConn);
@@ -97,7 +106,7 @@ public static class Program
         IGraph ontology = new Graph();
         ontology.LoadFromFile(OntologyPath, new TurtleParser());
 
-        var graphStorage = new GraphStorage(ontology);
+        var graphStorage = new GraphStorage(GraphStoragePath, ontology);
 
         using var simpleConn = new SQLiteConnection($"Data Source={SimpleDatabasePath}");
         var simpleSqlite = new Sqlite("", BaseUri, simpleConn);
