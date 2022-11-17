@@ -38,7 +38,58 @@ public static class Program
         // SparqlExperiment("SELECT ?something ?name WHERE { ?something a ddl:Column . ?something ddl:Datastore ?name }");
 
         // CreateAndValidateGraph();
-        WorkingWithGraphStorage();
+        // WorkingWithGraphStorage();
+
+        InitGraphStorage();
+        MakeChangeToGraph();
+    }
+
+    private static void InitGraphStorage()
+    {
+        IGraph ontology = new Graph();
+        ontology.LoadFromFile(OntologyPath, new TurtleParser());
+
+        var graphStorage = new GraphStorage(ontology);
+        
+        using var simpleConn = new SQLiteConnection($"Data Source={SimpleDatabasePath}");
+        var simpleSqlite = new Sqlite("", BaseUri, simpleConn);
+        simpleSqlite.BuildFromDataSource();
+        var simpleGraph = simpleSqlite.ToGraph();
+        
+        graphStorage.Insert(simpleSqlite, simpleGraph, new List<string>());
+    }
+
+    private static void MakeChangeToGraph()
+    {
+        IGraph ontology = new Graph();
+        ontology.LoadFromFile(OntologyPath, new TurtleParser());
+
+        var graphStorage = new GraphStorage(ontology);
+        
+        using var simpleConn = new SQLiteConnection($"Data Source={SimpleDatabasePath}");
+        var simpleSqlite = new Sqlite("", BaseUri, simpleConn);
+        simpleSqlite.BuildFromDataSource();
+        
+        IGraph dataGraph = graphStorage.GetLatest(simpleSqlite);
+        
+        var graphManipulator = new GraphManipulator<Sqlite>(dataGraph);
+
+        var userDataTable = simpleSqlite
+            .FindSchema("main")!
+            .FindTable("UserData")!;
+
+        var emailColumn = simpleSqlite
+            .FindSchema("main")!
+            .FindTable("Users")!
+            .FindColumn("email")!;
+
+        var columnUri = emailColumn.Uri.ToString();
+        
+        userDataTable.AddStructure(emailColumn);
+        
+        graphManipulator.Move(new Uri(columnUri), emailColumn.Uri);
+
+        graphStorage.Insert(simpleSqlite, graphManipulator.Graph, graphManipulator.Changes);
     }
 
     private static void WorkingWithGraphStorage()
