@@ -6,8 +6,8 @@ namespace GraphManipulation.Models.Entity;
 
 public abstract class Entity : IEquatable<Entity>
 {
-    public static readonly char IdSeparator = '/'; 
-    
+    public const char IdSeparator = '/';
+
     protected Entity(string id)
     {
         _id = new List<string> { id };
@@ -25,6 +25,11 @@ public abstract class Entity : IEquatable<Entity>
                 _baseUri = "";
                 return;
             }
+
+            if (value.Last() is not (IdSeparator or '#'))
+            {
+                throw new EntityException($"Base uri must end on {IdSeparator} or '#'");
+            }
             
             if (Uri.TryCreate(value, UriKind.Absolute, out _))
             {
@@ -41,9 +46,11 @@ public abstract class Entity : IEquatable<Entity>
     
     public void ComputeId()
     {
-        var names = ConstructIdString();
-
-        _id = BaseUri is null ? names : names.Prepend(BaseUri.TrimEnd(IdSeparator, '#')).ToList();
+        _id = BaseUri is null ? 
+            ConstructIdString() : 
+            ConstructIdString()
+                .Prepend(BaseUri.TrimEnd(IdSeparator, '#'))
+                .ToList();
     }
 
     public string Id => string.Join(IdSeparator, _id);

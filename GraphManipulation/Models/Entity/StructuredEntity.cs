@@ -28,8 +28,13 @@ public abstract class StructuredEntity : NamedEntity
 
     public override void UpdateName(string name)
     {
+        var oldName = Name;
         base.UpdateName(name);
-        UpdateIdToBottom();
+
+        if (Name != oldName)
+        {
+            UpdateIdToBottom();
+        }
     }
 
     public abstract void AddStructure(Structure structure);

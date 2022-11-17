@@ -11,7 +11,7 @@ public class GraphManipulator<T> where T : DataStore
 {
     public IGraph Graph { get; private set; }
     public List<string> Changes { get; }
-    
+
     public GraphManipulator(IGraph graph)
     {
         Graph = new Graph();
@@ -23,43 +23,65 @@ public class GraphManipulator<T> where T : DataStore
     public void Move(Uri from, Uri to)
     {
         CheckMoveValidity(from);
+        
+        if (from == to)
+        {
+            return;
+        }
 
         var dataStore = GetDataStoreFromGraph();
 
-        var structure = dataStore.Find<Structure>(from)!;
+        var structure = dataStore.Find<Structure>(from)
+                        ?? throw new GraphManipulatorException("Could not find structure with Uri: " + from);
 
-        var newParentUri = UriFactory.Create(string.Join(Entity.IdSeparator, to.ToString().Split(Entity.IdSeparator).SkipLast(1)));
+        var newName = to.ToString().Split(Entity.IdSeparator).Last();
+        structure.UpdateName(newName);
 
-        var parentStructure = dataStore.Find<Structure>(newParentUri)!;
-        
-        parentStructure.AddStructure(structure);
+        var newParentNames = to.ToString().Split(Entity.IdSeparator).SkipLast(1).ToList();
+        var newParentString = string.Join(Entity.IdSeparator, newParentNames);
+        var newParentUri = UriFactory.Create(newParentString);
+        var newParentStructure = dataStore.Find<Structure>(newParentUri)
+                                 ?? throw new GraphManipulatorException("Could not find parent structure with Uri: " +
+                                                                        newParentUri);
+
+        newParentStructure.AddStructure(structure);
 
         Changes.Add($"MOVE({from}, {to})");
-        
+
         AddMoveChangesForSubStructures(from, structure.SubStructures);
-        
+
         Graph = dataStore.ToGraph();
     }
 
     private void CheckMoveValidity(Uri from)
     {
-        var triples = Graph.GetTriplesWithPredicateObject(
+        var typeTriple = Graph.GetTripleWithSubjectPredicateObject(
+            Graph.CreateUriNode(from),
+            Graph.CreateUriNode("rdf:type"),
+            Graph.CreateUriNode(DataStoreDescriptionLanguage.Datastore));
+
+        if (typeTriple is not null)
+        {
+            throw new GraphManipulatorException("Cannot move something of type Datastore");
+        }
+        
+        var hasStructureTriples = Graph.GetTriplesWithPredicateObject(
             Graph.CreateUriNode(DataStoreDescriptionLanguage.HasStructure),
             Graph.CreateUriNode(from)
         ).ToList();
 
-        if (!triples.Any())
+        if (!hasStructureTriples.Any())
         {
             throw new GraphManipulatorException("Cannot move structure without parent");
         }
-        
-        if (triples.Count > 1)
+
+        if (hasStructureTriples.Count > 1)
         {
-            throw new GraphManipulatorException("Multiple parents found, something went wrong");
+            throw new GraphManipulatorException("Multiple parents found, cannot proceed");
         }
 
         var parentTypeTriple = Graph.GetTripleWithSubjectPredicateObject(
-            triples.First().Subject,
+            hasStructureTriples.First().Subject,
             Graph.CreateUriNode("rdf:type"),
             Graph.CreateUriNode(DataStoreDescriptionLanguage.Datastore)
         );
@@ -73,8 +95,14 @@ public class GraphManipulator<T> where T : DataStore
     public void Rename(Uri uri, string newName)
     {
         var dataStore = GetDataStoreFromGraph();
-        var structure = dataStore.Find<Structure>(uri)!;
-        
+        var structure = dataStore.Find<Structure>(uri) 
+                        ?? throw new GraphManipulatorException("Could not find structure with Uri: " + uri);
+
+        if (structure.Name == newName)
+        {
+            return;
+        }
+
         structure.UpdateName(newName);
         Changes.Add($"RENAME({uri}, {structure.Uri})");
 
@@ -86,11 +114,10 @@ public class GraphManipulator<T> where T : DataStore
     private void AddMoveChangesForSubStructures(Uri uri, IReadOnlyCollection<Structure> newSubstructures)
     {
         var dataStore = GetDataStoreFromGraph();
-        var structure = dataStore.Find<Structure>(uri)!;
-        
-        var substructureUris = new List<string>(structure.SubStructures.Select(sub => sub.Uri.ToString()));
-        
-        foreach (var subUri in substructureUris.Select(UriFactory.Create))
+        var structure = dataStore.Find<Structure>(uri) 
+                        ?? throw new GraphManipulatorException("Could not find structure with Uri: " + uri);
+
+        foreach (var subUri in structure.SubStructures.Select(sub => sub.Uri))
         {
             var oldName = Graph.GetNameOfNode(Graph.CreateUriNode(subUri));
             var newSub = newSubstructures.First(sub => sub.Name == oldName);
@@ -102,14 +129,8 @@ public class GraphManipulator<T> where T : DataStore
 
     private DataStore GetDataStoreFromGraph()
     {
-        DataStore? dataStore = Graph.ConstructDataStore<T>();
-
-        if (dataStore is null)
-        {
-            throw new GraphManipulatorException("Could not construct datastore from graph");
-        }
-
-        return dataStore;
+        return Graph.ConstructDataStore<T>() 
+               ?? throw new GraphManipulatorException("Could not construct datastore from graph");
     }
 
     public void Undo()
