@@ -15,6 +15,11 @@ public abstract class Entity : IEquatable<Entity>
 
     private string _baseUri = "";
 
+    public static bool IsValidUri(string maybeUri)
+    {
+        return Uri.TryCreate(maybeUri, UriKind.RelativeOrAbsolute, out _);
+    }
+    
     public string? BaseUri
     {
         get => string.IsNullOrEmpty(_baseUri) ? null : _baseUri;
@@ -31,7 +36,7 @@ public abstract class Entity : IEquatable<Entity>
                 throw new EntityException($"Base uri must end on {IdSeparator} or '#'");
             }
             
-            if (Uri.TryCreate(value, UriKind.Absolute, out _))
+            if (IsValidUri(value))
             {
                 _baseUri = value;
             }

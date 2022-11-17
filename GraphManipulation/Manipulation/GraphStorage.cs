@@ -51,12 +51,17 @@ public class GraphStorage
         _dbConnection.Close();
     }
 
+    public void Insert(DataStore dataStore)
+    {
+        Insert(dataStore.Uri, dataStore.ToGraph(), new List<string>());
+    }
+
     public void Insert(DataStore dataStore, IGraph graph, List<string> changes)
     {
         Insert(dataStore.Uri, graph, changes);
     }
 
-    private void Insert(Uri datastoreUri, IGraph graph, List<string> changes)
+    public void Insert(Uri datastoreUri, IGraph graph, List<string> changes)
     {
         if (!graph.ValidateUsing(_ontology).Conforms)
         {

@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using GraphManipulation.Extensions;
 using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Stores;
@@ -92,6 +93,11 @@ public class GraphManipulator<T> where T : DataStore
         }
     }
 
+    public void Rename(Uri from, Uri to)
+    {
+        Rename(from, to.ToString().Split(Entity.IdSeparator).Last());
+    }
+
     public void Rename(Uri uri, string newName)
     {
         var dataStore = GetDataStoreFromGraph();
@@ -131,6 +137,28 @@ public class GraphManipulator<T> where T : DataStore
     {
         return Graph.ConstructDataStore<T>() 
                ?? throw new GraphManipulatorException("Could not construct datastore from graph");
+    }
+
+    private static string ValidManipulationQueryPattern => "^(\\w+)\\(([\\w:#\\/.]+),\\s?([\\w:#\\/.]+)\\)$";
+
+    public bool IsValidManipulationQuery(string query) => Regex.IsMatch(query, ValidManipulationQueryPattern);
+
+    public void ApplyManipulationQuery(string query)
+    {
+        var match = Regex.Match(query, ValidManipulationQueryPattern);
+
+        var command = match.Groups[1].ToString().ToUpper();
+        var firstUri = new Uri(match.Groups[2].ToString());
+        var secondUri = new Uri(match.Groups[3].ToString());
+
+        Action<Uri, Uri> action = command switch
+        {
+            "MOVE" => Move,
+            "RENAME" => Rename,
+            _ => throw new GraphManipulatorException("Command not supported")
+        };
+
+        action(firstUri, secondUri);
     }
 
     public void Undo()
