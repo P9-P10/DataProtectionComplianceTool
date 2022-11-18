@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using GraphManipulation.Extensions;
 using GraphManipulation.Models.Stores;
@@ -25,7 +24,7 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
         IGraph graph = new Graph();
 
         graph.NamespaceMap.AddNamespace(
-            DataStoreDescriptionLanguage.OntologyPrefix, 
+            DataStoreDescriptionLanguage.OntologyPrefix,
             DataStoreDescriptionLanguage.OntologyUri);
         var uri = UriFactory.Create(BaseUri);
         graph.BaseUri = uri;

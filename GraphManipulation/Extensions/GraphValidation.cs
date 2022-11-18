@@ -12,7 +12,7 @@ public static class GraphValidation
     {
         return dataStore.ToGraph().ValidateUsing(ontology);
     }
-    
+
     public static Report ValidateUsing(this IGraph graph, IGraph ontology)
     {
         var shapesGraph = new ShapesGraph(ontology);
@@ -23,7 +23,7 @@ public static class GraphValidation
 
         return shapesGraph.Validate(graph);
     }
-    
+
     public static string PrintValidationReport(Report report)
     {
         var message = "";

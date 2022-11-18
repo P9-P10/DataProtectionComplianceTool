@@ -8,7 +8,7 @@ public abstract class NamedEntity : Entity
     }
 
     public string Name { get; protected set; }
-    
+
     public virtual void UpdateName(string name)
     {
         Name = name;

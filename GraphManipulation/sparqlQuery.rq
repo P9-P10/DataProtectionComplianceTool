@@ -1,10 +1,9 @@
 PREFIX ddl: <http://www.cs-22-dt-9-03.org/datastore-description-language#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-
 SELECT ?name ?p ?obj WHERE {
     ?subj a ddl:Datastore .
     ?subj ddl:hasName ?name .
     ?subj ?p ?obj .
-    
+
     FILTER(?p != ddl:hasName) .
 }

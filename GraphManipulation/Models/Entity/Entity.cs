@@ -1,25 +1,18 @@
-using System.Security.Cryptography;
-using System.Text;
-using VDS.RDF;
-
 namespace GraphManipulation.Models.Entity;
 
 public abstract class Entity : IEquatable<Entity>
 {
     public const char IdSeparator = '/';
 
+    private string _baseUri = "";
+
+    private List<string> _id;
+
     protected Entity(string id)
     {
         _id = new List<string> { id };
     }
 
-    private string _baseUri = "";
-
-    public static bool IsValidUri(string maybeUri)
-    {
-        return Uri.TryCreate(maybeUri, UriKind.RelativeOrAbsolute, out _);
-    }
-    
     public string? BaseUri
     {
         get => string.IsNullOrEmpty(_baseUri) ? null : _baseUri;
@@ -35,7 +28,7 @@ public abstract class Entity : IEquatable<Entity>
             {
                 throw new EntityException($"Base uri must end on {IdSeparator} or '#'");
             }
-            
+
             if (IsValidUri(value))
             {
                 _baseUri = value;
@@ -45,17 +38,6 @@ public abstract class Entity : IEquatable<Entity>
                 throw new EntityException("Uri given as BaseUri not valid Uri: " + value);
             }
         }
-    }
-
-    private List<string> _id;
-    
-    public void ComputeId()
-    {
-        _id = BaseUri is null ? 
-            ConstructIdString() : 
-            ConstructIdString()
-                .Prepend(BaseUri.TrimEnd(IdSeparator, '#'))
-                .ToList();
     }
 
     public string Id => string.Join(IdSeparator, _id);
@@ -78,6 +60,26 @@ public abstract class Entity : IEquatable<Entity>
         }
     }
 
+
+    public bool Equals(Entity? other)
+    {
+        return other is not null && Id == other.Id;
+    }
+
+    public static bool IsValidUri(string maybeUri)
+    {
+        return Uri.TryCreate(maybeUri, UriKind.RelativeOrAbsolute, out _);
+    }
+
+    public void ComputeId()
+    {
+        _id = BaseUri is null
+            ? ConstructIdString()
+            : ConstructIdString()
+                .Prepend(BaseUri.TrimEnd(IdSeparator, '#'))
+                .ToList();
+    }
+
     public abstract void UpdateBaseUri(string baseUri);
 
     public bool HasBase()
@@ -91,13 +93,6 @@ public abstract class Entity : IEquatable<Entity>
     }
 
     public abstract List<string> ConstructIdString();
-
-    
-    
-    public bool Equals(Entity? other)
-    {
-        return other is not null && Id == other.Id;
-    }
 
     public override bool Equals(object? obj)
     {

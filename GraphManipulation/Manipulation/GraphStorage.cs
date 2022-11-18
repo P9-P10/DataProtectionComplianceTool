@@ -5,16 +5,11 @@ using GraphManipulation.Extensions;
 using GraphManipulation.Models.Stores;
 using Newtonsoft.Json;
 using VDS.RDF;
-using JsonSerializer = Newtonsoft.Json.JsonSerializer;
-
 
 namespace GraphManipulation.Manipulation;
 
 public class GraphStorage
 {
-    private readonly DbConnection _dbConnection;
-    private readonly IGraph _ontology;
-
     private const string SqlCreateStatement = @"
         CREATE TABLE IF NOT EXISTS DatastoreGraphs (
            id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -29,14 +24,18 @@ public class GraphStorage
     private const string SqlCreateStatementWithDrop =
         $"DROP TABLE IF EXISTS DatastoreGraphs;\n{SqlCreateStatement}";
 
+    private readonly DbConnection _dbConnection;
+    private readonly IGraph _ontology;
+
     public GraphStorage(string connectionString, IGraph ontology, bool withDrop = false)
     {
         _ontology = ontology;
-        
+
         if (!File.Exists(connectionString))
         {
             SQLiteConnection.CreateFile(connectionString);
         }
+
         _dbConnection = new SQLiteConnection($"Data source={connectionString};Version=3;");
         _dbConnection.Open();
         if (withDrop)
@@ -48,10 +47,11 @@ public class GraphStorage
         {
             _dbConnection.Execute(SqlCreateStatement);
         }
+
         _dbConnection.Close();
     }
 
-    public void Insert(DataStore dataStore)
+    public void InitInsert(DataStore dataStore)
     {
         Insert(dataStore.Uri, dataStore.ToGraph(), new List<string>());
     }
@@ -76,7 +76,7 @@ public class GraphStorage
             INSERT INTO DatastoreGraphs (uri, datastoreType, graph, operations) 
             VALUES ('{datastoreUri}', '{datastoreType}', '{graph.ToStorageString()}', '{string.Join(", ", jsonChanges)}')
         ";
-        
+
         _dbConnection.Open();
         _dbConnection.Execute(insertStatement);
         _dbConnection.Close();
@@ -86,11 +86,11 @@ public class GraphStorage
     {
         return GetLatest(dataStore.Uri);
     }
-    
+
     public IGraph GetLatest(Uri uri)
     {
         IGraph result = new Graph();
-        
+
         var query = @$"
             SELECT graph 
             FROM DatastoreGraphs as ds 
@@ -109,7 +109,7 @@ public class GraphStorage
         {
             throw new GraphStorageException("No graph found for uri: " + uri);
         }
-        
+
         result.LoadFromString(queryResult);
 
         return result;
@@ -118,7 +118,7 @@ public class GraphStorage
     public List<(string, string)> GetListOfManagedDataStoresWithType()
     {
         const string query = "SELECT DISTINCT uri, datastoreType FROM DatastoreGraphs; ";
-        
+
         _dbConnection.Open();
         var result = _dbConnection.Query<(string, string)>(query).ToList();
         _dbConnection.Close();

@@ -9,7 +9,7 @@ public abstract class StructuredEntity : NamedEntity
     protected StructuredEntity(string name) : base(name)
     {
     }
-    
+
     public void UpdateIdToBottom()
     {
         ComputeId();
@@ -20,7 +20,7 @@ public abstract class StructuredEntity : NamedEntity
                 subStructure.UpdateIdToBottom();
         }
     }
-    
+
     public bool IsBottom()
     {
         return SubStructures.Count == 0;

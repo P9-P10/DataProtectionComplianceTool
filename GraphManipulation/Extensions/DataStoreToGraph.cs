@@ -50,7 +50,7 @@ public static class DataStoreToGraph
     private static void AddNameSpaces(this IGraph graph)
     {
         graph.NamespaceMap.AddNamespace(
-            DataStoreDescriptionLanguage.OntologyPrefix, 
+            DataStoreDescriptionLanguage.OntologyPrefix,
             DataStoreDescriptionLanguage.OntologyUri);
     }
 

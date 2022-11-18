@@ -96,13 +96,11 @@ public abstract class Relational : Database
     private void BuildColumnOptions()
     {
         foreach (var result in ColumnOptionsQueryResults)
-        {
             this
                 .FindSchema(result.SchemaName)!
                 .FindTable(result.TableName)!
                 .FindColumn(result.ColumnName)!
                 .SetOptions(result.Options);
-        }
     }
 
     public class StructureQueryResult

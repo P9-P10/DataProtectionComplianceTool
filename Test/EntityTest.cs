@@ -1,7 +1,4 @@
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Xml;
 using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
@@ -81,7 +78,7 @@ public class EntityTest
         const string tableName = "Table";
         const string columnName = "Column";
 
-        
+
         var expectedSqliteString = string.Join("", baseUri, sqliteName);
         var expectedSchemaString = string.Join(Entity.IdSeparator, expectedSqliteString, schemaName);
         var expectedTableString = string.Join(Entity.IdSeparator, expectedSchemaString, tableName);
@@ -103,100 +100,100 @@ public class EntityTest
         Assert.Equal(expectedColumnString, column.Id);
     }
 
-     [Fact]
-     public void DataStoreStructureChaining()
-     {
-         const string sqliteName = "SQLite";
-         const string schemaName = "Schema";
-         const string tableName = "Table";
+    [Fact]
+    public void DataStoreStructureChaining()
+    {
+        const string sqliteName = "SQLite";
+        const string schemaName = "Schema";
+        const string tableName = "Table";
 
-         var expectedSqliteString = string.Join("", baseUri, sqliteName);
+        var expectedSqliteString = string.Join("", baseUri, sqliteName);
 
-         var sqlite = new Sqlite(sqliteName);
-         sqlite.UpdateBaseUri(baseUri);
+        var sqlite = new Sqlite(sqliteName);
+        sqlite.UpdateBaseUri(baseUri);
 
-         Assert.Equal(expectedSqliteString, sqlite.Id);
+        Assert.Equal(expectedSqliteString, sqlite.Id);
 
-         var expectedSchemaStringBefore = schemaName;
-         var expectedTableStringBefore = string.Join(Entity.IdSeparator, expectedSchemaStringBefore, tableName);
-         
-         var schema = new Schema(schemaName);
-         var table = new Table(tableName);
+        var expectedSchemaStringBefore = schemaName;
+        var expectedTableStringBefore = string.Join(Entity.IdSeparator, expectedSchemaStringBefore, tableName);
 
-         schema.AddStructure(table);
+        var schema = new Schema(schemaName);
+        var table = new Table(tableName);
 
-         Assert.Equal(expectedSchemaStringBefore, schema.Id);
-         Assert.Equal(expectedTableStringBefore, table.Id);
+        schema.AddStructure(table);
 
-         var expectedSchemaStringAfter = string.Join(Entity.IdSeparator, expectedSqliteString, schemaName);
-         var expectedTableStringAfter = string.Join(Entity.IdSeparator, expectedSchemaStringAfter, tableName);
+        Assert.Equal(expectedSchemaStringBefore, schema.Id);
+        Assert.Equal(expectedTableStringBefore, table.Id);
 
-         sqlite.AddStructure(schema);
+        var expectedSchemaStringAfter = string.Join(Entity.IdSeparator, expectedSqliteString, schemaName);
+        var expectedTableStringAfter = string.Join(Entity.IdSeparator, expectedSchemaStringAfter, tableName);
 
-         Assert.Equal(expectedSqliteString, sqlite.Id);
-         Assert.Equal(expectedSchemaStringAfter, schema.Id);
-         Assert.Equal(expectedTableStringAfter, table.Id);
-     }
+        sqlite.AddStructure(schema);
 
-     [Fact]
-     public void StructureStructureChaining()
-     {
-         const string schemaName = "Schema";
-         const string tableName = "Table";
-         
-         var expectedSchemaStringBefore = schemaName;
-         var expectedTableStringBefore = tableName;
+        Assert.Equal(expectedSqliteString, sqlite.Id);
+        Assert.Equal(expectedSchemaStringAfter, schema.Id);
+        Assert.Equal(expectedTableStringAfter, table.Id);
+    }
 
-         var schema = new Schema(schemaName);
-         var table = new Table(tableName);
+    [Fact]
+    public void StructureStructureChaining()
+    {
+        const string schemaName = "Schema";
+        const string tableName = "Table";
 
-         Assert.Equal(expectedSchemaStringBefore, schema.Id);
-         Assert.Equal(expectedTableStringBefore, table.Id);
+        var expectedSchemaStringBefore = schemaName;
+        var expectedTableStringBefore = tableName;
 
-         var expectedTableStringAfter = string.Join(Entity.IdSeparator, expectedSchemaStringBefore, tableName);
+        var schema = new Schema(schemaName);
+        var table = new Table(tableName);
 
-         schema.AddStructure(table);
+        Assert.Equal(expectedSchemaStringBefore, schema.Id);
+        Assert.Equal(expectedTableStringBefore, table.Id);
 
-         Assert.Equal(expectedSchemaStringBefore, schema.Id);
-         Assert.Equal(expectedTableStringAfter, table.Id);
-     }
+        var expectedTableStringAfter = string.Join(Entity.IdSeparator, expectedSchemaStringBefore, tableName);
 
-     [Fact]
-     public void SubStructuresAreUpdatedWhenParentStructureIsAdded()
-     {
-         const string schemaName = "Schema";
-         const string tableName = "Table";
-         const string columnName1 = "Column1";
-         const string columnName2 = "Column2";
+        schema.AddStructure(table);
 
-         const string expectedSchemaString = schemaName;
+        Assert.Equal(expectedSchemaStringBefore, schema.Id);
+        Assert.Equal(expectedTableStringAfter, table.Id);
+    }
 
-         var expectedTableStringBefore = tableName;
-         var expectedColumnString1Before = expectedTableStringBefore + Entity.IdSeparator + columnName1;
-         var expectedColumnString2Before = expectedTableStringBefore + Entity.IdSeparator + columnName2;
+    [Fact]
+    public void SubStructuresAreUpdatedWhenParentStructureIsAdded()
+    {
+        const string schemaName = "Schema";
+        const string tableName = "Table";
+        const string columnName1 = "Column1";
+        const string columnName2 = "Column2";
 
-         var schema = new Schema(schemaName);
-         var table = new Table(tableName);
-         var column1 = new Column(columnName1);
-         var column2 = new Column(columnName2);
+        const string expectedSchemaString = schemaName;
 
-         table.AddStructure(column1);
-         table.AddStructure(column2);
+        var expectedTableStringBefore = tableName;
+        var expectedColumnString1Before = expectedTableStringBefore + Entity.IdSeparator + columnName1;
+        var expectedColumnString2Before = expectedTableStringBefore + Entity.IdSeparator + columnName2;
 
-         Assert.Equal(expectedSchemaString, schema.Id);
-         Assert.Equal(expectedTableStringBefore, table.Id);
-         Assert.Equal(expectedColumnString1Before, column1.Id);
-         Assert.Equal(expectedColumnString2Before, column2.Id);
-         
-         var expectedTableStringAfter = expectedSchemaString + Entity.IdSeparator + tableName;
-         var expectedColumnString1After = expectedTableStringAfter + Entity.IdSeparator + columnName1;
-         var expectedColumnString2After = expectedTableStringAfter + Entity.IdSeparator + columnName2;
+        var schema = new Schema(schemaName);
+        var table = new Table(tableName);
+        var column1 = new Column(columnName1);
+        var column2 = new Column(columnName2);
 
-         schema.AddStructure(table);
+        table.AddStructure(column1);
+        table.AddStructure(column2);
 
-         Assert.Equal(expectedSchemaString, schema.Id);
-         Assert.Equal(expectedTableStringAfter, table.Id);
-         Assert.Equal(expectedColumnString1After, column1.Id);
-         Assert.Equal(expectedColumnString2After, column2.Id);
-     }
+        Assert.Equal(expectedSchemaString, schema.Id);
+        Assert.Equal(expectedTableStringBefore, table.Id);
+        Assert.Equal(expectedColumnString1Before, column1.Id);
+        Assert.Equal(expectedColumnString2Before, column2.Id);
+
+        var expectedTableStringAfter = expectedSchemaString + Entity.IdSeparator + tableName;
+        var expectedColumnString1After = expectedTableStringAfter + Entity.IdSeparator + columnName1;
+        var expectedColumnString2After = expectedTableStringAfter + Entity.IdSeparator + columnName2;
+
+        schema.AddStructure(table);
+
+        Assert.Equal(expectedSchemaString, schema.Id);
+        Assert.Equal(expectedTableStringAfter, table.Id);
+        Assert.Equal(expectedColumnString1After, column1.Id);
+        Assert.Equal(expectedColumnString2After, column2.Id);
+    }
 }

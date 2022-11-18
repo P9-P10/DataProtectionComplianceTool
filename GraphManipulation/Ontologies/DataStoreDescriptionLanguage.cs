@@ -5,9 +5,7 @@ namespace GraphManipulation.Ontologies;
 public static class DataStoreDescriptionLanguage
 {
     public const string OntologyPrefix = "ddl";
-    public static Uri OntologyUri =>
-        UriFactory.Create("http://www.cs-22-dt-9-03.org/datastore-description-language#");
-    
+
     // Predicates
     public const string HasStructure = $"{OntologyPrefix}:hasStructure";
     public const string HasDataType = $"{OntologyPrefix}:hasDataType";
@@ -23,11 +21,14 @@ public static class DataStoreDescriptionLanguage
     public const string ColumnOptions = $"{OntologyPrefix}:columnOptions";
     public const string ForeignKeyOnDelete = $"{OntologyPrefix}:foreignKeyOnDelete";
     public const string ForeignKeyOnUpdate = $"{OntologyPrefix}:foreignKeyOnUpdate";
-    
+
     // Classes
     public const string Datastore = $"{OntologyPrefix}:Datastore";
     public const string Sqlite = $"{OntologyPrefix}:SQLite";
     public const string Schema = $"{OntologyPrefix}:Schema";
     public const string Table = $"{OntologyPrefix}:Table";
     public const string Column = $"{OntologyPrefix}:Column";
+
+    public static Uri OntologyUri =>
+        UriFactory.Create("http://www.cs-22-dt-9-03.org/datastore-description-language#");
 }

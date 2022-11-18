@@ -5,7 +5,6 @@ using GraphManipulation.Extensions;
 using GraphManipulation.Manipulation;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
-using GraphManipulation.Ontologies;
 using VDS.RDF;
 using Xunit;
 
@@ -14,6 +13,12 @@ namespace Test;
 public class GraphManipulatorTest
 {
     private const string BaseUri = "http://www.test.com/";
+
+
+    private static TestDataStoreFixture CreateDatastore()
+    {
+        return new TestDataStoreFixture();
+    }
 
     public class Move
     {
@@ -92,7 +97,7 @@ public class GraphManipulatorTest
         }
 
         [Fact]
-        public void CanChangeName()
+        public void ChangeNameThrowsException()
         {
             var tds = CreateDatastore();
             var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
@@ -104,47 +109,12 @@ public class GraphManipulatorTest
             tds.ExpectedColumn.UpdateName(newName);
             var columnUriAfter = tds.ExpectedColumn.Uri.ToString();
 
-            graphManipulator.Move(new Uri(columnUriBefore), tds.ExpectedColumn.Uri);
-
-            var hasStructureTriple = new Triple(
-                graphManipulator.Graph.CreateUriNode(tds.ExpectedTable2.Uri),
-                graphManipulator.Graph.CreateUriNode(DataStoreDescriptionLanguage.HasStructure),
-                graphManipulator.Graph.CreateUriNode(tds.ExpectedColumn.Uri)
-            );
-
-            var hasNameTriple = new Triple(
-                graphManipulator.Graph.CreateUriNode(tds.ExpectedColumn.Uri),
-                graphManipulator.Graph.CreateUriNode(DataStoreDescriptionLanguage.HasName),
-                graphManipulator.Graph.CreateLiteralNode(newName)
-            );
-
-            Assert.Contains(hasStructureTriple, graphManipulator.Graph.Triples);
-            Assert.Contains(hasNameTriple, graphManipulator.Graph.Triples);
-
-            Assert.Single(graphManipulator.Changes);
-            Assert.Contains($"MOVE({columnUriBefore}, {columnUriAfter})", graphManipulator.Changes);
+            Assert.Throws<GraphManipulatorException>(() =>
+                graphManipulator.Move(new Uri(columnUriBefore), new Uri(columnUriAfter)));
         }
 
         [Fact]
-        public void ToSameLocationDifferentNameChangesName()
-        {
-            var tds = CreateDatastore();
-            var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
-
-            var newName = "NewName";
-
-            var columnUriBefore = tds.ExpectedColumn.Uri.ToString();
-            tds.ExpectedColumn.UpdateName(newName);
-            var columnUriAfter = tds.ExpectedColumn.Uri.ToString();
-
-            graphManipulator.Move(new Uri(columnUriBefore), new Uri(columnUriAfter));
-
-            Assert.Single(graphManipulator.Changes);
-            Assert.Contains($"MOVE({columnUriBefore}, {columnUriAfter})", graphManipulator.Changes);
-        }
-
-        [Fact]
-        public void ToSameLocationAndNameDoesNothing()
+        public void ToSameLocationDoesNothing()
         {
             var tds = CreateDatastore();
             var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
@@ -169,7 +139,7 @@ public class GraphManipulatorTest
         {
             var tds = CreateDatastore();
             var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
-            
+
             var sqlite = new Sqlite("MySqlite", BaseUri);
 
             var schemaUriBefore = tds.ExpectedSchema1.Uri.ToString();
@@ -185,11 +155,11 @@ public class GraphManipulatorTest
         {
             var tds = CreateDatastore();
             var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
-            
+
             var columnUriBefore = tds.ExpectedColumn.Uri.ToString();
             tds.ExpectedTable3.AddStructure(tds.ExpectedColumn);
             var columnUriAfter = tds.ExpectedColumn.Uri.ToString();
-            
+
             graphManipulator.Move(new Uri(columnUriBefore), tds.ExpectedColumn.Uri);
 
             var subj = graphManipulator.Graph.CreateUriNode(tds.ExpectedTable3.Uri);
@@ -201,7 +171,6 @@ public class GraphManipulatorTest
             Assert.Single(graphManipulator.Changes);
             Assert.Contains($"MOVE({columnUriBefore}, {columnUriAfter})", graphManipulator.Changes);
         }
-
     }
 
     public class Rename
@@ -215,8 +184,9 @@ public class GraphManipulatorTest
             var columnUriBefore = tds.ExpectedColumn.Uri.ToString();
             var newName = "NewName";
             tds.ExpectedColumn.UpdateName(newName);
+            var columnUriAfter = tds.ExpectedColumn.Uri.ToString();
 
-            graphManipulator.Rename(new Uri(columnUriBefore), newName);
+            graphManipulator.Rename(new Uri(columnUriBefore), new Uri(columnUriAfter));
 
             var subj = graphManipulator.Graph.CreateUriNode(tds.ExpectedColumn.Uri);
             var pred = graphManipulator.Graph.CreateUriNode("ddl:hasName");
@@ -237,7 +207,7 @@ public class GraphManipulatorTest
             tds.ExpectedColumn.UpdateName(newName);
             var columnUriAfter = tds.ExpectedColumn.Uri.ToString();
 
-            graphManipulator.Rename(new Uri(columnUriBefore), newName);
+            graphManipulator.Rename(new Uri(columnUriBefore), new Uri(columnUriAfter));
 
             Assert.Single(graphManipulator.Changes);
             Assert.Contains($"RENAME({columnUriBefore}, {columnUriAfter})", graphManipulator.Changes);
@@ -259,7 +229,7 @@ public class GraphManipulatorTest
             var column1UriAfter = tds.ExpectedColumn.Uri.ToString();
             var column2UriAfter = tds.ExpectedPrimaryColumn1.Uri.ToString();
 
-            graphManipulator.Rename(new Uri(tableUriBefore), newName);
+            graphManipulator.Rename(new Uri(tableUriBefore), new Uri(tableUriAfter));
 
             var rename = $"RENAME({tableUriBefore}, {tableUriAfter})";
             var move1 = $"MOVE({column1UriBefore}, {column1UriAfter})";
@@ -295,7 +265,7 @@ public class GraphManipulatorTest
             var column2UriAfter = tds.ExpectedPrimaryColumn1.Uri.ToString();
             var column3UriAfter = tds.ExpectedPrimaryColumn2.Uri.ToString();
 
-            graphManipulator.Rename(new Uri(schemaUriBefore), newName);
+            graphManipulator.Rename(new Uri(schemaUriBefore), new Uri(schemaUriAfter));
 
             var rename = $"RENAME({schemaUriBefore}, {schemaUriAfter})";
             var move1 = $"MOVE({table1UriBefore}, {table1UriAfter})";
@@ -321,35 +291,28 @@ public class GraphManipulatorTest
             var tds = CreateDatastore();
             var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
 
-            graphManipulator.Rename(tds.ExpectedColumn.Uri, tds.ExpectedColumn.Name);
+            graphManipulator.Rename(tds.ExpectedColumn.Uri, tds.ExpectedColumn.Uri);
 
             Assert.Empty(graphManipulator.Changes);
         }
 
         [Fact]
-        public void OnlyUriToUri()
+        public void DifferentParentUriThrowsException()
         {
             var tds = CreateDatastore();
             var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
 
             var columnUriBefore = tds.ExpectedColumn.Uri.ToString();
-            var newName = "NewName";
-            tds.ExpectedColumn.UpdateName(newName);
+            tds.ExpectedTable2.AddStructure(tds.ExpectedColumn);
             var columnUriAfter = tds.ExpectedColumn.Uri.ToString();
 
-            graphManipulator.Rename(new Uri(columnUriBefore), new Uri(columnUriAfter));
-
-            var subj = graphManipulator.Graph.CreateUriNode(tds.ExpectedColumn.Uri);
-            var pred = graphManipulator.Graph.CreateUriNode("ddl:hasName");
-            var obj = graphManipulator.Graph.CreateLiteralNode(newName);
-
-            Assert.Contains(new Triple(subj, pred, obj), graphManipulator.Graph.Triples);
+            Assert.Throws<GraphManipulatorException>(() =>
+                graphManipulator.Rename(new Uri(columnUriBefore), new Uri(columnUriAfter)));
         }
     }
 
     public class IsValidManipulationQuery
     {
-        
     }
 
     public class ApplyManipulationQuery
@@ -399,12 +362,6 @@ public class GraphManipulatorTest
         }
     }
 
-
-    private static TestDataStoreFixture CreateDatastore()
-    {
-        return new TestDataStoreFixture();
-    }
-
     private class TestDataStoreFixture
     {
         private const string ExpectedSqliteName = "TestSqlite";
@@ -417,17 +374,17 @@ public class GraphManipulatorTest
         private const string ExpectedPrimaryColumn1Name = "PrimaryColumn1";
         private const string ExpectedPrimaryColumn2Name = "PrimaryColumn2";
         private const string ExpectedPrimaryColumn3Name = "PrimaryColumn3";
-
-        public readonly Sqlite ExpectedSqlite;
-        public readonly Schema ExpectedSchema1;
-        public readonly Schema ExpectedSchema2;
-        public readonly Table ExpectedTable1;
-        public readonly Table ExpectedTable2;
-        public readonly Table ExpectedTable3;
         public readonly Column ExpectedColumn;
         public readonly Column ExpectedPrimaryColumn1;
         public readonly Column ExpectedPrimaryColumn2;
         public readonly Column ExpectedPrimaryColumn3;
+        public readonly Schema ExpectedSchema1;
+        public readonly Schema ExpectedSchema2;
+
+        public readonly Sqlite ExpectedSqlite;
+        public readonly Table ExpectedTable1;
+        public readonly Table ExpectedTable2;
+        public readonly Table ExpectedTable3;
 
         public TestDataStoreFixture()
         {
@@ -447,7 +404,7 @@ public class GraphManipulatorTest
             ExpectedSchema1.AddStructure(ExpectedTable1);
             ExpectedSchema1.AddStructure(ExpectedTable2);
             ExpectedSchema2.AddStructure(ExpectedTable3);
-            
+
             ExpectedTable1.AddStructure(ExpectedColumn);
 
             ExpectedTable1.AddStructure(ExpectedPrimaryColumn1);

@@ -10,9 +10,6 @@ namespace GraphManipulation.Manipulation;
 
 public class GraphManipulator<T> where T : DataStore
 {
-    public IGraph Graph { get; private set; }
-    public List<string> Changes { get; }
-
     public GraphManipulator(IGraph graph)
     {
         Graph = new Graph();
@@ -21,10 +18,15 @@ public class GraphManipulator<T> where T : DataStore
         Changes = new List<string>();
     }
 
+    public IGraph Graph { get; private set; }
+    public List<string> Changes { get; }
+
+    private static string ValidManipulationQueryPattern => "^(\\w+)\\(([\\w:#\\/.]+),\\s?([\\w:#\\/.]+)\\)$";
+
     public void Move(Uri from, Uri to)
     {
-        CheckMoveValidity(from);
-        
+        CheckMoveValidity(from, to);
+
         if (from == to)
         {
             return;
@@ -38,9 +40,7 @@ public class GraphManipulator<T> where T : DataStore
         var newName = to.ToString().Split(Entity.IdSeparator).Last();
         structure.UpdateName(newName);
 
-        var newParentNames = to.ToString().Split(Entity.IdSeparator).SkipLast(1).ToList();
-        var newParentString = string.Join(Entity.IdSeparator, newParentNames);
-        var newParentUri = UriFactory.Create(newParentString);
+        var newParentUri = ExtractParentUriFromChildUri(to);
         var newParentStructure = dataStore.Find<Structure>(newParentUri)
                                  ?? throw new GraphManipulatorException("Could not find parent structure with Uri: " +
                                                                         newParentUri);
@@ -54,8 +54,13 @@ public class GraphManipulator<T> where T : DataStore
         Graph = dataStore.ToGraph();
     }
 
-    private void CheckMoveValidity(Uri from)
+    private void CheckMoveValidity(Uri from, Uri to)
     {
+        if (ExtractNameFromUri(from) != ExtractNameFromUri(to))
+        {
+            throw new GraphManipulatorException("MOVE cannot change the name of an entity, use RENAME");
+        }
+
         var typeTriple = Graph.GetTripleWithSubjectPredicateObject(
             Graph.CreateUriNode(from),
             Graph.CreateUriNode("rdf:type"),
@@ -65,7 +70,7 @@ public class GraphManipulator<T> where T : DataStore
         {
             throw new GraphManipulatorException("Cannot move something of type Datastore");
         }
-        
+
         var hasStructureTriples = Graph.GetTriplesWithPredicateObject(
             Graph.CreateUriNode(DataStoreDescriptionLanguage.HasStructure),
             Graph.CreateUriNode(from)
@@ -95,32 +100,51 @@ public class GraphManipulator<T> where T : DataStore
 
     public void Rename(Uri from, Uri to)
     {
-        Rename(from, to.ToString().Split(Entity.IdSeparator).Last());
-    }
+        CheckRenameValidity(from, to);
 
-    public void Rename(Uri uri, string newName)
-    {
-        var dataStore = GetDataStoreFromGraph();
-        var structure = dataStore.Find<Structure>(uri) 
-                        ?? throw new GraphManipulatorException("Could not find structure with Uri: " + uri);
-
-        if (structure.Name == newName)
+        if (from == to)
         {
             return;
         }
 
-        structure.UpdateName(newName);
-        Changes.Add($"RENAME({uri}, {structure.Uri})");
+        var dataStore = GetDataStoreFromGraph();
+        var structure = dataStore.Find<Structure>(from)
+                        ?? throw new GraphManipulatorException("Could not find structure with Uri: " + from);
 
-        AddMoveChangesForSubStructures(uri, structure.SubStructures);
+        structure.UpdateName(ExtractNameFromUri(to));
+        Changes.Add($"RENAME({from}, {structure.Uri})");
+
+        AddMoveChangesForSubStructures(from, structure.SubStructures);
 
         Graph = dataStore.ToGraph();
+    }
+
+    private void CheckRenameValidity(Uri from, Uri to)
+    {
+        if (ExtractParentUriFromChildUri(from) != ExtractParentUriFromChildUri(to))
+        {
+            throw new GraphManipulatorException("RENAME cannot move an entity, use MOVE instead");
+        }
+    }
+
+    private static Uri ExtractParentUriFromChildUri(Uri childUri)
+    {
+        var parentNames = childUri.ToString().Split(Entity.IdSeparator).SkipLast(1).ToList();
+        var parentString = string.Join(Entity.IdSeparator, parentNames);
+        var parentUri = UriFactory.Create(parentString);
+
+        return parentUri;
+    }
+
+    private static string ExtractNameFromUri(Uri uri)
+    {
+        return uri.ToString().Split(Entity.IdSeparator).Last();
     }
 
     private void AddMoveChangesForSubStructures(Uri uri, IReadOnlyCollection<Structure> newSubstructures)
     {
         var dataStore = GetDataStoreFromGraph();
-        var structure = dataStore.Find<Structure>(uri) 
+        var structure = dataStore.Find<Structure>(uri)
                         ?? throw new GraphManipulatorException("Could not find structure with Uri: " + uri);
 
         foreach (var subUri in structure.SubStructures.Select(sub => sub.Uri))
@@ -135,13 +159,14 @@ public class GraphManipulator<T> where T : DataStore
 
     private DataStore GetDataStoreFromGraph()
     {
-        return Graph.ConstructDataStore<T>() 
+        return Graph.ConstructDataStore<T>()
                ?? throw new GraphManipulatorException("Could not construct datastore from graph");
     }
 
-    private static string ValidManipulationQueryPattern => "^(\\w+)\\(([\\w:#\\/.]+),\\s?([\\w:#\\/.]+)\\)$";
-
-    public bool IsValidManipulationQuery(string query) => Regex.IsMatch(query, ValidManipulationQueryPattern);
+    public bool IsValidManipulationQuery(string query)
+    {
+        return Regex.IsMatch(query, ValidManipulationQueryPattern);
+    }
 
     public void ApplyManipulationQuery(string query)
     {

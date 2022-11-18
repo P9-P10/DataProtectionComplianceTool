@@ -1,5 +1,3 @@
-using AngleSharp.Text;
-using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
 using GraphManipulation.Ontologies;
@@ -61,7 +59,7 @@ public static class DataStoreFromGraph
     {
         foreach (var columnNode in graph
                      .GetTriplesWithSubjectPredicate(
-                         graph.CreateUriNode(table.Uri), 
+                         graph.CreateUriNode(table.Uri),
                          graph.CreateUriNode(DataStoreDescriptionLanguage.PrimaryKey))
                      .Select(triple => (triple.Object as UriNode)!))
         {
