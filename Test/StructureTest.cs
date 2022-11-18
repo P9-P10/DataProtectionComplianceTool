@@ -13,7 +13,7 @@ namespace Test;
 
 public class StructureTest
 {
-    private const string baseUri = "http://www.test.com/";
+    private const string BaseUri = "http://www.test.com/";
 
     [Fact]
     public void StructuresWithSameNameUniqueUnderDifferentParentStructures()
@@ -41,7 +41,7 @@ public class StructureTest
         var sqlite = new Sqlite("SQLite");
         var column = new Column("Column");
 
-        sqlite.UpdateBaseUri(baseUri);
+        sqlite.UpdateBaseUri(BaseUri);
         column.UpdateStore(sqlite);
         Assert.Equal(sqlite, column.Store);
     }
@@ -52,7 +52,7 @@ public class StructureTest
         var sqlite = new Sqlite("SQLite");
         var table = new Table("Table");
 
-        sqlite.UpdateBaseUri(baseUri);
+        sqlite.UpdateBaseUri(BaseUri);
         table.UpdateStore(sqlite);
 
         Assert.DoesNotContain(table, sqlite.SubStructures);
@@ -65,7 +65,7 @@ public class StructureTest
         var table = new Table("Table");
         var column = new Column("Column");
 
-        sqlite.UpdateBaseUri(baseUri);
+        sqlite.UpdateBaseUri(BaseUri);
 
         table.AddStructure(column);
         column.UpdateStore(sqlite);
@@ -81,7 +81,7 @@ public class StructureTest
         var column1 = new Column("Column1");
         var column2 = new Column("Column2");
 
-        sqlite.UpdateBaseUri(baseUri);
+        sqlite.UpdateBaseUri(BaseUri);
 
         table.AddStructure(column1);
         table.AddStructure(column2);
@@ -99,7 +99,7 @@ public class StructureTest
         const string tableName = "Table";
         const string columnName = "Column";
 
-        var expectedSqliteString = baseUri + sqliteName;
+        var expectedSqliteString = BaseUri + sqliteName;
         var expectedTableString = expectedSqliteString + Entity.IdSeparator + tableName;
         var expectedColumnString = expectedTableString + Entity.IdSeparator + columnName;
 
@@ -107,7 +107,7 @@ public class StructureTest
         var table = new Table(tableName);
         var column = new Column(columnName);
 
-        sqlite.UpdateBaseUri(baseUri);
+        sqlite.UpdateBaseUri(BaseUri);
 
         table.AddStructure(column);
         column.UpdateStore(sqlite);
@@ -125,7 +125,7 @@ public class StructureTest
         const string columnName1 = "Column1";
         const string columnName2 = "Column2";
 
-        var expectedSqliteString = baseUri + sqliteName;
+        var expectedSqliteString = BaseUri + sqliteName;
         var expectedTableString = expectedSqliteString + Entity.IdSeparator + tableName;
         var expectedColumn1String = expectedTableString + Entity.IdSeparator + columnName1;
         var expectedColumn2String = expectedTableString + Entity.IdSeparator + columnName2;
@@ -135,7 +135,7 @@ public class StructureTest
         var column1 = new Column(columnName1);
         var column2 = new Column(columnName2);
 
-        sqlite.UpdateBaseUri(baseUri);
+        sqlite.UpdateBaseUri(BaseUri);
 
         table.AddStructure(column1);
         table.AddStructure(column2);
@@ -168,7 +168,7 @@ public class StructureTest
         var table = new Table("Table");
         var column = new Column("Column");
 
-        sqlite.UpdateBaseUri(baseUri);
+        sqlite.UpdateBaseUri(BaseUri);
         sqlite.AddStructure(table);
         table.AddStructure(column);
         column.UpdateBaseUri("http://www.expected.com/");
@@ -186,9 +186,9 @@ public class StructureTest
         table.AddStructure(column1);
         table.AddStructure(column2);
 
-        table.UpdateBaseUri(baseUri);
+        table.UpdateBaseUri(BaseUri);
 
-        Assert.Equal(baseUri, table.BaseUri);
+        Assert.Equal(BaseUri, table.BaseUri);
         Assert.Equal(table.BaseUri, column1.BaseUri);
         Assert.Equal(table.BaseUri, column2.BaseUri);
     }
@@ -199,14 +199,14 @@ public class StructureTest
         const string tableName = "Table";
         const string columnName = "Column";
 
-        var expectedTableString = baseUri + tableName;
+        var expectedTableString = BaseUri + tableName;
         var expectedColumnString = expectedTableString + Entity.IdSeparator + columnName;
 
         var table = new Table(tableName);
         var column = new Column(columnName);
 
         table.AddStructure(column);
-        column.UpdateBaseUri(baseUri);
+        column.UpdateBaseUri(BaseUri);
 
         Assert.Equal(expectedTableString, table.Id);
         Assert.Equal(expectedColumnString, column.Id);
@@ -219,7 +219,7 @@ public class StructureTest
         const string tableName = "Table";
         const string columnName = "Column";
 
-        var expectedSqliteString = baseUri + sqliteName;
+        var expectedSqliteString = BaseUri + sqliteName;
         var expectedTableString = expectedSqliteString + Entity.IdSeparator + tableName;
         var expectedColumnString = expectedTableString + Entity.IdSeparator + columnName;
 
@@ -227,11 +227,11 @@ public class StructureTest
         var table = new Table(tableName);
         var column = new Column(columnName);
 
-        sqlite.UpdateBaseUri(baseUri + "/Test/");
+        sqlite.UpdateBaseUri(BaseUri + "/Test/");
 
         sqlite.AddStructure(table);
         table.AddStructure(column);
-        column.UpdateBaseUri(baseUri);
+        column.UpdateBaseUri(BaseUri);
 
         Assert.Equal(expectedSqliteString, sqlite.Id);
         Assert.Equal(expectedTableString, table.Id);
@@ -245,7 +245,7 @@ public class StructureTest
         const string columnName1 = "Column1";
         const string columnName2 = "Column2";
 
-        var expectedTableString = baseUri + tableName;
+        var expectedTableString = BaseUri + tableName;
         var expectedColumn1String = expectedTableString + Entity.IdSeparator + columnName1;
         var expectedColumn2String = expectedTableString + Entity.IdSeparator + columnName2;
 
@@ -256,7 +256,7 @@ public class StructureTest
         table.AddStructure(column1);
         table.AddStructure(column2);
 
-        table.UpdateBaseUri(baseUri);
+        table.UpdateBaseUri(BaseUri);
 
         Assert.Equal(expectedTableString, table.Id);
         Assert.Equal(expectedColumn1String, column1.Id);
@@ -301,7 +301,7 @@ public class StructureTest
         var table = new Table(tableName);
         var column = new Column(columnName);
 
-        sqlite.UpdateBaseUri(baseUri);
+        sqlite.UpdateBaseUri(BaseUri);
         sqlite.AddStructure(table);
 
         table.AddStructure(column);
@@ -316,10 +316,10 @@ public class StructureTest
         var table = new Table("Table");
         var column = new Column("Column");
 
-        table.UpdateBaseUri(baseUri);
+        table.UpdateBaseUri(BaseUri);
         table.AddStructure(column);
 
-        Assert.Equal(baseUri, table.BaseUri);
+        Assert.Equal(BaseUri, table.BaseUri);
         Assert.Equal(table.BaseUri, column.BaseUri);
     }
 
@@ -330,7 +330,7 @@ public class StructureTest
         var table = new Table("Table");
         var column = new Column("Column");
 
-        sqlite.UpdateBaseUri(baseUri);
+        sqlite.UpdateBaseUri(BaseUri);
         sqlite.AddStructure(table);
         table.AddStructure(column);
 
@@ -359,8 +359,8 @@ public class StructureTest
         var table2 = new Table("Table2");
         var column = new Column("Column");
 
-        table1.UpdateBaseUri(baseUri);
-        table2.UpdateBaseUri(baseUri);
+        table1.UpdateBaseUri(BaseUri);
+        table2.UpdateBaseUri(BaseUri);
         table1.AddStructure(column);
 
         Assert.Equal(column, table1.SubStructures.First());
@@ -386,7 +386,7 @@ public class StructureTest
             var table = new Table("Table");
             var column = new Column("Column");
 
-            table.UpdateBaseUri(baseUri);
+            table.UpdateBaseUri(BaseUri);
             table.AddStructure(column);
             table.AddPrimaryKey(column);
 
@@ -399,7 +399,7 @@ public class StructureTest
             var table = new Table("Table");
             var column = new Column("Column");
 
-            table.UpdateBaseUri(baseUri);
+            table.UpdateBaseUri(BaseUri);
 
             Assert.Throws<StructureException>(() => table.AddPrimaryKey(column));
         }
@@ -410,7 +410,7 @@ public class StructureTest
             var table = new Table("Table");
             var column = new Column("Column");
 
-            table.UpdateBaseUri(baseUri);
+            table.UpdateBaseUri(BaseUri);
             table.AddStructure(column);
             table.AddPrimaryKey(column);
             table.AddPrimaryKey(column);
@@ -427,10 +427,10 @@ public class StructureTest
             var table2 = new Table("Table2");
             var column2 = new Column("Column2");
 
-            table1.UpdateBaseUri(baseUri);
+            table1.UpdateBaseUri(BaseUri);
             table1.AddStructure(column1);
 
-            table2.UpdateBaseUri(baseUri);
+            table2.UpdateBaseUri(BaseUri);
             table2.AddStructure(column2);
 
             var foreignKey = new ForeignKey(column1, column2);
@@ -449,10 +449,10 @@ public class StructureTest
             var table2 = new Table("Table2");
             var column2 = new Column("Column2");
 
-            table1.UpdateBaseUri(baseUri);
+            table1.UpdateBaseUri(BaseUri);
             table1.AddStructure(column1);
 
-            table2.UpdateBaseUri(baseUri);
+            table2.UpdateBaseUri(BaseUri);
             table2.AddStructure(column2);
 
             table1.AddForeignKey(column1, column2);
@@ -471,12 +471,12 @@ public class StructureTest
 
             var table3 = new Table("Table3");
 
-            table1.UpdateBaseUri(baseUri);
+            table1.UpdateBaseUri(BaseUri);
 
-            table2.UpdateBaseUri(baseUri);
+            table2.UpdateBaseUri(BaseUri);
             table2.AddStructure(column2);
 
-            table3.UpdateBaseUri(baseUri);
+            table3.UpdateBaseUri(BaseUri);
             table3.AddStructure(column1);
 
             Assert.Throws<StructureException>(() => table1.AddForeignKey(column1, column2));
@@ -490,10 +490,10 @@ public class StructureTest
             var column1 = new Column("Column1");
             var column2 = new Column("Column2");
 
-            table1.UpdateBaseUri(baseUri);
+            table1.UpdateBaseUri(BaseUri);
             table1.AddStructure(column1);
 
-            table2.UpdateBaseUri(baseUri);
+            table2.UpdateBaseUri(BaseUri);
             table2.AddStructure(column2);
 
             table1.AddForeignKey(column1, column2);
@@ -512,11 +512,11 @@ public class StructureTest
             var column21 = new Column("Column21");
             var column22 = new Column("Column22");
 
-            table1.UpdateBaseUri(baseUri);
+            table1.UpdateBaseUri(BaseUri);
             table1.AddStructure(column11);
             table1.AddStructure(column12);
 
-            table2.UpdateBaseUri(baseUri);
+            table2.UpdateBaseUri(BaseUri);
             table2.AddStructure(column21);
             table2.AddStructure(column22);
 
@@ -533,8 +533,8 @@ public class StructureTest
             var column1 = new Column("Column1");
             var column2 = new Column("Column2");
 
-            table1.UpdateBaseUri(baseUri);
-            table2.UpdateBaseUri(baseUri);
+            table1.UpdateBaseUri(BaseUri);
+            table2.UpdateBaseUri(BaseUri);
 
             table1.AddStructure(column1);
             table2.AddStructure(column2);
@@ -553,8 +553,8 @@ public class StructureTest
             var column1 = new Column("Column1");
             var column2 = new Column("Column2");
 
-            table1.UpdateBaseUri(baseUri);
-            table2.UpdateBaseUri(baseUri);
+            table1.UpdateBaseUri(BaseUri);
+            table2.UpdateBaseUri(BaseUri);
 
             table1.AddStructure(column1);
             table2.AddStructure(column2);
@@ -573,8 +573,8 @@ public class StructureTest
             var column1 = new Column("Column1");
             var column2 = new Column("Column2");
 
-            table1.UpdateBaseUri(baseUri);
-            table2.UpdateBaseUri(baseUri);
+            table1.UpdateBaseUri(BaseUri);
+            table2.UpdateBaseUri(BaseUri);
 
             table1.AddStructure(column1);
             table2.AddStructure(column2);
@@ -591,11 +591,11 @@ public class StructureTest
         public void ToGraphNoPrimaryKeyThrowsException()
         {
             var table = new Table("Table");
-            table.UpdateBaseUri(baseUri);
+            table.UpdateBaseUri(BaseUri);
 
             // Added to avoid StructureException caused by Structure having no Store
             var sqlite = new Sqlite("SQLite");
-            sqlite.UpdateBaseUri(baseUri);
+            sqlite.UpdateBaseUri(BaseUri);
             sqlite.AddStructure(table);
 
             Assert.Throws<DataStoreToGraphException>(() => table.ToGraph());
@@ -607,13 +607,13 @@ public class StructureTest
             var table = new Table("Table");
             var column = new Column("Column");
 
-            table.UpdateBaseUri(baseUri);
+            table.UpdateBaseUri(BaseUri);
             table.AddStructure(column);
             table.AddPrimaryKey(column);
 
             // Added to avoid StructureException caused by Structure having no Store
             var sqlite = new Sqlite("SQLite");
-            sqlite.UpdateBaseUri(baseUri);
+            sqlite.UpdateBaseUri(BaseUri);
             sqlite.AddStructure(table);
 
             var graph = table.ToGraph();
@@ -635,8 +635,8 @@ public class StructureTest
             var column1 = new Column("Column1");
             var column2 = new Column("Column2");
 
-            table1.UpdateBaseUri(baseUri);
-            table2.UpdateBaseUri(baseUri);
+            table1.UpdateBaseUri(BaseUri);
+            table2.UpdateBaseUri(BaseUri);
 
             table1.AddStructure(column1);
             table2.AddStructure(column2);
@@ -649,7 +649,7 @@ public class StructureTest
 
             // Added to avoid StructureException caused by Structure having no Store
             var sqlite = new Sqlite("SQLite");
-            sqlite.UpdateBaseUri(baseUri);
+            sqlite.UpdateBaseUri(BaseUri);
             sqlite.AddStructure(table1);
             sqlite.AddStructure(table2);
 
@@ -757,8 +757,8 @@ public class StructureTest
             column1 = new Column("Column1");
             column2 = new Column("Column2");
 
-            table1.UpdateBaseUri(baseUri);
-            table2.UpdateBaseUri(baseUri);
+            table1.UpdateBaseUri(BaseUri);
+            table2.UpdateBaseUri(BaseUri);
 
             table1.AddStructure(column1);
             table2.AddStructure(column2);
@@ -771,7 +771,7 @@ public class StructureTest
 
             // Added to avoid StructureException caused by Structure having no Store
             var sqlite = new Sqlite("SQLite");
-            sqlite.UpdateBaseUri(baseUri);
+            sqlite.UpdateBaseUri(BaseUri);
             sqlite.AddStructure(table1);
             sqlite.AddStructure(table2);
 
@@ -813,12 +813,12 @@ public class StructureTest
         public void ToGraphDataTypeAddedToGraph()
         {
             var column = new Column("Column");
-            column.UpdateBaseUri(baseUri);
+            column.UpdateBaseUri(BaseUri);
             column.SetDataType("Test");
 
             // Added to avoid StructureException caused by Structure having no Store
             var sqlite = new Sqlite("SQLite");
-            sqlite.UpdateBaseUri(baseUri);
+            sqlite.UpdateBaseUri(BaseUri);
             sqlite.AddStructure(column);
 
             var graph = column.ToGraph();
@@ -836,12 +836,12 @@ public class StructureTest
         public void ToGraphIsNotNullAddedToGraph()
         {
             var column = new Column("MyColumn");
-            column.UpdateBaseUri(baseUri);
+            column.UpdateBaseUri(BaseUri);
             column.SetDataType("INT");
 
             // Added to avoid StructureException caused by Structure having no Store
             var sqlite = new Sqlite("SQLite");
-            sqlite.UpdateBaseUri(baseUri);
+            sqlite.UpdateBaseUri(BaseUri);
             sqlite.AddStructure(column);
 
             var graph = column.ToGraph();
@@ -859,13 +859,13 @@ public class StructureTest
         public void ToGraphOptionsAddedToGraph()
         {
             var column = new Column("MyColumn");
-            column.UpdateBaseUri(baseUri);
+            column.UpdateBaseUri(BaseUri);
             column.SetDataType("INT");
             column.SetOptions("AUTOINCREMENT");
 
             // Added to avoid StructureException caused by Structure having no Store
             var sqlite = new Sqlite("SQLite");
-            sqlite.UpdateBaseUri(baseUri);
+            sqlite.UpdateBaseUri(BaseUri);
             sqlite.AddStructure(column);
 
             var graph = column.ToGraph();

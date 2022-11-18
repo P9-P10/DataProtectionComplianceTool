@@ -67,13 +67,6 @@ public static class Program
         ontology.LoadFromFile(OntologyPath, new TurtleParser());
 
         var graphStorage = new GraphStorage(GraphStoragePath, ontology, true);
-
-        using var simpleConn = new SQLiteConnection($"Data Source={SimpleDatabasePath}");
-        var simpleSqlite = new Sqlite("", BaseUri, simpleConn);
-        simpleSqlite.BuildFromDataSource();
-        var simpleGraph = simpleSqlite.ToGraph();
-
-        graphStorage.Insert(simpleSqlite, simpleGraph, new List<string>());
     }
 
     private static void MakeChangeToGraph()

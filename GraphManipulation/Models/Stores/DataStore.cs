@@ -3,14 +3,6 @@ using GraphManipulation.Models.Structures;
 
 namespace GraphManipulation.Models.Stores;
 
-public enum SupportedDataStores
-{
-    Sqlite,
-    PostgreSql,
-    MongoDb,
-    Csv
-}
-
 public abstract class DataStore : StructuredEntity
 {
     protected DataStore(string name) : base(name)
@@ -22,8 +14,6 @@ public abstract class DataStore : StructuredEntity
         BaseUri = baseUri;
         ComputeId();
     }
-
-    // protected SupportedDataStores DataStoreType;
 
     public override void AddStructure(Structure structure)
     {
@@ -56,21 +46,17 @@ public abstract class DataStore : StructuredEntity
     {
     }
 
-    public override List<string> ConstructIdString()
-    {
-        return new List<string> { Name };
-    }
+    public override List<string> ConstructIdString() => new() { Name };
 
     public override void UpdateBaseUri(string baseUri)
     {
         BaseUri = baseUri;
         ComputeId();
 
-        foreach (var structure in SubStructures)
-            if (!structure.HasSameBase(baseUri))
-            {
-                structure.UpdateBaseUri(baseUri);
-            }
+        foreach (var structure in SubStructures.Where(structure => !structure.HasSameBase(baseUri)))
+        {
+            structure.UpdateBaseUri(baseUri);
+        }
     }
 }
 
