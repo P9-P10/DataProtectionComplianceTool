@@ -14,7 +14,6 @@ public static class ConfigurationHandler
 
     public static string? GetOntologyPath()
     {
-        Console.WriteLine(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).FilePath);
         return ConfigurationManager.AppSettings[OntologyKey];
     }
 
