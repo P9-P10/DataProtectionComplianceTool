@@ -1,4 +1,6 @@
+using System.Configuration;
 using System.Data.SQLite;
+using GraphManipulation.Configuration;
 using GraphManipulation.Extensions;
 using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Stores;
@@ -17,16 +19,17 @@ public class InteractiveMode
     public void Run()
     {
         Console.WriteLine();
-        Console.WriteLine("Welcome to this interactive experience!");
+        Console.WriteLine(GenerateHashTags(40));
+        Console.WriteLine(GenerateSpaces(10) + "Graph Manipulation");
+        Console.WriteLine(GenerateHashTags(40));
 
-
-        var ontologyPath = GetOntologyPathFromUser();
-        var graphStoragePath = GetGraphStoragePathFromUser();
+        var ontologyPath = GetOntologyPath();
+        var graphStorageConnectionString = GetGraphStorageConnectionString();
 
         IGraph ontology = new Graph();
         ontology.LoadFromFile(ontologyPath, new TurtleParser());
 
-        var graphStorage = new GraphStorage(graphStoragePath, ontology);
+        var graphStorage = new GraphStorage(graphStorageConnectionString, ontology);
 
         var stop = false;
 
@@ -34,7 +37,7 @@ public class InteractiveMode
         {
             var managedDataStores = graphStorage.GetListOfManagedDataStoresWithType();
 
-            var choice = PresentManagedDataStoresResultingInChoice(managedDataStores);
+            var choice = PresentManagedDataStoresReturnChoice(managedDataStores);
 
             InitOrManageDataStore(choice, managedDataStores, graphStorage);
 
@@ -43,6 +46,36 @@ public class InteractiveMode
                 stop = true;
             }
         }
+    }
+
+    private static string GetOntologyPath()
+    {
+        var ontologyPath = ConfigurationHandler.GetOntologyPath();
+
+        if (ontologyPath is not null)
+        {
+            return ontologyPath;
+        }
+
+        ontologyPath = GetOntologyPathFromUser();
+        ConfigurationHandler.UpdateOntologyPath(ontologyPath);
+
+        return ontologyPath;
+    }
+
+    private static string GetGraphStorageConnectionString()
+    {
+        var graphStorageConnectionString = ConfigurationHandler.GetGraphStorageConnectionString();
+
+        if (graphStorageConnectionString is not null)
+        {
+            return graphStorageConnectionString;
+        }
+
+        graphStorageConnectionString = GetGraphStorageConnectionStringFromUser();
+        ConfigurationHandler.UpdateGraphStorageConnectionString(graphStorageConnectionString);
+
+        return graphStorageConnectionString;
     }
 
     private static string GetBaseUriFromUser()
@@ -67,7 +100,7 @@ public class InteractiveMode
         return ontologyPath;
     }
 
-    private static string GetGraphStoragePathFromUser()
+    private static string GetGraphStorageConnectionStringFromUser()
     {
         Console.WriteLine();
         Console.WriteLine("Please input the absolute path to you GraphStorage (.sqlite): ");
@@ -148,7 +181,7 @@ public class InteractiveMode
         return boolString == trueEquivalent;
     }
 
-    private static int PresentManagedDataStoresResultingInChoice(List<(string, string)> managedDataStores)
+    private static int PresentManagedDataStoresReturnChoice(List<(string, string)> managedDataStores)
     {
         Console.WriteLine();
         Console.WriteLine("These are the currently managed datastores: ");
@@ -279,6 +312,16 @@ public class InteractiveMode
                 stop = true;
             }
         }
+    }
+
+    private static string GenerateHashTags(int count)
+    {
+        return new string('#', count);
+    }
+
+    private static string GenerateSpaces(int count)
+    {
+        return new string(' ', count);
     }
 }
 
