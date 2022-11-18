@@ -259,12 +259,30 @@ public class InteractiveMode
     {
         Console.WriteLine();
         Console.WriteLine("Please provide the path to the SQLite: ");
+        var flag = false;
+
         var managedDataStores = graphStorage.GetListOfManagedDataStoresWithType();
+        Sqlite sqlite;
+        
+        do
+        {
+            var sqlitePath = GetStringFromUser(s => false, "");
 
-        var sqlitePath = GetStringFromUser(s => false, "");
+            sqlite = new Sqlite("", baseUri, new SQLiteConnection($"Data Source={sqlitePath}"));
+            sqlite.BuildFromDataSource();
 
-        var sqlite = new Sqlite("", baseUri, new SQLiteConnection($"Data Source={sqlitePath}"));
-        sqlite.BuildFromDataSource();
+            if (managedDataStores.Select(tuple => tuple.Item1).FirstOrDefault(s => s == sqlite.Uri.ToString()) != null)
+            {
+                Console.WriteLine(
+                    $"{sqlite.Uri} is already managed by this system, please choose a different datastore");
+            }
+            else
+            {
+                flag = true;
+            }
+        } while (!flag);
+        
+        
         graphStorage.InitInsert(sqlite);
     }
 
@@ -306,7 +324,16 @@ public class InteractiveMode
                 continue;
             }
 
-            graphStorage.Insert(datastoreUri, graphManipulator.Graph, graphManipulator.Changes);
+            try
+            {
+                graphStorage.Insert(datastoreUri, graphManipulator.Graph, graphManipulator.Changes);
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine("An error happened: " + e.Message);
+                return;
+            }
+            
             if (PresentExit($"manipulating {datastoreUri}"))
             {
                 stop = true;

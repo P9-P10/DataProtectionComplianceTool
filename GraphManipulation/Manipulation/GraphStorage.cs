@@ -11,18 +11,24 @@ namespace GraphManipulation.Manipulation;
 public class GraphStorage
 {
     private const string SqlCreateStatement = @"
+        CREATE TABLE IF NOT EXISTS Datastores (
+          uri VARCHAR PRIMARY KEY,
+          datastoreType VARCHAR NOT NULL,
+          creationDate DATETIME DEFAULT(STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')) 
+        );
+
         CREATE TABLE IF NOT EXISTS DatastoreGraphs (
            id INTEGER PRIMARY KEY AUTOINCREMENT,
            uri VARCHAR NOT NULL,
-           datastoreType VARCHAR NOT NULL,
            from_date DATETIME DEFAULT(STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')),
            graph VARCHAR NOT NULL,
-           operations VARCHAR
+           operations VARCHAR NOT NULL,
+           FOREIGN KEY (uri) REFERENCES Datastores (uri) ON DELETE CASCADE
         );
     ";
 
     private const string SqlCreateStatementWithDrop =
-        $"DROP TABLE IF EXISTS DatastoreGraphs;\n{SqlCreateStatement}";
+        $"DROP TABLE IF EXISTS Datastores; DROP TABLE IF EXISTS DatastoreGraphs;\n{SqlCreateStatement}";
 
     private readonly DbConnection _dbConnection;
     private readonly IGraph _ontology;
@@ -51,9 +57,30 @@ public class GraphStorage
         _dbConnection.Close();
     }
 
+    private void CheckConformity(IGraph graph)
+    {
+        if (!graph.ValidateUsing(_ontology).Conforms)
+        {
+            throw new GraphStorageException("Graph does not conform");
+        }
+    }
+
     public void InitInsert(DataStore dataStore)
     {
-        Insert(dataStore.Uri, dataStore.ToGraph(), new List<string>());
+        var graph = dataStore.ToGraph();
+        CheckConformity(graph);
+        
+        var datastoreType = graph.GetDataStoreDescriptionLanguageTypeFromUri(dataStore.Uri)!;
+
+        var insertStatement = $@"
+            INSERT INTO Datastores (uri, datastoreType) VALUES ('{dataStore.Uri}', '{datastoreType}')
+        ";
+        
+        _dbConnection.Open();
+        _dbConnection.Execute(insertStatement);
+        _dbConnection.Close();
+        
+        Insert(dataStore.Uri, graph, new List<string>());
     }
 
     public void Insert(DataStore dataStore, IGraph graph, List<string> changes)
@@ -63,18 +90,13 @@ public class GraphStorage
 
     public void Insert(Uri datastoreUri, IGraph graph, List<string> changes)
     {
-        if (!graph.ValidateUsing(_ontology).Conforms)
-        {
-            throw new GraphStorageException("Graph does not conform");
-        }
-
-        var datastoreType = graph.GetDataStoreDescriptionLanguageTypeFromUri(datastoreUri)!;
+        CheckConformity(graph);
 
         var jsonChanges = JsonConvert.SerializeObject(changes);
 
         var insertStatement = $@"
-            INSERT INTO DatastoreGraphs (uri, datastoreType, graph, operations) 
-            VALUES ('{datastoreUri}', '{datastoreType}', '{graph.ToStorageString()}', '{string.Join(", ", jsonChanges)}')
+            INSERT INTO DatastoreGraphs (uri, graph, operations) 
+            VALUES ('{datastoreUri}', '{graph.ToStorageString()}', '{string.Join(',', jsonChanges)}')
         ";
 
         _dbConnection.Open();
@@ -117,7 +139,7 @@ public class GraphStorage
 
     public List<(string, string)> GetListOfManagedDataStoresWithType()
     {
-        const string query = "SELECT DISTINCT uri, datastoreType FROM DatastoreGraphs; ";
+        const string query = "SELECT uri, datastoreType FROM Datastores; ";
 
         _dbConnection.Open();
         var result = _dbConnection.Query<(string, string)>(query).ToList();
