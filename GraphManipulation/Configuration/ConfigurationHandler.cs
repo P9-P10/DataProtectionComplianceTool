@@ -42,7 +42,7 @@ public static class ConfigurationHandler
         {
             return ConfigurationManager.ConnectionStrings[GraphStorageKey].ConnectionString;
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return null;
         }
