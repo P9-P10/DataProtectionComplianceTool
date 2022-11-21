@@ -8,3 +8,5 @@ riderModule.iml
 GraphManipulation/temp.ttl
 
 GraphManipulation.sln.DotSettings.user
+
+GraphManipulation/GraphStorage.sqlite
