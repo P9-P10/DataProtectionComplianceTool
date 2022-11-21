@@ -18,6 +18,12 @@ ddl:
 ddl:hasStructure
     a rdf:Property .
 
+ddl:hasDataType
+    a rdf:Property .
+
+ddl:hasStore
+    a rdf:Property .
+
 ddl:storedIn
     a rdf:Property .
 
@@ -39,13 +45,61 @@ ddl:foreignKey
 ddl:references
     a rdf:Property .
 
-ddl:ReferencesShape
+ddl:isNotNull
+    a rdf:Property .
+
+ddl:columnOptions
+    a rdf:Property .
+
+ddl:foreignKeyOnAction
+    a rdf:Property .
+
+ddl:foreignKeyOnDelete
+    a                  rdf:Property ;
+    rdfs:subPropertyOf ddl:foreignKeyOnAction .
+
+ddl:foreignKeyOnUpdate
+    a                  rdf:Property ;
+    rdfs:subPropertyOf ddl:foreignKeyOnAction .
+
+ddl:foreignKeyOnSubjectsShape
+    a                   sh:NodeShape ;
+    sh:targetSubjectsOf ddl:foreignKeyOnAction ;
+    sh:class            ddl:Column .
+
+ddl:foreignKeyOnObjectsShape
+    a                  sh:NodeShape ;
+    sh:targetObjectsOf ddl:foreignKeyOnAction ;
+    sh:datatype        xsd:string .
+
+ddl:columnOptionsSubjectShape
+    a                   sh:NodeShape ;
+    sh:targetSubjectsOf ddl:columnOptions ;
+    sh:class            ddl:Column .
+
+ddl:columnOptionsObjectShape
+    a                  sh:NodeShape ;
+    sh:targetObjectsOf ddl:columnOptions ;
+    sh:datatype        xsd:string .
+
+ddl:isNotNullShape
+    a                  sh:NodeShape ;
+    sh:targetObjectsOf ddl:isNotNull ;
+    sh:datatype        xsd:boolean .
+
+ddl:ForeignKeyObjectShape
     a                  sh:NodeShape ;
     sh:targetObjectsOf ddl:foreignKey ;
     sh:property        [ sh:path     ddl:references ;
                          sh:class    ddl:Column ;
                          sh:minCount 1 ;
                          sh:maxCount 1 ; ] .
+
+ddl:ReferencesSubjectObjectShape
+    a                   sh:NodeShape ;
+    sh:targetSubjectsOf ddl:references ;
+    sh:targetObjectsOf  ddl:references ;
+    sh:class            ddl:Column .
 
 ### DataEntry
 
@@ -83,6 +137,12 @@ ddl:Datastore
                       sh:class    ddl:Structure ;
                       sh:minCount 1 ; ] .
 
+ddl:DataStoreShape
+    a             sh:NodeShape ;
+    sh:targetNode ddl:Datastore ;
+    sh:property   [ sh:path     [ sh:inversePath rdf:type ] ;
+                    sh:maxCount 1 ] .
+
 ddl:Database
     a               rdfs:Class ;
     rdfs:subClassOf ddl:Datastore .
@@ -91,9 +151,8 @@ ddl:Relational
     a               rdfs:Class, sh:NodeShape ;
     rdfs:subClassOf ddl:Database ;
     sh:property     [ sh:path     ddl:hasStructure ;
-                      sh:class    ddl:Schema  ;
-                      sh:minCount 1 ; ] ;
-    sh:property     [ sh:path ddl:hasName ; ] .
+                      sh:class    ddl:Schema ;
+                      sh:minCount 1 ; ] .
 
 
 ddl:SQLite
@@ -111,12 +170,18 @@ ddl:ConnectionShape
 
 ddl:Structure
     a               rdfs:Class ;
-    rdfs:subClassOf ddl:NamedEntity .
+    rdfs:subClassOf ddl:NamedEntity ;
+    sh:property     [ sh:path     ddl:hasStore ;
+                      sh:class    ddl:Datastore ;
+                      sh:minCount 1 ;
+                      sh:maxCount 1 ] .
 
 ddl:Schema
     a               rdfs:Class, sh:NodeShape ;
     rdfs:subClassOf ddl:Structure ;
-    sh:property [sh:path ddl:hasStructure ; sh:class ddl:Table ; sh:minCount 1] .
+    sh:property     [ sh:path     ddl:hasStructure ;
+                      sh:class    ddl:Table ;
+                      sh:minCount 1 ] .
 
 ddl:Table
     a               rdfs:Class, sh:NodeShape ;
@@ -132,5 +197,11 @@ ddl:Table
 
 
 ddl:Column
-    a               rdfs:Class ;
-    rdfs:subClassOf ddl:Structure .
+    a               rdfs:Class, sh:NodeShape ;
+    rdfs:subClassOf ddl:Structure ;
+    sh:property     [ sh:path     ddl:hasDataType ;
+                      sh:datatype xsd:string ;
+                      sh:minCount 1 ;
+                      sh:maxCount 1 ] ;
+    sh:property     [ sh:path     ddl:columnOptions ;
+                      sh:maxCount 1 ] .
