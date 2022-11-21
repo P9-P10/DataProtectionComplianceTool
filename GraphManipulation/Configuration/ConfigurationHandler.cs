@@ -6,7 +6,7 @@ public static class ConfigurationHandler
 {
     private const string OntologyKey = "OntologyPath";
     private const string GraphStorageKey = "GraphStorageConnectionString";
-    
+
     public static string GetConnectionString(Uri datastoreUri)
     {
         return ConfigurationManager.ConnectionStrings[datastoreUri.ToString()].ConnectionString;
@@ -31,6 +31,7 @@ public static class ConfigurationHandler
         {
             settings[OntologyKey].Value = value;
         }
+
         configFile.Save(ConfigurationSaveMode.Modified);
         ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
     }
@@ -61,6 +62,7 @@ public static class ConfigurationHandler
         {
             settings[GraphStorageKey].ConnectionString = value;
         }
+
         configFile.Save(ConfigurationSaveMode.Modified);
         ConfigurationManager.RefreshSection(configFile.ConnectionStrings.SectionInformation.Name);
     }

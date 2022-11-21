@@ -7,16 +7,16 @@ namespace Test;
 
 public class DataStoreTest
 {
-    private const string baseUri = "http://www.test.com/";
+    private const string BaseUri = "http://www.test.com/";
 
     [Fact]
     public void UpdateBaseSetsBase()
     {
         var sqlite = new Sqlite("SQLite");
 
-        sqlite.UpdateBaseUri(baseUri);
+        sqlite.UpdateBaseUri(BaseUri);
 
-        Assert.Equal(baseUri, sqlite.BaseUri);
+        Assert.Equal(BaseUri, sqlite.BaseUri);
     }
 
     [Fact]
@@ -28,7 +28,7 @@ public class DataStoreTest
         var sqlite = new Sqlite(sqliteName);
         var schema = new Schema(schemaName);
 
-        sqlite.UpdateBaseUri(baseUri);
+        sqlite.UpdateBaseUri(BaseUri);
         sqlite.AddStructure(schema);
         Assert.Contains(schema, sqlite.SubStructures);
     }
@@ -42,7 +42,7 @@ public class DataStoreTest
         var sqlite = new Sqlite(sqliteName);
         var schema = new Schema(schemaName);
 
-        sqlite.UpdateBaseUri(baseUri);
+        sqlite.UpdateBaseUri(BaseUri);
         sqlite.AddStructure(schema);
         sqlite.AddStructure(schema);
 
@@ -55,18 +55,18 @@ public class DataStoreTest
         var sqlite = new Sqlite("SQLite");
         var table = new Table("Table");
 
-        sqlite.UpdateBaseUri(baseUri + "/Test/");
+        sqlite.UpdateBaseUri(BaseUri + "/Test/");
         sqlite.AddStructure(table);
-        sqlite.UpdateBaseUri(baseUri + "/Expected/");
+        sqlite.UpdateBaseUri(BaseUri + "/Expected/");
 
-        Assert.Equal(baseUri + "/Expected/", table.BaseUri);
+        Assert.Equal(BaseUri + "/Expected/", table.BaseUri);
         Assert.Equal(sqlite.BaseUri, table.BaseUri);
     }
 
     [Fact]
     public void UpdateBaseUpdatesOwnAndStructuresId()
     {
-        const string baseNamespace = baseUri + "/Expected/";
+        const string baseNamespace = BaseUri + "/Expected/";
         const string sqliteName = "SQLite";
         const string tableName = "Table";
 
@@ -76,7 +76,7 @@ public class DataStoreTest
         var sqlite = new Sqlite(sqliteName);
         var table = new Table(tableName);
 
-        sqlite.UpdateBaseUri(baseUri + "/Test/");
+        sqlite.UpdateBaseUri(BaseUri + "/Test/");
         sqlite.AddStructure(table);
         sqlite.UpdateBaseUri(baseNamespace);
 
@@ -90,7 +90,7 @@ public class DataStoreTest
         var sqlite = new Sqlite("SQLite");
         var table = new Table("Table");
 
-        const string expected = baseUri + "/Expected/";
+        const string expected = BaseUri + "/Expected/";
         sqlite.UpdateBaseUri(expected);
         sqlite.AddStructure(table);
 
@@ -104,7 +104,7 @@ public class DataStoreTest
         var sqlite = new Sqlite("SQLite");
         var table = new Table("Table");
 
-        sqlite.UpdateBaseUri(baseUri);
+        sqlite.UpdateBaseUri(BaseUri);
         sqlite.AddStructure(table);
 
         Assert.Equal(sqlite, table.Store);

@@ -69,17 +69,17 @@ public class GraphStorage
     {
         var graph = dataStore.ToGraph();
         CheckConformity(graph);
-        
+
         var datastoreType = graph.GetDataStoreDescriptionLanguageTypeFromUri(dataStore.Uri)!;
 
         var insertStatement = $@"
             INSERT INTO Datastores (uri, datastoreType) VALUES ('{dataStore.Uri}', '{datastoreType}')
         ";
-        
+
         _dbConnection.Open();
         _dbConnection.Execute(insertStatement);
         _dbConnection.Close();
-        
+
         Insert(dataStore.Uri, graph, new List<string>());
     }
 

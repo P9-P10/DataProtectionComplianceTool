@@ -46,7 +46,10 @@ public abstract class DataStore : StructuredEntity
     {
     }
 
-    public override List<string> ConstructIdString() => new() { Name };
+    public override List<string> ConstructIdString()
+    {
+        return new() { Name };
+    }
 
     public override void UpdateBaseUri(string baseUri)
     {
@@ -54,9 +57,7 @@ public abstract class DataStore : StructuredEntity
         ComputeId();
 
         foreach (var structure in SubStructures.Where(structure => !structure.HasSameBase(baseUri)))
-        {
             structure.UpdateBaseUri(baseUri);
-        }
     }
 }
 

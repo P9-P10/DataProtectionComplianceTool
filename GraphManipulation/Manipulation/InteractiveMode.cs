@@ -1,4 +1,3 @@
-using System.Configuration;
 using System.Data.SQLite;
 using GraphManipulation.Configuration;
 using GraphManipulation.Extensions;
@@ -263,7 +262,7 @@ public class InteractiveMode
 
         var managedDataStores = graphStorage.GetListOfManagedDataStoresWithType();
         Sqlite sqlite;
-        
+
         do
         {
             var sqlitePath = GetStringFromUser(s => false, "");
@@ -281,8 +280,8 @@ public class InteractiveMode
                 flag = true;
             }
         } while (!flag);
-        
-        
+
+
         graphStorage.InitInsert(sqlite);
     }
 
@@ -333,7 +332,7 @@ public class InteractiveMode
                 Console.Error.WriteLine("An error happened: " + e.Message);
                 return;
             }
-            
+
             if (PresentExit($"manipulating {datastoreUri}"))
             {
                 stop = true;
