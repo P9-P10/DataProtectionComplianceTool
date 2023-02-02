@@ -46,7 +46,8 @@ public static class GraphAsserts
 
     public static void AssertHasDatabaseTriple(this IGraph graph, Structure structure)
     {
-        graph.AssertSubjectPredicateObjectTriple(structure, DatabaseDescriptionLanguage.HasDatabase, structure.Database!);
+        graph.AssertSubjectPredicateObjectTriple(structure, DatabaseDescriptionLanguage.HasDatabase,
+            structure.Database!);
     }
 
     public static void AssertOptionsTriple(this IGraph graph, Column column)

@@ -36,7 +36,7 @@ public abstract class Database : StructuredEntity
     private void BuildDatabase()
     {
     }
-    
+
     public override void AddStructure(Structure structure)
     {
         if (SubStructures.Contains(structure))
@@ -58,10 +58,10 @@ public abstract class Database : StructuredEntity
 
         structure.UpdateIdToBottom();
     }
-    
+
     public override List<string> ConstructIdString()
     {
-        return new() { Name };
+        return new List<string> { Name };
     }
 
     public override void UpdateBaseUri(string baseUri)

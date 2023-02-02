@@ -84,8 +84,8 @@ public class SqliteTest
 
         private static readonly SQLiteConnection Connection = new($"Data Source={TestDatabase}");
         public readonly Column ExpectedColumnEmail = new("email");
-        public readonly Column ExpectedColumnPassword = new("password");
         public readonly Column ExpectedColumnId = new("id");
+        public readonly Column ExpectedColumnPassword = new("password");
         public readonly Schema ExpectedSchema = new("main");
 
         public readonly Sqlite ExpectedSqlite = new("NoForeignKeysDatabase", BaseUri);
@@ -113,7 +113,7 @@ public class SqliteTest
             ExpectedColumnId.SetDataType("INT");
             ExpectedColumnEmail.SetDataType("VARCHAR");
             ExpectedColumnPassword.SetDataType("VARCHAR");
-            
+
             ExpectedColumnEmail.SetIsNotNull(true);
         }
 
@@ -130,7 +130,7 @@ public class SqliteTest
             }
         }
     }
-    
+
     public class NoPrimaryKeysDatabaseFixture
     {
         private static readonly string _testDatabase =
@@ -138,8 +138,8 @@ public class SqliteTest
 
         private static readonly SQLiteConnection Connection = new($"Data Source={TestDatabase}");
         public readonly Column ExpectedColumnEmail = new("email");
-        public readonly Column ExpectedColumnPassword = new("password");
         public readonly Column ExpectedColumnId = new("id");
+        public readonly Column ExpectedColumnPassword = new("password");
         public readonly Schema ExpectedSchema = new("main");
 
         public readonly Sqlite ExpectedSqlite = new("NoPrimaryKeysDatabase", BaseUri);
@@ -165,7 +165,7 @@ public class SqliteTest
             ExpectedColumnId.SetDataType("INT");
             ExpectedColumnEmail.SetDataType("VARCHAR");
             ExpectedColumnPassword.SetDataType("VARCHAR");
-            
+
             ExpectedColumnEmail.SetIsNotNull(true);
         }
 
@@ -350,7 +350,7 @@ public class SqliteTest
             Assert.Equal(_testDatabaseFixture.ExpectedSqlite.Name, _testDatabaseFixture.Sqlite.Name);
         }
     }
-    
+
     public class NoPrimaryKeysBuildTest : IClassFixture<NoPrimaryKeysDatabaseFixture>
     {
         private readonly NoPrimaryKeysDatabaseFixture _testDatabaseFixture;

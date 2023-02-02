@@ -6,11 +6,11 @@ using GraphManipulation.Models.Structures;
 using GraphManipulation.Ontologies;
 using VDS.RDF;
 
-namespace GraphManipulation.Manipulation;
+namespace GraphManipulation.Components;
 
-public class GraphManipulator<T> where T : Database
+public class Manipulator<T> where T : Database
 {
-    public GraphManipulator(IGraph graph)
+    public Manipulator(IGraph graph)
     {
         Graph = new Graph();
         Graph.BaseUri = graph.BaseUri;
@@ -35,15 +35,15 @@ public class GraphManipulator<T> where T : Database
         var database = GetDatabaseFromGraph();
 
         var structure = database.Find<Structure>(from)
-                        ?? throw new GraphManipulatorException("Could not find structure with Uri: " + from);
+                        ?? throw new ManipulatorException("Could not find structure with Uri: " + from);
 
         var newName = to.ToString().Split(Entity.IdSeparator).Last();
         structure.UpdateName(newName);
 
         var newParentUri = ExtractParentUriFromChildUri(to);
         var newParentStructure = database.Find<Structure>(newParentUri)
-                                 ?? throw new GraphManipulatorException("Could not find parent structure with Uri: " +
-                                                                        newParentUri);
+                                 ?? throw new ManipulatorException("Could not find parent structure with Uri: " +
+                                                                   newParentUri);
 
         newParentStructure.AddStructure(structure);
 
@@ -58,7 +58,7 @@ public class GraphManipulator<T> where T : Database
     {
         if (ExtractNameFromUri(from) != ExtractNameFromUri(to))
         {
-            throw new GraphManipulatorException("MOVE cannot change the name of an entity, use RENAME");
+            throw new ManipulatorException("MOVE cannot change the name of an entity, use RENAME");
         }
 
         var typeTriple = Graph.GetTripleWithSubjectPredicateObject(
@@ -68,7 +68,7 @@ public class GraphManipulator<T> where T : Database
 
         if (typeTriple is not null)
         {
-            throw new GraphManipulatorException("Cannot move something of type Database");
+            throw new ManipulatorException("Cannot move something of type Database");
         }
 
         var hasStructureTriples = Graph.GetTriplesWithPredicateObject(
@@ -78,12 +78,12 @@ public class GraphManipulator<T> where T : Database
 
         if (!hasStructureTriples.Any())
         {
-            throw new GraphManipulatorException("Cannot move structure without parent");
+            throw new ManipulatorException("Cannot move structure without parent");
         }
 
         if (hasStructureTriples.Count > 1)
         {
-            throw new GraphManipulatorException("Multiple parents found, cannot proceed");
+            throw new ManipulatorException("Multiple parents found, cannot proceed");
         }
 
         var parentTypeTriple = Graph.GetTripleWithSubjectPredicateObject(
@@ -94,7 +94,7 @@ public class GraphManipulator<T> where T : Database
 
         if (parentTypeTriple is not null)
         {
-            throw new GraphManipulatorException("Cannot move structure whose parent is a Database");
+            throw new ManipulatorException("Cannot move structure whose parent is a Database");
         }
     }
 
@@ -109,7 +109,7 @@ public class GraphManipulator<T> where T : Database
 
         var database = GetDatabaseFromGraph();
         var structure = database.Find<Structure>(from)
-                        ?? throw new GraphManipulatorException("Could not find structure with Uri: " + from);
+                        ?? throw new ManipulatorException("Could not find structure with Uri: " + from);
 
         structure.UpdateName(ExtractNameFromUri(to));
         Changes.Add($"RENAME({from}, {structure.Uri})");
@@ -123,7 +123,7 @@ public class GraphManipulator<T> where T : Database
     {
         if (ExtractParentUriFromChildUri(from) != ExtractParentUriFromChildUri(to))
         {
-            throw new GraphManipulatorException("RENAME cannot move an entity, use MOVE instead");
+            throw new ManipulatorException("RENAME cannot move an entity, use MOVE instead");
         }
     }
 
@@ -145,7 +145,7 @@ public class GraphManipulator<T> where T : Database
     {
         var database = GetDatabaseFromGraph();
         var structure = database.Find<Structure>(uri)
-                        ?? throw new GraphManipulatorException("Could not find structure with Uri: " + uri);
+                        ?? throw new ManipulatorException("Could not find structure with Uri: " + uri);
 
         foreach (var subUri in structure.SubStructures.Select(sub => sub.Uri))
         {
@@ -160,7 +160,7 @@ public class GraphManipulator<T> where T : Database
     private Database GetDatabaseFromGraph()
     {
         return Graph.ConstructDatabase<T>()
-               ?? throw new GraphManipulatorException("Could not construct database from graph");
+               ?? throw new ManipulatorException("Could not construct database from graph");
     }
 
     public bool IsValidManipulationQuery(string query)
@@ -180,7 +180,7 @@ public class GraphManipulator<T> where T : Database
         {
             "MOVE" => Move,
             "RENAME" => Rename,
-            _ => throw new GraphManipulatorException("Command not supported")
+            _ => throw new ManipulatorException("Command not supported")
         };
 
         action(firstUri, secondUri);
@@ -192,9 +192,9 @@ public class GraphManipulator<T> where T : Database
     }
 }
 
-public class GraphManipulatorException : Exception
+public class ManipulatorException : Exception
 {
-    public GraphManipulatorException(string message) : base(message)
+    public ManipulatorException(string message) : base(message)
     {
     }
 }

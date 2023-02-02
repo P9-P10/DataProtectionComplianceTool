@@ -1,4 +1,5 @@
 using System.Data.SQLite;
+using GraphManipulation.Components;
 using GraphManipulation.Configuration;
 using GraphManipulation.Extensions;
 using GraphManipulation.Models.Entity;
@@ -10,12 +11,7 @@ namespace GraphManipulation.Manipulation;
 
 public class InteractiveMode
 {
-    // /home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/Ontologies/database-description-language.ttl
-    // /home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/GraphStorage.sqlite
-    // MOVE(http://www.test.com/SimpleDatabase/main/UserData/email, http://www.test.com/SimpleDatabase/main/Users/email)
-    // MOVE(http://www.test.com/SimpleDatabase/main/Users/email, http://www.test.com/SimpleDatabase/main/UserData/email)
-
-    public void Run()
+    public static void Run()
     {
         Console.WriteLine();
         Console.WriteLine(GenerateHashTags(40));
@@ -294,7 +290,7 @@ public class InteractiveMode
     {
         var graph = graphStorage.GetLatest(databaseUri);
 
-        var graphManipulator = new GraphManipulator<T>(graph);
+        var graphManipulator = new Manipulator<T>(graph);
 
         var stop = false;
 
@@ -309,7 +305,7 @@ public class InteractiveMode
             {
                 graphManipulator.ApplyManipulationQuery(manipulationQuery);
             }
-            catch (GraphManipulatorException e)
+            catch (ManipulatorException e)
             {
                 Console.WriteLine("An error happened, please resolve: " + e.Message);
                 continue;
@@ -342,12 +338,12 @@ public class InteractiveMode
 
     private static string GenerateHashTags(int count)
     {
-        return new string('#', count);
+        return new('#', count);
     }
 
     private static string GenerateSpaces(int count)
     {
-        return new string(' ', count);
+        return new(' ', count);
     }
 }
 

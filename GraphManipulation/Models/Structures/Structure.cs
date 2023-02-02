@@ -5,8 +5,8 @@ namespace GraphManipulation.Models.Structures;
 
 public abstract class Structure : StructuredEntity //, IHasStructure
 {
-    public Structure? ParentStructure;
     public Database? Database;
+    public Structure? ParentStructure;
 
     protected Structure(string name) : base(name)
     {

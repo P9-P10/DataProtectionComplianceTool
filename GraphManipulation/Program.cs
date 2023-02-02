@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using System.Data.SQLite;
+using GraphManipulation.Components;
 using GraphManipulation.Extensions;
 using GraphManipulation.Manipulation;
 using GraphManipulation.Models.Stores;
@@ -12,9 +13,6 @@ using VDS.RDF.Writing;
 using StringWriter = VDS.RDF.Writing.StringWriter;
 
 namespace GraphManipulation;
-
-// TODO: Omdøb Table til Relation
-// TODO: Omdøb Column til Attribute
 
 public static class Program
 {
@@ -60,7 +58,7 @@ public static class Program
     private static void Interactive()
     {
         var interactive = new InteractiveMode();
-        interactive.Run();
+        InteractiveMode.Run();
     }
 
     private static void InitGraphStorage()
@@ -84,7 +82,7 @@ public static class Program
 
         var dataGraph = graphStorage.GetLatest(simpleSqlite);
 
-        var graphManipulator = new GraphManipulator<Sqlite>(dataGraph);
+        var graphManipulator = new Manipulator<Sqlite>(dataGraph);
 
         var userDataTable = simpleSqlite
             .FindSchema("main")!
@@ -116,7 +114,7 @@ public static class Program
         simpleSqlite.BuildFromDataSource();
         var simpleGraph = simpleSqlite.ToGraph();
 
-        var graphManipulator = new GraphManipulator<Sqlite>(simpleGraph);
+        var graphManipulator = new Manipulator<Sqlite>(simpleGraph);
 
         var userDataTable = simpleSqlite
             .FindSchema("main")!

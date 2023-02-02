@@ -61,7 +61,6 @@ public class Sqlite : Relational
         {
             ForeignKeysQueryResults = new List<ForeignKeysQueryResult>();
         }
-        
     }
 
     protected override void GetColumnOptionsQueryResults()
