@@ -3,14 +3,14 @@
 @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
 @prefix owl:   <http://www.w3.org/2002/07/owl#> .
 @prefix sh:    <http://www.w3.org/ns/shacl#> .
-@prefix ddl:   <http://www.cs-22-dt-9-03.org/datastore-description-language#> .
+@prefix ddl:   <http://www.cs-22-dt-9-03.org/database-description-language#> .
 
 ddl:
     a            owl:Ontology ;
-    rdfs:label   "Datastore Description Language (DDL) Vocabulary"@en ;
-    rdfs:comment "This vocabulary defines terms that can be used to describe datastores"@en ;
+    rdfs:label   "Database Description Language (DDL) Vocabulary"@en ;
+    rdfs:comment "This vocabulary defines terms that can be used to describe databases"@en ;
     sh:declare   [ sh:prefix    "ddl" ;
-                   sh:namespace "http://www.cs-22-dt-9-03.org/datastore-description-language#" ; ] ; .
+                   sh:namespace "http://www.cs-22-dt-9-03.org/database-description-language#" ; ] ; .
 
 
 ### Properties
@@ -107,24 +107,20 @@ ddl:NamedEntity
                       sh:maxCount 1 ; ] .
 
 
-### Datastore
+### Database
 
-ddl:Datastore
+ddl:Database
     a               rdfs:Class, sh:NodeShape ;
     rdfs:subClassOf ddl:NamedEntity ;
     sh:property     [ sh:path     ddl:hasStructure ;
                       sh:class    ddl:Structure ;
                       sh:minCount 1 ; ] .
 
-ddl:DataStoreShape
+ddl:DatabaseShape
     a             sh:NodeShape ;
-    sh:targetNode ddl:Datastore ;
+    sh:targetNode ddl:Database ;
     sh:property   [ sh:path     [ sh:inversePath rdf:type ] ;
                     sh:maxCount 1 ] .
-
-ddl:Database
-    a               rdfs:Class ;
-    rdfs:subClassOf ddl:Datastore .
 
 ddl:Relational
     a               rdfs:Class, sh:NodeShape ;
@@ -143,7 +139,7 @@ ddl:Structure
     a               rdfs:Class ;
     rdfs:subClassOf ddl:NamedEntity ;
     sh:property     [ sh:path     ddl:hasStore ;
-                      sh:class    ddl:Datastore ;
+                      sh:class    ddl:Database ;
                       sh:minCount 1 ;
                       sh:maxCount 1 ] .
 

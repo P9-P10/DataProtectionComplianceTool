@@ -64,7 +64,7 @@ public class GraphManipulator<T> where T : DataStore
         var typeTriple = Graph.GetTripleWithSubjectPredicateObject(
             Graph.CreateUriNode(from),
             Graph.CreateUriNode("rdf:type"),
-            Graph.CreateUriNode(DataStoreDescriptionLanguage.Datastore));
+            Graph.CreateUriNode(DatabaseDescriptionLanguage.Datastore));
 
         if (typeTriple is not null)
         {
@@ -72,7 +72,7 @@ public class GraphManipulator<T> where T : DataStore
         }
 
         var hasStructureTriples = Graph.GetTriplesWithPredicateObject(
-            Graph.CreateUriNode(DataStoreDescriptionLanguage.HasStructure),
+            Graph.CreateUriNode(DatabaseDescriptionLanguage.HasStructure),
             Graph.CreateUriNode(from)
         ).ToList();
 
@@ -89,7 +89,7 @@ public class GraphManipulator<T> where T : DataStore
         var parentTypeTriple = Graph.GetTripleWithSubjectPredicateObject(
             hasStructureTriples.First().Subject,
             Graph.CreateUriNode("rdf:type"),
-            Graph.CreateUriNode(DataStoreDescriptionLanguage.Datastore)
+            Graph.CreateUriNode(DatabaseDescriptionLanguage.Datastore)
         );
 
         if (parentTypeTriple is not null)

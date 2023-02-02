@@ -16,10 +16,10 @@ public static class GraphDataType
     {
         return type switch
         {
-            { } when type == typeof(Column) => DataStoreDescriptionLanguage.Column,
-            { } when type == typeof(Table) => DataStoreDescriptionLanguage.Table,
-            { } when type == typeof(Schema) => DataStoreDescriptionLanguage.Schema,
-            { } when type == typeof(Sqlite) => DataStoreDescriptionLanguage.Sqlite,
+            { } when type == typeof(Column) => DatabaseDescriptionLanguage.Column,
+            { } when type == typeof(Table) => DatabaseDescriptionLanguage.Table,
+            { } when type == typeof(Schema) => DatabaseDescriptionLanguage.Schema,
+            { } when type == typeof(Sqlite) => DatabaseDescriptionLanguage.Sqlite,
             _ => throw new GraphDataTypeException("Type not supported " + type)
         };
     }
@@ -28,10 +28,10 @@ public static class GraphDataType
     {
         return typeString switch
         {
-            DataStoreDescriptionLanguage.Column => typeof(Column),
-            DataStoreDescriptionLanguage.Table => typeof(Table),
-            DataStoreDescriptionLanguage.Schema => typeof(Schema),
-            DataStoreDescriptionLanguage.Sqlite => typeof(Sqlite),
+            DatabaseDescriptionLanguage.Column => typeof(Column),
+            DatabaseDescriptionLanguage.Table => typeof(Table),
+            DatabaseDescriptionLanguage.Schema => typeof(Schema),
+            DatabaseDescriptionLanguage.Sqlite => typeof(Sqlite),
             _ => throw new GraphDataTypeException("Type string could not be converted to type: " + typeString)
         };
     }

@@ -619,7 +619,7 @@ public class StructureTest
             var graph = table.ToGraph();
 
             var subj = graph.CreateUriNode(table.Uri);
-            var pred = graph.CreateUriNode(DataStoreDescriptionLanguage.PrimaryKey);
+            var pred = graph.CreateUriNode(DatabaseDescriptionLanguage.PrimaryKey);
             var obj = graph.CreateUriNode(column.Uri);
 
             var triple = new Triple(subj, pred, obj);
@@ -656,7 +656,7 @@ public class StructureTest
             var graph = table1.ToGraph();
 
             var subj = graph.CreateUriNode(table1.Uri);
-            var pred = graph.CreateUriNode(DataStoreDescriptionLanguage.ForeignKey);
+            var pred = graph.CreateUriNode(DatabaseDescriptionLanguage.ForeignKey);
             var obj = graph.CreateUriNode(column1.Uri);
 
             var triple = new Triple(subj, pred, obj);
@@ -673,7 +673,7 @@ public class StructureTest
                 out var column1, out var column2);
 
             var subj = graph.CreateUriNode(column1.Uri);
-            var pred = graph.CreateUriNode(DataStoreDescriptionLanguage.References);
+            var pred = graph.CreateUriNode(DatabaseDescriptionLanguage.References);
             var obj = graph.CreateUriNode(column2.Uri);
 
             var triple = new Triple(subj, pred, obj);
@@ -690,7 +690,7 @@ public class StructureTest
                 out var column1, out var column2);
 
             var subj = graph.CreateUriNode(column1.Uri);
-            var pred = graph.CreateUriNode(DataStoreDescriptionLanguage.ForeignKeyOnDelete);
+            var pred = graph.CreateUriNode(DatabaseDescriptionLanguage.ForeignKeyOnDelete);
             var obj = graph.CreateLiteralNode("CASCADE");
 
             var triple = new Triple(subj, pred, obj);
@@ -707,7 +707,7 @@ public class StructureTest
                 out var column1, out var column2);
 
             var subj = graph.CreateUriNode(column1.Uri);
-            var pred = graph.CreateUriNode(DataStoreDescriptionLanguage.ForeignKeyOnDelete);
+            var pred = graph.CreateUriNode(DatabaseDescriptionLanguage.ForeignKeyOnDelete);
             var obj = graph.CreateLiteralNode("NO ACTION");
 
             var triple = new Triple(subj, pred, obj);
@@ -724,7 +724,7 @@ public class StructureTest
                 out var column1, out var column2);
 
             var subj = graph.CreateUriNode(column1.Uri);
-            var pred = graph.CreateUriNode(DataStoreDescriptionLanguage.ForeignKeyOnUpdate);
+            var pred = graph.CreateUriNode(DatabaseDescriptionLanguage.ForeignKeyOnUpdate);
             var obj = graph.CreateLiteralNode("CASCADE");
 
             var triple = new Triple(subj, pred, obj);
@@ -741,7 +741,7 @@ public class StructureTest
                 out var column1, out var column2);
 
             var subj = graph.CreateUriNode(column1.Uri);
-            var pred = graph.CreateUriNode(DataStoreDescriptionLanguage.ForeignKeyOnUpdate);
+            var pred = graph.CreateUriNode(DatabaseDescriptionLanguage.ForeignKeyOnUpdate);
             var obj = graph.CreateLiteralNode("NO ACTION");
 
             var triple = new Triple(subj, pred, obj);
@@ -824,7 +824,7 @@ public class StructureTest
             var graph = column.ToGraph();
 
             var subj = graph.CreateUriNode(column.Uri);
-            var pred = graph.CreateUriNode(DataStoreDescriptionLanguage.HasDataType);
+            var pred = graph.CreateUriNode(DatabaseDescriptionLanguage.HasDataType);
             var obj = graph.CreateLiteralNode("Test");
 
             var triple = new Triple(subj, pred, obj);
@@ -847,7 +847,7 @@ public class StructureTest
             var graph = column.ToGraph();
 
             var subj = graph.CreateUriNode(column.Uri);
-            var pred = graph.CreateUriNode(DataStoreDescriptionLanguage.IsNotNull);
+            var pred = graph.CreateUriNode(DatabaseDescriptionLanguage.IsNotNull);
             var obj = graph.CreateLiteralNode("false", UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeBoolean));
 
             var triple = new Triple(subj, pred, obj);
@@ -871,7 +871,7 @@ public class StructureTest
             var graph = column.ToGraph();
 
             var subj = graph.CreateUriNode(column.Uri);
-            var pred = graph.CreateUriNode(DataStoreDescriptionLanguage.ColumnOptions);
+            var pred = graph.CreateUriNode(DatabaseDescriptionLanguage.ColumnOptions);
             var obj = graph.CreateLiteralNode("AUTOINCREMENT");
 
             var triple = new Triple(subj, pred, obj);

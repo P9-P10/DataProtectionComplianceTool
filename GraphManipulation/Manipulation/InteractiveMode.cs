@@ -10,7 +10,7 @@ namespace GraphManipulation.Manipulation;
 
 public class InteractiveMode
 {
-    // /home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/Ontologies/datastore-description-language.ttl
+    // /home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/Ontologies/database-description-language.ttl
     // /home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/GraphStorage.sqlite
     // MOVE(http://www.test.com/SimpleDatabase/main/UserData/email, http://www.test.com/SimpleDatabase/main/Users/email)
     // MOVE(http://www.test.com/SimpleDatabase/main/Users/email, http://www.test.com/SimpleDatabase/main/UserData/email)

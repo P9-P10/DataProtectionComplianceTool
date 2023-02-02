@@ -60,7 +60,7 @@ public static class DataStoreFromGraph
         foreach (var columnNode in graph
                      .GetTriplesWithSubjectPredicate(
                          graph.CreateUriNode(table.Uri),
-                         graph.CreateUriNode(DataStoreDescriptionLanguage.PrimaryKey))
+                         graph.CreateUriNode(DatabaseDescriptionLanguage.PrimaryKey))
                      .Select(triple => (triple.Object as UriNode)!))
         {
             var matchingColumn = table.SubStructures.First(sub => sub.Uri == columnNode.Uri) as Column;
@@ -71,17 +71,17 @@ public static class DataStoreFromGraph
     private static void ConstructForeignKeys(this IGraph graph, Relational relational)
     {
         var triples = graph
-            .GetTriplesWithPredicate(graph.CreateUriNode(DataStoreDescriptionLanguage.References))
+            .GetTriplesWithPredicate(graph.CreateUriNode(DatabaseDescriptionLanguage.References))
             .Where(triple =>
             {
                 var subjStore = graph.GetTripleWithSubjectPredicateObject(
                     triple.Subject,
-                    graph.CreateUriNode(DataStoreDescriptionLanguage.HasStore),
+                    graph.CreateUriNode(DatabaseDescriptionLanguage.HasStore),
                     graph.CreateUriNode(relational.Uri));
 
                 var objStore = graph.GetTripleWithSubjectPredicateObject(
                     triple.Object,
-                    graph.CreateUriNode(DataStoreDescriptionLanguage.HasStore),
+                    graph.CreateUriNode(DatabaseDescriptionLanguage.HasStore),
                     graph.CreateUriNode(relational.Uri));
 
                 return subjStore is not null && objStore is not null;

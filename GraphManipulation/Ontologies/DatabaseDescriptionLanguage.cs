@@ -2,7 +2,7 @@ using VDS.RDF;
 
 namespace GraphManipulation.Ontologies;
 
-public static class DataStoreDescriptionLanguage
+public static class DatabaseDescriptionLanguage
 {
     public const string OntologyPrefix = "ddl";
 
@@ -30,5 +30,5 @@ public static class DataStoreDescriptionLanguage
     public const string Column = $"{OntologyPrefix}:Column";
 
     public static Uri OntologyUri =>
-        UriFactory.Create("http://www.cs-22-dt-9-03.org/datastore-description-language#");
+        UriFactory.Create("http://www.cs-22-dt-9-03.org/database-description-language#");
 }
