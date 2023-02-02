@@ -77,6 +77,112 @@ public class SqliteTest
         }
     }
 
+    public class NoForeignKeysDatabaseFixture
+    {
+        private static readonly string _testDatabase =
+            $"TestResources{Path.DirectorySeparatorChar}NoForeignKeysDatabase.sqlite";
+
+        private static readonly SQLiteConnection Connection = new($"Data Source={TestDatabase}");
+        public readonly Column ExpectedColumnEmail = new("email");
+        public readonly Column ExpectedColumnPassword = new("password");
+        public readonly Column ExpectedColumnId = new("id");
+        public readonly Schema ExpectedSchema = new("main");
+
+        public readonly Sqlite ExpectedSqlite = new("NoForeignKeysDatabase", BaseUri);
+        public readonly Table ExpectedTableUsers = new("Users");
+
+        public readonly Sqlite Sqlite;
+
+
+        public NoForeignKeysDatabaseFixture()
+        {
+            Sqlite = new Sqlite("", BaseUri, Connection);
+
+            Sqlite.BuildFromDataSource();
+
+            ExpectedSqlite.AddStructure(ExpectedSchema);
+
+            ExpectedSchema.AddStructure(ExpectedTableUsers);
+
+            ExpectedTableUsers.AddStructure(ExpectedColumnId);
+            ExpectedTableUsers.AddStructure(ExpectedColumnEmail);
+            ExpectedTableUsers.AddStructure(ExpectedColumnPassword);
+
+            ExpectedTableUsers.AddPrimaryKey(ExpectedColumnId);
+
+            ExpectedColumnId.SetDataType("INT");
+            ExpectedColumnEmail.SetDataType("VARCHAR");
+            ExpectedColumnPassword.SetDataType("VARCHAR");
+            
+            ExpectedColumnEmail.SetIsNotNull(true);
+        }
+
+        private static string TestDatabase
+        {
+            get
+            {
+                if (!File.Exists(_testDatabase))
+                {
+                    throw new FileNotFoundException("File not found: " + _testDatabase);
+                }
+
+                return _testDatabase;
+            }
+        }
+    }
+    
+    public class NoPrimaryKeysDatabaseFixture
+    {
+        private static readonly string _testDatabase =
+            $"TestResources{Path.DirectorySeparatorChar}NoPrimaryKeysDatabase.sqlite";
+
+        private static readonly SQLiteConnection Connection = new($"Data Source={TestDatabase}");
+        public readonly Column ExpectedColumnEmail = new("email");
+        public readonly Column ExpectedColumnPassword = new("password");
+        public readonly Column ExpectedColumnId = new("id");
+        public readonly Schema ExpectedSchema = new("main");
+
+        public readonly Sqlite ExpectedSqlite = new("NoPrimaryKeysDatabase", BaseUri);
+        public readonly Table ExpectedTableUsers = new("Users");
+
+        public readonly Sqlite Sqlite;
+
+
+        public NoPrimaryKeysDatabaseFixture()
+        {
+            Sqlite = new Sqlite("", BaseUri, Connection);
+
+            Sqlite.BuildFromDataSource();
+
+            ExpectedSqlite.AddStructure(ExpectedSchema);
+
+            ExpectedSchema.AddStructure(ExpectedTableUsers);
+
+            ExpectedTableUsers.AddStructure(ExpectedColumnId);
+            ExpectedTableUsers.AddStructure(ExpectedColumnEmail);
+            ExpectedTableUsers.AddStructure(ExpectedColumnPassword);
+
+            ExpectedColumnId.SetDataType("INT");
+            ExpectedColumnEmail.SetDataType("VARCHAR");
+            ExpectedColumnPassword.SetDataType("VARCHAR");
+            
+            ExpectedColumnEmail.SetIsNotNull(true);
+        }
+
+        private static string TestDatabase
+        {
+            get
+            {
+                if (!File.Exists(_testDatabase))
+                {
+                    throw new FileNotFoundException("File not found: " + _testDatabase);
+                }
+
+                return _testDatabase;
+            }
+        }
+    }
+
     public class BuildTest : IClassFixture<TestDatabaseFixture>
     {
         private readonly TestDatabaseFixture _testDatabaseFixture;
@@ -99,7 +205,7 @@ public class SqliteTest
         [Fact]
         public void SqliteGetsAName()
         {
-            Assert.Equal("SimpleDatabase", _testDatabaseFixture.Sqlite.Name);
+            Assert.Equal(_testDatabaseFixture.ExpectedSqlite.Name, _testDatabaseFixture.Sqlite.Name);
         }
 
         [Fact]
@@ -226,6 +332,38 @@ public class SqliteTest
                 .OnUpdate;
 
             Assert.Equal(ForeignKeyOnEnum.NoAction, actual);
+        }
+    }
+
+    public class NoForeignKeysBuildTest : IClassFixture<NoForeignKeysDatabaseFixture>
+    {
+        private readonly NoForeignKeysDatabaseFixture _testDatabaseFixture;
+
+        public NoForeignKeysBuildTest(NoForeignKeysDatabaseFixture testDatabaseFixture)
+        {
+            _testDatabaseFixture = testDatabaseFixture;
+        }
+
+        [Fact]
+        public void DatabaseWithoutForeignKeysWorks()
+        {
+            Assert.Equal(_testDatabaseFixture.ExpectedSqlite.Name, _testDatabaseFixture.Sqlite.Name);
+        }
+    }
+    
+    public class NoPrimaryKeysBuildTest : IClassFixture<NoPrimaryKeysDatabaseFixture>
+    {
+        private readonly NoPrimaryKeysDatabaseFixture _testDatabaseFixture;
+
+        public NoPrimaryKeysBuildTest(NoPrimaryKeysDatabaseFixture testDatabaseFixture)
+        {
+            _testDatabaseFixture = testDatabaseFixture;
+        }
+
+        [Fact]
+        public void DatabaseWithoutPrimaryKeysWorks()
+        {
+            Assert.Equal(_testDatabaseFixture.ExpectedSqlite.Name, _testDatabaseFixture.Sqlite.Name);
         }
     }
 }

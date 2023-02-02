@@ -38,8 +38,10 @@ public class Sqlite : Relational
 
     protected override void GetForeignKeysQueryResults()
     {
-        ForeignKeysQueryResults = Connection
-            .Query<ForeignKeysQueryResult>(@"
+        try
+        {
+            ForeignKeysQueryResults = Connection
+                .Query<ForeignKeysQueryResult>(@"
             SELECT tl.schema as fromSchema, 
                    m.tbl_name as fromTable, 
                    fkl.'from' as fromColumn, 
@@ -53,7 +55,13 @@ public class Sqlite : Relational
             JOIN pragma_table_list(m.tbl_name) as tl
             JOIN pragma_table_list(fkl.'table') as fk
             WHERE m.type = 'table' ;")
-            .ToList();
+                .ToList();
+        }
+        catch (Exception e)
+        {
+            ForeignKeysQueryResults = new List<ForeignKeysQueryResult>();
+        }
+        
     }
 
     protected override void GetColumnOptionsQueryResults()

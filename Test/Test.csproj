@@ -32,6 +32,12 @@
         <None Update="TestResources\SimpleDatabase.sqlite">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="TestResources\NoForeignKeysDatabase.sqlite">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="TestResources\NoPrimaryKeysDatabase.sqlite">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>
