@@ -101,7 +101,7 @@ public class EntityTest
     }
 
     [Fact]
-    public void DataStoreStructureChaining()
+    public void DatabaseStructureChaining()
     {
         const string sqliteName = "SQLite";
         const string schemaName = "Schema";

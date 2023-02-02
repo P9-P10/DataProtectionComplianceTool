@@ -7,9 +7,9 @@ public static class ConfigurationHandler
     private const string OntologyKey = "OntologyPath";
     private const string GraphStorageKey = "GraphStorageConnectionString";
 
-    public static string GetConnectionString(Uri datastoreUri)
+    public static string GetConnectionString(Uri databaseUri)
     {
-        return ConfigurationManager.ConnectionStrings[datastoreUri.ToString()].ConnectionString;
+        return ConfigurationManager.ConnectionStrings[databaseUri.ToString()].ConnectionString;
     }
 
     public static string? GetOntologyPath()

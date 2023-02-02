@@ -13,6 +13,9 @@ using StringWriter = VDS.RDF.Writing.StringWriter;
 
 namespace GraphManipulation;
 
+// TODO: Omdøb Table til Relation
+// TODO: Omdøb Column til Attribute
+
 public static class Program
 {
     private const string GraphStoragePath =
@@ -32,7 +35,7 @@ public static class Program
         $"/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/{OutputFileName}";
 
     private const string OntologyPath =
-        "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/Ontologies/datastore-description-language.ttl";
+        "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/Ontologies/database-description-language.ttl";
 
     public static void Main()
     {
@@ -42,16 +45,16 @@ public static class Program
 
         // SparqlExperiment();
         // SparqlExperiment("SELECT * WHERE { ?s ?p ?o }");
-        // SparqlExperiment(@"SELECT ?name ?o WHERE { ?datastore a ddl:Datastore . ?datastore ddl:hasName ?name . ?datastore ?p ?o }");
-        // SparqlExperiment("SELECT ?something ?name WHERE { ?something a ddl:Column . ?something ddl:Datastore ?name }");
+        // SparqlExperiment(@"SELECT ?name ?o WHERE { ?database a ddl:Database . ?database ddl:hasName ?name . ?database ?p ?o }");
+        // SparqlExperiment("SELECT ?something ?name WHERE { ?something a ddl:Column . ?something ddl:Database ?name }");
 
-        // CreateAndValidateGraph();
+        CreateAndValidateGraph();
         // WorkingWithGraphStorage();
 
         // InitGraphStorage();
         // MakeChangeToGraph();
 
-        Interactive();
+        // Interactive();
     }
 
     private static void Interactive()
@@ -152,8 +155,8 @@ public static class Program
 
         // var queryString = new SparqlParameterizedString();
         // queryString.Namespaces.AddNamespace(
-        //     DataStoreDescriptionLanguage.OntologyPrefix, 
-        //     DataStoreDescriptionLanguage.OntologyUri);
+        //     DatabaseDescriptionLanguage.OntologyPrefix, 
+        //     DatabaseDescriptionLanguage.OntologyUri);
         // queryString.CommandText = commandText;
 
 
@@ -181,17 +184,17 @@ public static class Program
         using var simpleConn = new SQLiteConnection($"Data Source={SimpleDatabasePath}");
 
         var optimizedSqlite = new Sqlite("", BaseUri, optimizedConn);
-        var simpleSqlite = new Sqlite("", BaseUri, simpleConn);
+        // var simpleSqlite = new Sqlite("", BaseUri, simpleConn);
 
         optimizedSqlite.BuildFromDataSource();
-        simpleSqlite.BuildFromDataSource();
+        // simpleSqlite.BuildFromDataSource();
 
         var optimizedGraph = optimizedSqlite.ToGraph();
-        var simpleGraph = simpleSqlite.ToGraph();
+        // var simpleGraph = simpleSqlite.ToGraph();
 
         var combinedGraph = new Graph();
         combinedGraph.Merge(optimizedGraph);
-        combinedGraph.Merge(simpleGraph);
+        // combinedGraph.Merge(simpleGraph);
 
         var writer = new CompressingTurtleWriter();
 
@@ -206,5 +209,6 @@ public static class Program
         var report = dataGraph.ValidateUsing(ontology);
 
         GraphValidation.PrintValidationReport(report);
+        // Console.WriteLine(simpleSqlite.ToSqlCreateStatement());
     }
 }

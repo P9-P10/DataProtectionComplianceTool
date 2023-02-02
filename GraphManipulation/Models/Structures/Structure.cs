@@ -6,7 +6,7 @@ namespace GraphManipulation.Models.Structures;
 public abstract class Structure : StructuredEntity //, IHasStructure
 {
     public Structure? ParentStructure;
-    public DataStore? Store;
+    public Database? Database;
 
     protected Structure(string name) : base(name)
     {
@@ -30,26 +30,26 @@ public abstract class Structure : StructuredEntity //, IHasStructure
                 }
         }
 
-        if (IsTop() && HasStore() && !Store!.HasSameBase(baseUri))
+        if (IsTop() && HasDatabase() && !Database!.HasSameBase(baseUri))
         {
-            Store.UpdateBaseUri(baseUri);
+            Database.UpdateBaseUri(baseUri);
         }
 
         ComputeId();
     }
 
-    public void UpdateStore(DataStore store)
+    public void UpdateDatabase(Database database)
     {
-        Store = store;
+        Database = database;
 
-        if (!IsTop() && !ParentStructure!.HasSameStore(store))
+        if (!IsTop() && !ParentStructure!.HasSameDatabase(database))
         {
-            ParentStructure.UpdateStore(store);
+            ParentStructure.UpdateDatabase(database);
         }
 
-        if (store.HasBase())
+        if (database.HasBase())
         {
-            UpdateBaseUri(store.BaseUri);
+            UpdateBaseUri(database.BaseUri);
         }
 
         ComputeId();
@@ -60,9 +60,9 @@ public abstract class Structure : StructuredEntity //, IHasStructure
         }
 
         foreach (var subStructure in SubStructures)
-            if (!subStructure.HasSameStore(store))
+            if (!subStructure.HasSameDatabase(database))
             {
-                subStructure.UpdateStore(store);
+                subStructure.UpdateDatabase(database);
             }
     }
 
@@ -81,9 +81,9 @@ public abstract class Structure : StructuredEntity //, IHasStructure
         SubStructures.Add(structure);
         structure.ParentStructure = this;
 
-        if (HasStore())
+        if (HasDatabase())
         {
-            UpdateStore(Store!);
+            UpdateDatabase(Database!);
         }
 
         if (HasBase())
@@ -99,14 +99,14 @@ public abstract class Structure : StructuredEntity //, IHasStructure
         return ParentStructure is null;
     }
 
-    public bool HasStore()
+    public bool HasDatabase()
     {
-        return Store is not null;
+        return Database is not null;
     }
 
-    public bool HasSameStore(DataStore store)
+    public bool HasSameDatabase(Database database)
     {
-        return HasStore() && Store!.Equals(store);
+        return HasDatabase() && Database!.Equals(database);
     }
 
     public override List<string> ConstructIdString()
@@ -115,9 +115,9 @@ public abstract class Structure : StructuredEntity //, IHasStructure
 
         if (IsTop())
         {
-            if (HasStore())
+            if (HasDatabase())
             {
-                result = Store!.ConstructIdString();
+                result = Database!.ConstructIdString();
             }
         }
         else

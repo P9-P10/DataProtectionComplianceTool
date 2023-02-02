@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Test;
 
-public class DataStoreTest
+public class DatabaseTest
 {
     private const string BaseUri = "http://www.test.com/";
 
@@ -34,7 +34,7 @@ public class DataStoreTest
     }
 
     [Fact]
-    public void StructureCannotBeAddedMultipleTimesToStoreListOfStructures()
+    public void StructureCannotBeAddedMultipleTimesToDatabasesListOfStructures()
     {
         const string sqliteName = "SQLite";
         const string schemaName = "Schema";
@@ -99,7 +99,7 @@ public class DataStoreTest
     }
 
     [Fact]
-    public void AddStructureUpdatesStore()
+    public void AddStructureUpdatesDatabase()
     {
         var sqlite = new Sqlite("SQLite");
         var table = new Table("Table");
@@ -107,6 +107,6 @@ public class DataStoreTest
         sqlite.UpdateBaseUri(BaseUri);
         sqlite.AddStructure(table);
 
-        Assert.Equal(sqlite, table.Store);
+        Assert.Equal(sqlite, table.Database);
     }
 }

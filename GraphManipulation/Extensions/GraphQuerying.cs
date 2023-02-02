@@ -19,7 +19,7 @@ public static class GraphQuerying
     public static string GetNameOfNode(this IGraph graph, INode subject)
     {
         return graph
-            .GetTriplesWithSubjectPredicate(subject, graph.CreateUriNode(DataStoreDescriptionLanguage.HasName))
+            .GetTriplesWithSubjectPredicate(subject, graph.CreateUriNode(DatabaseDescriptionLanguage.HasName))
             .Select(triple => triple.Object as LiteralNode)
             .First()!
             .Value;
@@ -30,7 +30,7 @@ public static class GraphQuerying
         return graph
             .GetTriplesWithSubjectPredicate(
                 graph.CreateUriNode(subject.Uri),
-                graph.CreateUriNode(DataStoreDescriptionLanguage.HasStructure))
+                graph.CreateUriNode(DatabaseDescriptionLanguage.HasStructure))
             .Select(triple => triple.Object);
     }
 
@@ -43,7 +43,7 @@ public static class GraphQuerying
             .Select(name => (T)Activator.CreateInstance(typeof(T), name)!);
     }
 
-    public static string? GetDataStoreDescriptionLanguageTypeFromUri(this IGraph graph, Uri uri)
+    public static string? GetDatabaseDescriptionLanguageTypeFromUri(this IGraph graph, Uri uri)
     {
         var triples = graph.GetTriplesWithSubjectPredicate(
             graph.CreateUriNode(uri),
@@ -55,15 +55,15 @@ public static class GraphQuerying
             .Uri
             .ToString()
             .Replace(
-                DataStoreDescriptionLanguage.OntologyUri.ToString(),
-                DataStoreDescriptionLanguage.OntologyPrefix + ":");
+                DatabaseDescriptionLanguage.OntologyUri.ToString(),
+                DatabaseDescriptionLanguage.OntologyPrefix + ":");
     }
 
     public static string GetColumnDataType(this IGraph graph, Column column)
     {
         return graph
             .GetTriplesWithSubjectPredicate(graph.CreateUriNode(column.Uri),
-                graph.CreateUriNode(DataStoreDescriptionLanguage.HasDataType))
+                graph.CreateUriNode(DatabaseDescriptionLanguage.HasDataType))
             .Select(triple => triple.Object as LiteralNode)
             .First()!
             .Value;
@@ -73,7 +73,7 @@ public static class GraphQuerying
     {
         return graph
             .GetTriplesWithSubjectPredicate(graph.CreateUriNode(column.Uri),
-                graph.CreateUriNode(DataStoreDescriptionLanguage.IsNotNull))
+                graph.CreateUriNode(DatabaseDescriptionLanguage.IsNotNull))
             .Select(triple => triple.Object as LiteralNode)
             .First()!
             .Value
@@ -84,7 +84,7 @@ public static class GraphQuerying
     {
         return graph
             .GetTriplesWithSubjectPredicate(graph.CreateUriNode(column.Uri),
-                graph.CreateUriNode(DataStoreDescriptionLanguage.ColumnOptions))
+                graph.CreateUriNode(DatabaseDescriptionLanguage.ColumnOptions))
             .Select(triple => triple.Object as LiteralNode)
             .First()!
             .Value;

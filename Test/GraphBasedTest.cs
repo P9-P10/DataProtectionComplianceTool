@@ -19,7 +19,7 @@ public class GraphBasedTest
             var column = new Column("Column");
             column.UpdateBaseUri(baseUri);
 
-            // Added to avoid StructureException caused by Structure having no Store
+            // Added to avoid StructureException caused by Structure having no Database
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(baseUri);
             sqlite.AddStructure(column);
@@ -35,7 +35,7 @@ public class GraphBasedTest
             var column = new Column("Column");
             column.UpdateBaseUri(baseUri);
 
-            // Added to avoid StructureException caused by Structure having no Store
+            // Added to avoid StructureException caused by Structure having no Database
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(baseUri);
             sqlite.AddStructure(column);
@@ -43,7 +43,7 @@ public class GraphBasedTest
             var graph = column.ToGraph();
 
             Assert.True(graph.NamespaceMap.HasNamespace("rdf"));
-            Assert.True(graph.NamespaceMap.HasNamespace(DataStoreDescriptionLanguage.OntologyPrefix));
+            Assert.True(graph.NamespaceMap.HasNamespace(DatabaseDescriptionLanguage.OntologyPrefix));
         }
 
         [Fact]
@@ -51,7 +51,7 @@ public class GraphBasedTest
         {
             var column = new Column("Column");
 
-            Assert.Throws<DataStoreToGraphException>(() => column.ToGraph());
+            Assert.Throws<DatabaseToGraphException>(() => column.ToGraph());
         }
 
         [Fact]
@@ -61,7 +61,7 @@ public class GraphBasedTest
             var column = new Column(columnName);
             column.UpdateBaseUri(baseUri);
 
-            // Added to avoid StructureException caused by Structure having no Store
+            // Added to avoid StructureException caused by Structure having no Database
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(baseUri);
             sqlite.AddStructure(column);
@@ -69,7 +69,7 @@ public class GraphBasedTest
             var graph = column.ToGraph();
 
             var subj = graph.CreateUriNode(column.Uri);
-            var pred = graph.CreateUriNode(DataStoreDescriptionLanguage.HasName);
+            var pred = graph.CreateUriNode(DatabaseDescriptionLanguage.HasName);
             var obj = graph.CreateLiteralNode(columnName);
 
             Assert.Contains(new Triple(subj, pred, obj), graph.Triples);
@@ -82,7 +82,7 @@ public class GraphBasedTest
             var column = new Column(columnName);
             column.UpdateBaseUri(baseUri);
 
-            // Added to avoid StructureException caused by Structure having no Store
+            // Added to avoid StructureException caused by Structure having no Database
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(baseUri);
             sqlite.AddStructure(column);
@@ -91,7 +91,7 @@ public class GraphBasedTest
 
             var subj = graph.CreateUriNode(column.Uri);
             var pred = graph.CreateUriNode("rdf:type");
-            var obj = graph.CreateUriNode(DataStoreDescriptionLanguage.Column);
+            var obj = graph.CreateUriNode(DatabaseDescriptionLanguage.Column);
 
             Assert.Contains(new Triple(subj, pred, obj), graph.Triples);
         }
@@ -105,7 +105,7 @@ public class GraphBasedTest
             parent.UpdateBaseUri(baseUri);
             parent.AddStructure(child);
 
-            // Added to avoid StructureException caused by Structure having no Store
+            // Added to avoid StructureException caused by Structure having no Database
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(baseUri);
             sqlite.AddStructure(parent);
@@ -114,7 +114,7 @@ public class GraphBasedTest
 
             var triple = new Triple(
                 graph.CreateUriNode(parent.Uri),
-                graph.CreateUriNode(DataStoreDescriptionLanguage.HasStructure),
+                graph.CreateUriNode(DatabaseDescriptionLanguage.HasStructure),
                 graph.CreateUriNode(child.Uri)
             );
 
@@ -122,7 +122,7 @@ public class GraphBasedTest
         }
 
         [Fact]
-        public void StoreSubStructuresAddedToGraph()
+        public void DatabaseSubStructuresAddedToGraph()
         {
             var sqlite = new Sqlite("SQLite");
             var table1 = new Table("Table1");
@@ -144,13 +144,13 @@ public class GraphBasedTest
 
             var triple1 = new Triple(
                 graph.CreateUriNode(sqlite.Uri),
-                graph.CreateUriNode(DataStoreDescriptionLanguage.HasStructure),
+                graph.CreateUriNode(DatabaseDescriptionLanguage.HasStructure),
                 graph.CreateUriNode(table1.Uri)
             );
 
             var triple2 = new Triple(
                 graph.CreateUriNode(sqlite.Uri),
-                graph.CreateUriNode(DataStoreDescriptionLanguage.HasStructure),
+                graph.CreateUriNode(DatabaseDescriptionLanguage.HasStructure),
                 graph.CreateUriNode(table2.Uri)
             );
 
@@ -172,7 +172,7 @@ public class GraphBasedTest
             table.AddStructure(column2);
             table.AddPrimaryKey(column1);
 
-            // Added to avoid StructureException caused by Structure having no Store
+            // Added to avoid StructureException caused by Structure having no Database
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(baseUri);
             sqlite.AddStructure(schema);
@@ -181,19 +181,19 @@ public class GraphBasedTest
 
             var triple1 = new Triple(
                 graph.CreateUriNode(schema.Uri),
-                graph.CreateUriNode(DataStoreDescriptionLanguage.HasStructure),
+                graph.CreateUriNode(DatabaseDescriptionLanguage.HasStructure),
                 graph.CreateUriNode(table.Uri)
             );
 
             var triple2 = new Triple(
                 graph.CreateUriNode(table.Uri),
-                graph.CreateUriNode(DataStoreDescriptionLanguage.HasStructure),
+                graph.CreateUriNode(DatabaseDescriptionLanguage.HasStructure),
                 graph.CreateUriNode(column1.Uri)
             );
 
             var triple3 = new Triple(
                 graph.CreateUriNode(table.Uri),
-                graph.CreateUriNode(DataStoreDescriptionLanguage.HasStructure),
+                graph.CreateUriNode(DatabaseDescriptionLanguage.HasStructure),
                 graph.CreateUriNode(column2.Uri)
             );
 
@@ -203,7 +203,7 @@ public class GraphBasedTest
         }
 
         [Fact]
-        public void StructureHasStoreAddedToGraph()
+        public void StructureHasDatabaseAddedToGraph()
         {
             var sqlite = new Sqlite("SQLite");
             var column = new Column("Column");
@@ -215,7 +215,7 @@ public class GraphBasedTest
 
             var triple = new Triple(
                 graph.CreateUriNode(column.Uri),
-                graph.CreateUriNode(DataStoreDescriptionLanguage.HasStore),
+                graph.CreateUriNode(DatabaseDescriptionLanguage.HasDatabase),
                 graph.CreateUriNode(sqlite.Uri)
             );
 
@@ -223,13 +223,13 @@ public class GraphBasedTest
         }
 
         [Fact]
-        public void StructureHasNoStoreWhenBuildingGraphThrowsException()
+        public void StructureHasNoDatabaseWhenBuildingGraphThrowsException()
         {
             var column = new Column("Column");
 
             column.UpdateBaseUri(baseUri);
 
-            Assert.Throws<DataStoreToGraphException>(() => column.ToGraph());
+            Assert.Throws<DatabaseToGraphException>(() => column.ToGraph());
         }
     }
 }

@@ -10,7 +10,7 @@ public static class GraphAsserts
 {
     public static void AssertHasStructureTriple(this IGraph graph, Entity parent, Entity child)
     {
-        graph.AssertSubjectPredicateObjectTriple(parent, DataStoreDescriptionLanguage.HasStructure, child);
+        graph.AssertSubjectPredicateObjectTriple(parent, DatabaseDescriptionLanguage.HasStructure, child);
     }
 
     public static void AssertTypeTriple(this IGraph graph, Entity entity)
@@ -21,7 +21,7 @@ public static class GraphAsserts
 
     public static void AssertNameTriple(this IGraph graph, NamedEntity entity)
     {
-        graph.AssertSubjectPredicateObjectTriple(entity, DataStoreDescriptionLanguage.HasName, entity.Name);
+        graph.AssertSubjectPredicateObjectTriple(entity, DatabaseDescriptionLanguage.HasName, entity.Name);
     }
 
     public static void AssertNamedEntityTriple(this IGraph graph, NamedEntity entity)
@@ -32,37 +32,37 @@ public static class GraphAsserts
 
     public static void AssertHasDataTypeTriple(this IGraph graph, Column column)
     {
-        graph.AssertSubjectPredicateObjectTriple(column, DataStoreDescriptionLanguage.HasDataType, column.DataType);
+        graph.AssertSubjectPredicateObjectTriple(column, DatabaseDescriptionLanguage.HasDataType, column.DataType);
     }
 
     public static void AssertIsNotNullTriple(this IGraph graph, Column column)
     {
         graph.AssertSubjectPredicateObjectTriple(
             column,
-            DataStoreDescriptionLanguage.IsNotNull,
+            DatabaseDescriptionLanguage.IsNotNull,
             graph.CreateLiteralNode(column.IsNotNull.ToString().ToLower(),
                 UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeBoolean)));
     }
 
-    public static void AssertHasStoreTriple(this IGraph graph, Structure structure)
+    public static void AssertHasDatabaseTriple(this IGraph graph, Structure structure)
     {
-        graph.AssertSubjectPredicateObjectTriple(structure, DataStoreDescriptionLanguage.HasStore, structure.Store!);
+        graph.AssertSubjectPredicateObjectTriple(structure, DatabaseDescriptionLanguage.HasDatabase, structure.Database!);
     }
 
     public static void AssertOptionsTriple(this IGraph graph, Column column)
     {
-        graph.AssertSubjectPredicateObjectTriple(column, DataStoreDescriptionLanguage.ColumnOptions, column.Options);
+        graph.AssertSubjectPredicateObjectTriple(column, DatabaseDescriptionLanguage.ColumnOptions, column.Options);
     }
 
     public static void AssertPrimaryKeys(this IGraph graph, Table table)
     {
         if (table.PrimaryKeys.Count == 0)
         {
-            throw new DataStoreToGraphException("No primary keys when creating graph");
+            throw new DatabaseToGraphException("No primary keys when creating graph");
         }
 
         var subj = graph.CreateUriNode(table.Uri);
-        var pred = graph.CreateUriNode(DataStoreDescriptionLanguage.PrimaryKey);
+        var pred = graph.CreateUriNode(DatabaseDescriptionLanguage.PrimaryKey);
 
         foreach (var primaryKey in table.PrimaryKeys)
         {
@@ -79,10 +79,10 @@ public static class GraphAsserts
         }
 
         var tableUri = graph.CreateUriNode(table.Uri);
-        var foreignKeyPredicate = graph.CreateUriNode(DataStoreDescriptionLanguage.ForeignKey);
-        var referencesPredicate = graph.CreateUriNode(DataStoreDescriptionLanguage.References);
-        var foreignKeyOnDeletePredicate = graph.CreateUriNode(DataStoreDescriptionLanguage.ForeignKeyOnDelete);
-        var foreignKeyOnUpdatePredicate = graph.CreateUriNode(DataStoreDescriptionLanguage.ForeignKeyOnUpdate);
+        var foreignKeyPredicate = graph.CreateUriNode(DatabaseDescriptionLanguage.ForeignKey);
+        var referencesPredicate = graph.CreateUriNode(DatabaseDescriptionLanguage.References);
+        var foreignKeyOnDeletePredicate = graph.CreateUriNode(DatabaseDescriptionLanguage.ForeignKeyOnDelete);
+        var foreignKeyOnUpdatePredicate = graph.CreateUriNode(DatabaseDescriptionLanguage.ForeignKeyOnUpdate);
 
         foreach (var foreignKey in table.ForeignKeys)
         {

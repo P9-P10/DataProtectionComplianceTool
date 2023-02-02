@@ -5,7 +5,7 @@ using VDS.RDF;
 
 namespace GraphManipulation.Extensions;
 
-public static class DataStoreToGraph
+public static class DatabaseToGraph
 {
     public static IGraph ToGraph(this Entity entity)
     {
@@ -27,7 +27,7 @@ public static class DataStoreToGraph
 
         if (entity is Structure structure)
         {
-            graph.AddHasStore(structure);
+            graph.AddHasDatabase(structure);
         }
 
         switch (entity)
@@ -50,15 +50,15 @@ public static class DataStoreToGraph
     private static void AddNameSpaces(this IGraph graph)
     {
         graph.NamespaceMap.AddNamespace(
-            DataStoreDescriptionLanguage.OntologyPrefix,
-            DataStoreDescriptionLanguage.OntologyUri);
+            DatabaseDescriptionLanguage.OntologyPrefix,
+            DatabaseDescriptionLanguage.OntologyUri);
     }
 
     private static void AddUriBase(this IGraph graph, Entity entity)
     {
         if (!entity.HasBase())
         {
-            throw new DataStoreToGraphException("BaseUri was null when building graph");
+            throw new DatabaseToGraphException("BaseUri was null when building graph");
         }
 
         var baseUri = UriFactory.Create(entity.BaseUri);
@@ -85,14 +85,14 @@ public static class DataStoreToGraph
         }
     }
 
-    private static void AddHasStore(this IGraph graph, Structure structure)
+    private static void AddHasDatabase(this IGraph graph, Structure structure)
     {
-        if (!structure.HasStore())
+        if (!structure.HasDatabase())
         {
-            throw new DataStoreToGraphException("Store was null when building graph");
+            throw new DatabaseToGraphException("Database was null when building graph");
         }
 
-        graph.AssertHasStoreTriple(structure);
+        graph.AssertHasDatabaseTriple(structure);
     }
 
     private static void AddPrimaryKeys(this IGraph graph, Table table)
@@ -121,9 +121,9 @@ public static class DataStoreToGraph
     }
 }
 
-public class DataStoreToGraphException : Exception
+public class DatabaseToGraphException : Exception
 {
-    public DataStoreToGraphException(string message) : base(message)
+    public DatabaseToGraphException(string message) : base(message)
     {
     }
 }

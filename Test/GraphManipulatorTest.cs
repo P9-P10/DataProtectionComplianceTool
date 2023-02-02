@@ -15,9 +15,9 @@ public class GraphManipulatorTest
     private const string BaseUri = "http://www.test.com/";
 
 
-    private static TestDataStoreFixture CreateDatastore()
+    private static TestDatabaseFixture CreateDatabase()
     {
-        return new TestDataStoreFixture();
+        return new TestDatabaseFixture();
     }
 
     public class Move
@@ -25,7 +25,7 @@ public class GraphManipulatorTest
         [Fact]
         public void StructureChangesItsParent()
         {
-            var tds = CreateDatastore();
+            var tds = CreateDatabase();
             var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
 
             var columnUriBefore = tds.ExpectedColumn.Uri.ToString();
@@ -47,7 +47,7 @@ public class GraphManipulatorTest
         [Fact]
         public void StructureKeepsAttributesSuchAsColumnType()
         {
-            var tds = CreateDatastore();
+            var tds = CreateDatabase();
             var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
 
             var columnUriBefore = tds.ExpectedColumn.Uri.ToString();
@@ -65,7 +65,7 @@ public class GraphManipulatorTest
         [Fact]
         public void ChildrenMoved()
         {
-            var tds = CreateDatastore();
+            var tds = CreateDatabase();
             var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
 
             var tableUriBefore = tds.ExpectedTable1.Uri.ToString();
@@ -99,7 +99,7 @@ public class GraphManipulatorTest
         [Fact]
         public void ChangeNameThrowsException()
         {
-            var tds = CreateDatastore();
+            var tds = CreateDatabase();
             var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
 
             var newName = "NewName";
@@ -116,7 +116,7 @@ public class GraphManipulatorTest
         [Fact]
         public void ToSameLocationDoesNothing()
         {
-            var tds = CreateDatastore();
+            var tds = CreateDatabase();
             var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
 
             graphManipulator.Move(tds.ExpectedColumn.Uri, tds.ExpectedColumn.Uri);
@@ -125,9 +125,9 @@ public class GraphManipulatorTest
         }
 
         [Fact]
-        public void DatastoreThrowsException()
+        public void DatabaseThrowsException()
         {
-            var tds = CreateDatastore();
+            var tds = CreateDatabase();
             var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
 
             Assert.Throws<GraphManipulatorException>(() =>
@@ -137,7 +137,7 @@ public class GraphManipulatorTest
         [Fact]
         public void ToLocationNotInGraphThrowsException()
         {
-            var tds = CreateDatastore();
+            var tds = CreateDatabase();
             var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
 
             var sqlite = new Sqlite("MySqlite", BaseUri);
@@ -153,7 +153,7 @@ public class GraphManipulatorTest
         [Fact]
         public void ColumnMovedToDifferentSchemaIsPossible()
         {
-            var tds = CreateDatastore();
+            var tds = CreateDatabase();
             var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
 
             var columnUriBefore = tds.ExpectedColumn.Uri.ToString();
@@ -178,7 +178,7 @@ public class GraphManipulatorTest
         [Fact]
         public void RenamesStructure()
         {
-            var tds = CreateDatastore();
+            var tds = CreateDatabase();
             var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
 
             var columnUriBefore = tds.ExpectedColumn.Uri.ToString();
@@ -198,7 +198,7 @@ public class GraphManipulatorTest
         [Fact]
         public void AddsChange()
         {
-            var tds = CreateDatastore();
+            var tds = CreateDatabase();
             var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
 
             var newName = "NewName";
@@ -216,7 +216,7 @@ public class GraphManipulatorTest
         [Fact]
         public void AddsChangesForChildrenIdRecomputes()
         {
-            var tds = CreateDatastore();
+            var tds = CreateDatabase();
             var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
 
             var newName = "NewName";
@@ -246,7 +246,7 @@ public class GraphManipulatorTest
         [Fact]
         public void AddsChangesForChildrensChildrenIdRecomputes()
         {
-            var tds = CreateDatastore();
+            var tds = CreateDatabase();
             var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
 
             var newName = "NewName";
@@ -288,7 +288,7 @@ public class GraphManipulatorTest
         [Fact]
         public void ToSameNameDoesNothing()
         {
-            var tds = CreateDatastore();
+            var tds = CreateDatabase();
             var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
 
             graphManipulator.Rename(tds.ExpectedColumn.Uri, tds.ExpectedColumn.Uri);
@@ -299,7 +299,7 @@ public class GraphManipulatorTest
         [Fact]
         public void DifferentParentUriThrowsException()
         {
-            var tds = CreateDatastore();
+            var tds = CreateDatabase();
             var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
 
             var columnUriBefore = tds.ExpectedColumn.Uri.ToString();
@@ -320,7 +320,7 @@ public class GraphManipulatorTest
         [Fact]
         public void MoveQueryApplied()
         {
-            var tds = CreateDatastore();
+            var tds = CreateDatabase();
             var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
 
             var columnUriBefore = tds.ExpectedColumn.Uri.ToString();
@@ -343,7 +343,7 @@ public class GraphManipulatorTest
         [Fact]
         public void RenameQueryApplied()
         {
-            var tds = CreateDatastore();
+            var tds = CreateDatabase();
             var graphManipulator = new GraphManipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
 
             var columnUriBefore = tds.ExpectedColumn.Uri.ToString();
@@ -362,7 +362,7 @@ public class GraphManipulatorTest
         }
     }
 
-    private class TestDataStoreFixture
+    private class TestDatabaseFixture
     {
         private const string ExpectedSqliteName = "TestSqlite";
         private const string ExpectedSchema1Name = "TestSchema1";
@@ -386,7 +386,7 @@ public class GraphManipulatorTest
         public readonly Table ExpectedTable2;
         public readonly Table ExpectedTable3;
 
-        public TestDataStoreFixture()
+        public TestDatabaseFixture()
         {
             ExpectedSqlite = new Sqlite(ExpectedSqliteName, BaseUri);
             ExpectedSchema1 = new Schema(ExpectedSchema1Name);
