@@ -34,11 +34,11 @@ public class InteractiveMode
 
         while (!stop)
         {
-            var managedDataStores = graphStorage.GetListOfManagedDataStoresWithType();
+            var managedDatabases = graphStorage.GetListOfManagedDatabasesWithType();
 
-            var choice = PresentManagedDataStoresReturnChoice(managedDataStores);
+            var choice = PresentManagedDatabasesReturnChoice(managedDatabases);
 
-            InitOrManageDataStore(choice, managedDataStores, graphStorage);
+            InitOrManageDatabase(choice, managedDatabases, graphStorage);
 
             if (PresentExit("the program"))
             {
@@ -180,21 +180,21 @@ public class InteractiveMode
         return boolString == trueEquivalent;
     }
 
-    private static int PresentManagedDataStoresReturnChoice(List<(string, string)> managedDataStores)
+    private static int PresentManagedDatabasesReturnChoice(List<(string, string)> managedDatabases)
     {
         Console.WriteLine();
-        Console.WriteLine("These are the currently managed datastores: ");
+        Console.WriteLine("These are the currently managed databases: ");
 
         var index = 1;
 
-        managedDataStores.ForEach(tuple => Console.WriteLine($"({index++}) : {tuple.Item1} - {tuple.Item2}"));
-        Console.WriteLine("\n(0) - Insert new datastore");
+        managedDatabases.ForEach(tuple => Console.WriteLine($"({index++}) : {tuple.Item1} - {tuple.Item2}"));
+        Console.WriteLine("\n(0) - Insert new database");
 
         Console.WriteLine();
-        Console.WriteLine("Please select which datastore you want to manipulate: ");
+        Console.WriteLine("Please select which database you want to manipulate: ");
         var choice = GetIntFromUser(
-            i => i < 0 || i > managedDataStores.Count,
-            $"Please choose a number between 0 and {managedDataStores.Count} (inclusive)");
+            i => i < 0 || i > managedDatabases.Count,
+            $"Please choose a number between 0 and {managedDatabases.Count} (inclusive)");
 
         return choice;
     }
@@ -206,43 +206,43 @@ public class InteractiveMode
         return GetBoolFromUser("y", "n");
     }
 
-    private static void InitOrManageDataStore(int choice, List<(string, string)> managedDataStores,
+    private static void InitOrManageDatabase(int choice, List<(string, string)> managedDatabases,
         GraphStorage graphStorage)
     {
         if (choice == 0)
         {
-            InitDatastore(graphStorage);
+            InitDatabase(graphStorage);
         }
         else
         {
-            var chosenTuple = managedDataStores[choice - 1];
-            var datastoreUri = UriFactory.Create(chosenTuple.Item1);
-            var datastoreType = GraphDataType.GetTypeFromString(chosenTuple.Item2);
+            var chosenTuple = managedDatabases[choice - 1];
+            var databaseUri = UriFactory.Create(chosenTuple.Item1);
+            var databaseType = GraphDataType.GetTypeFromString(chosenTuple.Item2);
 
-            switch (datastoreType)
+            switch (databaseType)
             {
-                case { } when datastoreType == typeof(Sqlite):
-                    ManageSelectedDatastore<Sqlite>(datastoreUri, graphStorage);
+                case { } when databaseType == typeof(Sqlite):
+                    ManageSelectedDatabase<Sqlite>(databaseUri, graphStorage);
                     break;
-                // case { } when datastoreType == typeof(PostgreSql):
-                //     ManageSelectedDatastore<PostgreSql>(datastoreUri, graphStorage);
+                // case { } when databaseType == typeof(PostgreSql):
+                //     ManageSelectedDatabase<PostgreSql>(databaseUri, graphStorage);
                 //     break;
                 default:
-                    throw new InteractiveModeException("The type of datastore is not supported: " + datastoreType);
+                    throw new InteractiveModeException("The type of database is not supported: " + databaseType);
             }
         }
     }
 
-    private static void InitDatastore(GraphStorage graphStorage)
+    private static void InitDatabase(GraphStorage graphStorage)
     {
         var baseUri = GetBaseUriFromUser();
 
         Console.WriteLine();
-        Console.WriteLine("Please provide the type of datastore you want to manage: ");
-        PresentDataStoreTypes();
+        Console.WriteLine("Please provide the type of database you want to manage: ");
+        PresentDatabaseTypes();
         var choice = GetIntFromUser(
             s => s != 0,
-            "Please choose a supported datastore");
+            "Please choose a supported database");
 
         switch (choice)
         {
@@ -250,7 +250,7 @@ public class InteractiveMode
                 InitSqlite(graphStorage, baseUri);
                 break;
             default:
-                throw new InteractiveModeException("The chosen type of datastore is not supported");
+                throw new InteractiveModeException("The chosen type of database is not supported");
         }
     }
 
@@ -260,7 +260,7 @@ public class InteractiveMode
         Console.WriteLine("Please provide the path to the SQLite: ");
         var flag = false;
 
-        var managedDataStores = graphStorage.GetListOfManagedDataStoresWithType();
+        var managedDatabases = graphStorage.GetListOfManagedDatabasesWithType();
         Sqlite sqlite;
 
         do
@@ -270,10 +270,10 @@ public class InteractiveMode
             sqlite = new Sqlite("", baseUri, new SQLiteConnection($"Data Source={sqlitePath}"));
             sqlite.BuildFromDataSource();
 
-            if (managedDataStores.Select(tuple => tuple.Item1).FirstOrDefault(s => s == sqlite.Uri.ToString()) != null)
+            if (managedDatabases.Select(tuple => tuple.Item1).FirstOrDefault(s => s == sqlite.Uri.ToString()) != null)
             {
                 Console.WriteLine(
-                    $"{sqlite.Uri} is already managed by this system, please choose a different datastore");
+                    $"{sqlite.Uri} is already managed by this system, please choose a different database");
             }
             else
             {
@@ -285,14 +285,14 @@ public class InteractiveMode
         graphStorage.InitInsert(sqlite);
     }
 
-    private static void PresentDataStoreTypes()
+    private static void PresentDatabaseTypes()
     {
         Console.WriteLine("(0) : SQLite");
     }
 
-    private static void ManageSelectedDatastore<T>(Uri datastoreUri, GraphStorage graphStorage) where T : DataStore
+    private static void ManageSelectedDatabase<T>(Uri databaseUri, GraphStorage graphStorage) where T : Database
     {
-        var graph = graphStorage.GetLatest(datastoreUri);
+        var graph = graphStorage.GetLatest(databaseUri);
 
         var graphManipulator = new GraphManipulator<T>(graph);
 
@@ -325,7 +325,7 @@ public class InteractiveMode
 
             try
             {
-                graphStorage.Insert(datastoreUri, graphManipulator.Graph, graphManipulator.Changes);
+                graphStorage.Insert(databaseUri, graphManipulator.Graph, graphManipulator.Changes);
             }
             catch (Exception e)
             {
@@ -333,7 +333,7 @@ public class InteractiveMode
                 return;
             }
 
-            if (PresentExit($"manipulating {datastoreUri}"))
+            if (PresentExit($"manipulating {databaseUri}"))
             {
                 stop = true;
             }

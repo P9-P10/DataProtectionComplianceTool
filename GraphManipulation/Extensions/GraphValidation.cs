@@ -8,9 +8,9 @@ namespace GraphManipulation.Extensions;
 
 public static class GraphValidation
 {
-    public static Report ValidateUsing(this DataStore dataStore, IGraph ontology)
+    public static Report ValidateUsing(this Database database, IGraph ontology)
     {
-        return dataStore.ToGraph().ValidateUsing(ontology);
+        return database.ToGraph().ValidateUsing(ontology);
     }
 
     public static Report ValidateUsing(this IGraph graph, IGraph ontology)

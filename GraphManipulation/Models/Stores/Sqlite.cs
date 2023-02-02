@@ -8,7 +8,7 @@ public class Sqlite : Relational
 {
     public Sqlite(string name) : base(name)
     {
-        // DataStoreType = SupportedDataStores.Sqlite;
+        // DatabaseType = SupportedDatabases.Sqlite;
     }
 
     public Sqlite(string name, string baseUri) : base(name, baseUri)
@@ -86,7 +86,7 @@ public class Sqlite : Relational
     {
         if (Connection is null)
         {
-            throw new DataStoreException("Connection was null when building SQLite");
+            throw new DatabaseException("Connection was null when building SQLite");
         }
 
         Connection.Open();

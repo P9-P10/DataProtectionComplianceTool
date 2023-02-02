@@ -43,7 +43,7 @@ public static class GraphQuerying
             .Select(name => (T)Activator.CreateInstance(typeof(T), name)!);
     }
 
-    public static string? GetDataStoreDescriptionLanguageTypeFromUri(this IGraph graph, Uri uri)
+    public static string? GetDatabaseDescriptionLanguageTypeFromUri(this IGraph graph, Uri uri)
     {
         var triples = graph.GetTriplesWithSubjectPredicate(
             graph.CreateUriNode(uri),

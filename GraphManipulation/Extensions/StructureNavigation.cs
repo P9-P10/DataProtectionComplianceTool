@@ -32,9 +32,9 @@ public static class StructureNavigation
         return structuredEntity.Find<T>(structure.Uri);
     }
 
-    public static Schema? FindSchema(this DataStore dataStore, string schemaName)
+    public static Schema? FindSchema(this Database database, string schemaName)
     {
-        return dataStore.SubStructures.Select(sub => (sub as Schema)!).FirstOrDefault(s => s.Name == schemaName);
+        return database.SubStructures.Select(sub => (sub as Schema)!).FirstOrDefault(s => s.Name == schemaName);
     }
 
     public static Table? FindTable(this Schema schema, string tableName)

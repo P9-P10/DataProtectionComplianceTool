@@ -8,13 +8,13 @@ using Xunit;
 
 namespace Test;
 
-public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestDataStoreFixture>
+public class DatabaseFromGraphTest : IClassFixture<DatabaseFromGraphTest.TestDatabaseFixture>
 {
     private const string BaseUri = "http://www.test.com/";
 
-    private readonly TestDataStoreFixture _tds;
+    private readonly TestDatabaseFixture _tds;
 
-    public DataStoreFromGraphTest(TestDataStoreFixture tds)
+    public DatabaseFromGraphTest(TestDatabaseFixture tds)
     {
         _tds = tds;
     }
@@ -34,7 +34,7 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
 
 
     [Fact]
-    public void GetDataStoreCreatesTheDataStoreOfGivenType()
+    public void GetDatabaseCreatesTheDatabaseOfGivenType()
     {
         Assert.Equal(_tds.ExpectedSqlite, _tds.ActualSqlite);
         Assert.Equal(_tds.ExpectedSqlite.Uri, _tds.ActualSqlite.Uri);
@@ -43,7 +43,7 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     }
 
     [Fact]
-    public void GetDataStoreTypeSqliteReturnsSqliteWithSchemas()
+    public void GetDatabaseTypeSqliteReturnsSqliteWithSchemas()
     {
         var actualSchema1 = _tds.ActualSqlite
             .Find<Schema>(_tds.ExpectedSchema1)!;
@@ -61,7 +61,7 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     }
 
     [Fact]
-    public void GetDataStoreTypeSqliteReturnsSqliteWithTables()
+    public void GetDatabaseTypeSqliteReturnsSqliteWithTables()
     {
         var actualTable1 = _tds.ActualSqlite
             .Find<Table>(_tds.ExpectedTable1);
@@ -74,7 +74,7 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     }
 
     [Fact]
-    public void GetDataStoreTypeSqliteReturnsSqliteWithColumns()
+    public void GetDatabaseTypeSqliteReturnsSqliteWithColumns()
     {
         var actualColumn1 = _tds.ActualSqlite
             .Find<Column>(_tds.ExpectedColumn11);
@@ -87,7 +87,7 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     }
 
     [Fact]
-    public void GetDataStoreTypeSqliteReturnsSqliteWithTablesWithSinglePrimaryKey()
+    public void GetDatabaseTypeSqliteReturnsSqliteWithTablesWithSinglePrimaryKey()
     {
         var actual = _tds.ActualSqlite
             .Find<Table>(_tds.ExpectedTable1)!
@@ -98,7 +98,7 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     }
 
     [Fact]
-    public void GetDataStoreTypeSqliteReturnsSqliteWithTablesWithCompositePrimaryKey()
+    public void GetDatabaseTypeSqliteReturnsSqliteWithTablesWithCompositePrimaryKey()
     {
         var actual = _tds.ActualSqlite
             .Find<Table>(_tds.ExpectedTable3.Uri)!
@@ -110,7 +110,7 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     }
 
     [Fact]
-    public void GetDataStoreTypeSqliteReturnsSqliteWithTablesWithSingleForeignKey()
+    public void GetDatabaseTypeSqliteReturnsSqliteWithTablesWithSingleForeignKey()
     {
         var actual = _tds.ActualSqlite
             .Find<Table>(_tds.ExpectedTable1)!
@@ -121,7 +121,7 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     }
 
     [Fact]
-    public void GetDataStoreTypeSqliteReturnsSqliteWithTablesWithCompositeForeignKey()
+    public void GetDatabaseTypeSqliteReturnsSqliteWithTablesWithCompositeForeignKey()
     {
         var actual = _tds.ActualSqlite
             .Find<Table>(_tds.ExpectedTable2)!
@@ -132,17 +132,17 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     }
 
     [Fact]
-    public void GetDataStoreTypeSqliteReturnsSqliteWithColumnsWithDataType()
+    public void GetDatabaseTypeSqliteReturnsSqliteWithColumnsWithDataType()
     {
         var actualDataType = _tds.ActualSqlite
             .Find<Column>(_tds.ExpectedColumn11)!
             .DataType;
 
-        Assert.Equal(TestDataStoreFixture.ExpectedColumn11DataType, actualDataType);
+        Assert.Equal(TestDatabaseFixture.ExpectedColumn11DataType, actualDataType);
     }
 
     [Fact]
-    public void GetDataStoreTypeSqliteReturnsSqliteWithColumnsWithIsNotNull()
+    public void GetDatabaseTypeSqliteReturnsSqliteWithColumnsWithIsNotNull()
     {
         var actualIsNotNull1 = _tds.ActualSqlite
             .Find<Column>(_tds.ExpectedColumn11)!
@@ -157,7 +157,7 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
     }
 
     [Fact]
-    public void GetDataStoreTypeSqliteReturnsSqliteWithColumnsWithOptions()
+    public void GetDatabaseTypeSqliteReturnsSqliteWithColumnsWithOptions()
     {
         var actualOptions1 = _tds.ActualSqlite
             .Find<Column>(_tds.ExpectedColumn11)!
@@ -171,7 +171,7 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
         Assert.Equal(_tds.ExpectedColumn12.Options, actualOptions2);
     }
 
-    public class TestDataStoreFixture
+    public class TestDatabaseFixture
     {
         private const string ExpectedSqliteName = "TestSqlite";
         private const string ExpectedSchema1Name = "TestSchema1";
@@ -219,7 +219,7 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
 
         public IGraph Graph;
 
-        public TestDataStoreFixture()
+        public TestDatabaseFixture()
         {
             ExpectedSqlite = new Sqlite(ExpectedSqliteName, BaseUri);
             ExpectedSchema1 = new Schema(ExpectedSchema1Name);
@@ -271,7 +271,7 @@ public class DataStoreFromGraphTest : IClassFixture<DataStoreFromGraphTest.TestD
 
             Graph.Merge(ExpectedSqlite.ToGraph());
 
-            ActualSqlite = Graph.ConstructDataStore<Sqlite>()!;
+            ActualSqlite = Graph.ConstructDatabase<Sqlite>()!;
         }
     }
 }

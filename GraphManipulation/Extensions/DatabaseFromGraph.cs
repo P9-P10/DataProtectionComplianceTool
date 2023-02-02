@@ -5,9 +5,9 @@ using VDS.RDF;
 
 namespace GraphManipulation.Extensions;
 
-public static class DataStoreFromGraph
+public static class DatabaseFromGraph
 {
-    public static T? ConstructDataStore<T>(this IGraph graph) where T : DataStore
+    public static T? ConstructDatabase<T>(this IGraph graph) where T : Database
     {
         return graph
             .GetTriplesWithObject(graph.CreateUriNode(GraphDataType.GetGraphTypeString(typeof(T))))
@@ -18,14 +18,14 @@ public static class DataStoreFromGraph
                 // TODO: Det her er åbenbart langsomt, men jeg kunne ikke finde andre måder der virkede
                 return (T)Activator.CreateInstance(typeof(T), name, graph.BaseUri.ToString())!;
             })
-            .Select(datastore =>
+            .Select(database =>
             {
-                if (datastore is Relational relational)
+                if (database is Relational relational)
                 {
                     graph.ConstructRelational(relational);
                 }
 
-                return datastore;
+                return database;
             })
             .FirstOrDefault();
     }
@@ -74,17 +74,17 @@ public static class DataStoreFromGraph
             .GetTriplesWithPredicate(graph.CreateUriNode(DatabaseDescriptionLanguage.References))
             .Where(triple =>
             {
-                var subjStore = graph.GetTripleWithSubjectPredicateObject(
+                var subjDatabase = graph.GetTripleWithSubjectPredicateObject(
                     triple.Subject,
-                    graph.CreateUriNode(DatabaseDescriptionLanguage.HasStore),
+                    graph.CreateUriNode(DatabaseDescriptionLanguage.HasDatabase),
                     graph.CreateUriNode(relational.Uri));
 
-                var objStore = graph.GetTripleWithSubjectPredicateObject(
+                var objDatabase = graph.GetTripleWithSubjectPredicateObject(
                     triple.Object,
-                    graph.CreateUriNode(DatabaseDescriptionLanguage.HasStore),
+                    graph.CreateUriNode(DatabaseDescriptionLanguage.HasDatabase),
                     graph.CreateUriNode(relational.Uri));
 
-                return subjStore is not null && objStore is not null;
+                return subjDatabase is not null && objDatabase is not null;
             });
 
         foreach (var triple in triples)

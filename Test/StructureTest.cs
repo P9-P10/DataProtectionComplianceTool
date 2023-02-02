@@ -36,30 +36,30 @@ public class StructureTest
     }
 
     [Fact]
-    public void UpdateStoreSetsStore()
+    public void UpdateDatabaseSetsDatabase()
     {
         var sqlite = new Sqlite("SQLite");
         var column = new Column("Column");
 
         sqlite.UpdateBaseUri(BaseUri);
-        column.UpdateStore(sqlite);
-        Assert.Equal(sqlite, column.Store);
+        column.UpdateDatabase(sqlite);
+        Assert.Equal(sqlite, column.Database);
     }
 
     [Fact]
-    public void UpdateStoreDoesNotAddStructureToStoreListOfStructures()
+    public void UpdateDatabaseDoesNotAddStructureToDatabaseListOfStructures()
     {
         var sqlite = new Sqlite("SQLite");
         var table = new Table("Table");
 
         sqlite.UpdateBaseUri(BaseUri);
-        table.UpdateStore(sqlite);
+        table.UpdateDatabase(sqlite);
 
         Assert.DoesNotContain(table, sqlite.SubStructures);
     }
 
     [Fact]
-    public void UpdateStoreUpdatesParentStore()
+    public void UpdateDatabaseUpdatesParentDatabase()
     {
         var sqlite = new Sqlite("SQLite");
         var table = new Table("Table");
@@ -68,13 +68,13 @@ public class StructureTest
         sqlite.UpdateBaseUri(BaseUri);
 
         table.AddStructure(column);
-        column.UpdateStore(sqlite);
+        column.UpdateDatabase(sqlite);
 
-        Assert.Equal(sqlite, table.Store);
+        Assert.Equal(sqlite, table.Database);
     }
 
     [Fact]
-    public void UpdateStoreUpdatesSubStructuresStore()
+    public void UpdateDatabaseUpdatesSubStructuresDatabase()
     {
         var sqlite = new Sqlite("SQLite");
         var table = new Table("Table");
@@ -86,14 +86,14 @@ public class StructureTest
         table.AddStructure(column1);
         table.AddStructure(column2);
 
-        table.UpdateStore(sqlite);
+        table.UpdateDatabase(sqlite);
 
-        Assert.Equal(sqlite, column1.Store);
-        Assert.Equal(sqlite, column2.Store);
+        Assert.Equal(sqlite, column1.Database);
+        Assert.Equal(sqlite, column2.Database);
     }
 
     [Fact]
-    public void UpdateStoreUpdatesOwnAndParentId()
+    public void UpdateDatabaseUpdatesOwnAndParentId()
     {
         const string sqliteName = "SQLite";
         const string tableName = "Table";
@@ -110,7 +110,7 @@ public class StructureTest
         sqlite.UpdateBaseUri(BaseUri);
 
         table.AddStructure(column);
-        column.UpdateStore(sqlite);
+        column.UpdateDatabase(sqlite);
 
         Assert.Equal(expectedSqliteString, sqlite.Id);
         Assert.Equal(expectedTableString, table.Id);
@@ -118,7 +118,7 @@ public class StructureTest
     }
 
     [Fact]
-    public void UpdateStoreUpdatesOwnAndSubStructuresId()
+    public void UpdateDatabaseUpdatesOwnAndSubStructuresId()
     {
         const string sqliteName = "SQLite";
         const string tableName = "Table";
@@ -140,7 +140,7 @@ public class StructureTest
         table.AddStructure(column1);
         table.AddStructure(column2);
 
-        table.UpdateStore(sqlite);
+        table.UpdateDatabase(sqlite);
 
         Assert.Equal(expectedSqliteString, sqlite.Id);
         Assert.Equal(expectedTableString, table.Id);
@@ -162,7 +162,7 @@ public class StructureTest
     }
 
     [Fact]
-    public void UpdateBaseUpdatesStoreBase()
+    public void UpdateBaseUpdatesDatabaseBase()
     {
         var sqlite = new Sqlite("SQLite");
         var table = new Table("Table");
@@ -213,7 +213,7 @@ public class StructureTest
     }
 
     [Fact]
-    public void UpdateBaseUpdatesOwnAndStoreId()
+    public void UpdateBaseUpdatesOwnAndDatabaseId()
     {
         const string sqliteName = "SQLite";
         const string tableName = "Table";
@@ -291,7 +291,7 @@ public class StructureTest
     }
 
     [Fact]
-    public void AddStructureSetsSubStructureStore()
+    public void AddStructureSetsSubStructureDatabase()
     {
         const string sqliteName = "SQLite";
         const string tableName = "Table";
@@ -306,8 +306,8 @@ public class StructureTest
 
         table.AddStructure(column);
 
-        Assert.Equal(sqlite, table.Store);
-        Assert.Equal(sqlite, column.Store);
+        Assert.Equal(sqlite, table.Database);
+        Assert.Equal(sqlite, column.Database);
     }
 
     [Fact]
@@ -324,7 +324,7 @@ public class StructureTest
     }
 
     [Fact]
-    public void AddStructureUpdatesStore()
+    public void AddStructureUpdatesDatabase()
     {
         var sqlite = new Sqlite("SQLite");
         var table = new Table("Table");
@@ -334,8 +334,8 @@ public class StructureTest
         sqlite.AddStructure(table);
         table.AddStructure(column);
 
-        Assert.Equal(sqlite, table.Store);
-        Assert.Equal(sqlite, column.Store);
+        Assert.Equal(sqlite, table.Database);
+        Assert.Equal(sqlite, column.Database);
     }
 
     [Fact]
@@ -593,12 +593,12 @@ public class StructureTest
             var table = new Table("Table");
             table.UpdateBaseUri(BaseUri);
 
-            // Added to avoid StructureException caused by Structure having no Store
+            // Added to avoid StructureException caused by Structure having no Database
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(BaseUri);
             sqlite.AddStructure(table);
 
-            Assert.Throws<DataStoreToGraphException>(() => table.ToGraph());
+            Assert.Throws<DatabaseToGraphException>(() => table.ToGraph());
         }
 
         [Fact]
@@ -611,7 +611,7 @@ public class StructureTest
             table.AddStructure(column);
             table.AddPrimaryKey(column);
 
-            // Added to avoid StructureException caused by Structure having no Store
+            // Added to avoid StructureException caused by Structure having no Database
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(BaseUri);
             sqlite.AddStructure(table);
@@ -647,7 +647,7 @@ public class StructureTest
             var foreignKey = new ForeignKey(column1, column2);
             table1.AddForeignKey(foreignKey);
 
-            // Added to avoid StructureException caused by Structure having no Store
+            // Added to avoid StructureException caused by Structure having no Database
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(BaseUri);
             sqlite.AddStructure(table1);
@@ -769,7 +769,7 @@ public class StructureTest
             var foreignKey = new ForeignKey(column1, column2, onDelete, onUpdate);
             table1.AddForeignKey(foreignKey);
 
-            // Added to avoid StructureException caused by Structure having no Store
+            // Added to avoid StructureException caused by Structure having no Database
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(BaseUri);
             sqlite.AddStructure(table1);
@@ -816,7 +816,7 @@ public class StructureTest
             column.UpdateBaseUri(BaseUri);
             column.SetDataType("Test");
 
-            // Added to avoid StructureException caused by Structure having no Store
+            // Added to avoid StructureException caused by Structure having no Database
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(BaseUri);
             sqlite.AddStructure(column);
@@ -839,7 +839,7 @@ public class StructureTest
             column.UpdateBaseUri(BaseUri);
             column.SetDataType("INT");
 
-            // Added to avoid StructureException caused by Structure having no Store
+            // Added to avoid StructureException caused by Structure having no Database
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(BaseUri);
             sqlite.AddStructure(column);
@@ -863,7 +863,7 @@ public class StructureTest
             column.SetDataType("INT");
             column.SetOptions("AUTOINCREMENT");
 
-            // Added to avoid StructureException caused by Structure having no Store
+            // Added to avoid StructureException caused by Structure having no Database
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(BaseUri);
             sqlite.AddStructure(column);

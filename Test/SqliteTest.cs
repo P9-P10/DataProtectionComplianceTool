@@ -93,7 +93,7 @@ public class SqliteTest
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(BaseUri);
 
-            Assert.Throws<DataStoreException>(() => sqlite.BuildFromDataSource());
+            Assert.Throws<DatabaseException>(() => sqlite.BuildFromDataSource());
         }
 
         [Fact]

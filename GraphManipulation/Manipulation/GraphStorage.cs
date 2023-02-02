@@ -11,24 +11,24 @@ namespace GraphManipulation.Manipulation;
 public class GraphStorage
 {
     private const string SqlCreateStatement = @"
-        CREATE TABLE IF NOT EXISTS Datastores (
+        CREATE TABLE IF NOT EXISTS Databases (
           uri VARCHAR PRIMARY KEY,
-          datastoreType VARCHAR NOT NULL,
+          databaseType VARCHAR NOT NULL,
           creationDate DATETIME DEFAULT(STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')) 
         );
 
-        CREATE TABLE IF NOT EXISTS DatastoreGraphs (
+        CREATE TABLE IF NOT EXISTS DatabaseGraphs (
            id INTEGER PRIMARY KEY AUTOINCREMENT,
            uri VARCHAR NOT NULL,
            from_date DATETIME DEFAULT(STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')),
            graph VARCHAR NOT NULL,
            operations VARCHAR NOT NULL,
-           FOREIGN KEY (uri) REFERENCES Datastores (uri) ON DELETE CASCADE
+           FOREIGN KEY (uri) REFERENCES Databases (uri) ON DELETE CASCADE
         );
     ";
 
     private const string SqlCreateStatementWithDrop =
-        $"DROP TABLE IF EXISTS Datastores; DROP TABLE IF EXISTS DatastoreGraphs;\n{SqlCreateStatement}";
+        $"DROP TABLE IF EXISTS Databases; DROP TABLE IF EXISTS DatabaseGraphs;\n{SqlCreateStatement}";
 
     private readonly DbConnection _dbConnection;
     private readonly IGraph _ontology;
@@ -65,38 +65,38 @@ public class GraphStorage
         }
     }
 
-    public void InitInsert(DataStore dataStore)
+    public void InitInsert(Database database)
     {
-        var graph = dataStore.ToGraph();
+        var graph = database.ToGraph();
         CheckConformity(graph);
 
-        var datastoreType = graph.GetDataStoreDescriptionLanguageTypeFromUri(dataStore.Uri)!;
+        var databaseType = graph.GetDatabaseDescriptionLanguageTypeFromUri(database.Uri)!;
 
         var insertStatement = $@"
-            INSERT INTO Datastores (uri, datastoreType) VALUES ('{dataStore.Uri}', '{datastoreType}')
+            INSERT INTO Databases (uri, databaseType) VALUES ('{database.Uri}', '{databaseType}')
         ";
 
         _dbConnection.Open();
         _dbConnection.Execute(insertStatement);
         _dbConnection.Close();
 
-        Insert(dataStore.Uri, graph, new List<string>());
+        Insert(database.Uri, graph, new List<string>());
     }
 
-    public void Insert(DataStore dataStore, IGraph graph, List<string> changes)
+    public void Insert(Database database, IGraph graph, List<string> changes)
     {
-        Insert(dataStore.Uri, graph, changes);
+        Insert(database.Uri, graph, changes);
     }
 
-    public void Insert(Uri datastoreUri, IGraph graph, List<string> changes)
+    public void Insert(Uri databaseUri, IGraph graph, List<string> changes)
     {
         CheckConformity(graph);
 
         var jsonChanges = JsonConvert.SerializeObject(changes);
 
         var insertStatement = $@"
-            INSERT INTO DatastoreGraphs (uri, graph, operations) 
-            VALUES ('{datastoreUri}', '{graph.ToStorageString()}', '{string.Join(',', jsonChanges)}')
+            INSERT INTO DatabaseGraphs (uri, graph, operations) 
+            VALUES ('{databaseUri}', '{graph.ToStorageString()}', '{string.Join(',', jsonChanges)}')
         ";
 
         _dbConnection.Open();
@@ -104,9 +104,9 @@ public class GraphStorage
         _dbConnection.Close();
     }
 
-    public IGraph GetLatest(DataStore dataStore)
+    public IGraph GetLatest(Database database)
     {
-        return GetLatest(dataStore.Uri);
+        return GetLatest(database.Uri);
     }
 
     public IGraph GetLatest(Uri uri)
@@ -115,7 +115,7 @@ public class GraphStorage
 
         var query = @$"
             SELECT graph 
-            FROM DatastoreGraphs as ds 
+            FROM DatabaseGraphs as ds 
             WHERE ds.uri = '{uri}' 
             ORDER BY from_date 
             DESC LIMIT 1
@@ -137,9 +137,9 @@ public class GraphStorage
         return result;
     }
 
-    public List<(string, string)> GetListOfManagedDataStoresWithType()
+    public List<(string, string)> GetListOfManagedDatabasesWithType()
     {
-        const string query = "SELECT uri, datastoreType FROM Datastores; ";
+        const string query = "SELECT uri, databaseType FROM Databases; ";
 
         _dbConnection.Open();
         var result = _dbConnection.Query<(string, string)>(query).ToList();

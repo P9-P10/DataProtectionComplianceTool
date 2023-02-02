@@ -19,7 +19,7 @@ public class GraphBasedTest
             var column = new Column("Column");
             column.UpdateBaseUri(baseUri);
 
-            // Added to avoid StructureException caused by Structure having no Store
+            // Added to avoid StructureException caused by Structure having no Database
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(baseUri);
             sqlite.AddStructure(column);
@@ -35,7 +35,7 @@ public class GraphBasedTest
             var column = new Column("Column");
             column.UpdateBaseUri(baseUri);
 
-            // Added to avoid StructureException caused by Structure having no Store
+            // Added to avoid StructureException caused by Structure having no Database
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(baseUri);
             sqlite.AddStructure(column);
@@ -51,7 +51,7 @@ public class GraphBasedTest
         {
             var column = new Column("Column");
 
-            Assert.Throws<DataStoreToGraphException>(() => column.ToGraph());
+            Assert.Throws<DatabaseToGraphException>(() => column.ToGraph());
         }
 
         [Fact]
@@ -61,7 +61,7 @@ public class GraphBasedTest
             var column = new Column(columnName);
             column.UpdateBaseUri(baseUri);
 
-            // Added to avoid StructureException caused by Structure having no Store
+            // Added to avoid StructureException caused by Structure having no Database
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(baseUri);
             sqlite.AddStructure(column);
@@ -82,7 +82,7 @@ public class GraphBasedTest
             var column = new Column(columnName);
             column.UpdateBaseUri(baseUri);
 
-            // Added to avoid StructureException caused by Structure having no Store
+            // Added to avoid StructureException caused by Structure having no Database
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(baseUri);
             sqlite.AddStructure(column);
@@ -105,7 +105,7 @@ public class GraphBasedTest
             parent.UpdateBaseUri(baseUri);
             parent.AddStructure(child);
 
-            // Added to avoid StructureException caused by Structure having no Store
+            // Added to avoid StructureException caused by Structure having no Database
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(baseUri);
             sqlite.AddStructure(parent);
@@ -122,7 +122,7 @@ public class GraphBasedTest
         }
 
         [Fact]
-        public void StoreSubStructuresAddedToGraph()
+        public void DatabaseSubStructuresAddedToGraph()
         {
             var sqlite = new Sqlite("SQLite");
             var table1 = new Table("Table1");
@@ -172,7 +172,7 @@ public class GraphBasedTest
             table.AddStructure(column2);
             table.AddPrimaryKey(column1);
 
-            // Added to avoid StructureException caused by Structure having no Store
+            // Added to avoid StructureException caused by Structure having no Database
             var sqlite = new Sqlite("SQLite");
             sqlite.UpdateBaseUri(baseUri);
             sqlite.AddStructure(schema);
@@ -203,7 +203,7 @@ public class GraphBasedTest
         }
 
         [Fact]
-        public void StructureHasStoreAddedToGraph()
+        public void StructureHasDatabaseAddedToGraph()
         {
             var sqlite = new Sqlite("SQLite");
             var column = new Column("Column");
@@ -215,7 +215,7 @@ public class GraphBasedTest
 
             var triple = new Triple(
                 graph.CreateUriNode(column.Uri),
-                graph.CreateUriNode(DatabaseDescriptionLanguage.HasStore),
+                graph.CreateUriNode(DatabaseDescriptionLanguage.HasDatabase),
                 graph.CreateUriNode(sqlite.Uri)
             );
 
@@ -223,13 +223,13 @@ public class GraphBasedTest
         }
 
         [Fact]
-        public void StructureHasNoStoreWhenBuildingGraphThrowsException()
+        public void StructureHasNoDatabaseWhenBuildingGraphThrowsException()
         {
             var column = new Column("Column");
 
             column.UpdateBaseUri(baseUri);
 
-            Assert.Throws<DataStoreToGraphException>(() => column.ToGraph());
+            Assert.Throws<DatabaseToGraphException>(() => column.ToGraph());
         }
     }
 }

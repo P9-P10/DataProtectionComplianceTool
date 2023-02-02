@@ -44,9 +44,9 @@ public static class GraphAsserts
                 UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeBoolean)));
     }
 
-    public static void AssertHasStoreTriple(this IGraph graph, Structure structure)
+    public static void AssertHasDatabaseTriple(this IGraph graph, Structure structure)
     {
-        graph.AssertSubjectPredicateObjectTriple(structure, DatabaseDescriptionLanguage.HasStore, structure.Store!);
+        graph.AssertSubjectPredicateObjectTriple(structure, DatabaseDescriptionLanguage.HasDatabase, structure.Database!);
     }
 
     public static void AssertOptionsTriple(this IGraph graph, Column column)
@@ -58,7 +58,7 @@ public static class GraphAsserts
     {
         if (table.PrimaryKeys.Count == 0)
         {
-            throw new DataStoreToGraphException("No primary keys when creating graph");
+            throw new DatabaseToGraphException("No primary keys when creating graph");
         }
 
         var subj = graph.CreateUriNode(table.Uri);

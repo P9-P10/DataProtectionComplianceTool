@@ -21,7 +21,7 @@ ddl:hasStructure
 ddl:hasDataType
     a rdf:Property .
 
-ddl:hasStore
+ddl:hasDatabase
     a rdf:Property .
 
 ddl:hasName
@@ -138,7 +138,7 @@ ddl:SQLite
 ddl:Structure
     a               rdfs:Class ;
     rdfs:subClassOf ddl:NamedEntity ;
-    sh:property     [ sh:path     ddl:hasStore ;
+    sh:property     [ sh:path     ddl:hasDatabase ;
                       sh:class    ddl:Database ;
                       sh:minCount 1 ;
                       sh:maxCount 1 ] .

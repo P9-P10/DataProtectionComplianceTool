@@ -3,7 +3,7 @@ using GraphManipulation.Models.Structures;
 
 namespace GraphManipulation.Extensions;
 
-public static class DataStoreToSqlCreateStatement
+public static class DatabaseToSqlCreateStatement
 {
     public static string ToSqlCreateStatement(this Entity entity)
     {
