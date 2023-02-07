@@ -39,8 +39,8 @@ public class ConfigManager
                 {"SimpleDatabaseName", "SimpleDatabase.sqlite"},
                 {"DatabasePath", ""},
                 {"BaseURI", "http://www.test.com/"},
-                {"OutputFileName", ""},
-                {"OutputPath", "output.ttl"},
+                {"OutputFileName", "output.ttl"},
+                {"OutputPath", ""},
                 {"OntologyPath", ""}
             };
             Console.WriteLine("Got here atleast.");
