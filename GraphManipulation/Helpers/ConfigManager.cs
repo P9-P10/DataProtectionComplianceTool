@@ -35,12 +35,12 @@ public class ConfigManager
             Dictionary<string, string> initialConfig = new Dictionary<string, string>()
             {
                 {"GraphStoragePath", ""},
-                {"OptimizedDatabaseName", ""},
-                {"SimpleDatabaseName", ""},
+                {"OptimizedDatabaseName", "OptimizedAdvancedDatabase.sqlite"},
+                {"SimpleDatabaseName", "SimpleDatabase.sqlite"},
                 {"DatabasePath", ""},
-                {"BaseURI", ""},
+                {"BaseURI", "http://www.test.com/"},
                 {"OutputFileName", ""},
-                {"OutputPath", ""},
+                {"OutputPath", "output.ttl"},
                 {"OntologyPath", ""}
             };
             Console.WriteLine("Got here atleast.");

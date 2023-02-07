@@ -17,30 +17,32 @@ namespace GraphManipulation;
 
 public static class Program
 {
-    private const string FilePath = "C:/Users/Alexander N/GitHub/GraphManipulation/config.json";
+    private static readonly string ProjectFolder = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+    private static readonly string FilePath = Path.Combine(ProjectFolder, "config.json");
     private static readonly ConfigManager Cf = new(FilePath);
-    
+
     //private const string GraphStoragePath =
-       // "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/GraphStorage.sqlite";
+    // "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/GraphStorage.sqlite";
 
     //private const string OptimizedDatabaseName = "OptimizedAdvancedDatabase.sqlite";
     //private const string SimpleDatabaseName = "SimpleDatabase.sqlite";
 
     //private const string OptimizedDatabasePath =
-      //  $"/home/ane/Documents/GitHub/Legeplads/Databases/{OptimizedDatabaseName}";
+    //  $"/home/ane/Documents/GitHub/Legeplads/Databases/{OptimizedDatabaseName}";
 
     //private const string SimpleDatabasePath = $"/home/ane/Documents/GitHub/Legeplads/Databases/{SimpleDatabaseName}";
     //private const string BaseUri = "http://www.test.com/";
     //private const string OutputFileName = "output.ttl";
 
     //private const string OutputPath =
-     //   $"/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/{OutputFileName}";
+    //   $"/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/{OutputFileName}";
 
     //private const string OntologyPath =
     //    "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/Ontologies/database-description-language.ttl";
 
     public static void Main()
     {
+        Console.WriteLine(ProjectFolder);
         // Console.WriteLine();
         // var arguments = Environment.GetCommandLineArgs();
         // Console.WriteLine(string.Join(", ", arguments));
@@ -80,7 +82,8 @@ public static class Program
 
         var graphStorage = new GraphStorage(Cf.GetValue("GraphStoragePath"), ontology);
 
-        using var simpleConn = new SQLiteConnection($"Data Source={Cf.GetValue("DatabasePath")+Cf.GetValue("SimpleDatabaseName")}");
+        using var simpleConn =
+            new SQLiteConnection($"Data Source={Cf.GetValue("DatabasePath") + Cf.GetValue("SimpleDatabaseName")}");
         var simpleSqlite = new Sqlite("", Cf.GetValue("BaseURI"), simpleConn);
         simpleSqlite.BuildFromDataSource();
 
@@ -113,7 +116,8 @@ public static class Program
 
         var graphStorage = new GraphStorage(Cf.GetValue("GraphStoragePath"), ontology);
 
-        using var simpleConn = new SQLiteConnection($"Data Source={Cf.GetValue("DatabasePath")+Cf.GetValue("SimpleDatabaseName")}");
+        using var simpleConn =
+            new SQLiteConnection($"Data Source={Cf.GetValue("DatabasePath") + Cf.GetValue("SimpleDatabaseName")}");
         var simpleSqlite = new Sqlite("", Cf.GetValue("BaseURI"), simpleConn);
         simpleSqlite.BuildFromDataSource();
         var simpleGraph = simpleSqlite.ToGraph();
@@ -182,8 +186,10 @@ public static class Program
 
     private static void CreateAndValidateGraph()
     {
-        using var optimizedConn = new SQLiteConnection($"Data Source={Cf.GetValue("DatabasePath")+Cf.GetValue("OptimizedDatabaseName")}");
-        using var simpleConn = new SQLiteConnection($"Data Source={Cf.GetValue("DatabasePath")+Cf.GetValue("SimpleDatabaseName")}");
+        using var optimizedConn =
+            new SQLiteConnection($"Data Source={Cf.GetValue("DatabasePath") + Cf.GetValue("OptimizedDatabaseName")}");
+        using var simpleConn =
+            new SQLiteConnection($"Data Source={Cf.GetValue("DatabasePath") + Cf.GetValue("SimpleDatabaseName")}");
 
         var optimizedSqlite = new Sqlite("", Cf.GetValue("BaseURI"), optimizedConn);
         // var simpleSqlite = new Sqlite("", BaseUri, simpleConn);
