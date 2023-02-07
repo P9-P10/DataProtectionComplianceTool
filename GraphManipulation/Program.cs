@@ -20,26 +20,7 @@ public static class Program
     private static readonly string ProjectFolder = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
     private static readonly string FilePath = Path.Combine(ProjectFolder, "config.json");
     private static readonly ConfigManager Cf = new(FilePath);
-
-    //private const string GraphStoragePath =
-    // "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/GraphStorage.sqlite";
-
-    //private const string OptimizedDatabaseName = "OptimizedAdvancedDatabase.sqlite";
-    //private const string SimpleDatabaseName = "SimpleDatabase.sqlite";
-
-    //private const string OptimizedDatabasePath =
-    //  $"/home/ane/Documents/GitHub/Legeplads/Databases/{OptimizedDatabaseName}";
-
-    //private const string SimpleDatabasePath = $"/home/ane/Documents/GitHub/Legeplads/Databases/{SimpleDatabaseName}";
-    //private const string BaseUri = "http://www.test.com/";
-    //private const string OutputFileName = "output.ttl";
-
-    //private const string OutputPath =
-    //   $"/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/{OutputFileName}";
-
-    //private const string OntologyPath =
-    //    "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/Ontologies/database-description-language.ttl";
-
+    
     public static void Main()
     {
         Console.WriteLine(ProjectFolder);
