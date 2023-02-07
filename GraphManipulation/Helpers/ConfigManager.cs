@@ -13,15 +13,19 @@ public class ConfigManager
         Init();
     }
 
-    public string getValue(string query)
+    public string GetValue(string query)
     {
+        if (!config.ContainsKey(query)) throw new KeyNotFoundException();
         string result = config[query];
-        if (result == "")
-        {
-            throw new Exception($"Please fill out the config file. {filepath}");
-        }
-
         return result;
+
+    }
+
+    public void UpdateValue(string key, string value)
+    {
+        config[key] = value;
+        var json = JsonConvert.SerializeObject(config, Formatting.Indented);
+        File.WriteAllText(filepath, json);
     }
 
     private void Init()

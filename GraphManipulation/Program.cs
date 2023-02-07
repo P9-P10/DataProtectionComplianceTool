@@ -17,7 +17,8 @@ namespace GraphManipulation;
 
 public static class Program
 {
-    private static ConfigManager cf = new("C:/Users/Alexander N/GitHub/GraphManipulation/config.json");
+    private const string FilePath = "C:/Users/Alexander N/GitHub/GraphManipulation/config.json";
+    private static ConfigManager cf = new(FilePath);
     
     //private const string GraphStoragePath =
        // "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/GraphStorage.sqlite";
@@ -61,26 +62,26 @@ public static class Program
     private static void Interactive()
     {
         var interactive = new InteractiveMode();
-        InteractiveMode.Run();
+        InteractiveMode.Run(FilePath);
     }
 
     private static void InitGraphStorage()
     {
         IGraph ontology = new Graph();
-        ontology.LoadFromFile(cf.getValue("OntologyPath"), new TurtleParser());
+        ontology.LoadFromFile(cf.GetValue("OntologyPath"), new TurtleParser());
 
-        var graphStorage = new GraphStorage(cf.getValue("GraphStoragePath"), ontology, true);
+        var graphStorage = new GraphStorage(cf.GetValue("GraphStoragePath"), ontology, true);
     }
 
     private static void MakeChangeToGraph()
     {
         IGraph ontology = new Graph();
-        ontology.LoadFromFile(cf.getValue("OntologyPath"), new TurtleParser());
+        ontology.LoadFromFile(cf.GetValue("OntologyPath"), new TurtleParser());
 
-        var graphStorage = new GraphStorage(cf.getValue("GraphStoragePath"), ontology);
+        var graphStorage = new GraphStorage(cf.GetValue("GraphStoragePath"), ontology);
 
-        using var simpleConn = new SQLiteConnection($"Data Source={cf.getValue("DatabasePath")+cf.getValue("SimpleDatabaseName")}");
-        var simpleSqlite = new Sqlite("", cf.getValue("BaseURI"), simpleConn);
+        using var simpleConn = new SQLiteConnection($"Data Source={cf.GetValue("DatabasePath")+cf.GetValue("SimpleDatabaseName")}");
+        var simpleSqlite = new Sqlite("", cf.GetValue("BaseURI"), simpleConn);
         simpleSqlite.BuildFromDataSource();
 
         var dataGraph = graphStorage.GetLatest(simpleSqlite);
@@ -108,12 +109,12 @@ public static class Program
     private static void WorkingWithGraphStorage()
     {
         IGraph ontology = new Graph();
-        ontology.LoadFromFile(cf.getValue("OntologyPath"), new TurtleParser());
+        ontology.LoadFromFile(cf.GetValue("OntologyPath"), new TurtleParser());
 
-        var graphStorage = new GraphStorage(cf.getValue("GraphStoragePath"), ontology);
+        var graphStorage = new GraphStorage(cf.GetValue("GraphStoragePath"), ontology);
 
-        using var simpleConn = new SQLiteConnection($"Data Source={cf.getValue("DatabasePath")+cf.getValue("SimpleDatabaseName")}");
-        var simpleSqlite = new Sqlite("", cf.getValue("BaseURI"), simpleConn);
+        using var simpleConn = new SQLiteConnection($"Data Source={cf.GetValue("DatabasePath")+cf.GetValue("SimpleDatabaseName")}");
+        var simpleSqlite = new Sqlite("", cf.GetValue("BaseURI"), simpleConn);
         simpleSqlite.BuildFromDataSource();
         var simpleGraph = simpleSqlite.ToGraph();
 
@@ -147,10 +148,10 @@ public static class Program
     private static void SparqlExperiment( /* string commandText */)
     {
         var graph = new Graph();
-        graph.LoadFromFile(cf.getValue("OutputPath"));
+        graph.LoadFromFile(cf.GetValue("OutputPath"));
 
         IGraph ontology = new Graph();
-        ontology.LoadFromFile(cf.getValue("OntologyPath"), new TurtleParser());
+        ontology.LoadFromFile(cf.GetValue("OntologyPath"), new TurtleParser());
 
         graph.ValidateUsing(ontology);
 
@@ -181,10 +182,10 @@ public static class Program
 
     private static void CreateAndValidateGraph()
     {
-        using var optimizedConn = new SQLiteConnection($"Data Source={cf.getValue("DatabasePath")+cf.getValue("OptimizedDatabaseName")}");
-        using var simpleConn = new SQLiteConnection($"Data Source={cf.getValue("DatabasePath")+cf.getValue("SimpleDatabaseName")}");
+        using var optimizedConn = new SQLiteConnection($"Data Source={cf.GetValue("DatabasePath")+cf.GetValue("OptimizedDatabaseName")}");
+        using var simpleConn = new SQLiteConnection($"Data Source={cf.GetValue("DatabasePath")+cf.GetValue("SimpleDatabaseName")}");
 
-        var optimizedSqlite = new Sqlite("", cf.getValue("BaseURI"), optimizedConn);
+        var optimizedSqlite = new Sqlite("", cf.GetValue("BaseURI"), optimizedConn);
         // var simpleSqlite = new Sqlite("", BaseUri, simpleConn);
 
         optimizedSqlite.BuildFromDataSource();
@@ -199,13 +200,13 @@ public static class Program
 
         var writer = new CompressingTurtleWriter();
 
-        writer.Save(combinedGraph, cf.getValue("OutputPath"));
+        writer.Save(combinedGraph, cf.GetValue("OutputPath"));
 
         IGraph dataGraph = new Graph();
-        dataGraph.LoadFromFile(cf.getValue("OutputPath"));
+        dataGraph.LoadFromFile(cf.GetValue("OutputPath"));
 
         IGraph ontology = new Graph();
-        ontology.LoadFromFile(cf.getValue("OntologyPath"), new TurtleParser());
+        ontology.LoadFromFile(cf.GetValue("OntologyPath"), new TurtleParser());
 
         var report = dataGraph.ValidateUsing(ontology);
 

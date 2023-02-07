@@ -1,7 +1,7 @@
 using System.Data.SQLite;
 using GraphManipulation.Components;
-using GraphManipulation.Configuration;
 using GraphManipulation.Extensions;
+using GraphManipulation.Helpers;
 using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Stores;
 using VDS.RDF;
@@ -11,8 +11,10 @@ namespace GraphManipulation.Manipulation;
 
 public class InteractiveMode
 {
-    public static void Run()
+    private static ConfigManager cf;
+    public static void Run(string configPath)
     {
+        cf = new ConfigManager(configPath);
         Console.WriteLine();
         Console.WriteLine(GenerateHashTags(40));
         Console.WriteLine(GenerateSpaces(10) + "Graph Manipulation");
@@ -45,7 +47,7 @@ public class InteractiveMode
 
     private static string GetOntologyPath()
     {
-        var ontologyPath = ConfigurationHandler.GetOntologyPath();
+        var ontologyPath = cf.GetValue("OntologyPath");
 
         if (ontologyPath is not null)
         {
@@ -53,14 +55,14 @@ public class InteractiveMode
         }
 
         ontologyPath = GetOntologyPathFromUser();
-        ConfigurationHandler.UpdateOntologyPath(ontologyPath);
+        cf.UpdateValue("OntologyPath",ontologyPath);
 
         return ontologyPath;
     }
 
     private static string GetGraphStorageConnectionString()
     {
-        var graphStorageConnectionString = ConfigurationHandler.GetGraphStorageConnectionString();
+        var graphStorageConnectionString = cf.GetValue("GraphStoragePath");
 
         if (graphStorageConnectionString is not null)
         {
@@ -68,7 +70,7 @@ public class InteractiveMode
         }
 
         graphStorageConnectionString = GetGraphStorageConnectionStringFromUser();
-        ConfigurationHandler.UpdateGraphStorageConnectionString(graphStorageConnectionString);
+        cf.UpdateValue("GraphStoragePath",graphStorageConnectionString);
 
         return graphStorageConnectionString;
     }

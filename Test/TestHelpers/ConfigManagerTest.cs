@@ -1,8 +1,7 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using GraphManipulation.Helpers;
-using J2N.Collections.Generic;
 using Newtonsoft.Json;
 using Xunit;
 
@@ -19,23 +18,34 @@ public class ConfigManagerTest
     }
 
     [Fact]
-    public void testGetValueRaisesErrorOnEmptyValue()
+    public void GetValueReturnsEmptyValue()
     {
         ConfigManager cf = new ConfigManager("testConfig.json");
 
-        Assert.Throws<Exception>(() => cf.getValue("OutputPath"));
+        Assert.True(cf.GetValue("OutputPath") == "");
         File.Delete("testConfig.json");
     }
+
+    [Fact]
+    public void GetValueRaisesKeyNotFoundOnIncorrectKey()
+    {
+        ConfigManager cf = new ConfigManager("testConfig.json");
+
+        Assert.Throws<KeyNotFoundException>(() => cf.GetValue("ThisKeyDoesNotExist"));
+        File.Delete("testConfig.json");
+    }
+
 
     [Fact]
     public void TestGetValueReturnsCorrectValue()
     {
         string path = $"TestResources{Path.DirectorySeparatorChar}newConfigFile.json";
-        
-        Dictionary<string, string> configContent = new Dictionary<string, string>()
-        {
-            {"TestValue", "SomeValue"}
-        };
+
+        Dictionary<string, string> configContent =
+            new Dictionary<string, string>()
+            {
+                {"TestValue", "SomeValue"}
+            };
         using (FileStream fs = File.Create(path))
         {
             char[] value = JsonConvert.SerializeObject(configContent).ToCharArray();
@@ -43,7 +53,6 @@ public class ConfigManagerTest
         }
 
         ConfigManager cf = new(path);
-        Assert.True(cf.getValue("TestValue") == "SomeValue");
-
+        Assert.True(cf.GetValue("TestValue") == "SomeValue");
     }
 }
