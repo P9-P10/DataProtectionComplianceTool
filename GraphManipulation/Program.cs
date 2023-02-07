@@ -23,7 +23,6 @@ public static class Program
     
     public static void Main()
     {
-        Console.WriteLine(ProjectFolder);
         // Console.WriteLine();
         // var arguments = Environment.GetCommandLineArgs();
         // Console.WriteLine(string.Join(", ", arguments));
