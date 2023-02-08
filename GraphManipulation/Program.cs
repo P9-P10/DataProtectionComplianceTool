@@ -17,10 +17,12 @@ namespace GraphManipulation;
 
 public static class Program
 {
-    private static readonly string ProjectFolder = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+    private static readonly string ProjectFolder =
+        Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+
     private static readonly string FilePath = Path.Combine(ProjectFolder, "config.json");
     private static readonly ConfigManager Cf = new(FilePath);
-    
+
     public static void Main()
     {
         // Console.WriteLine();
@@ -148,8 +150,7 @@ public static class Program
 
         var parser = new SparqlQueryParser();
         // var query = parser.ParseFromString(queryString);
-        var query = parser.ParseFromFile(
-            "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/sparqlQuery.rq");
+        var query = parser.ParseFromFile(Path.Combine(ProjectFolder, "GraphManipulation/sparqlQuery.rq"));
 
         var tripleStore = new TripleStore();
         tripleStore.Add(graph);
