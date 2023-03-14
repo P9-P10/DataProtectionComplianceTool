@@ -32,7 +32,5 @@ public class Implementer
             SELECT * FROM MOVE_1;";
 
         return string.Join("\n", new List<string>{ dropViews, temp, final });
-        
-        
     }
 }
