@@ -12,9 +12,9 @@ namespace GraphManipulation.Manipulation;
 
 public class InteractiveMode
 {
-    private static string ValidManipulationQueryPattern => "^(\\w+)\\(([\\w:#\\/.]+),\\s?([\\w:#\\/.]+)\\)$";
+    private static ConfigManager cf;
 
-    public static void Run()
+    public static void Run(string configPath)
     {
         cf = new ConfigManager(configPath);
         Console.WriteLine();
@@ -51,13 +51,13 @@ public class InteractiveMode
     {
         var ontologyPath = cf.GetValue("OntologyPath");
 
-        if (ontologyPath is not null)
+        if (ontologyPath != "")
         {
             return ontologyPath;
         }
 
         ontologyPath = GetOntologyPathFromUser();
-        cf.UpdateValue("OntologyPath",ontologyPath);
+        cf.UpdateValue("OntologyPath", ontologyPath);
 
         return ontologyPath;
     }
@@ -66,24 +66,28 @@ public class InteractiveMode
     {
         var graphStorageConnectionString = cf.GetValue("GraphStoragePath");
 
-        if (graphStorageConnectionString is not null)
+        if (graphStorageConnectionString != "")
         {
             return graphStorageConnectionString;
         }
 
         graphStorageConnectionString = GetGraphStorageConnectionStringFromUser();
-        cf.UpdateValue("GraphStoragePath",graphStorageConnectionString);
+        cf.UpdateValue("GraphStoragePath", graphStorageConnectionString);
 
         return graphStorageConnectionString;
     }
 
     private static string GetBaseUriFromUser()
     {
-        Console.WriteLine();
-        Console.WriteLine("Please input the Base Uri for your system: ");
-        var baseUri = GetStringFromUser(
-            s => !Entity.IsValidUri(s.Trim()),
-            "Uri must be valid, try again");
+        string baseUri = cf.GetValue("BaseURI");
+        if (baseUri == "")
+        {
+            Console.WriteLine();
+            Console.WriteLine("Please input the Base Uri for your system: ");
+            baseUri = GetStringFromUser(
+                s => !Entity.IsValidUri(s.Trim()),
+                "Uri must be valid, try again");
+        }
 
         return baseUri;
     }
@@ -102,7 +106,7 @@ public class InteractiveMode
     private static string GetGraphStorageConnectionStringFromUser()
     {
         Console.WriteLine();
-        Console.WriteLine("Please input the absolute path to you GraphStorage (.sqlite): ");
+        Console.WriteLine("Please input the absolute path to your GraphStorage (.sqlite): ");
         var graphStoragePath = GetStringFromUser(
             s =>
             {
@@ -302,12 +306,12 @@ public class InteractiveMode
         {
             Console.WriteLine("Please write manipulation query: ");
             var manipulationQuery = GetStringFromUser(
-                s => !IsValidManipulationQuery(s),
+                s => !FunctionParser.IsValidManipulationQuery(s),
                 "The manipulation query is invalid, please try again");
 
             try
             {
-                FunctionParser(manipulationQuery, graphManipulator);
+                FunctionParser.CommandParser(manipulationQuery, graphManipulator);
             }
             catch (ManipulatorException e)
             {
@@ -340,24 +344,6 @@ public class InteractiveMode
         }
     }
 
-    private static void FunctionParser<T>(string manipulationQuery, Manipulator<T> graphManipulator) where T : Database
-    {
-        var match = Regex.Match(manipulationQuery, ValidManipulationQueryPattern);
-
-        var command = match.Groups[1].ToString().ToUpper();
-        var firstUri = new Uri(match.Groups[2].ToString());
-        var secondUri = new Uri(match.Groups[3].ToString());
-
-        Action<Uri, Uri> action = command switch
-        {
-            "MOVE" => graphManipulator.Move,
-            "RENAME" => graphManipulator.Rename,
-            _ => throw new ManipulatorException("Command not supported")
-        };
-
-        action(firstUri, secondUri);
-    }
-
     private static string GenerateHashTags(int count)
     {
         return new('#', count);
@@ -366,11 +352,6 @@ public class InteractiveMode
     private static string GenerateSpaces(int count)
     {
         return new(' ', count);
-    }
-
-    private static bool IsValidManipulationQuery(string query)
-    {
-        return Regex.IsMatch(query, ValidManipulationQueryPattern);
     }
 }
 
