@@ -1,5 +1,4 @@
 using System.Data.SQLite;
-using System.Text.RegularExpressions;
 using GraphManipulation.Components;
 using GraphManipulation.Extensions;
 using GraphManipulation.Helpers;
@@ -12,11 +11,15 @@ namespace GraphManipulation.Manipulation;
 
 public class InteractiveMode
 {
-    private static ConfigManager cf;
+    private readonly ConfigManager _cf;
 
-    public static void Run(string configPath)
+    public InteractiveMode(string configPath)
     {
-        cf = new ConfigManager(configPath);
+        _cf = new ConfigManager(configPath);
+    }
+
+    public void Run()
+    {
         Console.WriteLine();
         Console.WriteLine(GenerateHashTags(40));
         Console.WriteLine(GenerateSpaces(10) + "Graph Manipulation");
@@ -47,9 +50,9 @@ public class InteractiveMode
         }
     }
 
-    private static string GetOntologyPath()
+    private string GetOntologyPath()
     {
-        var ontologyPath = cf.GetValue("OntologyPath");
+        var ontologyPath = _cf.GetValue("OntologyPath");
 
         if (ontologyPath != "")
         {
@@ -57,14 +60,14 @@ public class InteractiveMode
         }
 
         ontologyPath = GetOntologyPathFromUser();
-        cf.UpdateValue("OntologyPath", ontologyPath);
+        _cf.UpdateValue("OntologyPath", ontologyPath);
 
         return ontologyPath;
     }
 
-    private static string GetGraphStorageConnectionString()
+    private string GetGraphStorageConnectionString()
     {
-        var graphStorageConnectionString = cf.GetValue("GraphStoragePath");
+        var graphStorageConnectionString = _cf.GetValue("GraphStoragePath");
 
         if (graphStorageConnectionString != "")
         {
@@ -72,14 +75,14 @@ public class InteractiveMode
         }
 
         graphStorageConnectionString = GetGraphStorageConnectionStringFromUser();
-        cf.UpdateValue("GraphStoragePath", graphStorageConnectionString);
+        _cf.UpdateValue("GraphStoragePath", graphStorageConnectionString);
 
         return graphStorageConnectionString;
     }
 
-    private static string GetBaseUriFromUser()
+    private string GetBaseUriFromUser()
     {
-        string baseUri = cf.GetValue("BaseURI");
+        string baseUri = _cf.GetValue("BaseURI");
         if (baseUri == "")
         {
             Console.WriteLine();
@@ -92,7 +95,7 @@ public class InteractiveMode
         return baseUri;
     }
 
-    private static string GetOntologyPathFromUser()
+    private string GetOntologyPathFromUser()
     {
         Console.WriteLine();
         Console.WriteLine("Please input the absolute path to your ontology turtle file (.ttl): ");
@@ -103,7 +106,7 @@ public class InteractiveMode
         return ontologyPath;
     }
 
-    private static string GetGraphStorageConnectionStringFromUser()
+    private string GetGraphStorageConnectionStringFromUser()
     {
         Console.WriteLine();
         Console.WriteLine("Please input the absolute path to your GraphStorage (.sqlite): ");
@@ -124,7 +127,7 @@ public class InteractiveMode
         return graphStoragePath;
     }
 
-    private static string GetStringFromUser(Func<string, bool> errorPredicate, string errorMessage)
+    private string GetStringFromUser(Func<string, bool> errorPredicate, string errorMessage)
     {
         string result;
         var flag = false;
@@ -146,7 +149,7 @@ public class InteractiveMode
         return result;
     }
 
-    private static int GetIntFromUser(Func<int, bool> errorPredicate, string errorMessage)
+    private int GetIntFromUser(Func<int, bool> errorPredicate, string errorMessage)
     {
         int result;
         var flag = false;
@@ -172,7 +175,7 @@ public class InteractiveMode
         return result;
     }
 
-    private static bool GetBoolFromUser(string trueEquivalent, string falseEquivalent)
+    private bool GetBoolFromUser(string trueEquivalent, string falseEquivalent)
     {
         var boolString = GetStringFromUser(
             s =>
@@ -184,7 +187,7 @@ public class InteractiveMode
         return boolString == trueEquivalent;
     }
 
-    private static int PresentManagedDatabasesReturnChoice(List<(string, string)> managedDatabases)
+    private int PresentManagedDatabasesReturnChoice(List<(string, string)> managedDatabases)
     {
         Console.WriteLine();
         Console.WriteLine("These are the currently managed databases: ");
@@ -203,14 +206,14 @@ public class InteractiveMode
         return choice;
     }
 
-    private static bool PresentExit(string exitFrom)
+    private bool PresentExit(string exitFrom)
     {
         Console.WriteLine();
         Console.WriteLine($"Do you want to exit from {exitFrom}? (y/n)");
         return GetBoolFromUser("y", "n");
     }
 
-    private static void InitOrManageDatabase(int choice, List<(string, string)> managedDatabases,
+    private void InitOrManageDatabase(int choice, List<(string, string)> managedDatabases,
         GraphStorage graphStorage)
     {
         if (choice == 0)
@@ -228,16 +231,13 @@ public class InteractiveMode
                 case { } when databaseType == typeof(Sqlite):
                     ManageSelectedDatabase<Sqlite>(databaseUri, graphStorage);
                     break;
-                // case { } when databaseType == typeof(PostgreSql):
-                //     ManageSelectedDatabase<PostgreSql>(databaseUri, graphStorage);
-                //     break;
                 default:
                     throw new InteractiveModeException("The type of database is not supported: " + databaseType);
             }
         }
     }
 
-    private static void InitDatabase(GraphStorage graphStorage)
+    private void InitDatabase(GraphStorage graphStorage)
     {
         var baseUri = GetBaseUriFromUser();
 
@@ -258,7 +258,7 @@ public class InteractiveMode
         }
     }
 
-    private static void InitSqlite(GraphStorage graphStorage, string baseUri)
+    private void InitSqlite(GraphStorage graphStorage, string baseUri)
     {
         Console.WriteLine();
         Console.WriteLine("Please provide the path to the SQLite: ");
@@ -269,7 +269,7 @@ public class InteractiveMode
 
         do
         {
-            var sqlitePath = GetStringFromUser(s => false, "");
+            var sqlitePath = GetStringFromUser(_ => false, "");
 
             sqlite = new Sqlite("", baseUri, new SQLiteConnection($"Data Source={sqlitePath}"));
             sqlite.BuildFromDataSource();
@@ -294,7 +294,7 @@ public class InteractiveMode
         Console.WriteLine("(0) : SQLite");
     }
 
-    private static void ManageSelectedDatabase<T>(Uri databaseUri, GraphStorage graphStorage) where T : Database
+    private void ManageSelectedDatabase<T>(Uri databaseUri, GraphStorage graphStorage) where T : Database
     {
         var graph = graphStorage.GetLatest(databaseUri);
 

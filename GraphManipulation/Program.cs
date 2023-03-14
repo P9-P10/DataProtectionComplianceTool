@@ -45,8 +45,8 @@ public static class Program
 
     private static void Interactive()
     {
-        var interactive = new InteractiveMode();
-        InteractiveMode.Run(FilePath);
+        var interactive = new InteractiveMode(FilePath);
+        interactive.Run();
     }
 
     private static void InitGraphStorage()
