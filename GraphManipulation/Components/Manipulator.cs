@@ -21,7 +21,7 @@ public class Manipulator<T> where T : Database
     public IGraph Graph { get; private set; }
     public List<string> Changes { get; }
 
-    private static string ValidManipulationQueryPattern => "^(\\w+)\\(([\\w:#\\/.]+),\\s?([\\w:#\\/.]+)\\)$";
+   
 
     public void Move(Uri from, Uri to)
     {
@@ -161,29 +161,6 @@ public class Manipulator<T> where T : Database
     {
         return Graph.ConstructDatabase<T>()
                ?? throw new ManipulatorException("Could not construct database from graph");
-    }
-
-    public bool IsValidManipulationQuery(string query)
-    {
-        return Regex.IsMatch(query, ValidManipulationQueryPattern);
-    }
-
-    public void ApplyManipulationQuery(string query)
-    {
-        var match = Regex.Match(query, ValidManipulationQueryPattern);
-
-        var command = match.Groups[1].ToString().ToUpper();
-        var firstUri = new Uri(match.Groups[2].ToString());
-        var secondUri = new Uri(match.Groups[3].ToString());
-
-        Action<Uri, Uri> action = command switch
-        {
-            "MOVE" => Move,
-            "RENAME" => Rename,
-            _ => throw new ManipulatorException("Command not supported")
-        };
-
-        action(firstUri, secondUri);
     }
 
     public void Undo()

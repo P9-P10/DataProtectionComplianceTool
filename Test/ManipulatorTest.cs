@@ -315,52 +315,7 @@ public class GraphManipulatorTest
     {
     }
 
-    public class ApplyManipulationQuery
-    {
-        [Fact]
-        public void MoveQueryApplied()
-        {
-            var tds = CreateDatabase();
-            var graphManipulator = new Manipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
-
-            var columnUriBefore = tds.ExpectedColumn.Uri.ToString();
-            tds.ExpectedTable2.AddStructure(tds.ExpectedColumn);
-            var columnUriAfter = tds.ExpectedColumn.Uri.ToString();
-
-            var manipulationQuery = $"MOVE({columnUriBefore}, {columnUriAfter})";
-            graphManipulator.ApplyManipulationQuery(manipulationQuery);
-
-            var subj = graphManipulator.Graph.CreateUriNode(tds.ExpectedTable2.Uri);
-            var pred = graphManipulator.Graph.CreateUriNode("ddl:hasStructure");
-            var obj = graphManipulator.Graph.CreateUriNode(tds.ExpectedColumn.Uri);
-
-            Assert.Contains(new Triple(subj, pred, obj), graphManipulator.Graph.Triples);
-
-            Assert.Single(graphManipulator.Changes);
-            Assert.Contains($"MOVE({columnUriBefore}, {columnUriAfter})", graphManipulator.Changes);
-        }
-
-        [Fact]
-        public void RenameQueryApplied()
-        {
-            var tds = CreateDatabase();
-            var graphManipulator = new Manipulator<Sqlite>(tds.ExpectedSqlite.ToGraph());
-
-            var columnUriBefore = tds.ExpectedColumn.Uri.ToString();
-            var newName = "NewName";
-            tds.ExpectedColumn.UpdateName(newName);
-            var columnUriAfter = tds.ExpectedColumn.Uri.ToString();
-
-            var manipulationQuery = $"RENAME({columnUriBefore}, {columnUriAfter})";
-            graphManipulator.ApplyManipulationQuery(manipulationQuery);
-
-            var subj = graphManipulator.Graph.CreateUriNode(tds.ExpectedColumn.Uri);
-            var pred = graphManipulator.Graph.CreateUriNode("ddl:hasName");
-            var obj = graphManipulator.Graph.CreateLiteralNode(newName);
-
-            Assert.Contains(new Triple(subj, pred, obj), graphManipulator.Graph.Triples);
-        }
-    }
+    
 
     private class TestDatabaseFixture
     {
