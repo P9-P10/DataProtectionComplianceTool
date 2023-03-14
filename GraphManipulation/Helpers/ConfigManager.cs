@@ -4,33 +4,34 @@ namespace GraphManipulation.Helpers;
 
 public class ConfigManager
 {
-    private string filepath;
-    private Dictionary<string, string> config;
+    private readonly string _filepath;
+    private Dictionary<string, string> _config;
 
-    public ConfigManager(String filepath)
+    public ConfigManager(string filepath)
     {
-        this.filepath = filepath;
+        _config = new Dictionary<string, string>();
+        _filepath = filepath;
         Init();
     }
 
     public string GetValue(string query)
     {
-        if (!config.ContainsKey(query)) throw new KeyNotFoundException();
-        string result = config[query];
+        if (!_config.ContainsKey(query)) throw new KeyNotFoundException();
+        string result = _config[query];
         return result;
 
     }
 
     public void UpdateValue(string key, string value)
     {
-        config[key] = value;
-        var json = JsonConvert.SerializeObject(config, Formatting.Indented);
-        File.WriteAllText(filepath, json);
+        _config[key] = value;
+        var json = JsonConvert.SerializeObject(_config, Formatting.Indented);
+        File.WriteAllText(_filepath, json);
     }
 
     private void Init()
     {
-        if (!File.Exists(filepath))
+        if (!File.Exists(_filepath))
         {
             Dictionary<string, string> initialConfig = new Dictionary<string, string>()
             {
@@ -43,13 +44,12 @@ public class ConfigManager
                 {"OutputPath", ""},
                 {"OntologyPath", ""}
             };
-            Console.WriteLine("Got here atleast.");
-            using var file = File.CreateText(filepath);
+            using var file = File.CreateText(_filepath);
             var json = JsonConvert.SerializeObject(initialConfig, Formatting.Indented);
             file.Write(json);
         }
 
-        config = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(filepath)) ??
-                 throw new Exception($"Config file in {filepath} is empty, please delete and run the program again.");
+        _config = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(_filepath)) ??
+                 throw new Exception($"Config file in {_filepath} is empty, please delete and run the program again.");
     }
 }
