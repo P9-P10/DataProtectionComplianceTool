@@ -299,6 +299,7 @@ public class InteractiveMode
         var graph = graphStorage.GetLatest(databaseUri);
 
         var graphManipulator = new Manipulator<T>(graph);
+        var metadataManager = new MetadataManager(graph);
 
         var stop = false;
 
@@ -311,7 +312,7 @@ public class InteractiveMode
 
             try
             {
-                FunctionParser.CommandParser(manipulationQuery, graphManipulator);
+                FunctionParser.CommandParser(manipulationQuery, graphManipulator,metadataManager);
             }
             catch (ManipulatorException e)
             {
