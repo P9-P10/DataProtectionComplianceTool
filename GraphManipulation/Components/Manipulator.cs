@@ -5,6 +5,7 @@ using GraphManipulation.Models.Stores;
 using GraphManipulation.Models.Structures;
 using GraphManipulation.Ontologies;
 using VDS.RDF;
+using VDS.RDF.Update.Commands;
 
 namespace GraphManipulation.Components;
 
@@ -20,8 +21,7 @@ public class Manipulator<T> where T : Database
 
     public IGraph Graph { get; private set; }
     public List<string> Changes { get; }
-
-   
+    
 
     public void Move(Uri from, Uri to)
     {

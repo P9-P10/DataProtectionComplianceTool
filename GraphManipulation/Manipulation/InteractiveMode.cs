@@ -1,8 +1,7 @@
 using System.Data.SQLite;
-using System.Text.RegularExpressions;
 using GraphManipulation.Components;
-using GraphManipulation.Configuration;
 using GraphManipulation.Extensions;
+using GraphManipulation.Helpers;
 using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Stores;
 using VDS.RDF;
@@ -12,9 +11,14 @@ namespace GraphManipulation.Manipulation;
 
 public class InteractiveMode
 {
-    private static string ValidManipulationQueryPattern => "^(\\w+)\\(([\\w:#\\/.]+),\\s?([\\w:#\\/.]+)\\)$";
+    private readonly ConfigManager _cf;
 
-    public static void Run()
+    public InteractiveMode(string configPath)
+    {
+        _cf = new ConfigManager(configPath);
+    }
+
+    public void Run()
     {
         Console.WriteLine();
         Console.WriteLine(GenerateHashTags(40));
@@ -46,48 +50,52 @@ public class InteractiveMode
         }
     }
 
-    private static string GetOntologyPath()
+    private string GetOntologyPath()
     {
-        var ontologyPath = ConfigurationHandler.GetOntologyPath();
+        var ontologyPath = _cf.GetValue("OntologyPath");
 
-        if (ontologyPath is not null)
+        if (ontologyPath != "")
         {
             return ontologyPath;
         }
 
         ontologyPath = GetOntologyPathFromUser();
-        ConfigurationHandler.UpdateOntologyPath(ontologyPath);
+        _cf.UpdateValue("OntologyPath", ontologyPath);
 
         return ontologyPath;
     }
 
-    private static string GetGraphStorageConnectionString()
+    private string GetGraphStorageConnectionString()
     {
-        var graphStorageConnectionString = ConfigurationHandler.GetGraphStorageConnectionString();
+        var graphStorageConnectionString = _cf.GetValue("GraphStoragePath");
 
-        if (graphStorageConnectionString is not null)
+        if (graphStorageConnectionString != "")
         {
             return graphStorageConnectionString;
         }
 
         graphStorageConnectionString = GetGraphStorageConnectionStringFromUser();
-        ConfigurationHandler.UpdateGraphStorageConnectionString(graphStorageConnectionString);
+        _cf.UpdateValue("GraphStoragePath", graphStorageConnectionString);
 
         return graphStorageConnectionString;
     }
 
-    private static string GetBaseUriFromUser()
+    private string GetBaseUriFromUser()
     {
-        Console.WriteLine();
-        Console.WriteLine("Please input the Base Uri for your system: ");
-        var baseUri = GetStringFromUser(
-            s => !Entity.IsValidUri(s.Trim()),
-            "Uri must be valid, try again");
+        string baseUri = _cf.GetValue("BaseURI");
+        if (baseUri == "")
+        {
+            Console.WriteLine();
+            Console.WriteLine("Please input the Base Uri for your system: ");
+            baseUri = GetStringFromUser(
+                s => !Entity.IsValidUri(s.Trim()),
+                "Uri must be valid, try again");
+        }
 
         return baseUri;
     }
 
-    private static string GetOntologyPathFromUser()
+    private string GetOntologyPathFromUser()
     {
         Console.WriteLine();
         Console.WriteLine("Please input the absolute path to your ontology turtle file (.ttl): ");
@@ -98,10 +106,10 @@ public class InteractiveMode
         return ontologyPath;
     }
 
-    private static string GetGraphStorageConnectionStringFromUser()
+    private string GetGraphStorageConnectionStringFromUser()
     {
         Console.WriteLine();
-        Console.WriteLine("Please input the absolute path to you GraphStorage (.sqlite): ");
+        Console.WriteLine("Please input the absolute path to your GraphStorage (.sqlite): ");
         var graphStoragePath = GetStringFromUser(
             s =>
             {
@@ -119,7 +127,7 @@ public class InteractiveMode
         return graphStoragePath;
     }
 
-    private static string GetStringFromUser(Func<string, bool> errorPredicate, string errorMessage)
+    private string GetStringFromUser(Func<string, bool> errorPredicate, string errorMessage)
     {
         string result;
         var flag = false;
@@ -141,7 +149,7 @@ public class InteractiveMode
         return result;
     }
 
-    private static int GetIntFromUser(Func<int, bool> errorPredicate, string errorMessage)
+    private int GetIntFromUser(Func<int, bool> errorPredicate, string errorMessage)
     {
         int result;
         var flag = false;
@@ -167,7 +175,7 @@ public class InteractiveMode
         return result;
     }
 
-    private static bool GetBoolFromUser(string trueEquivalent, string falseEquivalent)
+    private bool GetBoolFromUser(string trueEquivalent, string falseEquivalent)
     {
         var boolString = GetStringFromUser(
             s =>
@@ -179,7 +187,7 @@ public class InteractiveMode
         return boolString == trueEquivalent;
     }
 
-    private static int PresentManagedDatabasesReturnChoice(List<(string, string)> managedDatabases)
+    private int PresentManagedDatabasesReturnChoice(List<(string, string)> managedDatabases)
     {
         Console.WriteLine();
         Console.WriteLine("These are the currently managed databases: ");
@@ -198,14 +206,14 @@ public class InteractiveMode
         return choice;
     }
 
-    private static bool PresentExit(string exitFrom)
+    private bool PresentExit(string exitFrom)
     {
         Console.WriteLine();
         Console.WriteLine($"Do you want to exit from {exitFrom}? (y/n)");
         return GetBoolFromUser("y", "n");
     }
 
-    private static void InitOrManageDatabase(int choice, List<(string, string)> managedDatabases,
+    private void InitOrManageDatabase(int choice, List<(string, string)> managedDatabases,
         GraphStorage graphStorage)
     {
         if (choice == 0)
@@ -223,16 +231,13 @@ public class InteractiveMode
                 case { } when databaseType == typeof(Sqlite):
                     ManageSelectedDatabase<Sqlite>(databaseUri, graphStorage);
                     break;
-                // case { } when databaseType == typeof(PostgreSql):
-                //     ManageSelectedDatabase<PostgreSql>(databaseUri, graphStorage);
-                //     break;
                 default:
                     throw new InteractiveModeException("The type of database is not supported: " + databaseType);
             }
         }
     }
 
-    private static void InitDatabase(GraphStorage graphStorage)
+    private void InitDatabase(GraphStorage graphStorage)
     {
         var baseUri = GetBaseUriFromUser();
 
@@ -253,7 +258,7 @@ public class InteractiveMode
         }
     }
 
-    private static void InitSqlite(GraphStorage graphStorage, string baseUri)
+    private void InitSqlite(GraphStorage graphStorage, string baseUri)
     {
         Console.WriteLine();
         Console.WriteLine("Please provide the path to the SQLite: ");
@@ -264,7 +269,7 @@ public class InteractiveMode
 
         do
         {
-            var sqlitePath = GetStringFromUser(s => false, "");
+            var sqlitePath = GetStringFromUser(_ => false, "");
 
             sqlite = new Sqlite("", baseUri, new SQLiteConnection($"Data Source={sqlitePath}"));
             sqlite.BuildFromDataSource();
@@ -289,7 +294,7 @@ public class InteractiveMode
         Console.WriteLine("(0) : SQLite");
     }
 
-    private static void ManageSelectedDatabase<T>(Uri databaseUri, GraphStorage graphStorage) where T : Database
+    private void ManageSelectedDatabase<T>(Uri databaseUri, GraphStorage graphStorage) where T : Database
     {
         var graph = graphStorage.GetLatest(databaseUri);
 
@@ -301,12 +306,12 @@ public class InteractiveMode
         {
             Console.WriteLine("Please write manipulation query: ");
             var manipulationQuery = GetStringFromUser(
-                s => !IsValidManipulationQuery(s),
+                s => !FunctionParser.IsValidManipulationQuery(s),
                 "The manipulation query is invalid, please try again");
 
             try
             {
-                FunctionParser(manipulationQuery, graphManipulator);
+                FunctionParser.CommandParser(manipulationQuery, graphManipulator);
             }
             catch (ManipulatorException e)
             {
@@ -339,24 +344,6 @@ public class InteractiveMode
         }
     }
 
-    private static void FunctionParser<T>(string manipulationQuery, Manipulator<T> graphManipulator) where T : Database
-    {
-        var match = Regex.Match(manipulationQuery, ValidManipulationQueryPattern);
-
-        var command = match.Groups[1].ToString().ToUpper();
-        var firstUri = new Uri(match.Groups[2].ToString());
-        var secondUri = new Uri(match.Groups[3].ToString());
-
-        Action<Uri, Uri> action = command switch
-        {
-            "MOVE" => graphManipulator.Move,
-            "RENAME" => graphManipulator.Rename,
-            _ => throw new ManipulatorException("Command not supported")
-        };
-
-        action(firstUri, secondUri);
-    }
-
     private static string GenerateHashTags(int count)
     {
         return new('#', count);
@@ -365,11 +352,6 @@ public class InteractiveMode
     private static string GenerateSpaces(int count)
     {
         return new(' ', count);
-    }
-
-    private static bool IsValidManipulationQuery(string query)
-    {
-        return Regex.IsMatch(query, ValidManipulationQueryPattern);
     }
 }
 

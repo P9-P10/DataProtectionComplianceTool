@@ -103,6 +103,21 @@ public class GraphStorage
         _dbConnection.Execute(insertStatement);
         _dbConnection.Close();
     }
+    
+    
+    public void Insert(Database database, IGraph graph, IGraph changes)
+    {
+        CheckConformity(graph);
+
+        var insertStatement = $@"
+            INSERT INTO DatabaseGraphs (uri, graph, operations) 
+            VALUES ('{database.Uri}', '{graph.ToStorageString()}', '{string.Join(',', changes.ToStorageString())}')
+        ";
+
+        _dbConnection.Open();
+        _dbConnection.Execute(insertStatement);
+        _dbConnection.Close();
+    }
 
     public IGraph GetLatest(Database database)
     {
