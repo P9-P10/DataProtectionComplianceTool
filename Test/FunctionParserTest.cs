@@ -19,24 +19,24 @@ public class FunctionParserTest
     }
 
     [Fact]
-    public void TestValidMarkAsPersonaldDataQuery_Returns_True_On_Valid_Query()
+    public void TestValidMarkAsPersonalDataQuery_Returns_True_On_Valid_Query()
     {
         string correctQuery =
             "MARK http://www.test.com/presentation_database/main/MarketingInformation/email AS PERSONAL DATA";
         List<string> parameters = FunctionParser.GetParametersFromQuery(correctQuery);
 
-        bool result = FunctionParser.IsValidMarkAsPersonaldDataQuery(parameters);
+        bool result = FunctionParser.IsValidMarkAsPersonalDataQuery(parameters);
         Assert.True(result);
     }
 
     [Fact]
-    public void TestValidMarkAsPersonaldDataQuery_Returns_False_On_InValid_Query()
+    public void TestValidMarkAsPersonalDataQuery_Returns_False_On_InValid_Query()
     {
         string incorrectQuery =
             "Not A COrrect Query";
 
         List<string> parameters = FunctionParser.GetParametersFromQuery(incorrectQuery);
-        bool result = FunctionParser.IsValidMarkAsPersonaldDataQuery(parameters);
+        bool result = FunctionParser.IsValidMarkAsPersonalDataQuery(parameters);
         Assert.False(result);
     }
 }

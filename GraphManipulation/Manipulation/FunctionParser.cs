@@ -25,7 +25,7 @@ public static class FunctionParser
 
         string command = GetParametersFromQuery(manipulationQuery)[0];
         Action<Uri, Uri> action;
-        Action<Uri, string> dataMarking;
+        
         Match match;
         switch (command)
         {
@@ -40,7 +40,7 @@ public static class FunctionParser
                 action(UriFromMatchGroups(match, 2), UriFromMatchGroups(match, 3));
                 break;
             case "MARK":
-                if (IsValidMarkAsPersonaldDataQuery(parameters))
+                if (IsValidMarkAsPersonalDataQuery(parameters))
                 {
                     metadataManager.MarkAsPersonalData(UriFromParameters(parameters, 2));
                 }
@@ -55,16 +55,16 @@ public static class FunctionParser
     public static List<string> GetParametersFromQuery(string query)
     {
         // Splits input string on:
-        // " ";")";"(";","
+        // " "; ")"; "("; ","
         return Regex.Split(query, " |\\(|\\)|,").ToList();
     }
 
-    public static Uri UriFromParameters(List<string> parameters, int index)
+    private static Uri UriFromParameters(List<string> parameters, int index)
     {
         return new Uri(parameters[index]);
     }
 
-    public static bool IsValidMarkAsPersonaldDataQuery(List<string> parameters)
+    public static bool IsValidMarkAsPersonalDataQuery(List<string> parameters)
     {
         if (parameters.Count >= 4)
         {
