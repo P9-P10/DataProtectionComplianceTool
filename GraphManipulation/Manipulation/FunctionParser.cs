@@ -10,8 +10,8 @@ public static class FunctionParser
 {
     // The below regular expression takes a command of the structure Command(Uri,Uri)
     // It verifies whether the structure of the command is correct, that the command itself only contain letters
-    // And the URI's are semantically valid.
-    public static string ValidManipulationQueryPattern => "^(\\w+)\\(([\\w:#\\/.]+),\\s?([\\w:#\\/.]+)\\)$";
+    // And the URI's are syntactically valid.
+    private static string ValidManipulationQueryPattern => "^(\\w+)\\(([\\w:#\\/.]+),\\s?([\\w:#\\/.]+)\\)$";
 
     public static bool IsValidManipulationQuery(string query)
     {

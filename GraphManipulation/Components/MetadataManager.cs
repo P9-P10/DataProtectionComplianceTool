@@ -1,33 +1,30 @@
-﻿using VDS.RDF;
+﻿using System.Data;
+using VDS.RDF;
 
 namespace GraphManipulation.Components;
 
 public class MetadataManager
 {
-    private IGraph _graph;
-    public MetadataManager(IGraph graph)
+    private IDbConnection _connection;
+
+    public MetadataManager(IDbConnection connection)
     {
-        _graph = graph;
-        
+        _connection = connection;
     }
-    
+
     public void MarkAsPersonalData(Uri uri)
     {
-        
     }
 
     public void AddPurpose()
     {
-        
     }
 
     public void AddTTL()
     {
-        
     }
 
     public void AddOrigin()
     {
-        
     }
 }
