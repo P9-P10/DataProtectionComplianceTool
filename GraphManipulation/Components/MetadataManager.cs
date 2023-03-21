@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using System.Data.SQLite;
 using Dapper;
 
 namespace GraphManipulation.Components;
@@ -12,11 +11,11 @@ public class MetadataManager
     /// Provides methods for interacting with GDPR metadata stored in a database represented by the given IDbConnection.
     /// </summary>
     /// <param name="connection">Connection to database containing metadata</param>
-    /// <param name="tableContainingIndivduals">Table containing individuals. Must have id column.</param>
-    public MetadataManager(IDbConnection connection, string tableContainingIndivduals)
+    /// <param name="tableContainingIndividuals">Table containing individuals. Must have id column.</param>
+    public MetadataManager(IDbConnection connection, string tableContainingIndividuals)
     {
         _connection = connection;
-        _individualsTable = tableContainingIndivduals;
+        _individualsTable = tableContainingIndividuals;
     }
 
     /// <summary>
@@ -88,15 +87,39 @@ public class MetadataManager
         _connection.Execute(addReferencesToMetadataStatement);
     }
 
-    public void AddPurpose()
+    public void AddPurpose(int metadataId, string purpose)
     {
+        UpdateMetadataEntry(metadataId, "purpose", purpose);
     }
 
-    public void AddTTL()
+    public void AddTTL(int metadataId, string ttl)
     {
+        UpdateMetadataEntry(metadataId, "ttl", ttl);
     }
 
-    public void AddOrigin()
+    public void AddOrigin(int metadataId, string origin)
     {
+        UpdateMetadataEntry(metadataId, "origin", origin);
+    }
+
+    public void AddStartTime(int metadataId, string startTime)
+    {
+        UpdateMetadataEntry(metadataId, "start_time", startTime);
+    }
+
+    public void AddLegallyRequired(int metadataId, bool legallyRequired)
+    {
+        UpdateMetadataEntry(metadataId, "legally_required", legallyRequired ? 1 : 0);
+    }
+
+    private void UpdateMetadataEntry(int entryId, string column, object value)
+    {
+        string updateStatement = $@"
+        UPDATE gdpr_metadata 
+        SET {column} = '{value}'
+        WHERE id = {entryId}
+        ";
+
+        _connection.Execute(updateStatement);
     }
 }

@@ -69,6 +69,21 @@ public class MetadataManagerTest : IDisposable
         // Database should again contain only the individuals table
         Assert.Equal(new List<string>{ IndividualsTable }, getTablesInDatabase());
     }
+    
+    private IEnumerable<string> getTablesInDatabase()
+    {
+        // Return a list of all non-system tables
+        // Query taken from https://www.sqlitetutorial.net/sqlite-show-tables/
+        return Connection.Query<string>(@"
+            SELECT 
+                name
+                    FROM 
+                sqlite_schema
+                WHERE 
+                    type ='table' AND 
+                    name NOT LIKE 'sqlite_%';
+        ");
+    }
 
     [Fact]
     public void AddsMetadataAndReferences()
@@ -91,19 +106,73 @@ public class MetadataManagerTest : IDisposable
         Assert.Contains((3, 1), insertedReferences);
     }
 
-    private IEnumerable<string> getTablesInDatabase()
+    [Fact]
+    public void AddsPurpose()
     {
-        // Return a list of all non-system tables
-        // Query taken from https://www.sqlitetutorial.net/sqlite-show-tables/
-        return Connection.Query<string>(@"
-            SELECT 
-                name
-                    FROM 
-                sqlite_schema
-                WHERE 
-                    type ='table' AND 
-                    name NOT LIKE 'sqlite_%';
-        ");
+        MetadataManager manager = new MetadataManager(Connection, IndividualsTable);
+        manager.CreateMetadataTables();
+        manager.MarkAsPersonalData("mockTable", "mockColumn");
+        
+        manager.AddPurpose(1, "Testing!");
+        
+        string purpose = Connection.QuerySingle<string>("select purpose from gdpr_metadata where id = 1");
+        
+        Assert.Equal("Testing!", purpose);
     }
     
+    [Fact]
+    public void AddsTTL()
+    {
+        MetadataManager manager = new MetadataManager(Connection, IndividualsTable);
+        manager.CreateMetadataTables();
+        manager.MarkAsPersonalData("mockTable", "mockColumn");
+        
+        manager.AddTTL(1, "one");
+        
+        string ttl = Connection.QuerySingle<string>("select ttl from gdpr_metadata where id = 1");
+        
+        Assert.Equal("one", ttl);
+    }
+    
+    [Fact]
+    public void AddsOrigin()
+    {
+        MetadataManager manager = new MetadataManager(Connection, IndividualsTable);
+        manager.CreateMetadataTables();
+        manager.MarkAsPersonalData("mockTable", "mockColumn");
+        
+        manager.AddOrigin(1, "Imagination");
+        
+        string origin = Connection.QuerySingle<string>("select origin from gdpr_metadata where id = 1");
+        
+        Assert.Equal("Imagination", origin);
+    }
+
+    [Fact]
+    public void AddsStartTime()
+    {
+        MetadataManager manager = new MetadataManager(Connection, IndividualsTable);
+        manager.CreateMetadataTables();
+        manager.MarkAsPersonalData("mockTable", "mockColumn");
+        
+        manager.AddStartTime(1, "Yesterday");
+        
+        string startTime = Connection.QuerySingle<string>("select start_time from gdpr_metadata where id = 1");
+        
+        Assert.Equal("Yesterday", startTime);
+    }
+
+    [Fact]
+    public void AddsLegallyRequired()
+    {
+        MetadataManager manager = new MetadataManager(Connection, IndividualsTable);
+        manager.CreateMetadataTables();
+        manager.MarkAsPersonalData("mockTable", "mockColumn");
+        
+        manager.AddLegallyRequired(1, true);
+        
+        bool legallyRequired = Connection.QuerySingle<bool>("select legally_required from gdpr_metadata where id = 1");
+        
+        Assert.Equal(true, legallyRequired);
+    }
 }
