@@ -17,6 +17,7 @@
         <None Update="Ontologies\database-description-language.ttl">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Remove="Models\Metadata\**" />
     </ItemGroup>
 
     <ItemGroup>
@@ -24,6 +25,11 @@
         <Compile Remove="Models\Stores\File.cs" />
         <Compile Remove="Models\Stores\Plaintext.cs" />
         <Compile Remove="Models\Structures\FilePath.cs" />
+        <Compile Remove="Models\Metadata\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Models\Metadata\**" />
     </ItemGroup>
 
 </Project>
