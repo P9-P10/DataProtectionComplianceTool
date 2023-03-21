@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using GraphManipulation.Components;
 using GraphManipulation.Helpers;
+using GraphManipulation.Models.Metadata;
 using GraphManipulation.Models.Stores;
 using J2N.Collections.Generic.Extensions;
 
@@ -42,7 +43,7 @@ public static class FunctionParser
             case "MARK":
                 if (IsValidMarkAsPersonalDataQuery(parameters))
                 {
-                    metadataManager.MarkAsPersonalData(parameters[1], parameters[2]);
+                    metadataManager.MarkAsPersonalData(new GDPRMetadata( parameters[1], parameters[2]));
                 }
                 else throw new ManipulatorException("Command not supported");
 

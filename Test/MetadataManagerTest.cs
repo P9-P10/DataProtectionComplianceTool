@@ -5,6 +5,7 @@ using System.Data.SQLite;
 using System.IO;
 using Dapper;
 using GraphManipulation.Components;
+using GraphManipulation.Models.Metadata;
 using Xunit;
 
 namespace Test;
@@ -91,7 +92,7 @@ public class MetadataManagerTest : IDisposable
         MetadataManager manager = new MetadataManager(Connection, IndividualsTable);
         manager.CreateMetadataTables();
         
-        manager.MarkAsPersonalData("mockTable", "mockColumn");
+        manager.MarkAsPersonalData(new GDPRMetadata("mockTable", "mockColumn"));
 
         (int, string, string) insertedRow = Connection.QuerySingle<(int, string, string)>("select id, target_table, target_column from gdpr_metadata");
         
@@ -105,13 +106,30 @@ public class MetadataManagerTest : IDisposable
         Assert.Contains((2, 1), insertedReferences);
         Assert.Contains((3, 1), insertedReferences);
     }
+    
+    [Fact]
+    public void AddsAllDefinedMetadataValues()
+    {
+        MetadataManager manager = new MetadataManager(Connection, IndividualsTable);
+        manager.CreateMetadataTables();
+
+        GDPRMetadata expected = new GDPRMetadata("mockTable", "mockColumn") { purpose = "Testing", ttl = "today" };
+        manager.MarkAsPersonalData(expected);
+
+        GDPRMetadata actual = Connection.QuerySingle<GDPRMetadata>(
+            "select target_table, target_column, purpose, ttl, origin, start_time, legally_required from gdpr_metadata");
+        
+        Assert.Equal(new GDPRMetadata("mockTable", "mockColumn") { purpose = "Testing", ttl = "today" }, new GDPRMetadata("mockTable", "mockColumn") { purpose = "Testing", ttl = "today" });
+        // Check that the expected values were inserted into gdpr_metadata
+        Assert.Equal(expected, actual);
+    }
 
     [Fact]
     public void AddsPurpose()
     {
         MetadataManager manager = new MetadataManager(Connection, IndividualsTable);
         manager.CreateMetadataTables();
-        manager.MarkAsPersonalData("mockTable", "mockColumn");
+        manager.MarkAsPersonalData(new GDPRMetadata("mockTable", "mockColumn"));
         
         manager.AddPurpose(1, "Testing!");
         
@@ -125,7 +143,7 @@ public class MetadataManagerTest : IDisposable
     {
         MetadataManager manager = new MetadataManager(Connection, IndividualsTable);
         manager.CreateMetadataTables();
-        manager.MarkAsPersonalData("mockTable", "mockColumn");
+        manager.MarkAsPersonalData(new GDPRMetadata("mockTable", "mockColumn"));
         
         manager.AddTTL(1, "one");
         
@@ -139,7 +157,7 @@ public class MetadataManagerTest : IDisposable
     {
         MetadataManager manager = new MetadataManager(Connection, IndividualsTable);
         manager.CreateMetadataTables();
-        manager.MarkAsPersonalData("mockTable", "mockColumn");
+        manager.MarkAsPersonalData(new GDPRMetadata("mockTable", "mockColumn"));
         
         manager.AddOrigin(1, "Imagination");
         
@@ -153,7 +171,7 @@ public class MetadataManagerTest : IDisposable
     {
         MetadataManager manager = new MetadataManager(Connection, IndividualsTable);
         manager.CreateMetadataTables();
-        manager.MarkAsPersonalData("mockTable", "mockColumn");
+        manager.MarkAsPersonalData(new GDPRMetadata("mockTable", "mockColumn"));
         
         manager.AddStartTime(1, "Yesterday");
         
@@ -167,7 +185,7 @@ public class MetadataManagerTest : IDisposable
     {
         MetadataManager manager = new MetadataManager(Connection, IndividualsTable);
         manager.CreateMetadataTables();
-        manager.MarkAsPersonalData("mockTable", "mockColumn");
+        manager.MarkAsPersonalData(new GDPRMetadata("mockTable", "mockColumn"));
         
         manager.AddLegallyRequired(1, true);
         

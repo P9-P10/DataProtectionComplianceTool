@@ -1,5 +1,7 @@
 ﻿using System.Data;
 using Dapper;
+using GraphManipulation.Helpers;
+using GraphManipulation.Models.Metadata;
 
 namespace GraphManipulation.Components;
 
@@ -55,6 +57,7 @@ public class MetadataManager
     ";
         
         _connection.Execute(createMetadataStatement);
+        
     }
 
     public void DropMetadataTables()
@@ -68,15 +71,14 @@ public class MetadataManager
         _connection.Execute(dropMetadataStatement);
     }
 
-    public void MarkAsPersonalData(string table, string column)
+    public void MarkAsPersonalData(GDPRMetadata metadata)
     {
+        InsertStatementBuilder builder = new InsertStatementBuilder("gdpr_metadata");
+        builder.InsertValues = metadata;
+        
         // This sql statement inserts a row with the given values, and returns the id of the inserted row
         // Please note that the function 'last_insert_rowid()' is specific to sqlite.
-        string insertMetadataStatement = @$"
-          INSERT INTO gdpr_metadata (target_table, target_column)
-	         VALUES ('{table}', '{column}');
-            select last_insert_rowid();
-        ";
+        string insertMetadataStatement = builder.Build() + " select last_insert_rowid();";
         int metadataId = _connection.QuerySingle<int>(insertMetadataStatement);
 
         string addReferencesToMetadataStatement = $@"
