@@ -42,7 +42,7 @@ public static class FunctionParser
             case "MARK":
                 if (IsValidMarkAsPersonalDataQuery(parameters))
                 {
-                    metadataManager.MarkAsPersonalData(UriFromParameters(parameters, 2));
+                    metadataManager.MarkAsPersonalData(parameters[1], parameters[2]);
                 }
                 else throw new ManipulatorException("Command not supported");
 
