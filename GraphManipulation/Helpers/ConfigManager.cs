@@ -42,7 +42,8 @@ public class ConfigManager
                 {"BaseURI", "http://www.test.com/"},
                 {"OutputFileName", "output.ttl"},
                 {"OutputPath", ""},
-                {"OntologyPath", ""}
+                {"OntologyPath", ""},
+                {"LogPath", ""}
             };
             using var file = File.CreateText(_filepath);
             var json = JsonConvert.SerializeObject(initialConfig, Formatting.Indented);

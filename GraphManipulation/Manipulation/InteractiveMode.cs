@@ -13,9 +13,9 @@ public class InteractiveMode
 {
     private readonly ConfigManager _cf;
 
-    public InteractiveMode(string configPath)
+    public InteractiveMode(ConfigManager configManager)
     {
-        _cf = new ConfigManager(configPath);
+        _cf = configManager;
     }
 
     public void Run()

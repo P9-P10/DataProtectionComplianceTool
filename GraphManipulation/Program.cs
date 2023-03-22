@@ -45,7 +45,7 @@ public static class Program
 
     private static void Interactive()
     {
-        var interactive = new InteractiveMode(FilePath);
+        var interactive = new InteractiveMode(Cf);
         interactive.Run();
     }
 

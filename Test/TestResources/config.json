@@ -1,0 +1,11 @@
+{
+  "GraphStoragePath": "",
+  "OptimizedDatabaseName": "OptimizedAdvancedDatabase.sqlite",
+  "SimpleDatabaseName": "SimpleDatabase.sqlite",
+  "DatabasePath": "",
+  "BaseURI": "http://www.test.com/",
+  "OutputFileName": "output.ttl",
+  "OutputPath": "",
+  "OntologyPath": "",
+  "LogPath": "/home/ane/Documents/GitHub/GraphManipulation/Test/TestResources/log"
+}
