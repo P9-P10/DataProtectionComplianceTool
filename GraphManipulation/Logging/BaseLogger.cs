@@ -22,10 +22,7 @@ public abstract class BaseLogger : ILogger
     protected string GetLogPath() => _configManager.GetValue("LogPath");
 
     public abstract void Append(ILog log);
-
-    public abstract ILog Read();
-
-    public abstract List<ILog> ReadAll();
+    public abstract IEnumerable<Log> Read(LoggerReadOptions options);
 }
 
 public class LoggerException : Exception

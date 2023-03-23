@@ -15,6 +15,14 @@ public class LogTest
     }
 
     [Fact]
+    public void LogToStringIfLogNumberAvailableReturnWithLogNumber()
+    {
+        var log = new Log(LogType.Vacuuming, LogMessageFormat.Plaintext, "This is a message");
+        log.SetLogNumber(47);
+        Assert.Equal("47" + Log.LogDelimiter() + log.GetCreationTimeStamp() + Log.LogDelimiter() + "Vacuuming" + Log.LogDelimiter() + "Plaintext" + Log.LogDelimiter() + "This is a message", log.LogToString());
+    }
+
+    [Fact]
     public void LogFromStringInvalidStringThrowsException()
     {
         const string logString = "This should not pass";

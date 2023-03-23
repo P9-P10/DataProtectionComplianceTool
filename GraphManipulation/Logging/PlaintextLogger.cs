@@ -10,47 +10,46 @@ public class PlaintextLogger : BaseLogger
     public PlaintextLogger(ConfigManager configManager) : base(configManager)
     {
         var path = GetLogPath();
+
+        if (!File.Exists(path))
+        {
+            var openWrite = File.OpenWrite(path);
+            openWrite.Dispose();
+        }
         
-        var openWrite = File.OpenWrite(path);
-        openWrite.Dispose();
-        
-        var lastLine = File.ReadLines(path).ToList().LastOrDefault();
+        var lastLine = File.ReadLines(path).LastOrDefault();
 
         if (lastLine is null)
         {
             _lineNumber = 1;
         }
+        else if (Log.IsValidLogString(lastLine))
+        {
+            _lineNumber = new Log(lastLine).LogNumber!.Value + 1;
+        }
         else
         {
-            var lineNumberString = lastLine.Split(Log.LogDelimiter()).First();
-            if (int.TryParse(lineNumberString, out var result))
-            {
-                _lineNumber = result + 1;
-            }
-            else
-            {
-                throw new LoggerException("Line number could not be parsed: " + lineNumberString);
-            }
-            
+            throw new LoggerException("Line number could not be parsed: " + lastLine);
         }
     }
     
     public override void Append(ILog log)
     {
         var writer = File.AppendText(GetLogPath());
-        writer.WriteLine(_lineNumber + Log.LogDelimiter() + log.LogToString());
+        log.SetLogNumber(_lineNumber);
+        writer.WriteLine(log.LogToString());
         _lineNumber++;
         writer.Dispose();
     }
 
-    public override ILog Read()
+    public override IEnumerable<Log> Read(LoggerReadOptions options)
     {
-        throw new NotImplementedException();
-    }
-
-    public override List<ILog> ReadAll()
-    {
-        throw new NotImplementedException();
+        return File.ReadLines(GetLogPath())
+            .Select(s => new Log(s))
+            .Where(log => options.LogNumbersRange.NumberWithinRange(log.LogNumber!.Value) &&
+                          options.LogTimeRange.DateTimeWithinRange(log.CreationTime) &&
+                          options.LogTypes.Contains(log.LogType) &&
+                          options.LogMessageFormats.Contains(log.LogMessageFormat));
     }
 }
 
