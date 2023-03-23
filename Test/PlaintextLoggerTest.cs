@@ -243,10 +243,10 @@ public class PlaintextLoggerTest
             logger.Append(log2);
             logger.Append(log3);
 
-            var probe1 = logger.Read(new LoggerReadOptions(logNumberRange: new NumberRange(1, 1)));
-            var probe2 = logger.Read(new LoggerReadOptions(logNumberRange: new NumberRange(2, 2)));
-            var probe3 = logger.Read(new LoggerReadOptions(logNumberRange: new NumberRange(2, 3)));
-            var probe4 = logger.Read(new LoggerReadOptions(logNumberRange: new NumberRange(4, 4)));
+            var probe1 = logger.Read(new LoggerReadOptions(logNumberRange: new NumberRange(1, 1))).ToList();
+            var probe2 = logger.Read(new LoggerReadOptions(logNumberRange: new NumberRange(2, 2))).ToList();
+            var probe3 = logger.Read(new LoggerReadOptions(logNumberRange: new NumberRange(2, 3))).ToList();
+            var probe4 = logger.Read(new LoggerReadOptions(logNumberRange: new NumberRange(4, 4))).ToList();
 
 
             Assert.Single(probe1);
@@ -254,11 +254,11 @@ public class PlaintextLoggerTest
 
             Assert.Single(probe2);
             Assert.Equal(2, probe2.First().LogNumber);
-            
-            Assert.Equal(2, probe3.Count());
+
+            Assert.Equal(2, probe3.Count);
             Assert.Equal(2, probe3.First().LogNumber);
             Assert.Equal(3, probe3.Skip(1).First().LogNumber);
-            
+
             Assert.Empty(probe4);
         }
 
@@ -275,7 +275,7 @@ public class PlaintextLoggerTest
         public void ReadReturnsLogsWithinTimeRange()
         {
             DeleteLog();
-            
+
             var log1String = CreateLogStringWithNumberAndTime(1, "01/01/0001 01.01.01");
             var log2String = CreateLogStringWithNumberAndTime(2, "02/02/0002 02.02.02");
             var log3String = CreateLogStringWithNumberAndTime(3, "03/03/0003 03.03.03");
@@ -288,32 +288,32 @@ public class PlaintextLoggerTest
             var probe1 = logger.Read(new LoggerReadOptions(
                 timeRange: new TimeRange(
                     new DateTime(1, 1, 1, 1, 1, 1),
-                    new DateTime(1, 1, 1, 1, 1, 1))));
+                    new DateTime(1, 1, 1, 1, 1, 1)))).ToList();
             var probe2 = logger.Read(new LoggerReadOptions(
                 timeRange: new TimeRange(
                     new DateTime(1, 2, 2),
-                    new DateTime(3, 2, 2))));
+                    new DateTime(3, 2, 2)))).ToList();
 
             var probe3 = logger.Read(new LoggerReadOptions(
                 timeRange: new TimeRange(
                     new DateTime(2, 2, 2, 2, 2, 2),
-                    new DateTime(3, 3, 3, 3, 3, 3))));
+                    new DateTime(3, 3, 3, 3, 3, 3)))).ToList();
 
             var probe4 = logger.Read(new LoggerReadOptions(
                 timeRange: new TimeRange(
                     new DateTime(4, 4, 4),
-                    new DateTime(4, 4, 4))));
+                    new DateTime(4, 4, 4)))).ToList();
 
             Assert.Single(probe1);
             Assert.Equal(1, probe1.First().LogNumber);
 
             Assert.Single(probe2);
             Assert.Equal(2, probe2.First().LogNumber);
-            
-            Assert.Equal(2, probe3.Count());
+
+            Assert.Equal(2, probe3.Count);
             Assert.Equal(2, probe3.First().LogNumber);
             Assert.Equal(3, probe3.Skip(1).First().LogNumber);
-            
+
             Assert.Empty(probe4);
         }
 
@@ -327,28 +327,41 @@ public class PlaintextLoggerTest
             var log1 = new Log(LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
             var log2 = new Log(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
             var log3 = new Log(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 3");
-            
+
             logger.Append(log1);
             logger.Append(log2);
             logger.Append(log3);
 
-            var probe1 = logger.Read(new LoggerReadOptions(logTypes: new List<LogType> { LogType.Metadata }));
-            var probe2 = logger.Read(new LoggerReadOptions(logTypes: new List<LogType> { LogType.Vacuuming }));
-            var probe3 = logger.Read(new LoggerReadOptions(logTypes: new List<LogType> { LogType.Metadata, LogType.Vacuuming }));
-            var probe4 = logger.Read(new LoggerReadOptions(logTypes: new List<LogType> { LogType.SchemaChange }));
-            
+            var probe1 = logger.Read(new LoggerReadOptions(logTypes: new List<LogType>
+                {
+                    LogType.Metadata
+                })).ToList();
+            var probe2 = logger.Read(new LoggerReadOptions(logTypes: new List<LogType>
+                {
+                    LogType.Vacuuming
+                })).ToList();
+            var probe3 = logger.Read(new LoggerReadOptions(logTypes: new List<LogType>
+                {
+                    LogType.Metadata, LogType.Vacuuming
+                })).ToList();
+            var probe4 = logger.Read(new LoggerReadOptions(logTypes: new List<LogType>
+                {
+                    LogType.SchemaChange
+                }))
+                .ToList();
+
             Assert.Single(probe1);
             Assert.Equal(1, probe1.First().LogNumber);
 
-            Assert.Equal(2, probe2.Count());
+            Assert.Equal(2, probe2.Count);
             Assert.Equal(2, probe2.First().LogNumber);
             Assert.Equal(3, probe2.Skip(1).First().LogNumber);
-            
-            Assert.Equal(3, probe3.Count());
+
+            Assert.Equal(3, probe3.Count);
             Assert.Equal(1, probe3.First().LogNumber);
             Assert.Equal(2, probe3.Skip(1).First().LogNumber);
             Assert.Equal(3, probe3.Skip(2).First().LogNumber);
-            
+
             Assert.Empty(probe4);
         }
 
@@ -362,44 +375,41 @@ public class PlaintextLoggerTest
             var log1 = new Log(LogType.Vacuuming, LogMessageFormat.Plaintext, "");
             var log2 = new Log(LogType.Vacuuming, LogMessageFormat.Json, "");
             var log3 = new Log(LogType.Vacuuming, LogMessageFormat.Json, "");
-            
+
             logger.Append(log1);
             logger.Append(log2);
             logger.Append(log3);
 
             var probe1 = logger.Read(new LoggerReadOptions(logMessageFormats: new List<LogMessageFormat>
-                {
-                    LogMessageFormat.Plaintext
-                }));
+            {
+                LogMessageFormat.Plaintext
+            })).ToList();
             var probe2 = logger.Read(new LoggerReadOptions(logMessageFormats: new List<LogMessageFormat>
-                {
-                    LogMessageFormat.Json
-                }));
+            {
+                LogMessageFormat.Json
+            })).ToList();
             var probe3 = logger.Read(new LoggerReadOptions(logMessageFormats: new List<LogMessageFormat>
-                {
-                    LogMessageFormat.Plaintext, LogMessageFormat.Json 
-                    
-                }));
+            {
+                LogMessageFormat.Plaintext, LogMessageFormat.Json
+            })).ToList();
             var probe4 = logger.Read(new LoggerReadOptions(logMessageFormats: new List<LogMessageFormat>
-                {
-                    LogMessageFormat.Turtle
-                }));
-            
+            {
+                LogMessageFormat.Turtle
+            })).ToList();
+
             Assert.Single(probe1);
             Assert.Equal(1, probe1.First().LogNumber);
 
-            Assert.Equal(2, probe2.Count());
+            Assert.Equal(2, probe2.Count);
             Assert.Equal(2, probe2.First().LogNumber);
             Assert.Equal(3, probe2.Skip(1).First().LogNumber);
-            
-            Assert.Equal(3, probe3.Count());
+
+            Assert.Equal(3, probe3.Count);
             Assert.Equal(1, probe3.First().LogNumber);
             Assert.Equal(2, probe3.Skip(1).First().LogNumber);
             Assert.Equal(3, probe3.Skip(2).First().LogNumber);
-            
+
             Assert.Empty(probe4);
         }
-        
-        
     }
 }
