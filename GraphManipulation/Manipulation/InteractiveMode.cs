@@ -31,6 +31,11 @@ public class InteractiveMode
         IGraph ontology = new Graph();
         ontology.LoadFromFile(ontologyPath, new TurtleParser());
 
+        var metadataConnection = new SQLiteConnection();
+        const string metadataConnectionString = "";
+        metadataConnection.ConnectionString = $"Data Source={metadataConnectionString}";
+        var metadataManager = new MetadataManager(metadataConnection, "placeholder_individuals_table");
+
         var graphStorage = new GraphStorage(graphStorageConnectionString, ontology);
 
         var stop = false;
@@ -41,7 +46,7 @@ public class InteractiveMode
 
             var choice = PresentManagedDatabasesReturnChoice(managedDatabases);
 
-            InitOrManageDatabase(choice, managedDatabases, graphStorage);
+            InitOrManageDatabase(choice, managedDatabases, graphStorage,metadataManager);
 
             if (PresentExit("the program"))
             {
@@ -214,7 +219,7 @@ public class InteractiveMode
     }
 
     private void InitOrManageDatabase(int choice, List<(string, string)> managedDatabases,
-        GraphStorage graphStorage)
+        GraphStorage graphStorage,MetadataManager metadataManager)
     {
         if (choice == 0)
         {
@@ -229,7 +234,7 @@ public class InteractiveMode
             switch (databaseType)
             {
                 case { } when databaseType == typeof(Sqlite):
-                    ManageSelectedDatabase<Sqlite>(databaseUri, graphStorage);
+                    ManageSelectedDatabase<Sqlite>(databaseUri, graphStorage,metadataManager);
                     break;
                 default:
                     throw new InteractiveModeException("The type of database is not supported: " + databaseType);
@@ -294,7 +299,7 @@ public class InteractiveMode
         Console.WriteLine("(0) : SQLite");
     }
 
-    private void ManageSelectedDatabase<T>(Uri databaseUri, GraphStorage graphStorage) where T : Database
+    private void ManageSelectedDatabase<T>(Uri databaseUri, GraphStorage graphStorage,MetadataManager metadataManager) where T : Database
     {
         var graph = graphStorage.GetLatest(databaseUri);
 
@@ -311,7 +316,7 @@ public class InteractiveMode
 
             try
             {
-                FunctionParser.CommandParser(manipulationQuery, graphManipulator);
+                FunctionParser.CommandParser(manipulationQuery, graphManipulator,metadataManager);
             }
             catch (ManipulatorException e)
             {
