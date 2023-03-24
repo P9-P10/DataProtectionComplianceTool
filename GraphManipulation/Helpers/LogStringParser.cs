@@ -1,55 +1,75 @@
 using System.Globalization;
+using GraphManipulation.Logging;
 using GraphManipulation.Logging.Logs;
 
 namespace GraphManipulation.Helpers;
 
 public static class LogStringParser
-{
-    public static ILog Parse(string logString)
+{ 
+    private static string GetRelevantPartFromString(string logString, int index)
     {
-        var splitLogString = logString.Split(Log.LogDelimiter());
+        if (!BaseLogger.IsValidLogString(logString))
+        {
+            throw new LogStringParserException("Log string is not valid: " + logString);
+        }
         
-        var logNumber = ParseLogNumber(splitLogString[0]);
-        var creationTime = ParseCreationTime(splitLogString[1]);
-        var logType = ParseLogType(splitLogString[2]);
-        var logMessageFormat = ParseLogMessageFormat(splitLogString[3]);
-        var message = splitLogString[4];
-
-        return new Log(logNumber, creationTime, logType, logMessageFormat, message);
+        return logString.Split(BaseLogger.LogDelimiter())[index];
     }
     
-    private static int ParseLogNumber(string logNumberString)
+    public static int ParseLogNumber(string logString)
     {
+        var logNumberString = GetRelevantPartFromString(logString, 0);
+        
         if (int.TryParse(logNumberString, out var result))
         {
             return result;
         }
 
-        throw new LogException("Could not parse log id: " + logNumberString);
+        throw new LogStringParserException("Could not parse log number: " + logNumberString);
     }
 
-    private static DateTime ParseCreationTime(string creationTimeString)
+    public static DateTime ParseCreationTime(string logString)
     {
+        var creationTimeString = GetRelevantPartFromString(logString, 1);
+        
         return DateTime.ParseExact(creationTimeString, "dd/MM/yyyy HH.mm.ss", CultureInfo.InvariantCulture);
     }
 
-    private static LogType ParseLogType(string logTypeString)
+    public static LogType ParseLogType(string logString)
     {
+        var logTypeString = GetRelevantPartFromString(logString, 2);
+        
         if (Enum.TryParse(enumType: typeof(LogType), value: logTypeString, result: out var result))
         {
             return (LogType)result!;
         }
 
-        throw new LogException("Could not parse log type: " + logTypeString);
+        throw new LogStringParserException("Could not parse log type: " + logTypeString);
     }
 
-    private static LogMessageFormat ParseLogMessageFormat(string logMessageFormatString)
+    public static LogMessageFormat ParseLogMessageFormat(string logString)
     {
+        var logMessageFormatString = GetRelevantPartFromString(logString, 3);
+        
         if (Enum.TryParse(enumType: typeof(LogMessageFormat), value: logMessageFormatString, result: out var result))
         {
             return (LogMessageFormat)result!;
         }
 
-        throw new LogException("Could not parse log message format: " + logMessageFormatString);
+        throw new LogStringParserException("Could not parse log message format: " + logMessageFormatString);
+    }
+
+    public static string ParseLogMessage(string logString)
+    {
+        var logMessage = GetRelevantPartFromString(logString, 4);
+
+        return logMessage;
+    }
+}
+
+public class LogStringParserException : Exception
+{
+    public LogStringParserException(string message) : base(message)
+    {
     }
 }

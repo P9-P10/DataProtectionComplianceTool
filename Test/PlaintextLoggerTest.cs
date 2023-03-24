@@ -61,7 +61,7 @@ public class PlaintextLoggerTest
 
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            var log = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.SchemaChange, LogMessageFormat.Plaintext, "Test message");
+            var log = logger.CreateLog(LogType.SchemaChange, LogMessageFormat.Plaintext, "Test message");
 
             logger.Append(log);
 
@@ -75,13 +75,13 @@ public class PlaintextLoggerTest
 
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            var log = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
+            var log = logger.CreateLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
 
             logger.Append(log);
 
             var actual = File.ReadLines(GetTestLogPath()).First();
 
-            Assert.Contains("Metadata" + Log.LogDelimiter() + "Plaintext" + Log.LogDelimiter() + "Test message",
+            Assert.Contains("Metadata" + BaseLogger.LogDelimiter() + "Plaintext" + BaseLogger.LogDelimiter() + "Test message",
                 actual);
         }
 
@@ -92,8 +92,8 @@ public class PlaintextLoggerTest
 
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            var log1 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
-            var log2 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
+            var log1 = logger.CreateLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
+            var log2 = logger.CreateLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
 
             logger.Append(log1);
             logger.Append(log2);
@@ -113,19 +113,19 @@ public class PlaintextLoggerTest
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
 
-            var log = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
+            var log = logger.CreateLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
 
             logger.Append(log);
 
             var actual = File.ReadLines(GetTestLogPath()).First();
 
-            Assert.Equal("1" + Log.LogDelimiter() +
-                         log.GetCreationTimeStamp() + Log.LogDelimiter() +
-                         "Metadata" + Log.LogDelimiter() +
-                         "Plaintext" + Log.LogDelimiter() +
+            Assert.Equal("1" + BaseLogger.LogDelimiter() +
+                         log.GetCreationTimeStamp() + BaseLogger.LogDelimiter() +
+                         "Metadata" + BaseLogger.LogDelimiter() +
+                         "Plaintext" + BaseLogger.LogDelimiter() +
                          "Test message",
                 actual);
-            Assert.True(Log.IsValidLogString(actual));
+            Assert.True(BaseLogger.IsValidLogString(actual));
         }
 
         [Fact]
@@ -135,9 +135,9 @@ public class PlaintextLoggerTest
 
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            var log1 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
-            var log2 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
-            var log3 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 3");
+            var log1 = logger.CreateLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
+            var log2 = logger.CreateLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
+            var log3 = logger.CreateLog(LogType.SchemaChange, LogMessageFormat.Plaintext, "Test message 3");
 
             logger.Append(log1);
             logger.Append(log2);
@@ -149,8 +149,8 @@ public class PlaintextLoggerTest
 
             actual.ForEach(logString =>
             {
-                Assert.Equal($"{index}", logString.Split(Log.LogDelimiter()).First());
-                Assert.Equal($"Test message {index}", logString.Split(Log.LogDelimiter()).Last());
+                Assert.Equal($"{index}", logString.Split(BaseLogger.LogDelimiter()).First());
+                Assert.Equal($"Test message {index}", logString.Split(BaseLogger.LogDelimiter()).Last());
                 index++;
             });
         }
@@ -162,51 +162,55 @@ public class PlaintextLoggerTest
 
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            var log = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
+            var log = logger.CreateLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
 
             logger.Append(log);
 
             var actual = File.ReadLines(GetTestLogPath()).First();
 
-            Assert.Equal("1", actual.Split(Log.LogDelimiter()).First());
+            Assert.Equal("1", actual.Split(BaseLogger.LogDelimiter()).First());
         }
 
         [Fact]
         public void LogFileWithExistingLogsStartsAtLastNumber()
         {
-            DeleteLog();
-
-            var log1 = new Log(4567, DateTime.Now, LogType.Metadata, LogMessageFormat.Plaintext, "Test message A");
+            Assert.True(false);
             
-            File.WriteAllLines(GetTestLogPath(), new[] { log1.LogToString() });
-
-            var configManager = CreateConfigManager();
-            var logger = new PlaintextLogger(configManager);
-            
-            var log2 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message B");
-
-            logger.Append(log2);
-
-            var actual = File.ReadLines(GetTestLogPath()).Last();
-
-            Assert.Equal("4568", actual.Split(Log.LogDelimiter()).First());
+            // DeleteLog();
+            //
+            // var log1 = new Log(4567, DateTime.Now, LogType.Metadata, LogMessageFormat.Plaintext, "Test message A");
+            //
+            // File.WriteAllLines(GetTestLogPath(), new[] { log1.ToString() });
+            //
+            // var configManager = CreateConfigManager();
+            // var logger = new PlaintextLogger(configManager);
+            //
+            // var log2 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message B");
+            //
+            // logger.Append(log2);
+            //
+            // var actual = File.ReadLines(GetTestLogPath()).Last();
+            //
+            // Assert.Equal("4568", actual.Split(Log.LogDelimiter()).First());
         }
 
         [Fact]
         public void LogFileWithLineNumberThatDoesNotParseThrowsException()
         {
-            DeleteLog();
-
-            var log = new Log(0, DateTime.Now, LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
-            var logString = log.LogToString();
-            var logStringList = logString.Split(Log.LogDelimiter()).ToList();
-            logStringList[0] = "This should not parse";
+            Assert.True(false);
             
-            File.WriteAllLines(GetTestLogPath(),
-                new[] { string.Join(Log.LogDelimiter(), logStringList) });
-
-            var configManager = CreateConfigManager();
-            Assert.Throws<LoggerException>(() => new PlaintextLogger(configManager));
+            // DeleteLog();
+            //
+            // var log = new Log(0, DateTime.Now, LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
+            // var logString = log.ToString();
+            // var logStringList = logString.Split(Log.LogDelimiter()).ToList();
+            // logStringList[0] = "This should not parse";
+            //
+            // File.WriteAllLines(GetTestLogPath(),
+            //     new[] { string.Join(Log.LogDelimiter(), logStringList) });
+            //
+            // var configManager = CreateConfigManager();
+            // Assert.Throws<LoggerException>(() => new PlaintextLogger(configManager));
         }
     }
 
@@ -220,9 +224,9 @@ public class PlaintextLoggerTest
 
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            var log1 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
-            var log2 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
-            var log3 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.SchemaChange, LogMessageFormat.Plaintext, "Test message 3");
+            var log1 = logger.CreateLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
+            var log2 = logger.CreateLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
+            var log3 = logger.CreateLog(LogType.SchemaChange, LogMessageFormat.Plaintext, "Test message 3");
 
             logger.Append(log1);
             logger.Append(log2);
@@ -240,9 +244,10 @@ public class PlaintextLoggerTest
 
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            var log1 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
-            var log2 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
-            var log3 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 3");
+            
+            var log1 = logger.CreateLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
+            var log2 = logger.CreateLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
+            var log3 = logger.CreateLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 3");
 
             logger.Append(log1);
             logger.Append(log2);
@@ -269,10 +274,10 @@ public class PlaintextLoggerTest
 
         private static string CreateLogStringWithNumberAndTime(int number, string timeString)
         {
-            return $"{number}" + Log.LogDelimiter() +
-                   timeString + Log.LogDelimiter() +
-                   LogType.Vacuuming + Log.LogDelimiter() +
-                   LogMessageFormat.Plaintext + Log.LogDelimiter() +
+            return $"{number}" + BaseLogger.LogDelimiter() +
+                   timeString + BaseLogger.LogDelimiter() +
+                   LogType.Vacuuming + BaseLogger.LogDelimiter() +
+                   LogMessageFormat.Plaintext + BaseLogger.LogDelimiter() +
                    "This is a message";
         }
 
@@ -329,9 +334,10 @@ public class PlaintextLoggerTest
 
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            var log1 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
-            var log2 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
-            var log3 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 3");
+            
+            var log1 = logger.CreateLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
+            var log2 = logger.CreateLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
+            var log3 = logger.CreateLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 3");
 
             logger.Append(log1);
             logger.Append(log2);
@@ -377,9 +383,10 @@ public class PlaintextLoggerTest
 
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            var log1 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Plaintext, "");
-            var log2 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Json, "");
-            var log3 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Json, "");
+            
+            var log1 = logger.CreateLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "");
+            var log2 = logger.CreateLog(LogType.Vacuuming, LogMessageFormat.Json, "");
+            var log3 = logger.CreateLog(LogType.Vacuuming, LogMessageFormat.Json, "");
 
             logger.Append(log1);
             logger.Append(log2);
@@ -425,20 +432,27 @@ public class PlaintextLoggerTest
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
 
-            var dateTime = new DateTime(1, 1, 1);
-            
-            var log1 = new Log(logger.ServeNextLogNumber(), dateTime + TimeSpan.FromSeconds(1), LogType.Vacuuming, LogMessageFormat.Plaintext, "");
-            var log2 = new Log(logger.ServeNextLogNumber(), dateTime + TimeSpan.FromSeconds(1), LogType.SchemaChange, LogMessageFormat.Json, "");
-            var log3 = new Log(logger.ServeNextLogNumber(), dateTime + TimeSpan.FromSeconds(2), LogType.Vacuuming, LogMessageFormat.Turtle, "");
-            var log4 = new Log(logger.ServeNextLogNumber(), dateTime + TimeSpan.FromSeconds(3), LogType.Metadata, LogMessageFormat.Plaintext, "");
+            var log1 = logger.CreateLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "");
+            var log2 = logger.CreateLog(LogType.SchemaChange, LogMessageFormat.Json, "");
+            var log3 = logger.CreateLog(LogType.Vacuuming, LogMessageFormat.Turtle, "");
+            var log4 = logger.CreateLog(LogType.Metadata, LogMessageFormat.Plaintext, "");
 
-            logger.Append(log1);
-            logger.Append(log2);
-            logger.Append(log3);
-            logger.Append(log4);
+            var logStrings = new List<string> { log1.ToString(), log2.ToString(), log3.ToString(), log4.ToString() };
+
+            var timeIndex = 1;
+
+            var modifiedStrings = logStrings.Select(s =>
+            {
+                var split = s.Split(BaseLogger.LogDelimiter());
+                split[1] = $"0{timeIndex}/0{timeIndex}/000{timeIndex} 0{timeIndex}.0{timeIndex}.0{timeIndex}";
+                timeIndex++;
+                return string.Join(BaseLogger.LogDelimiter(), split);
+            }).ToList();
+
+            File.WriteAllLines(GetTestLogPath(), modifiedStrings);
 
             var probe = logger.Read(new LoggerReadOptions(
-                    timeRange: new TimeRange(dateTime + TimeSpan.FromSeconds(1), dateTime + TimeSpan.FromSeconds(1)),
+                    timeRange: new TimeRange(new DateTime(1,1,1, 1, 1, 1), new DateTime(1,1,1, 1, 1, 1)),
                     logTypes: new List<LogType> { LogType.Vacuuming },
                     logMessageFormats: new List<LogMessageFormat> { LogMessageFormat.Plaintext }
                 )
@@ -455,11 +469,9 @@ public class PlaintextLoggerTest
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
 
-            var dateTime = new DateTime(1, 1, 1);
-            
-            var log1 = new Log(logger.ServeNextLogNumber(), dateTime + TimeSpan.FromSeconds(1), LogType.Vacuuming, LogMessageFormat.Plaintext, "");
-            var log2 = new Log(logger.ServeNextLogNumber(), dateTime + TimeSpan.FromSeconds(2), LogType.SchemaChange, LogMessageFormat.Json, "");
-            
+            var log1 = logger.CreateLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "");
+            var log2 = logger.CreateLog(LogType.SchemaChange, LogMessageFormat.Json, "");
+
             logger.Append(log2);
             logger.Append(log1);
 

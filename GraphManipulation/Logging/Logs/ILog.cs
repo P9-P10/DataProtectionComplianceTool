@@ -8,5 +8,6 @@ public interface ILog
     public LogMessageFormat LogMessageFormat { get; }
     public string Message { get; }
     
-    public string LogToString();
+    public string ToString();
+    public string GetCreationTimeStamp();
 }

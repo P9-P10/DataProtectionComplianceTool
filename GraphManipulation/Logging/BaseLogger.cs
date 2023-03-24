@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using GraphManipulation.Helpers;
 using GraphManipulation.Logging.Logs;
 
@@ -24,13 +25,24 @@ public abstract class BaseLogger : ILogger
 
     public abstract void Append(ILog log);
     public abstract IOrderedEnumerable<ILog> Read(LoggerReadOptions options);
+    public abstract ILog CreateLog(LogType logType, LogMessageFormat logMessageFormat, string message);
 
-    public int ServeNextLogNumber()
+    protected int ServeNextLogNumber()
     {
         return _logNumber++;
     }
 
     protected abstract int GetCurrentLogNumberFromFile();
+    
+    public static string LogDelimiter() => " <<>> ";
+    
+    private static string ValidLogStringPattern() =>
+        $"^\\d+{LogDelimiter()}\\d+\\/\\d+\\/\\d+ \\d+\\.\\d+\\.\\d+{LogDelimiter()}[a-zA-Z0-9_ ]+{LogDelimiter()}[a-zA-Z0-9_ ]+{LogDelimiter()}.*$";
+    
+    public static bool IsValidLogString(string logString)
+    {
+        return Regex.IsMatch(logString, ValidLogStringPattern());
+    }
 }
 
 public class LoggerException : Exception
