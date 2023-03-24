@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using Dapper;
 using GraphManipulation.Helpers;
+using GraphManipulation.MetadataManagement.AttributeMapping;
 using GraphManipulation.Models.Metadata;
 
 namespace GraphManipulation.Components;
@@ -18,6 +19,12 @@ public class MetadataManager
     {
         _connection = connection;
         _individualsTable = tableContainingIndividuals;
+        
+        // Add custom mapper that uses attributes to map columns to properties to dapper.
+        SqlMapper.SetTypeMap(
+            typeof(GDPRMetadata),
+            new ColumnAttributeTypeMapper<GDPRMetadata>());
+        
     }
 
     /// <summary>

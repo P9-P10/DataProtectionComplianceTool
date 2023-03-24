@@ -113,13 +113,13 @@ public class MetadataManagerTest : IDisposable
         MetadataManager manager = new MetadataManager(Connection, IndividualsTable);
         manager.CreateMetadataTables();
 
-        GDPRMetadata expected = new GDPRMetadata("mockTable", "mockColumn") { purpose = "Testing", ttl = "today" };
+        GDPRMetadata expected = new GDPRMetadata("mockTable", "mockColumn") { Purpose = "Testing", TTL = "today" };
         manager.MarkAsPersonalData(expected);
 
         GDPRMetadata actual = Connection.QuerySingle<GDPRMetadata>(
             "select target_table, target_column, purpose, ttl, origin, start_time, legally_required from gdpr_metadata");
         
-        Assert.Equal(new GDPRMetadata("mockTable", "mockColumn") { purpose = "Testing", ttl = "today" }, new GDPRMetadata("mockTable", "mockColumn") { purpose = "Testing", ttl = "today" });
+        Assert.Equal(new GDPRMetadata("mockTable", "mockColumn") { Purpose = "Testing", TTL = "today" }, new GDPRMetadata("mockTable", "mockColumn") { Purpose = "Testing", TTL = "today" });
         // Check that the expected values were inserted into gdpr_metadata
         Assert.Equal(expected, actual);
     }
