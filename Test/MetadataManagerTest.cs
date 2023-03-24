@@ -116,10 +116,8 @@ public class MetadataManagerTest : IDisposable
         GDPRMetadata expected = new GDPRMetadata("mockTable", "mockColumn") { Purpose = "Testing", TTL = "today" };
         manager.MarkAsPersonalData(expected);
 
-        GDPRMetadata actual = Connection.QuerySingle<GDPRMetadata>(
-            "select target_table, target_column, purpose, ttl, origin, start_time, legally_required from gdpr_metadata");
+        GDPRMetadata actual = manager.GetMetadataEntry(1);
         
-        Assert.Equal(new GDPRMetadata("mockTable", "mockColumn") { Purpose = "Testing", TTL = "today" }, new GDPRMetadata("mockTable", "mockColumn") { Purpose = "Testing", TTL = "today" });
         // Check that the expected values were inserted into gdpr_metadata
         Assert.Equal(expected, actual);
     }
@@ -192,5 +190,42 @@ public class MetadataManagerTest : IDisposable
         bool legallyRequired = Connection.QuerySingle<bool>("select legally_required from gdpr_metadata where id = 1");
         
         Assert.Equal(true, legallyRequired);
+    }
+    
+    [Fact]
+    public void GetsMetadataWithMissingValues()
+    {
+        MetadataManager manager = new MetadataManager(Connection, IndividualsTable);
+        manager.CreateMetadataTables();
+
+        // Defines only necessary values
+        GDPRMetadata one = new GDPRMetadata("mockTable", "mockColumn");
+        // Defines all values
+        GDPRMetadata two = new GDPRMetadata("mockTable", "mockColumn")
+        {
+            Purpose = "purpose",
+            LegallyRequired = false,
+            Origin = "test",
+            StartTime = "now",
+            TTL = "3 days"
+        };
+        // Defines all values except 'origin'
+        GDPRMetadata three = new GDPRMetadata("mockTable", "mockColumn")
+        {
+            Purpose = "purpose",
+            LegallyRequired = false,
+            StartTime = "now",
+            TTL = "3 days"
+        };
+
+        manager.MarkAsPersonalData(one);
+        manager.MarkAsPersonalData(two);
+        manager.MarkAsPersonalData(three);
+
+        IEnumerable<GDPRMetadata> result = manager.GetMetadataWithNullValues();
+
+        Assert.Contains(one, result);
+        Assert.DoesNotContain(two, result);
+        Assert.Contains(three, result);
     }
 }

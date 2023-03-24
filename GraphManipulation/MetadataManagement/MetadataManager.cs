@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.Collections;
+using System.Data;
 using Dapper;
 using GraphManipulation.Helpers;
 using GraphManipulation.MetadataManagement.AttributeMapping;
@@ -130,5 +131,25 @@ public class MetadataManager
         ";
 
         _connection.Execute(updateStatement);
+    }
+
+    public GDPRMetadata GetMetadataEntry(int entryId)
+    {
+        GDPRMetadata result = _connection.QuerySingle<GDPRMetadata>(
+            $"select target_table, target_column, purpose, ttl, origin, start_time, legally_required from gdpr_metadata where id = {entryId}");
+
+        return result;
+    }
+    
+    public IEnumerable<GDPRMetadata> GetMetadataWithNullValues()
+    {
+        IEnumerable<string> columns = typeof(GDPRMetadata).GetProperties().Select(prop =>
+            prop.GetCustomAttributes(true).OfType<ColumnAttribute>().FirstOrDefault().Name);
+        
+        IEnumerable<GDPRMetadata> result = _connection.Query<GDPRMetadata>(@$"
+            select {string.Join(", ", columns)} from gdpr_metadata 
+            where {string.Join(" IS NULL OR ", columns)} IS NULL");
+
+        return result;
     }
 }
