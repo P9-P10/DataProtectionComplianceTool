@@ -174,43 +174,47 @@ public class PlaintextLoggerTest
         [Fact]
         public void LogFileWithExistingLogsStartsAtLastNumber()
         {
-            Assert.True(false);
+            DeleteLog();
             
-            // DeleteLog();
-            //
-            // var log1 = new Log(4567, DateTime.Now, LogType.Metadata, LogMessageFormat.Plaintext, "Test message A");
-            //
-            // File.WriteAllLines(GetTestLogPath(), new[] { log1.ToString() });
-            //
-            // var configManager = CreateConfigManager();
-            // var logger = new PlaintextLogger(configManager);
-            //
-            // var log2 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message B");
-            //
-            // logger.Append(log2);
-            //
-            // var actual = File.ReadLines(GetTestLogPath()).Last();
-            //
-            // Assert.Equal("4568", actual.Split(Log.LogDelimiter()).First());
+            var configManager = CreateConfigManager();
+            var logger1 = new PlaintextLogger(configManager);
+
+            var log1 = logger1.CreateLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message A");
+            var logString = log1.ToString();
+            var splitString = logString.Split(BaseLogger.LogDelimiter());
+            splitString[0] = "4567";
+            var modifiedLogString = string.Join(BaseLogger.LogDelimiter(), splitString);
+
+            File.WriteAllLines(GetTestLogPath(), new[] { modifiedLogString });
+            
+            var logger2 = new PlaintextLogger(configManager);
+
+            var log2 = logger2.CreateLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message b");
+
+            logger2.Append(log2);
+            
+            var actual = File.ReadLines(GetTestLogPath()).Last();
+            
+            Assert.Equal("4568", actual.Split(BaseLogger.LogDelimiter()).First());
         }
 
         [Fact]
         public void LogFileWithLineNumberThatDoesNotParseThrowsException()
         {
-            Assert.True(false);
+            DeleteLog();
+
+            var configManager = CreateConfigManager();
+            var logger = new PlaintextLogger(configManager);
             
-            // DeleteLog();
-            //
-            // var log = new Log(0, DateTime.Now, LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
-            // var logString = log.ToString();
-            // var logStringList = logString.Split(Log.LogDelimiter()).ToList();
-            // logStringList[0] = "This should not parse";
-            //
-            // File.WriteAllLines(GetTestLogPath(),
-            //     new[] { string.Join(Log.LogDelimiter(), logStringList) });
-            //
-            // var configManager = CreateConfigManager();
-            // Assert.Throws<LoggerException>(() => new PlaintextLogger(configManager));
+            var log = logger.CreateLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
+            var logString = log.ToString();
+            var splitString = logString.Split(BaseLogger.LogDelimiter());
+            splitString[0] = "This should not parse";
+            var modifiedLogString = string.Join(BaseLogger.LogDelimiter(), splitString);
+            
+            File.WriteAllLines(GetTestLogPath(), new[] { modifiedLogString });
+            
+            Assert.Throws<LoggerException>(() => new PlaintextLogger(configManager));
         }
     }
 
