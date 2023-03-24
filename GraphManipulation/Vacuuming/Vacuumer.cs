@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using Dapper;
 using GraphManipulation.Vacuuming.Components;
 
 namespace GraphManipulation.Vacuuming;
@@ -16,7 +17,8 @@ public class Vacuumer : IVacuumer
 
     public bool DeleteExpiredTuples()
     {
-        throw new NotImplementedException();
+        _connection.Execute(GenerateSqlQueryForDeletion());
+        return true;
     }
 
     public string GenerateSqlQueryForDeletion(string predefinedExpirationDate = "")
