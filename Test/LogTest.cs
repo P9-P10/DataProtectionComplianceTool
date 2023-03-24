@@ -21,7 +21,7 @@ public class LogTest
         Assert.Throws<LogException>(() => new Log(logString));
     }
     
-    private static string GetTestLogString() => "1" + Log.LogDelimiter() + 
+    private static string GetTestLogString() => "123" + Log.LogDelimiter() + 
                                                 "12/05/1937 09.57.33" + Log.LogDelimiter() +
                                                 LogType.Vacuuming + Log.LogDelimiter() +
                                                 LogMessageFormat.Plaintext + Log.LogDelimiter() + 
@@ -82,12 +82,16 @@ public class LogTest
     [Fact]
     public void LogFromStringGetsLogNumber()
     {
-        Assert.True(false);
+        var logString = GetTestLogString();
+        var log = new Log(logString);
+        
+        Assert.Equal(123, log.LogNumber);
     }
 
     [Fact]
     public void LogFromStringInvalidLogNumberThrowsException()
     {
-        Assert.True(false);
+        var invalidLogString = GetTestLogString().Replace("123", "This should not parse");
+        Assert.Throws<LogException>(() => new Log(invalidLogString));
     }
 }
