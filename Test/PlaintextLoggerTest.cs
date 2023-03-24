@@ -61,7 +61,7 @@ public class PlaintextLoggerTest
 
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            var log = new Log(LogType.SchemaChange, LogMessageFormat.Plaintext, "Test message");
+            var log = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.SchemaChange, LogMessageFormat.Plaintext, "Test message");
 
             logger.Append(log);
 
@@ -75,7 +75,7 @@ public class PlaintextLoggerTest
 
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            var log = new Log(LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
+            var log = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
 
             logger.Append(log);
 
@@ -92,8 +92,8 @@ public class PlaintextLoggerTest
 
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            var log1 = new Log(LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
-            var log2 = new Log(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
+            var log1 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
+            var log2 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
 
             logger.Append(log1);
             logger.Append(log2);
@@ -113,7 +113,7 @@ public class PlaintextLoggerTest
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
 
-            var log = new Log(LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
+            var log = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
 
             logger.Append(log);
 
@@ -135,9 +135,9 @@ public class PlaintextLoggerTest
 
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            var log1 = new Log(LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
-            var log2 = new Log(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
-            var log3 = new Log(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 3");
+            var log1 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
+            var log2 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
+            var log3 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 3");
 
             logger.Append(log1);
             logger.Append(log2);
@@ -162,7 +162,7 @@ public class PlaintextLoggerTest
 
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            var log = new Log(LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
+            var log = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
 
             logger.Append(log);
 
@@ -176,13 +176,14 @@ public class PlaintextLoggerTest
         {
             DeleteLog();
 
-            var log1 = new Log(LogType.Metadata, LogMessageFormat.Plaintext, "Test message A");
-            var log2 = new Log(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message B");
-
-            File.WriteAllLines(GetTestLogPath(), new[] { "4567" + Log.LogDelimiter() + log1.LogToString() });
+            var log1 = new Log(4567, DateTime.Now, LogType.Metadata, LogMessageFormat.Plaintext, "Test message A");
+            
+            File.WriteAllLines(GetTestLogPath(), new[] { log1.LogToString() });
 
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
+            
+            var log2 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message B");
 
             logger.Append(log2);
 
@@ -196,9 +197,13 @@ public class PlaintextLoggerTest
         {
             DeleteLog();
 
-            var log = new Log(LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
+            var log = new Log(0, DateTime.Now, LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
+            var logString = log.LogToString();
+            var logStringList = logString.Split(Log.LogDelimiter()).ToList();
+            logStringList[0] = "This should not parse";
+            
             File.WriteAllLines(GetTestLogPath(),
-                new[] { "This should not pass" + Log.LogDelimiter() + log.LogToString() });
+                new[] { string.Join(Log.LogDelimiter(), logStringList) });
 
             var configManager = CreateConfigManager();
             Assert.Throws<LoggerException>(() => new PlaintextLogger(configManager));
@@ -215,9 +220,9 @@ public class PlaintextLoggerTest
 
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            var log1 = new Log(LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
-            var log2 = new Log(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
-            var log3 = new Log(LogType.SchemaChange, LogMessageFormat.Plaintext, "Test message 3");
+            var log1 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
+            var log2 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
+            var log3 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.SchemaChange, LogMessageFormat.Plaintext, "Test message 3");
 
             logger.Append(log1);
             logger.Append(log2);
@@ -235,9 +240,9 @@ public class PlaintextLoggerTest
 
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            var log1 = new Log(LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
-            var log2 = new Log(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
-            var log3 = new Log(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 3");
+            var log1 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
+            var log2 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
+            var log3 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 3");
 
             logger.Append(log1);
             logger.Append(log2);
@@ -324,9 +329,9 @@ public class PlaintextLoggerTest
 
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            var log1 = new Log(LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
-            var log2 = new Log(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
-            var log3 = new Log(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 3");
+            var log1 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
+            var log2 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
+            var log3 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 3");
 
             logger.Append(log1);
             logger.Append(log2);
@@ -372,9 +377,9 @@ public class PlaintextLoggerTest
 
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            var log1 = new Log(LogType.Vacuuming, LogMessageFormat.Plaintext, "");
-            var log2 = new Log(LogType.Vacuuming, LogMessageFormat.Json, "");
-            var log3 = new Log(LogType.Vacuuming, LogMessageFormat.Json, "");
+            var log1 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Plaintext, "");
+            var log2 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Json, "");
+            var log3 = new Log(logger.ServeNextLogNumber(), DateTime.Now, LogType.Vacuuming, LogMessageFormat.Json, "");
 
             logger.Append(log1);
             logger.Append(log2);
@@ -410,6 +415,58 @@ public class PlaintextLoggerTest
             Assert.Equal(3, probe3.Skip(2).First().LogNumber);
 
             Assert.Empty(probe4);
+        }
+
+        [Fact]
+        public void ReadReturnsOnlyLogThatMatchesAllOptions()
+        {
+            DeleteLog();
+
+            var configManager = CreateConfigManager();
+            var logger = new PlaintextLogger(configManager);
+
+            var dateTime = new DateTime(1, 1, 1);
+            
+            var log1 = new Log(logger.ServeNextLogNumber(), dateTime + TimeSpan.FromSeconds(1), LogType.Vacuuming, LogMessageFormat.Plaintext, "");
+            var log2 = new Log(logger.ServeNextLogNumber(), dateTime + TimeSpan.FromSeconds(1), LogType.SchemaChange, LogMessageFormat.Json, "");
+            var log3 = new Log(logger.ServeNextLogNumber(), dateTime + TimeSpan.FromSeconds(2), LogType.Vacuuming, LogMessageFormat.Turtle, "");
+            var log4 = new Log(logger.ServeNextLogNumber(), dateTime + TimeSpan.FromSeconds(3), LogType.Metadata, LogMessageFormat.Plaintext, "");
+
+            logger.Append(log1);
+            logger.Append(log2);
+            logger.Append(log3);
+            logger.Append(log4);
+
+            var probe = logger.Read(new LoggerReadOptions(
+                    timeRange: new TimeRange(dateTime + TimeSpan.FromSeconds(1), dateTime + TimeSpan.FromSeconds(1)),
+                    logTypes: new List<LogType> { LogType.Vacuuming },
+                    logMessageFormats: new List<LogMessageFormat> { LogMessageFormat.Plaintext }
+                )
+            );
+
+            Assert.Single(probe);
+        }
+
+        [Fact]
+        public void ReadReturnsLogsSortedByLogNumber()
+        {
+            DeleteLog();
+            
+            var configManager = CreateConfigManager();
+            var logger = new PlaintextLogger(configManager);
+
+            var dateTime = new DateTime(1, 1, 1);
+            
+            var log1 = new Log(logger.ServeNextLogNumber(), dateTime + TimeSpan.FromSeconds(1), LogType.Vacuuming, LogMessageFormat.Plaintext, "");
+            var log2 = new Log(logger.ServeNextLogNumber(), dateTime + TimeSpan.FromSeconds(2), LogType.SchemaChange, LogMessageFormat.Json, "");
+            
+            logger.Append(log2);
+            logger.Append(log1);
+
+            var probe = logger.Read(new LoggerReadOptions()).ToList();
+            
+            Assert.Equal(1, probe.First().LogNumber);
+            Assert.Equal(2, probe.Skip(1).First().LogNumber);
         }
     }
 }

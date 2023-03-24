@@ -6,23 +6,31 @@ namespace GraphManipulation.Logging;
 public abstract class BaseLogger : ILogger
 {
     private readonly ConfigManager _configManager;
-    
-    public BaseLogger(ConfigManager configManager)
+    private int _logNumber;
+
+    protected BaseLogger(ConfigManager configManager)
     {
         _configManager = configManager;
 
-        var path = GetLogPath();
-
-        if (string.IsNullOrEmpty(path))
+        if (string.IsNullOrEmpty(GetLogPath()))
         {
-            throw new LoggerException("Value for LogPath must be set in config file");
+            throw new LoggerException("Value for log path must be set in config file");
         }
+
+        _logNumber = GetCurrentLogNumberFromFile();
     }
     
     protected string GetLogPath() => _configManager.GetValue("LogPath");
 
     public abstract void Append(ILog log);
-    public abstract IEnumerable<Log> Read(LoggerReadOptions options);
+    public abstract IOrderedEnumerable<ILog> Read(LoggerReadOptions options);
+
+    public int ServeNextLogNumber()
+    {
+        return _logNumber++;
+    }
+
+    protected abstract int GetCurrentLogNumberFromFile();
 }
 
 public class LoggerException : Exception

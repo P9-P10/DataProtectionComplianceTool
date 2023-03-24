@@ -10,15 +10,7 @@ public class LogTest
     [Fact]
     public void LogToStringReturnsCorrectString()
     {
-        var log = new Log(LogType.Vacuuming, LogMessageFormat.Plaintext, "This is a message");
-        Assert.Equal(log.GetCreationTimeStamp() + Log.LogDelimiter() + "Vacuuming" + Log.LogDelimiter() + "Plaintext" + Log.LogDelimiter() + "This is a message", log.LogToString());
-    }
-
-    [Fact]
-    public void LogToStringIfLogNumberAvailableReturnWithLogNumber()
-    {
-        var log = new Log(LogType.Vacuuming, LogMessageFormat.Plaintext, "This is a message");
-        log.SetLogNumber(47);
+        var log = new Log(47, DateTime.Now, LogType.Vacuuming, LogMessageFormat.Plaintext, "This is a message");
         Assert.Equal("47" + Log.LogDelimiter() + log.GetCreationTimeStamp() + Log.LogDelimiter() + "Vacuuming" + Log.LogDelimiter() + "Plaintext" + Log.LogDelimiter() + "This is a message", log.LogToString());
     }
 
@@ -85,5 +77,17 @@ public class LogTest
         var log = new Log(logString);
 
         Assert.Equal("This is a message", log.Message);
+    }
+
+    [Fact]
+    public void LogFromStringGetsLogNumber()
+    {
+        Assert.True(false);
+    }
+
+    [Fact]
+    public void LogFromStringInvalidLogNumberThrowsException()
+    {
+        Assert.True(false);
     }
 }
