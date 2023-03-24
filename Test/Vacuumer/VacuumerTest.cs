@@ -18,7 +18,7 @@ public class VacuumerTest
         List<TableColumnPair> tableColumnPairs = new List<TableColumnPair>();
 
 
-        GraphManipulation.Vacuuming.Vacuumer vacuumer = new(dbMock.Object, tableColumnPairs);
+        GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
         string query = vacuumer.GenerateSqlQueryForDeletion();
 
 
@@ -39,7 +39,7 @@ public class VacuumerTest
 
 
         string expectedTime = DateTime.Now.AddYears(-2).ToString("yyyy-M-d h:m", CultureInfo.InvariantCulture);
-        GraphManipulation.Vacuuming.Vacuumer vacuumer = new(dbMock.Object, tableColumnPairs);
+        GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
         string query = vacuumer.GenerateSqlQueryForDeletion(expectedTime);
 
 
@@ -63,7 +63,7 @@ public class VacuumerTest
 
 
         string expectedTime = DateTime.Now.AddYears(-2).ToString("yyyy-M-d h:m", CultureInfo.InvariantCulture);
-        GraphManipulation.Vacuuming.Vacuumer vacuumer = new(dbMock.Object, tableColumnPairs);
+        GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
         string query = vacuumer.GenerateSqlQueryForDeletion(expectedTime);
 
 
@@ -87,7 +87,7 @@ public class VacuumerTest
 
 
         string expectedTime = DateTime.Now.AddYears(-2).ToString("yyyy-M-d h:m", CultureInfo.InvariantCulture);
-        GraphManipulation.Vacuuming.Vacuumer vacuumer = new(dbMock.Object, tableColumnPairs);
+        GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
         string query = vacuumer.GenerateSqlQueryForDeletion(expectedTime);
 
 
