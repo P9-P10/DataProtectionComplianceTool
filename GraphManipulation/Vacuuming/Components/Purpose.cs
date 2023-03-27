@@ -25,13 +25,13 @@ public class Purpose
     {
         _name = name;
         _timeFormat = timeFormat;   
-        _expiration_date = expiration_date_calculator(ttl);
+        _expiration_date = ExpirationDateCalculator(ttl);
         _expirationCondition = expirationCondition;
         _origin = origin;
         _legallyRequired = legallyRequired;
     }
 
-    private string expiration_date_calculator(string inputString)
+    private string ExpirationDateCalculator(string inputString)
     {
         int years = 0, months = 0, days = 0, hours = 0, minutes = 0;
 
@@ -39,22 +39,22 @@ public class Purpose
 
         foreach (string component in compontents)
         {
-            int componentNumber = get_number_from_component(component);
+            int componentNumber = GetNumberFromComponentGetNumberFromComponent(component);
             switch (component)
             {
-                case { } a when a.Contains('y'):
+                case { } when component.Contains('y'):
                     years += componentNumber;
                     break;
-                case { } b when b.Contains('m'):
+                case { } when component.Contains('m'):
                     months += componentNumber;
                     break;
-                case { } c when c.Contains('d'):
+                case { } when component.Contains('d'):
                     days += componentNumber;
                     break;
-                case { } d when d.Contains('h'):
+                case { } when component.Contains('h'):
                     hours += componentNumber;
                     break;
-                case { } e when e.Contains('M'):
+                case { } when component.Contains('M'):
                     minutes += componentNumber;
                     break;
             }
@@ -65,15 +65,10 @@ public class Purpose
         return expirationDate.ToString(_timeFormat,CultureInfo.InvariantCulture);
     }
 
-    private int get_number_from_component(string inputString)
+    private int GetNumberFromComponentGetNumberFromComponent(string inputString)
     {
         Match match = Regex.Match(inputString, @"\d");
-        if (match.Success)
-        {
-            return Convert.ToInt32(match.Value);
-        }
-
-        return 0;
+        return match.Success ? Convert.ToInt32(match.Value) : 0;
     }
 
     private DateTime ExpirationDateAsDatetime()

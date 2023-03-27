@@ -8,12 +8,22 @@ public class TableColumnPair
     public string Table => _table;
     public string Column => _column;
 
+
     public List<Purpose> GetPurposes => _purposes;
 
     public TableColumnPair(string table, string column)
     {
         _table = table;
         _column = column;
+    }
+
+    public TableColumnPair(string target_table, string target_column, string purpose, string ttl,
+        bool legally_required, string origin, string start_time)
+    {
+        _table = target_table;
+        _column = target_column;
+        Purpose newPurpose = new(purpose, ttl, start_time, origin, legally_required);
+        AddPurpose(newPurpose);
     }
 
     public void AddPurpose(Purpose purpose)
@@ -26,16 +36,7 @@ public class TableColumnPair
 
     public IEnumerable<Purpose> GetPurposeWithLegalReason()
     {
-        var purposes = new List<Purpose>();
-        foreach (var purpose in _purposes)
-        {
-            if (purpose.GetLegallyRequired)
-            {
-                purposes.Add(purpose);
-            }
-        }
-
-        return purposes;
+        return _purposes.Where(purpose => purpose.GetLegallyRequired).ToList();
     }
 
     public Purpose GetPurposeWithOldestExpirationDate()
