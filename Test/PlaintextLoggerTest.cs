@@ -9,9 +9,6 @@ using Xunit;
 
 namespace Test;
 
-// TODO: Hver test er ansvarlig for at rydde op efter sig selv
-// https://stackoverflow.com/questions/12976319/xunit-net-global-setup-teardown
-
 public abstract class LogTest : IDisposable
 {
     protected LogTest()
@@ -41,7 +38,7 @@ public abstract class LogTest : IDisposable
         return Path.Combine(projectFolder, "TestResources/log");
     }
 
-    protected static void DeleteLog()
+    private static void DeleteLog()
     {
         if (File.Exists(GetTestLogPath()))
         {
@@ -75,8 +72,6 @@ public class PlaintextLoggerTest : LogTest
         [Fact]
         public void LoggerCreatesFileIfNotExists()
         {
-            DeleteLog();
-
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
             var log = logger.CreateLog(LogType.SchemaChange, LogMessageFormat.Plaintext, "Test message");
@@ -89,8 +84,6 @@ public class PlaintextLoggerTest : LogTest
         [Fact]
         public void LoggerWritesToFile()
         {
-            DeleteLog();
-
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
             var log = logger.CreateLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
@@ -100,15 +93,13 @@ public class PlaintextLoggerTest : LogTest
             var actual = File.ReadLines(GetTestLogPath()).First();
 
             Assert.Contains(
-                "Metadata" + BaseLogger.LogDelimiter() + "Plaintext" + BaseLogger.LogDelimiter() + "Test message",
+                "Metadata" + Log.LogDelimiter() + "Plaintext" + Log.LogDelimiter() + "Test message",
                 actual);
         }
 
         [Fact]
         public void LoggerAppendsToFile()
         {
-            DeleteLog();
-
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
             var log1 = logger.CreateLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
@@ -127,8 +118,6 @@ public class PlaintextLoggerTest : LogTest
         [Fact]
         public void LoggerUsesCorrectFormat()
         {
-            DeleteLog();
-
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
 
@@ -138,20 +127,18 @@ public class PlaintextLoggerTest : LogTest
 
             var actual = File.ReadLines(GetTestLogPath()).First();
 
-            Assert.Equal("1" + BaseLogger.LogDelimiter() +
-                         log.GetCreationTimeStamp() + BaseLogger.LogDelimiter() +
-                         "Metadata" + BaseLogger.LogDelimiter() +
-                         "Plaintext" + BaseLogger.LogDelimiter() +
+            Assert.Equal("1" + Log.LogDelimiter() +
+                         log.GetCreationTimeStamp() + Log.LogDelimiter() +
+                         "Metadata" + Log.LogDelimiter() +
+                         "Plaintext" + Log.LogDelimiter() +
                          "Test message",
                 actual);
-            Assert.True(BaseLogger.IsValidLogString(actual));
+            Assert.True(Log.IsValidLogString(actual));
         }
 
         [Fact]
         public void LogEntriesAreNumberedSequentially()
         {
-            DeleteLog();
-
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
             var log1 = logger.CreateLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
@@ -168,8 +155,8 @@ public class PlaintextLoggerTest : LogTest
 
             actual.ForEach(logString =>
             {
-                Assert.Equal($"{index}", logString.Split(BaseLogger.LogDelimiter()).First());
-                Assert.Equal($"Test message {index}", logString.Split(BaseLogger.LogDelimiter()).Last());
+                Assert.Equal($"{index}", logString.Split(Log.LogDelimiter()).First());
+                Assert.Equal($"Test message {index}", logString.Split(Log.LogDelimiter()).Last());
                 index++;
             });
         }
@@ -177,8 +164,6 @@ public class PlaintextLoggerTest : LogTest
         [Fact]
         public void LogFileWithNoLogsStartsAtOne()
         {
-            DeleteLog();
-
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
             var log = logger.CreateLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
@@ -187,22 +172,20 @@ public class PlaintextLoggerTest : LogTest
 
             var actual = File.ReadLines(GetTestLogPath()).First();
 
-            Assert.Equal("1", actual.Split(BaseLogger.LogDelimiter()).First());
+            Assert.Equal("1", actual.Split(Log.LogDelimiter()).First());
         }
 
         [Fact]
         public void LogFileWithExistingLogsStartsAtLastNumber()
         {
-            DeleteLog();
-
             var configManager = CreateConfigManager();
             var logger1 = new PlaintextLogger(configManager);
 
             var log1 = logger1.CreateLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message A");
             var logString = log1.ToString();
-            var splitString = logString.Split(BaseLogger.LogDelimiter());
+            var splitString = logString.Split(Log.LogDelimiter());
             splitString[0] = "4567";
-            var modifiedLogString = string.Join(BaseLogger.LogDelimiter(), splitString);
+            var modifiedLogString = string.Join(Log.LogDelimiter(), splitString);
 
             File.WriteAllLines(GetTestLogPath(), new[] { modifiedLogString });
 
@@ -214,22 +197,20 @@ public class PlaintextLoggerTest : LogTest
 
             var actual = File.ReadLines(GetTestLogPath()).Last();
 
-            Assert.Equal("4568", actual.Split(BaseLogger.LogDelimiter()).First());
+            Assert.Equal("4568", actual.Split(Log.LogDelimiter()).First());
         }
 
         [Fact]
         public void LogFileWithLineNumberThatDoesNotParseThrowsException()
         {
-            DeleteLog();
-
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
 
             var log = logger.CreateLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
             var logString = log.ToString();
-            var splitString = logString.Split(BaseLogger.LogDelimiter());
+            var splitString = logString.Split(Log.LogDelimiter());
             splitString[0] = "This should not parse";
-            var modifiedLogString = string.Join(BaseLogger.LogDelimiter(), splitString);
+            var modifiedLogString = string.Join(Log.LogDelimiter(), splitString);
 
             File.WriteAllLines(GetTestLogPath(), new[] { modifiedLogString });
 
@@ -243,8 +224,6 @@ public class PlaintextLoggerTest : LogTest
         [Fact]
         public void ReadReturnsAllLogsWhenGivenEmptyOptions()
         {
-            DeleteLog();
-
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
             var log1 = logger.CreateLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
@@ -263,8 +242,6 @@ public class PlaintextLoggerTest : LogTest
         [Fact]
         public void ReadReturnsLogsWithinNumbersRange()
         {
-            DeleteLog();
-
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
 
@@ -297,18 +274,16 @@ public class PlaintextLoggerTest : LogTest
 
         private static string CreateLogStringWithNumberAndTime(int number, string timeString)
         {
-            return $"{number}" + BaseLogger.LogDelimiter() +
-                   timeString + BaseLogger.LogDelimiter() +
-                   LogType.Vacuuming + BaseLogger.LogDelimiter() +
-                   LogMessageFormat.Plaintext + BaseLogger.LogDelimiter() +
+            return $"{number}" + Log.LogDelimiter() +
+                   timeString + Log.LogDelimiter() +
+                   LogType.Vacuuming + Log.LogDelimiter() +
+                   LogMessageFormat.Plaintext + Log.LogDelimiter() +
                    "This is a message";
         }
 
         [Fact]
         public void ReadReturnsLogsWithinTimeRange()
         {
-            DeleteLog();
-
             var log1String = CreateLogStringWithNumberAndTime(1, "01/01/0001 01.01.01");
             var log2String = CreateLogStringWithNumberAndTime(2, "02/02/0002 02.02.02");
             var log3String = CreateLogStringWithNumberAndTime(3, "03/03/0003 03.03.03");
@@ -353,8 +328,6 @@ public class PlaintextLoggerTest : LogTest
         [Fact]
         public void ReadReturnsLogsWithGivenLogTypes()
         {
-            DeleteLog();
-
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
 
@@ -402,8 +375,6 @@ public class PlaintextLoggerTest : LogTest
         [Fact]
         public void ReadReturnsLogsWithGivenLogMessageFormats()
         {
-            DeleteLog();
-
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
 
@@ -450,8 +421,6 @@ public class PlaintextLoggerTest : LogTest
         [Fact]
         public void ReadReturnsOnlyLogThatMatchesAllOptions()
         {
-            DeleteLog();
-
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
 
@@ -466,10 +435,10 @@ public class PlaintextLoggerTest : LogTest
 
             var modifiedStrings = logStrings.Select(s =>
             {
-                var split = s.Split(BaseLogger.LogDelimiter());
+                var split = s.Split(Log.LogDelimiter());
                 split[1] = $"0{timeIndex}/0{timeIndex}/000{timeIndex} 0{timeIndex}.0{timeIndex}.0{timeIndex}";
                 timeIndex++;
-                return string.Join(BaseLogger.LogDelimiter(), split);
+                return string.Join(Log.LogDelimiter(), split);
             }).ToList();
 
             File.WriteAllLines(GetTestLogPath(), modifiedStrings);
@@ -487,8 +456,6 @@ public class PlaintextLoggerTest : LogTest
         [Fact]
         public void ReadReturnsLogsSortedByLogNumber()
         {
-            DeleteLog();
-
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
 

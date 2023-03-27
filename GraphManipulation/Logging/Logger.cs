@@ -4,12 +4,12 @@ using GraphManipulation.Logging.Logs;
 
 namespace GraphManipulation.Logging;
 
-public abstract class BaseLogger : ILogger
+public abstract class Logger : ILogger
 {
     private readonly ConfigManager _configManager;
     private int _logNumber;
 
-    protected BaseLogger(ConfigManager configManager)
+    protected Logger(ConfigManager configManager)
     {
         _configManager = configManager;
 
@@ -36,23 +36,6 @@ public abstract class BaseLogger : ILogger
     }
 
     protected abstract int GetCurrentLogNumberFromFile();
-
-    public static string LogDelimiter()
-    {
-        return " <<>> ";
-    }
-
-    // TODO: Beskriv lige hvad den her beskriver (gerne med eksempel)
-    private static string ValidLogStringPattern()
-    {
-        return
-            $"^\\d+{LogDelimiter()}\\d+\\/\\d+\\/\\d+ \\d+\\.\\d+\\.\\d+{LogDelimiter()}[a-zA-Z0-9_ ]+{LogDelimiter()}[a-zA-Z0-9_ ]+{LogDelimiter()}.*$";
-    }
-
-    public static bool IsValidLogString(string logString)
-    {
-        return Regex.IsMatch(logString, ValidLogStringPattern());
-    }
 }
 
 public class LoggerException : Exception

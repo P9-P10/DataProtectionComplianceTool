@@ -5,7 +5,7 @@ namespace GraphManipulation.Logging;
 
 // TODO: Lav en ny log fil per [indsæt segmenterings faktor], hav unikt index i hver fil (dato + tidspunkt + index = unik)
 
-public class PlaintextLogger : BaseLogger
+public class PlaintextLogger : Logger
 {
     public PlaintextLogger(ConfigManager configManager) : base(configManager)
     {
@@ -46,7 +46,7 @@ public class PlaintextLogger : BaseLogger
             return 1;
         }
 
-        if (IsValidLogString(lastLogString))
+        if (Log.IsValidLogString(lastLogString))
         {
             return new PlaintextLog(lastLogString).LogNumber + 1;
         }

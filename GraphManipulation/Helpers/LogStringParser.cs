@@ -8,12 +8,12 @@ public static class LogStringParser
 {
     private static string GetRelevantPartFromString(string logString, int index)
     {
-        if (!BaseLogger.IsValidLogString(logString))
+        if (!Log.IsValidLogString(logString))
         {
             throw new LogStringParserException("Log string is not valid: " + logString);
         }
 
-        return logString.Split(BaseLogger.LogDelimiter())[index];
+        return logString.Split(Log.LogDelimiter())[index];
     }
 
     public static int ParseLogNumber(string logString)
@@ -32,7 +32,14 @@ public static class LogStringParser
     {
         var creationTimeString = GetRelevantPartFromString(logString, 1);
 
-        return DateTime.ParseExact(creationTimeString, "dd/MM/yyyy HH.mm.ss", CultureInfo.InvariantCulture);
+        try
+        {
+            return DateTime.ParseExact(creationTimeString, "dd/MM/yyyy HH.mm.ss", CultureInfo.InvariantCulture);
+        }
+        catch (Exception)
+        {
+            throw new LogStringParserException("Could not parse creation time: " + creationTimeString);
+        }
     }
 
     public static LogType ParseLogType(string logString)

@@ -21,10 +21,10 @@ public class LogStringParserTest
 
     private static string GetTestLogString()
     {
-        return "123" + BaseLogger.LogDelimiter() +
-               "12/05/1937 09.57.33" + BaseLogger.LogDelimiter() +
-               LogType.Vacuuming + BaseLogger.LogDelimiter() +
-               LogMessageFormat.Plaintext + BaseLogger.LogDelimiter() +
+        return "123" + Log.LogDelimiter() +
+               "12/05/1937 09.57.33" + Log.LogDelimiter() +
+               LogType.Vacuuming + Log.LogDelimiter() +
+               LogMessageFormat.Plaintext + Log.LogDelimiter() +
                "This is a message";
     }
 
