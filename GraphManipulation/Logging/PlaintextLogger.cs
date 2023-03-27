@@ -23,15 +23,11 @@ public class PlaintextLogger : BaseLogger
         writer.Dispose();
     }
 
-    public override IOrderedEnumerable<ILog> Read(LoggerReadOptions options)
+    public override IOrderedEnumerable<ILog> Read(ILoggerConstraints constraints)
     {
-        return File.ReadLines(GetLogPath())
-            .Select(s => new PlaintextLog(s))
-            .Where(log => options.LogNumbersRange.NumberWithinRange(log.LogNumber) &&
-                          options.LogTimeRange.DateTimeWithinRange(log.CreationTime) &&
-                          options.LogTypes.Contains(log.LogType) &&
-                          options.LogMessageFormats.Contains(log.LogMessageFormat))
-            .OrderBy(log => log.LogNumber);
+        var logs = File.ReadLines(GetLogPath()).Select(s => new PlaintextLog(s));
+        return constraints.Apply(logs);
+        
     }
 
     protected override int GetCurrentLogNumberFromFile()

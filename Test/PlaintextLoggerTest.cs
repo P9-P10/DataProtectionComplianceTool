@@ -236,7 +236,7 @@ public class PlaintextLoggerTest
             logger.Append(log2);
             logger.Append(log3);
 
-            var logs = logger.Read(new LoggerReadOptions());
+            var logs = logger.Read(new LoggerConstraints());
 
             Assert.Equal(3, logs.Count());
         }
@@ -257,10 +257,10 @@ public class PlaintextLoggerTest
             logger.Append(log2);
             logger.Append(log3);
 
-            var probe1 = logger.Read(new LoggerReadOptions(logNumberRange: new NumberRange(1, 1))).ToList();
-            var probe2 = logger.Read(new LoggerReadOptions(logNumberRange: new NumberRange(2, 2))).ToList();
-            var probe3 = logger.Read(new LoggerReadOptions(logNumberRange: new NumberRange(2, 3))).ToList();
-            var probe4 = logger.Read(new LoggerReadOptions(logNumberRange: new NumberRange(4, 4))).ToList();
+            var probe1 = logger.Read(new LoggerConstraints(logNumberRange: new NumberRange(1, 1))).ToList();
+            var probe2 = logger.Read(new LoggerConstraints(logNumberRange: new NumberRange(2, 2))).ToList();
+            var probe3 = logger.Read(new LoggerConstraints(logNumberRange: new NumberRange(2, 3))).ToList();
+            var probe4 = logger.Read(new LoggerConstraints(logNumberRange: new NumberRange(4, 4))).ToList();
 
 
             Assert.Single(probe1);
@@ -299,21 +299,21 @@ public class PlaintextLoggerTest
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
 
-            var probe1 = logger.Read(new LoggerReadOptions(
+            var probe1 = logger.Read(new LoggerConstraints(
                 timeRange: new TimeRange(
                     new DateTime(1, 1, 1, 1, 1, 1),
                     new DateTime(1, 1, 1, 1, 1, 1)))).ToList();
-            var probe2 = logger.Read(new LoggerReadOptions(
+            var probe2 = logger.Read(new LoggerConstraints(
                 timeRange: new TimeRange(
                     new DateTime(1, 2, 2),
                     new DateTime(3, 2, 2)))).ToList();
 
-            var probe3 = logger.Read(new LoggerReadOptions(
+            var probe3 = logger.Read(new LoggerConstraints(
                 timeRange: new TimeRange(
                     new DateTime(2, 2, 2, 2, 2, 2),
                     new DateTime(3, 3, 3, 3, 3, 3)))).ToList();
 
-            var probe4 = logger.Read(new LoggerReadOptions(
+            var probe4 = logger.Read(new LoggerConstraints(
                 timeRange: new TimeRange(
                     new DateTime(4, 4, 4),
                     new DateTime(4, 4, 4)))).ToList();
@@ -347,19 +347,19 @@ public class PlaintextLoggerTest
             logger.Append(log2);
             logger.Append(log3);
 
-            var probe1 = logger.Read(new LoggerReadOptions(logTypes: new List<LogType>
+            var probe1 = logger.Read(new LoggerConstraints(logTypes: new List<LogType>
                 {
                     LogType.Metadata
                 })).ToList();
-            var probe2 = logger.Read(new LoggerReadOptions(logTypes: new List<LogType>
+            var probe2 = logger.Read(new LoggerConstraints(logTypes: new List<LogType>
                 {
                     LogType.Vacuuming
                 })).ToList();
-            var probe3 = logger.Read(new LoggerReadOptions(logTypes: new List<LogType>
+            var probe3 = logger.Read(new LoggerConstraints(logTypes: new List<LogType>
                 {
                     LogType.Metadata, LogType.Vacuuming
                 })).ToList();
-            var probe4 = logger.Read(new LoggerReadOptions(logTypes: new List<LogType>
+            var probe4 = logger.Read(new LoggerConstraints(logTypes: new List<LogType>
                 {
                     LogType.SchemaChange
                 }))
@@ -396,19 +396,19 @@ public class PlaintextLoggerTest
             logger.Append(log2);
             logger.Append(log3);
 
-            var probe1 = logger.Read(new LoggerReadOptions(logMessageFormats: new List<LogMessageFormat>
+            var probe1 = logger.Read(new LoggerConstraints(logMessageFormats: new List<LogMessageFormat>
             {
                 LogMessageFormat.Plaintext
             })).ToList();
-            var probe2 = logger.Read(new LoggerReadOptions(logMessageFormats: new List<LogMessageFormat>
+            var probe2 = logger.Read(new LoggerConstraints(logMessageFormats: new List<LogMessageFormat>
             {
                 LogMessageFormat.Json
             })).ToList();
-            var probe3 = logger.Read(new LoggerReadOptions(logMessageFormats: new List<LogMessageFormat>
+            var probe3 = logger.Read(new LoggerConstraints(logMessageFormats: new List<LogMessageFormat>
             {
                 LogMessageFormat.Plaintext, LogMessageFormat.Json
             })).ToList();
-            var probe4 = logger.Read(new LoggerReadOptions(logMessageFormats: new List<LogMessageFormat>
+            var probe4 = logger.Read(new LoggerConstraints(logMessageFormats: new List<LogMessageFormat>
             {
                 LogMessageFormat.Turtle
             })).ToList();
@@ -455,7 +455,7 @@ public class PlaintextLoggerTest
 
             File.WriteAllLines(GetTestLogPath(), modifiedStrings);
 
-            var probe = logger.Read(new LoggerReadOptions(
+            var probe = logger.Read(new LoggerConstraints(
                     timeRange: new TimeRange(new DateTime(1,1,1, 1, 1, 1), new DateTime(1,1,1, 1, 1, 1)),
                     logTypes: new List<LogType> { LogType.Vacuuming },
                     logMessageFormats: new List<LogMessageFormat> { LogMessageFormat.Plaintext }
@@ -479,7 +479,7 @@ public class PlaintextLoggerTest
             logger.Append(log2);
             logger.Append(log1);
 
-            var probe = logger.Read(new LoggerReadOptions()).ToList();
+            var probe = logger.Read(new LoggerConstraints()).ToList();
             
             Assert.Equal(1, probe.First().LogNumber);
             Assert.Equal(2, probe.Skip(1).First().LogNumber);

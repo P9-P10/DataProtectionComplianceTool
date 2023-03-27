@@ -24,7 +24,7 @@ public abstract class BaseLogger : ILogger
     protected string GetLogPath() => _configManager.GetValue("LogPath");
 
     public abstract void Append(ILog log);
-    public abstract IOrderedEnumerable<ILog> Read(LoggerReadOptions options);
+    public abstract IOrderedEnumerable<ILog> Read(ILoggerConstraints constraints);
     public abstract ILog CreateLog(LogType logType, LogMessageFormat logMessageFormat, string message);
 
     protected int ServeNextLogNumber()
