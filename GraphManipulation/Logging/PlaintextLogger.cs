@@ -1,9 +1,9 @@
-using System.Text.RegularExpressions;
-using GraphManipulation.Extensions;
 using GraphManipulation.Helpers;
 using GraphManipulation.Logging.Logs;
 
 namespace GraphManipulation.Logging;
+
+// TODO: Lav en ny log fil per [indsæt segmenterings faktor], hav unikt index i hver fil (dato + tidspunkt + index = unik)
 
 public class PlaintextLogger : BaseLogger
 {
@@ -27,7 +27,6 @@ public class PlaintextLogger : BaseLogger
     {
         var logs = File.ReadLines(GetLogPath()).Select(s => new PlaintextLog(s));
         return constraints.Apply(logs);
-        
     }
 
     protected override int GetCurrentLogNumberFromFile()
@@ -40,70 +39,18 @@ public class PlaintextLogger : BaseLogger
             openWrite.Dispose();
         }
 
-        var lastLine = File.ReadLines(path).LastOrDefault();
+        var lastLogString = File.ReadLines(path).LastOrDefault();
 
-        if (lastLine is null)
+        if (lastLogString is null)
         {
             return 1;
         }
 
-        if (IsValidLogString(lastLine))
+        if (IsValidLogString(lastLogString))
         {
-            return new PlaintextLog(lastLine).LogNumber + 1;
+            return new PlaintextLog(lastLogString).LogNumber + 1;
         }
 
-        throw new LoggerException("Line number could not be parsed: " + lastLine);
-    }
-
-    private class PlaintextLog : ILog
-    {
-        public int LogNumber { get; }
-        public DateTime CreationTime { get; }
-        public LogType LogType { get; }
-        public LogMessageFormat LogMessageFormat { get; }
-        public string Message { get; }
-    
-        public PlaintextLog(int logNumber, DateTime creationTime, LogType logType, LogMessageFormat logMessageFormat, string message)
-        {
-            LogNumber = logNumber;
-            CreationTime = creationTime;
-            LogType = logType;
-            LogMessageFormat = logMessageFormat;
-            Message = message;
-        }
-    
-        public PlaintextLog(string logString)
-        {
-            LogNumber = LogStringParser.ParseLogNumber(logString);
-            CreationTime = LogStringParser.ParseCreationTime(logString);
-            LogType = LogStringParser.ParseLogType(logString);
-            LogMessageFormat = LogStringParser.ParseLogMessageFormat(logString);
-            Message = LogStringParser.ParseLogMessage(logString);
-        }
-
-        public override string ToString()
-        {
-            return LogNumber + LogDelimiter() +
-                   GetCreationTimeStamp() + LogDelimiter() +
-                   LogType + LogDelimiter() +
-                   LogMessageFormat + LogDelimiter() +
-                   Message;
-        }
-    
-        public string GetCreationTimeStamp()
-        {
-            return CreationTime.ToShortDateString() + " " + CreationTime.ToLongTimeString();
-        }
-    
-        protected bool Equals(ILog other)
-        {
-            return CreationTime.Equals(other.CreationTime) && LogType == other.LogType &&
-                   LogMessageFormat == other.LogMessageFormat && Message == other.Message;
-        }
-    
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(LogNumber, CreationTime, (int)LogType, (int)LogMessageFormat, Message);
-        }
+        throw new LoggerException("Log could not be parsed: " + lastLogString);
     }
 }
