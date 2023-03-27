@@ -1,9 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using GraphManipulation.Components;
-using GraphManipulation.Helpers;
 using GraphManipulation.Models.Metadata;
 using GraphManipulation.Models.Stores;
-using J2N.Collections.Generic.Extensions;
 
 namespace GraphManipulation.Manipulation;
 
@@ -22,11 +20,11 @@ public static class FunctionParser
     public static void CommandParser<T>(string manipulationQuery, Manipulator<T> graphManipulator,
         MetadataManager metadataManager) where T : Database
     {
-        List<string> parameters = GetParametersFromQuery(manipulationQuery);
+        var parameters = GetParametersFromQuery(manipulationQuery);
 
-        string command = GetParametersFromQuery(manipulationQuery)[0];
+        var command = GetParametersFromQuery(manipulationQuery)[0];
         Action<Uri, Uri> action;
-        
+
         Match match;
         switch (command)
         {
@@ -43,9 +41,12 @@ public static class FunctionParser
             case "MARK":
                 if (IsValidMarkAsPersonalDataQuery(parameters))
                 {
-                    metadataManager.MarkAsPersonalData(new GDPRMetadata( parameters[1], parameters[2]));
+                    metadataManager.MarkAsPersonalData(new GDPRMetadata(parameters[1], parameters[2]));
                 }
-                else throw new ManipulatorException("Command not supported");
+                else
+                {
+                    throw new ManipulatorException("Command not supported");
+                }
 
                 break;
             default:
@@ -76,7 +77,7 @@ public static class FunctionParser
         return false;
     }
 
-    static Uri UriFromMatchGroups(Match match, int inputInteger)
+    private static Uri UriFromMatchGroups(Match match, int inputInteger)
     {
         return new Uri(match.Groups[inputInteger].ToString());
     }

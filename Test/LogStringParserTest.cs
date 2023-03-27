@@ -8,7 +8,6 @@ namespace Test;
 
 public class LogStringParserTest
 {
-    
     [Fact]
     public void AnyParseOnInvalidStringThrowsException()
     {
@@ -19,12 +18,15 @@ public class LogStringParserTest
         Assert.Throws<LogStringParserException>(() => LogStringParser.ParseLogMessageFormat(logString));
         Assert.Throws<LogStringParserException>(() => LogStringParser.ParseLogMessage(logString));
     }
-    
-    private static string GetTestLogString() => "123" + BaseLogger.LogDelimiter() + 
-                                                "12/05/1937 09.57.33" + BaseLogger.LogDelimiter() +
-                                                LogType.Vacuuming + BaseLogger.LogDelimiter() +
-                                                LogMessageFormat.Plaintext + BaseLogger.LogDelimiter() + 
-                                                "This is a message";
+
+    private static string GetTestLogString()
+    {
+        return "123" + BaseLogger.LogDelimiter() +
+               "12/05/1937 09.57.33" + BaseLogger.LogDelimiter() +
+               LogType.Vacuuming + BaseLogger.LogDelimiter() +
+               LogMessageFormat.Plaintext + BaseLogger.LogDelimiter() +
+               "This is a message";
+    }
 
     [Fact]
     public void ParseCreationTimeReturnsCorrectDateTime()
@@ -55,7 +57,7 @@ public class LogStringParserTest
         var invalidLogString = GetTestLogString().Replace(LogType.Vacuuming.ToString(), "This should not parse");
         Assert.Throws<LogStringParserException>(() => LogStringParser.ParseLogType(invalidLogString));
     }
-    
+
 
     [Fact]
     public void ParseLogMessageFormatReturnsCorrectLogMessageFormat()
@@ -68,7 +70,8 @@ public class LogStringParserTest
     [Fact]
     public void ParseLogMessageFormatInvalidThrowsException()
     {
-        var invalidLogString = GetTestLogString().Replace(LogMessageFormat.Plaintext.ToString(), "This should not parse");
+        var invalidLogString =
+            GetTestLogString().Replace(LogMessageFormat.Plaintext.ToString(), "This should not parse");
         Assert.Throws<LogStringParserException>(() => LogStringParser.ParseLogMessageFormat(invalidLogString));
     }
 

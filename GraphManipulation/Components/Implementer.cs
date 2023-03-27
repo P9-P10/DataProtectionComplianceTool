@@ -5,24 +5,20 @@ namespace GraphManipulation.Components;
 
 public class Implementer
 {
-    public Implementer()
+    public string Move1(IGraph schema, Table sourceRelation, Table destinationRelation, Column element,
+        List<string> conditions)
     {
-        
-    }
-
-    public string Move1(IGraph schema, Table sourceRelation, Table destinationRelation, Column element, List<string> conditions)
-    {
-        string dropViews = @"
+        var dropViews = @"
             DROP VIEW IF EXISTS MOVE_1_temp;
             DROP VIEW IF EXISTS MOVE_1;";
 
-        string temp = $@"
+        var temp = $@"
             CREATE VIEW MOVE_1_temp AS
             SELECT {destinationRelation.Name}.*, {element.Name}
             FROM {destinationRelation.Name}
                      LEFT JOIN {sourceRelation.Name} on {string.Join(" and ", conditions)};";
 
-        string final = $@"
+        var final = $@"
             CREATE VIEW MOVE_1 AS
             SELECT M.*,
                    CASE WHEN t.id is null THEN FALSE ELSE TRUE END AS originally_in_{sourceRelation.Name}
@@ -31,6 +27,6 @@ public class Implementer
 
             SELECT * FROM MOVE_1;";
 
-        return string.Join("\n", new List<string>{ dropViews, temp, final });
+        return string.Join("\n", new List<string> { dropViews, temp, final });
     }
 }

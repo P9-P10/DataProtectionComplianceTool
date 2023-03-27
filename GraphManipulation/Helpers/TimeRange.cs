@@ -2,9 +2,9 @@ namespace GraphManipulation.Helpers;
 
 public class TimeRange
 {
-    public readonly DateTime Start;
     public readonly DateTime End;
-    
+    public readonly DateTime Start;
+
     public TimeRange(DateTime start, DateTime end)
     {
         Start = start;

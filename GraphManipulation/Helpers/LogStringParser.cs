@@ -5,21 +5,21 @@ using GraphManipulation.Logging.Logs;
 namespace GraphManipulation.Helpers;
 
 public static class LogStringParser
-{ 
+{
     private static string GetRelevantPartFromString(string logString, int index)
     {
         if (!BaseLogger.IsValidLogString(logString))
         {
             throw new LogStringParserException("Log string is not valid: " + logString);
         }
-        
+
         return logString.Split(BaseLogger.LogDelimiter())[index];
     }
-    
+
     public static int ParseLogNumber(string logString)
     {
         var logNumberString = GetRelevantPartFromString(logString, 0);
-        
+
         if (int.TryParse(logNumberString, out var result))
         {
             return result;
@@ -31,15 +31,15 @@ public static class LogStringParser
     public static DateTime ParseCreationTime(string logString)
     {
         var creationTimeString = GetRelevantPartFromString(logString, 1);
-        
+
         return DateTime.ParseExact(creationTimeString, "dd/MM/yyyy HH.mm.ss", CultureInfo.InvariantCulture);
     }
 
     public static LogType ParseLogType(string logString)
     {
         var logTypeString = GetRelevantPartFromString(logString, 2);
-        
-        if (Enum.TryParse(enumType: typeof(LogType), value: logTypeString, result: out var result))
+
+        if (Enum.TryParse(typeof(LogType), logTypeString, out var result))
         {
             return (LogType)result!;
         }
@@ -50,8 +50,8 @@ public static class LogStringParser
     public static LogMessageFormat ParseLogMessageFormat(string logString)
     {
         var logMessageFormatString = GetRelevantPartFromString(logString, 3);
-        
-        if (Enum.TryParse(enumType: typeof(LogMessageFormat), value: logMessageFormatString, result: out var result))
+
+        if (Enum.TryParse(typeof(LogMessageFormat), logMessageFormatString, out var result))
         {
             return (LogMessageFormat)result!;
         }

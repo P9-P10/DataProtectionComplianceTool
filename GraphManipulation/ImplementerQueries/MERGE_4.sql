@@ -41,7 +41,8 @@ FROM (SELECT id, email FROM Users EXCEPT SELECT id, email FROM MarketingInformat
          LEFT JOIN MarketingInformation ON t.id = MarketingInformation.id
 WHERE MarketingInformation.id is not null;
 
-SELECT * FROM merge_rows_to_be_deleted;
+SELECT *
+FROM merge_rows_to_be_deleted;
 
 
 CREATE VIEW merge_merged_values AS

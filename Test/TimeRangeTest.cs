@@ -13,9 +13,9 @@ public class TimeRangeTest
         var end = new DateTime(7);
 
         var range = new TimeRange(start, end);
-        
+
         var probe = new DateTime(5);
-        
+
         Assert.True(range.DateTimeWithinRange(probe));
     }
 
@@ -26,9 +26,9 @@ public class TimeRangeTest
         var end = new DateTime(7);
 
         var range = new TimeRange(start, end);
-        
+
         var probe = new DateTime(1);
-        
+
         Assert.False(range.DateTimeWithinRange(probe));
     }
 
@@ -39,9 +39,9 @@ public class TimeRangeTest
         var end = new DateTime(7);
 
         var range = new TimeRange(start, end);
-        
+
         var probe = new DateTime(10);
-        
+
         Assert.False(range.DateTimeWithinRange(probe));
     }
 }

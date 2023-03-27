@@ -9,25 +9,39 @@ using Xunit;
 
 namespace Test;
 
-[Collection("Sequential")]
-public class PlaintextLoggerTest
-{
-    private static string GetTestProjectFolder() =>
-        Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+// TODO: Hver test er ansvarlig for at rydde op efter sig selv
+// https://stackoverflow.com/questions/12976319/xunit-net-global-setup-teardown
 
-    private static string GetTestConfigPath()
+public abstract class LogTest : IDisposable
+{
+    protected LogTest()
+    {
+        
+    }
+
+    public void Dispose()
+    {
+        DeleteLog();
+    }
+    
+    protected static string GetTestProjectFolder()
+    {
+        return Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+    }
+
+    protected static string GetTestConfigPath()
     {
         var projectFolder = GetTestProjectFolder();
         return Path.Combine(projectFolder, "TestResources/config.json");
     }
 
-    private static string GetTestLogPath()
+    protected static string GetTestLogPath()
     {
         var projectFolder = GetTestProjectFolder();
         return Path.Combine(projectFolder, "TestResources/log");
     }
 
-    private static void DeleteLog()
+    protected static void DeleteLog()
     {
         if (File.Exists(GetTestLogPath()))
         {
@@ -35,13 +49,17 @@ public class PlaintextLoggerTest
         }
     }
 
-    private static ConfigManager CreateConfigManager()
+    protected static ConfigManager CreateConfigManager()
     {
         var configManager = new ConfigManager(GetTestConfigPath());
         configManager.UpdateValue("LogPath", GetTestLogPath());
         return configManager;
     }
+}
 
+[Collection("Sequential")]
+public class PlaintextLoggerTest : LogTest
+{
     [Fact]
     public void LoggerThrowsExceptionIfFilePathToLogNotAvailable()
     {
@@ -52,7 +70,7 @@ public class PlaintextLoggerTest
     }
 
     [Collection("Sequential")]
-    public class Append
+    public class Append : LogTest
     {
         [Fact]
         public void LoggerCreatesFileIfNotExists()
@@ -81,7 +99,8 @@ public class PlaintextLoggerTest
 
             var actual = File.ReadLines(GetTestLogPath()).First();
 
-            Assert.Contains("Metadata" + BaseLogger.LogDelimiter() + "Plaintext" + BaseLogger.LogDelimiter() + "Test message",
+            Assert.Contains(
+                "Metadata" + BaseLogger.LogDelimiter() + "Plaintext" + BaseLogger.LogDelimiter() + "Test message",
                 actual);
         }
 
@@ -175,7 +194,7 @@ public class PlaintextLoggerTest
         public void LogFileWithExistingLogsStartsAtLastNumber()
         {
             DeleteLog();
-            
+
             var configManager = CreateConfigManager();
             var logger1 = new PlaintextLogger(configManager);
 
@@ -186,15 +205,15 @@ public class PlaintextLoggerTest
             var modifiedLogString = string.Join(BaseLogger.LogDelimiter(), splitString);
 
             File.WriteAllLines(GetTestLogPath(), new[] { modifiedLogString });
-            
+
             var logger2 = new PlaintextLogger(configManager);
 
             var log2 = logger2.CreateLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message b");
 
             logger2.Append(log2);
-            
+
             var actual = File.ReadLines(GetTestLogPath()).Last();
-            
+
             Assert.Equal("4568", actual.Split(BaseLogger.LogDelimiter()).First());
         }
 
@@ -205,21 +224,21 @@ public class PlaintextLoggerTest
 
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            
+
             var log = logger.CreateLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
             var logString = log.ToString();
             var splitString = logString.Split(BaseLogger.LogDelimiter());
             splitString[0] = "This should not parse";
             var modifiedLogString = string.Join(BaseLogger.LogDelimiter(), splitString);
-            
+
             File.WriteAllLines(GetTestLogPath(), new[] { modifiedLogString });
-            
+
             Assert.Throws<LoggerException>(() => new PlaintextLogger(configManager));
         }
     }
 
     [Collection("Sequential")]
-    public class Read
+    public class Read : LogTest
     {
         [Fact]
         public void ReadReturnsAllLogsWhenGivenEmptyOptions()
@@ -248,7 +267,7 @@ public class PlaintextLoggerTest
 
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            
+
             var log1 = logger.CreateLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
             var log2 = logger.CreateLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
             var log3 = logger.CreateLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 3");
@@ -257,10 +276,10 @@ public class PlaintextLoggerTest
             logger.Append(log2);
             logger.Append(log3);
 
-            var probe1 = logger.Read(new LoggerConstraints(logNumberRange: new NumberRange(1, 1))).ToList();
-            var probe2 = logger.Read(new LoggerConstraints(logNumberRange: new NumberRange(2, 2))).ToList();
-            var probe3 = logger.Read(new LoggerConstraints(logNumberRange: new NumberRange(2, 3))).ToList();
-            var probe4 = logger.Read(new LoggerConstraints(logNumberRange: new NumberRange(4, 4))).ToList();
+            var probe1 = logger.Read(new LoggerConstraints(new NumberRange(1, 1))).ToList();
+            var probe2 = logger.Read(new LoggerConstraints(new NumberRange(2, 2))).ToList();
+            var probe3 = logger.Read(new LoggerConstraints(new NumberRange(2, 3))).ToList();
+            var probe4 = logger.Read(new LoggerConstraints(new NumberRange(4, 4))).ToList();
 
 
             Assert.Single(probe1);
@@ -338,7 +357,7 @@ public class PlaintextLoggerTest
 
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            
+
             var log1 = logger.CreateLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
             var log2 = logger.CreateLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
             var log3 = logger.CreateLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 3");
@@ -348,17 +367,17 @@ public class PlaintextLoggerTest
             logger.Append(log3);
 
             var probe1 = logger.Read(new LoggerConstraints(logTypes: new List<LogType>
-                {
-                    LogType.Metadata
-                })).ToList();
+            {
+                LogType.Metadata
+            })).ToList();
             var probe2 = logger.Read(new LoggerConstraints(logTypes: new List<LogType>
-                {
-                    LogType.Vacuuming
-                })).ToList();
+            {
+                LogType.Vacuuming
+            })).ToList();
             var probe3 = logger.Read(new LoggerConstraints(logTypes: new List<LogType>
-                {
-                    LogType.Metadata, LogType.Vacuuming
-                })).ToList();
+            {
+                LogType.Metadata, LogType.Vacuuming
+            })).ToList();
             var probe4 = logger.Read(new LoggerConstraints(logTypes: new List<LogType>
                 {
                     LogType.SchemaChange
@@ -387,7 +406,7 @@ public class PlaintextLoggerTest
 
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            
+
             var log1 = logger.CreateLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "");
             var log2 = logger.CreateLog(LogType.Vacuuming, LogMessageFormat.Json, "");
             var log3 = logger.CreateLog(LogType.Vacuuming, LogMessageFormat.Json, "");
@@ -456,7 +475,7 @@ public class PlaintextLoggerTest
             File.WriteAllLines(GetTestLogPath(), modifiedStrings);
 
             var probe = logger.Read(new LoggerConstraints(
-                    timeRange: new TimeRange(new DateTime(1,1,1, 1, 1, 1), new DateTime(1,1,1, 1, 1, 1)),
+                    timeRange: new TimeRange(new DateTime(1, 1, 1, 1, 1, 1), new DateTime(1, 1, 1, 1, 1, 1)),
                     logTypes: new List<LogType> { LogType.Vacuuming },
                     logMessageFormats: new List<LogMessageFormat> { LogMessageFormat.Plaintext }
                 )
@@ -469,7 +488,7 @@ public class PlaintextLoggerTest
         public void ReadReturnsLogsSortedByLogNumber()
         {
             DeleteLog();
-            
+
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
 
@@ -480,7 +499,7 @@ public class PlaintextLoggerTest
             logger.Append(log1);
 
             var probe = logger.Read(new LoggerConstraints()).ToList();
-            
+
             Assert.Equal(1, probe.First().LogNumber);
             Assert.Equal(2, probe.Skip(1).First().LogNumber);
         }

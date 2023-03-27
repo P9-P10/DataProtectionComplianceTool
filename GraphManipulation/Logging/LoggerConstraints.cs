@@ -5,12 +5,8 @@ namespace GraphManipulation.Logging;
 
 public class LoggerConstraints : ILoggerConstraints
 {
-    public NumberRange LogNumbersRange { get; }
-    public TimeRange LogTimeRange { get; }
-    public List<LogType> LogTypes { get; }
-    public List<LogMessageFormat> LogMessageFormats { get; }
-    
-    public LoggerConstraints(NumberRange? logNumberRange = null, TimeRange? timeRange = null, List<LogType>? logTypes = null,
+    public LoggerConstraints(NumberRange? logNumberRange = null, TimeRange? timeRange = null,
+        List<LogType>? logTypes = null,
         List<LogMessageFormat>? logMessageFormats = null)
     {
         LogNumbersRange = logNumberRange ?? new NumberRange(int.MinValue, int.MaxValue);
@@ -18,6 +14,11 @@ public class LoggerConstraints : ILoggerConstraints
         LogTypes = logTypes ?? Enum.GetValues<LogType>().ToList();
         LogMessageFormats = logMessageFormats ?? Enum.GetValues<LogMessageFormat>().ToList();
     }
+
+    public NumberRange LogNumbersRange { get; }
+    public TimeRange LogTimeRange { get; }
+    public List<LogType> LogTypes { get; }
+    public List<LogMessageFormat> LogMessageFormats { get; }
 
     public IOrderedEnumerable<ILog> Apply(IEnumerable<ILog> logs)
     {

@@ -103,8 +103,8 @@ public class GraphStorage
         _dbConnection.Execute(insertStatement);
         _dbConnection.Close();
     }
-    
-    
+
+
     public void Insert(Database database, IGraph graph, IGraph changes)
     {
         CheckConformity(graph);

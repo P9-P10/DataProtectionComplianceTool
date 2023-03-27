@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using GraphManipulation.Manipulation;
+﻿using GraphManipulation.Manipulation;
 using Xunit;
 
 namespace Test;
@@ -10,10 +8,10 @@ public class FunctionParserTest
     [Fact]
     public void TestGetParameters()
     {
-        string query =
+        var query =
             "MARK http://www.test.com/presentation_database/main/MarketingInformation/email AS PERSONAL DATA";
 
-        List<string> parameters = FunctionParser.GetParametersFromQuery(query);
+        var parameters = FunctionParser.GetParametersFromQuery(query);
 
         Assert.True(parameters.Count == 5);
     }
@@ -21,22 +19,22 @@ public class FunctionParserTest
     [Fact]
     public void TestValidMarkAsPersonalDataQuery_Returns_True_On_Valid_Query()
     {
-        string correctQuery =
+        var correctQuery =
             "MARK http://www.test.com/presentation_database/main/MarketingInformation/email AS PERSONAL DATA";
-        List<string> parameters = FunctionParser.GetParametersFromQuery(correctQuery);
+        var parameters = FunctionParser.GetParametersFromQuery(correctQuery);
 
-        bool result = FunctionParser.IsValidMarkAsPersonalDataQuery(parameters);
+        var result = FunctionParser.IsValidMarkAsPersonalDataQuery(parameters);
         Assert.True(result);
     }
 
     [Fact]
     public void TestValidMarkAsPersonalDataQuery_Returns_False_On_InValid_Query()
     {
-        string incorrectQuery =
+        var incorrectQuery =
             "Not A COrrect Query";
 
-        List<string> parameters = FunctionParser.GetParametersFromQuery(incorrectQuery);
-        bool result = FunctionParser.IsValidMarkAsPersonalDataQuery(parameters);
+        var parameters = FunctionParser.GetParametersFromQuery(incorrectQuery);
+        var result = FunctionParser.IsValidMarkAsPersonalDataQuery(parameters);
         Assert.False(result);
     }
 }

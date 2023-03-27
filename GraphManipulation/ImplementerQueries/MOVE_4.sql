@@ -22,14 +22,16 @@ FROM MarketingInformation;
 
 CREATE VIEW MOVE_3_extended_users AS
 SELECT MOVE_3_merged_ids.id, U.name, U.email, U.mark
-FROM MOVE_3_merged_ids FULL OUTER JOIN MOVE_3_marked_users as U on MOVE_3_merged_ids.id = U.id;
+FROM MOVE_3_merged_ids
+         FULL OUTER JOIN MOVE_3_marked_users as U on MOVE_3_merged_ids.id = U.id;
 
 SELECT *
 FROM MOVE_3_extended_users;
 
 CREATE VIEW MOVE_3_temp_relation AS
 SELECT U.id, name, U.email, subscribed, U.mark
-FROM MOVE_3_extended_users AS U FULL OUTER JOIN MarketingInformation AS M on U.id = M.id;
+FROM MOVE_3_extended_users AS U
+         FULL OUTER JOIN MarketingInformation AS M on U.id = M.id;
 
 SELECT *
 FROM MOVE_3_temp_relation;
@@ -53,8 +55,9 @@ SELECT M.id,
        subscribed,
        from_MarketingInformation,
        CASE WHEN t.id is null THEN FALSE ELSE TRUE END AS originally_in_MarketingInformation
-FROM MOVE_3_temp_temp_relation AS M FULL JOIN (SELECT id from MarketingInformation) as t
-ON M.id = t.id;
+FROM MOVE_3_temp_temp_relation AS M
+         FULL JOIN (SELECT id from MarketingInformation) as t
+                   ON M.id = t.id;
 
 SELECT *
 FROM MOVE_3;

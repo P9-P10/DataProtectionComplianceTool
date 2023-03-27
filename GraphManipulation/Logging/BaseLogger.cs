@@ -20,12 +20,15 @@ public abstract class BaseLogger : ILogger
 
         _logNumber = GetCurrentLogNumberFromFile();
     }
-    
-    protected string GetLogPath() => _configManager.GetValue("LogPath");
 
     public abstract void Append(ILog log);
     public abstract IOrderedEnumerable<ILog> Read(ILoggerConstraints constraints);
     public abstract ILog CreateLog(LogType logType, LogMessageFormat logMessageFormat, string message);
+
+    protected string GetLogPath()
+    {
+        return _configManager.GetValue("LogPath");
+    }
 
     protected int ServeNextLogNumber()
     {
@@ -33,12 +36,19 @@ public abstract class BaseLogger : ILogger
     }
 
     protected abstract int GetCurrentLogNumberFromFile();
-    
-    public static string LogDelimiter() => " <<>> ";
-    
-    private static string ValidLogStringPattern() =>
-        $"^\\d+{LogDelimiter()}\\d+\\/\\d+\\/\\d+ \\d+\\.\\d+\\.\\d+{LogDelimiter()}[a-zA-Z0-9_ ]+{LogDelimiter()}[a-zA-Z0-9_ ]+{LogDelimiter()}.*$";
-    
+
+    public static string LogDelimiter()
+    {
+        return " <<>> ";
+    }
+
+    // TODO: Beskriv lige hvad den her beskriver (gerne med eksempel)
+    private static string ValidLogStringPattern()
+    {
+        return
+            $"^\\d+{LogDelimiter()}\\d+\\/\\d+\\/\\d+ \\d+\\.\\d+\\.\\d+{LogDelimiter()}[a-zA-Z0-9_ ]+{LogDelimiter()}[a-zA-Z0-9_ ]+{LogDelimiter()}.*$";
+    }
+
     public static bool IsValidLogString(string logString)
     {
         return Regex.IsMatch(logString, ValidLogStringPattern());

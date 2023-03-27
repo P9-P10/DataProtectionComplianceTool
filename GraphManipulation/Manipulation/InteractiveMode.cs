@@ -46,7 +46,7 @@ public class InteractiveMode
 
             var choice = PresentManagedDatabasesReturnChoice(managedDatabases);
 
-            InitOrManageDatabase(choice, managedDatabases, graphStorage,metadataManager);
+            InitOrManageDatabase(choice, managedDatabases, graphStorage, metadataManager);
 
             if (PresentExit("the program"))
             {
@@ -87,7 +87,7 @@ public class InteractiveMode
 
     private string GetBaseUriFromUser()
     {
-        string baseUri = _cf.GetValue("BaseURI");
+        var baseUri = _cf.GetValue("BaseURI");
         if (baseUri == "")
         {
             Console.WriteLine();
@@ -219,7 +219,7 @@ public class InteractiveMode
     }
 
     private void InitOrManageDatabase(int choice, List<(string, string)> managedDatabases,
-        GraphStorage graphStorage,MetadataManager metadataManager)
+        GraphStorage graphStorage, MetadataManager metadataManager)
     {
         if (choice == 0)
         {
@@ -234,7 +234,7 @@ public class InteractiveMode
             switch (databaseType)
             {
                 case { } when databaseType == typeof(Sqlite):
-                    ManageSelectedDatabase<Sqlite>(databaseUri, graphStorage,metadataManager);
+                    ManageSelectedDatabase<Sqlite>(databaseUri, graphStorage, metadataManager);
                     break;
                 default:
                     throw new InteractiveModeException("The type of database is not supported: " + databaseType);
@@ -299,7 +299,8 @@ public class InteractiveMode
         Console.WriteLine("(0) : SQLite");
     }
 
-    private void ManageSelectedDatabase<T>(Uri databaseUri, GraphStorage graphStorage,MetadataManager metadataManager) where T : Database
+    private void ManageSelectedDatabase<T>(Uri databaseUri, GraphStorage graphStorage, MetadataManager metadataManager)
+        where T : Database
     {
         var graph = graphStorage.GetLatest(databaseUri);
 
@@ -316,7 +317,7 @@ public class InteractiveMode
 
             try
             {
-                FunctionParser.CommandParser(manipulationQuery, graphManipulator,metadataManager);
+                FunctionParser.CommandParser(manipulationQuery, graphManipulator, metadataManager);
             }
             catch (ManipulatorException e)
             {
@@ -351,12 +352,12 @@ public class InteractiveMode
 
     private static string GenerateHashTags(int count)
     {
-        return new('#', count);
+        return new string('#', count);
     }
 
     private static string GenerateSpaces(int count)
     {
-        return new(' ', count);
+        return new string(' ', count);
     }
 }
 

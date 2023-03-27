@@ -2,8 +2,8 @@ namespace GraphManipulation.Helpers;
 
 public class NumberRange
 {
-    public readonly int Start;
     public readonly int End;
+    public readonly int Start;
 
     public NumberRange(int start, int end)
     {
