@@ -129,7 +129,7 @@ public class MetadataManagerTest : IDisposable
         manager.CreateMetadataTables();
         manager.MarkAsPersonalData(new GDPRMetadata("mockTable", "mockColumn"));
         
-        manager.AddPurpose(1, "Testing!");
+        manager.UpdateMetadataEntry(1, new GDPRMetadata("mockTable", "mockColumn"){Purpose = "Testing!"});
         
         string purpose = Connection.QuerySingle<string>("select purpose from gdpr_metadata where id = 1");
         
@@ -143,7 +143,7 @@ public class MetadataManagerTest : IDisposable
         manager.CreateMetadataTables();
         manager.MarkAsPersonalData(new GDPRMetadata("mockTable", "mockColumn"));
         
-        manager.AddTTL(1, "one");
+        manager.UpdateMetadataEntry(1, new GDPRMetadata("mockTable", "mockColumn"){TTL = "one"});
         
         string ttl = Connection.QuerySingle<string>("select ttl from gdpr_metadata where id = 1");
         
@@ -157,7 +157,7 @@ public class MetadataManagerTest : IDisposable
         manager.CreateMetadataTables();
         manager.MarkAsPersonalData(new GDPRMetadata("mockTable", "mockColumn"));
         
-        manager.AddOrigin(1, "Imagination");
+        manager.UpdateMetadataEntry(1, new GDPRMetadata("mockTable", "mockColumn"){Origin = "Imagination"});
         
         string origin = Connection.QuerySingle<string>("select origin from gdpr_metadata where id = 1");
         
@@ -171,7 +171,7 @@ public class MetadataManagerTest : IDisposable
         manager.CreateMetadataTables();
         manager.MarkAsPersonalData(new GDPRMetadata("mockTable", "mockColumn"));
         
-        manager.AddStartTime(1, "Yesterday");
+        manager.UpdateMetadataEntry(1, new GDPRMetadata("mockTable", "mockColumn"){StartTime = "Yesterday"});
         
         string startTime = Connection.QuerySingle<string>("select start_time from gdpr_metadata where id = 1");
         
@@ -185,10 +185,26 @@ public class MetadataManagerTest : IDisposable
         manager.CreateMetadataTables();
         manager.MarkAsPersonalData(new GDPRMetadata("mockTable", "mockColumn"));
         
-        manager.AddLegallyRequired(1, true);
+        manager.UpdateMetadataEntry(1, new GDPRMetadata("mockTable", "mockColumn") {LegallyRequired = true});
         
         bool legallyRequired = Connection.QuerySingle<bool>("select legally_required from gdpr_metadata where id = 1");
         
+        Assert.Equal(true, legallyRequired);
+    }
+    
+    [Fact]
+    public void UpdateIgnoresNullValues()
+    {
+        MetadataManager manager = new MetadataManager(Connection, IndividualsTable);
+        manager.CreateMetadataTables();
+        manager.MarkAsPersonalData(new GDPRMetadata("mockTable", "mockColumn") {Purpose = "Test"});
+        
+        manager.UpdateMetadataEntry(1, new GDPRMetadata("mockTable", "mockColumn") {LegallyRequired = true});
+        
+        string purpose = Connection.QuerySingle<string>("select purpose from gdpr_metadata where id = 1");
+        bool legallyRequired = Connection.QuerySingle<bool>("select legally_required from gdpr_metadata where id = 1");
+        
+        Assert.Equal("Test", purpose);
         Assert.Equal(true, legallyRequired);
     }
     

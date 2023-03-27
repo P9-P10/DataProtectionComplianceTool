@@ -97,36 +97,18 @@ public class MetadataManager
         _connection.Execute(addReferencesToMetadataStatement);
     }
 
-    public void AddPurpose(int metadataId, string purpose)
+    public void UpdateMetadataEntry(int entryId, GDPRMetadata value)
     {
-        UpdateMetadataEntry(metadataId, "purpose", purpose);
-    }
+        IEnumerable<(string, object)> columns = typeof(GDPRMetadata).GetProperties().Where(prop => prop.GetValue(value) != null).Select(prop =>
+            (prop.GetCustomAttributes(true).OfType<ColumnAttribute>().FirstOrDefault().Name, prop.GetValue(value)));
 
-    public void AddTTL(int metadataId, string ttl)
-    {
-        UpdateMetadataEntry(metadataId, "ttl", ttl);
-    }
-
-    public void AddOrigin(int metadataId, string origin)
-    {
-        UpdateMetadataEntry(metadataId, "origin", origin);
-    }
-
-    public void AddStartTime(int metadataId, string startTime)
-    {
-        UpdateMetadataEntry(metadataId, "start_time", startTime);
-    }
-
-    public void AddLegallyRequired(int metadataId, bool legallyRequired)
-    {
-        UpdateMetadataEntry(metadataId, "legally_required", legallyRequired ? 1 : 0);
-    }
-
-    private void UpdateMetadataEntry(int entryId, string column, object value)
-    {
+        IEnumerable<string> valueUpdates = columns
+            .Select((col) => col.Item2 is string ? $"{col.Item1} = '{col.Item2}'" : $"{col.Item1} = {col.Item2.ToString().ToLower()}");
+        
+        string setValues = string.Join(", ", valueUpdates);
         string updateStatement = $@"
         UPDATE gdpr_metadata 
-        SET {column} = '{value}'
+        SET {setValues}
         WHERE id = {entryId}
         ";
 
