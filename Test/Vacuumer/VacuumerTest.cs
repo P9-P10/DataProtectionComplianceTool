@@ -13,8 +13,6 @@ public class VacuumerTest
     [Fact]
     public void TestGenerateSqlQueryForDeletion_Returns_Empty_Query_when_No_TablePairs_Provided()
     {
-        var dbMock = new Mock<IDbConnection>();
-
         List<TableColumnPair> tableColumnPairs = new List<TableColumnPair>();
 
 
@@ -42,7 +40,7 @@ public class VacuumerTest
 
 
         string expected =
-            $"SELECT Column, expiration_date FROM Table JOIN (Condition) WHERE expiration_date < {expectedTime} AND uid = id;\n";
+            $"SELECT Column, expiration_date FROM Table JOIN (Condition) WHERE expiration_date < {expectedTime} AND uid = id;";
         Assert.Equal(query, expected);
     }
 
@@ -62,10 +60,11 @@ public class VacuumerTest
         string expectedTime = DateTime.Now.AddYears(-2).ToString("yyyy-M-d h:m", CultureInfo.InvariantCulture);
         GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
         string query = vacuumer.GenerateSqlQueryForDeletion(expectedTime);
-
+        
 
         string expected =
-            $"SELECT Column, expiration_date FROM Table JOIN (SecondCondition) WHERE expiration_date < {expectedTime} AND uid = id;\n";
+            $"SELECT Column, expiration_date FROM Table JOIN (Condition) WHERE expiration_date < {expectedTime} AND uid = id " +
+            $"UNION SELECT Column, expiration_date FROM Table JOIN (SecondCondition) WHERE expiration_date < {expectedTime} AND uid = id;";
             Assert.Equal(query, expected);
     }
 
@@ -88,7 +87,7 @@ public class VacuumerTest
 
 
         string expected =
-            $"SELECT Column, expiration_date FROM Table JOIN (Condition) WHERE expiration_date < {expectedTime} AND uid = id;\n";
+            $"SELECT Column, expiration_date FROM Table JOIN (Condition) WHERE expiration_date < {expectedTime} AND uid = id;";
         Assert.Equal(query, expected);
     }
 
@@ -102,7 +101,7 @@ public class VacuumerTest
         tableColumnPairs.Add(tableColumnPair1);
         GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
         
-        string expected = "SELECT Column FROM Table WHERE (Condition);\n";
+        string expected = "SELECT Column FROM Table WHERE (Condition);";
         Assert.Equal(vacuumer.GenerateSqlQueryForDeletion(), expected);
     }
 }
