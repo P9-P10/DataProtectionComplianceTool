@@ -20,7 +20,7 @@ public class LoggerConstraints : ILoggerConstraints
     public List<LogType> LogTypes { get; }
     public List<LogMessageFormat> LogMessageFormats { get; }
 
-    public IOrderedEnumerable<ILog> Apply(IEnumerable<ILog> logs)
+    public IOrderedEnumerable<ILog> ApplyConstraintsToLogs(IEnumerable<ILog> logs)
     {
         return logs
             .Where(log => LogNumbersRange.NumberWithinRange(log.LogNumber) &&

@@ -4,5 +4,5 @@ namespace GraphManipulation.Logging;
 
 public interface ILoggerConstraints
 {
-    IOrderedEnumerable<ILog> Apply(IEnumerable<ILog> logs);
+    IOrderedEnumerable<ILog> ApplyConstraintsToLogs(IEnumerable<ILog> logs);
 }
