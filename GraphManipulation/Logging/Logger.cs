@@ -24,6 +24,7 @@ public abstract class Logger : ILogger
     public abstract void Append(ILog log);
     public abstract IOrderedEnumerable<ILog> Read(ILoggerConstraints constraints);
     public abstract ILog CreateLog(LogType logType, LogMessageFormat logMessageFormat, string message);
+    public abstract void CreateAndAppendLog(LogType logType, LogMessageFormat logMessageFormat, string message);
 
     protected string GetLogPath()
     {

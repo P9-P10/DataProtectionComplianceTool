@@ -9,6 +9,7 @@ public class PlaintextLogger : Logger
 {
     public PlaintextLogger(ConfigManager configManager) : base(configManager)
     {
+        
     }
 
     public override ILog CreateLog(LogType logType, LogMessageFormat logMessageFormat, string message)
@@ -26,7 +27,12 @@ public class PlaintextLogger : Logger
     public override IOrderedEnumerable<ILog> Read(ILoggerConstraints constraints)
     {
         var logs = File.ReadLines(GetLogPath()).Select(s => new PlaintextLog(s));
-        return constraints.Apply(logs);
+        return constraints.ApplyConstraintsToLogs(logs);
+    }
+
+    public override void CreateAndAppendLog(LogType logType, LogMessageFormat logMessageFormat, string message)
+    {
+        Append(CreateLog(logType, logMessageFormat, message));
     }
 
     protected override int GetCurrentLogNumberFromFile()

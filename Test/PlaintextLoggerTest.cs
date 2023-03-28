@@ -471,4 +471,31 @@ public class PlaintextLoggerTest : LogTest
             Assert.Equal(2, probe.Skip(1).First().LogNumber);
         }
     }
+
+    [Collection("Sequential")]
+    public class CreateLog : LogTest
+    {
+        
+    }
+    
+    [Collection("Sequential")]
+    public class CreateAndAppendLog : LogTest
+    {
+        [Fact]
+        public void CreateAndAppendLogAppendsLogWithGivenInformation()
+        {
+            var configManager = CreateConfigManager();
+            var logger = new PlaintextLogger(configManager);
+            
+            logger.CreateAndAppendLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "This is a test");
+            
+            var actual = File.ReadLines(GetTestLogPath()).First();
+            
+            Assert.Contains(
+                "Vacuuming" + Log.LogDelimiter() + "Plaintext" + Log.LogDelimiter() + "This is a test",
+                actual);
+        }
+    }
+    
+    
 }
