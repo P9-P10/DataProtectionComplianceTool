@@ -29,8 +29,6 @@ public class VacuumerTest
     [Fact]
     public void TestGenerateSqlQueryForDeletion_Returns_Correct_Query_When_Provided_TablePairs()
     {
-        var dbMock = new Mock<IDbConnection>();
-
         Purpose purpose = new("Name", "2y", "Condition", "Local", true);
         TableColumnPair tableColumnPair1 = new("Table", "Column");
         List<TableColumnPair> tableColumnPairs = new List<TableColumnPair>();
@@ -47,19 +45,18 @@ public class VacuumerTest
             $"SELECT Column, expiration_date FROM Table JOIN (Condition) WHERE expiration_date < {expectedTime} AND uid = id;\n";
         Assert.Equal(query, expected);
     }
-    
-    public void TestGenerateSqlQueryForDeletion_Returns_Correct_Query_When_Provided_Multiple_Purposes_One_TableColumnPair()
-    {
-        var dbMock = new Mock<IDbConnection>();
 
+    [Fact]
+    public void
+        TestGenerateSqlQueryForDeletion_Returns_Correct_Query_When_Provided_Multiple_Purposes_One_TableColumnPair()
+    {
         Purpose purpose = new("Name", "2y", "Condition", "Local", true);
-        Purpose purpose2 = new("Second", "2y", "SecondCondition", "Local", true);
+        Purpose purpose2 = new("Second", "3y", "SecondCondition", "Local", true);
         TableColumnPair tableColumnPair1 = new("Table", "Column");
         List<TableColumnPair> tableColumnPairs = new List<TableColumnPair>();
         tableColumnPair1.AddPurpose(purpose);
         tableColumnPair1.AddPurpose(purpose2);
         tableColumnPairs.Add(tableColumnPair1);
-        
 
 
         string expectedTime = DateTime.Now.AddYears(-2).ToString("yyyy-M-d h:m", CultureInfo.InvariantCulture);
@@ -68,13 +65,13 @@ public class VacuumerTest
 
 
         string expected =
-            $"SELECT Column, expiration_date FROM Table JOIN (Condition) WHERE expiration_date < {expectedTime} AND uid = id;\n" +
             $"SELECT Column, expiration_date FROM Table JOIN (SecondCondition) WHERE expiration_date < {expectedTime} AND uid = id;\n";
-        Assert.Equal(query, expected);
+            Assert.Equal(query, expected);
     }
+
+    [Fact]
     public void TestGenerateSqlQueryForDeletion_Returns_Correct_Query_When_Provided_Multiple_TableColumnPairs_()
     {
-        var dbMock = new Mock<IDbConnection>();
 
         Purpose purpose = new("Name", "2y", "Condition", "Local", true);
         TableColumnPair tableColumnPair1 = new("Table", "Column");
@@ -83,7 +80,6 @@ public class VacuumerTest
         tableColumnPair1.AddPurpose(purpose);
         tableColumnPair2.AddPurpose(purpose);
         tableColumnPairs.Add(tableColumnPair1);
-        
 
 
         string expectedTime = DateTime.Now.AddYears(-2).ToString("yyyy-M-d h:m", CultureInfo.InvariantCulture);
@@ -92,8 +88,21 @@ public class VacuumerTest
 
 
         string expected =
-            $"SELECT Column, expiration_date FROM Table JOIN (Condition) WHERE expiration_date < {expectedTime} AND uid = id;\n" +
-            $"SELECT SecondColumn, expiration_date FROM SecondTable JOIN (Condition) WHERE expiration_date < {expectedTime} AND uid = id;\n";
+            $"SELECT Column, expiration_date FROM Table JOIN (Condition) WHERE expiration_date < {expectedTime} AND uid = id;\n";
         Assert.Equal(query, expected);
+    }
+
+    [Fact]
+    public void TestGenerateSQLQueryForDeletion_Returns_Correct_Query_When_Provided_No_TTL()
+    {
+        Purpose purpose = new("Name", "", "Condition", "Local", true);
+        TableColumnPair tableColumnPair1 = new("Table", "Column");
+        List<TableColumnPair> tableColumnPairs = new List<TableColumnPair>();
+        tableColumnPair1.AddPurpose(purpose);
+        tableColumnPairs.Add(tableColumnPair1);
+        GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
+        
+        string expected = "SELECT Column FROM Table WHERE (Condition);\n";
+        Assert.Equal(vacuumer.GenerateSqlQueryForDeletion(), expected);
     }
 }

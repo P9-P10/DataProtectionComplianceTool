@@ -1,4 +1,5 @@
-﻿using GraphManipulation.Vacuuming.Components;
+﻿using System.Globalization;
+using GraphManipulation.Vacuuming.Components;
 
 namespace GraphManipulation.Vacuuming;
 
@@ -16,14 +17,24 @@ public class Vacuumer : IVacuumer
         string outputQuery = "";
         foreach (TableColumnPair tcPair in _tableColumnPairs)
         {
+            string query;
             Purpose purpose = tcPair.GetPurposeWithOldestExpirationDate();
             string time = predefinedExpirationDate == "" ? purpose.GetExpirationDate : predefinedExpirationDate;
-            string query =
-                $"SELECT {tcPair.Column}, expiration_date " +
-                $"FROM {tcPair.Table} " +
-                $"JOIN ({purpose.ExpirationCondition}) " +
-                $"WHERE expiration_date < {time} " +
-                $"AND uid = id;";
+            if (time == DateTime.Now.ToString("yyyy-M-d h:m", CultureInfo.InvariantCulture))
+            {
+                query = $"SELECT {tcPair.Column} " +
+                        $"FROM {tcPair.Table} " +
+                        $"WHERE ({purpose.ExpirationCondition});";
+            }
+            else
+            {
+                query = $"SELECT {tcPair.Column}, expiration_date " +
+                        $"FROM {tcPair.Table} " +
+                        $"JOIN ({purpose.ExpirationCondition}) " +
+                        $"WHERE expiration_date < {time} " +
+                        $"AND uid = id;";
+                
+            }
             outputQuery += query + "\n";
         }
 
