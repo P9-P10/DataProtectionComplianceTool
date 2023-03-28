@@ -19,37 +19,11 @@ public class Vacuumer : IVacuumer
         {
             foreach (var purpose in tcPair.GetPurposes)
             {
-                string time = predefinedExpirationDate == "" ? purpose.GetExpirationDate : predefinedExpirationDate;
-                string query;
-                if (time == DateTime.Now.ToString("yyyy-M-d h:m", CultureInfo.InvariantCulture))
-                {
-                    query = $"SELECT {tcPair.Column} " +
-                            $"FROM {tcPair.Table} " +
-                            $"WHERE ({purpose.ExpirationCondition})";
-                }
-                else
-                {
-                    query = $"SELECT {tcPair.Column}, expiration_date " +
-                            $"FROM {tcPair.Table} " +
-                            $"JOIN ({purpose.ExpirationCondition}) " +
-                            $"WHERE expiration_date < {time} " +
-                            $"AND uid = id";
-                }
-
-                outputQuery += query + " UNION ";
+                string query = $"SELECT {tcPair.Column} FROM {tcPair.Table} WHERE Exists({purpose.ExpirationCondition});";
+                outputQuery += query;
             }
         }
 
-        return RemoveLastUnion(outputQuery);
-    }
-
-    private string RemoveLastUnion(string inputString)
-    {
-        int place = inputString.LastIndexOf(" UNION ", StringComparison.Ordinal);
-
-        if (place == -1)
-            return inputString;
-
-        return inputString.Remove(place, " UNION ".Length).Insert(place, ";");
+        return outputQuery;
     }
 }

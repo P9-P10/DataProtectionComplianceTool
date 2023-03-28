@@ -26,7 +26,7 @@ public class Purpose
         _name = name;
         _timeFormat = timeFormat;
         _expiration_date = ExpirationDateCalculator(ttl);
-        _expirationCondition = expirationCondition;
+        _expirationCondition = expirationCondition.Replace("#", "'");
         _origin = origin;
         _legallyRequired = legallyRequired;
     }
