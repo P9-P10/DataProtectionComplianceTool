@@ -33,7 +33,7 @@ public class TableColumnPair
         _table = target_table;
         _column = target_column;
 
-        Purpose newPurpose = new(purpose, ttl, start_time, origin, legally_required == "true");
+        Purpose newPurpose = new(purpose, ttl, start_time, origin, legally_required.ToLower() == "1");
         AddPurpose(newPurpose);
     }
 

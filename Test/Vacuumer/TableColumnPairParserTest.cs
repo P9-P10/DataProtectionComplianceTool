@@ -39,23 +39,23 @@ public class TableColumnPairParserTest
     }
 
     [Fact]
-    public void TestFetchPurpose_Fetches_Correct_Purpose_Count()
+    public void TestFetchTableColumnPairs_Fetches_Correct_Purpose_Count()
     {
         SQLiteConnection sqLiteConnection = Setup();
 
         TableColumnPairParser tableColumnPairParser = new(sqLiteConnection);
-        List<TableColumnPair> result = tableColumnPairParser.FetchPurposes();
+        List<TableColumnPair> result = tableColumnPairParser.FetchTableColumnPairs();
 
         Assert.True(result.Count == 1);
     }
 
     [Fact]
-    public void TestFetchPurpose_Fetches_Correct_TC_Pair()
+    public void TestFetchTableColumnPairs_Fetches_Correct_TC_Pair()
     {
         SQLiteConnection sqLiteConnection = Setup();
 
         TableColumnPairParser tableColumnPairParser = new(sqLiteConnection);
-        List<TableColumnPair> result = tableColumnPairParser.FetchPurposes();
+        List<TableColumnPair> result = tableColumnPairParser.FetchTableColumnPairs();
         TableColumnPair tableColumnPair = new("newsletter", "email");
         Purpose purpose = new("Marketing", "2y", "Condition", "local", false);
 
@@ -63,5 +63,64 @@ public class TableColumnPairParserTest
         Assert.Contains(tableColumnPair, result);
         TableColumnPair firstElement = result[0];
         Assert.Contains(purpose,firstElement.GetPurposes);
+    }
+    
+    [Fact]
+    public void TestTableColumnPairs_Merges_Equivalent_TcPairs_Into_One()
+    {
+        SQLiteConnection sqLiteConnection = Setup();
+        sqLiteConnection.Execute("INSERT INTO gdpr_metadata " +
+                                 "(id,purpose,ttl,target_table,target_column,origin,start_time,legally_required) " +
+                                 "VALUES (2, " +
+                                 "'Bookkeeping', " +
+                                 "'5y', " +
+                                 "'newsletter', " +
+                                 "'email', " +
+                                 "'local', " +
+                                 "'Condition', " +
+                                 "True)");
+
+        TableColumnPairParser tableColumnPairParser = new(sqLiteConnection);
+        List<TableColumnPair> result = tableColumnPairParser.FetchTableColumnPairs();
+        TableColumnPair tableColumnPair = new("newsletter", "email");
+        Purpose purpose = new("Marketing", "2y", "Condition", "local", false);
+        Purpose secondPurpose = new("Bookkeeping", "5y", "Condition", "local", true);
+
+
+        Assert.Contains(tableColumnPair, result);
+        TableColumnPair firstElement = result[0];
+        Assert.Contains(purpose,firstElement.GetPurposes);
+        Assert.Contains(secondPurpose, firstElement.GetPurposes);
+    }
+    
+     [Fact]
+    public void TestTableColumnPairs_Returns_Multiple_TcPairs()
+    {
+        SQLiteConnection sqLiteConnection = Setup();
+        sqLiteConnection.Execute("INSERT INTO gdpr_metadata " +
+                                 "(id,purpose,ttl,target_table,target_column,origin,start_time,legally_required) " +
+                                 "VALUES (2, " +
+                                 "'Bookkeeping', " +
+                                 "'5y', " +
+                                 "'newsletter', " +
+                                 "'id', " +
+                                 "'local', " +
+                                 "'Condition', " +
+                                 "True)");
+
+        TableColumnPairParser tableColumnPairParser = new(sqLiteConnection);
+        List<TableColumnPair> result = tableColumnPairParser.FetchTableColumnPairs();
+        TableColumnPair tableColumnPair = new("newsletter", "email");
+        TableColumnPair secondTableColumnPair = new TableColumnPair("newsletter", "id");
+        Purpose purpose = new("Marketing", "2y", "Condition", "local", false);
+        Purpose secondPurpose = new("Bookkeeping", "5y", "Condition", "local", true);
+
+
+        Assert.Contains(tableColumnPair, result);
+        Assert.Contains(secondTableColumnPair, result);
+        TableColumnPair firstElement = result[0];
+        TableColumnPair secondElement = result[1];
+        Assert.Contains(purpose,firstElement.GetPurposes);
+        Assert.Contains(secondPurpose, secondElement.GetPurposes);
     }
 }

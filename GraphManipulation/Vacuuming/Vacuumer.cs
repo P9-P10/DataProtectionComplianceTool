@@ -14,7 +14,7 @@ public class Vacuumer : IVacuumer
 
     public string GenerateSqlQueryForDeletion(string predefinedExpirationDate = "")
     {
-        string outputQuery = "";
+        string outputQuery = String.Empty;
         foreach (TableColumnPair tcPair in _tableColumnPairs)
         {
             string query;

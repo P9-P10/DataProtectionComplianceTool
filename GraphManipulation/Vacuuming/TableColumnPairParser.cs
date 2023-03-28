@@ -13,7 +13,11 @@ public class TableColumnPairParser
         _dbConnection = dbConnection;
     }
 
-    public List<TableColumnPair> FetchPurposes()
+    /// <summary>
+    /// Fetches TableColumnPairs from the provided SQLConnection
+    /// </summary>
+    /// <returns></returns>
+    public List<TableColumnPair> FetchTableColumnPairs()
     {
         List<TableColumnPair> output = new List<TableColumnPair>();
         
