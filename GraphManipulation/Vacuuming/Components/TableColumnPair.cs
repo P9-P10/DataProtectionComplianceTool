@@ -69,6 +69,11 @@ public class TableColumnPair
         return Equals(obj as TableColumnPair);
     }
 
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_table, _column);
+    }
+
     private bool Equals(TableColumnPair? other)
     {
         return other != null && Table == other.Table && Column == other.Column;

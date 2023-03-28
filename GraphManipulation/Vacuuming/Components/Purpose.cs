@@ -81,6 +81,11 @@ public class Purpose
         return Equals(obj as Purpose);
     }
 
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_name, _expirationCondition, _origin, _legallyRequired, _expiration_date, _timeFormat);
+    }
+
     private bool Equals(Purpose? other)
     {
         return other != null && GetExpirationDate == other.GetExpirationDate &&
