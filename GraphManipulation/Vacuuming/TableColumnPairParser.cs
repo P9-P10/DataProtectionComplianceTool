@@ -15,22 +15,28 @@ public class TableColumnPairParser
 
     public List<TableColumnPair> FetchPurposes()
     {
+        List<TableColumnPair> output = new List<TableColumnPair>();
+        
         var queryResult =
             _dbConnection.Query<TableColumnPair>(
                 "SELECT purpose, ttl, target_table, target_column, legally_required, origin, start_time " +
                 "FROM gdpr_metadata " +
                 "ORDER BY target_table,target_column;");
 
-        foreach (var row in queryResult)
+        var tableColumnPairs = queryResult.ToList();
+        foreach (TableColumnPair? tcpair in tableColumnPairs)
         {
-            
+            if (output.Contains(tcpair))
+            {
+                var index = output.IndexOf(tcpair);
+                output[index].AddPurposes(tcpair.GetPurposes);
+            }
+            else
+            {
+                output.Add(tcpair);
+            }
         }
-        
-        return new List<TableColumnPair>();
-    }
 
-    public List<TableColumnPair> ParsePurposes()
-    {
-        return new List<TableColumnPair>();
+        return output;
     }
 }

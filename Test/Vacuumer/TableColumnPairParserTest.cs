@@ -1,0 +1,67 @@
+﻿using System.Collections.Generic;
+using System.Data.SQLite;
+using Dapper;
+using GraphManipulation.Vacuuming;
+using GraphManipulation.Vacuuming.Components;
+using Xunit;
+
+namespace Test.Vacuumer;
+
+public class TableColumnPairParserTest
+{
+    private SQLiteConnection Setup()
+    {
+        SQLiteConnection.CreateFile("testSqlite.sqlite");
+        string connectionString = "Data Source=MyDatabase.sqlite;Version=3;";
+        SQLiteConnection sqLiteConnection = new(connectionString);
+        sqLiteConnection.Execute("DROP TABLE IF EXISTS gdpr_metadata;");
+        sqLiteConnection.Execute("CREATE TABLE IF NOT EXISTS gdpr_metadata(" +
+                                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                                 "purpose VARCHAR(256), ttl VARCHAR(256),  " +
+                                 "target_table VARCHAR(256), " +
+                                 "target_column VARCHAR(256), " +
+                                 "origin VARCHAR(256), " +
+                                 "start_time VARCHAR(256), " +
+                                 "legally_required VARCHAR(256)); ");
+
+        sqLiteConnection.Execute("INSERT INTO gdpr_metadata " +
+                                 "(id,purpose,ttl,target_table,target_column,origin,start_time,legally_required) " +
+                                 "VALUES (1, " +
+                                 "'Marketing', " +
+                                 "'2y', " +
+                                 "'newsletter', " +
+                                 "'email', " +
+                                 "'local', " +
+                                 "'Condition', " +
+                                 "False)");
+
+        return sqLiteConnection;
+    }
+
+    [Fact]
+    public void TestFetchPurpose_Fetches_Correct_Purpose_Count()
+    {
+        SQLiteConnection sqLiteConnection = Setup();
+
+        TableColumnPairParser tableColumnPairParser = new(sqLiteConnection);
+        List<TableColumnPair> result = tableColumnPairParser.FetchPurposes();
+
+        Assert.True(result.Count == 1);
+    }
+
+    [Fact]
+    public void TestFetchPurpose_Fetches_Correct_TC_Pair()
+    {
+        SQLiteConnection sqLiteConnection = Setup();
+
+        TableColumnPairParser tableColumnPairParser = new(sqLiteConnection);
+        List<TableColumnPair> result = tableColumnPairParser.FetchPurposes();
+        TableColumnPair tableColumnPair = new("newsletter", "email");
+        Purpose purpose = new("Marketing", "2y", "Condition", "local", false);
+
+
+        Assert.Contains(tableColumnPair, result);
+        TableColumnPair firstElement = result[0];
+        Assert.Contains(purpose,firstElement.GetPurposes);
+    }
+}

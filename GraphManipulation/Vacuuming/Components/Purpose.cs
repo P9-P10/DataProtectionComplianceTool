@@ -24,7 +24,7 @@ public class Purpose
         string timeFormat = "yyyy-M-d h:m")
     {
         _name = name;
-        _timeFormat = timeFormat;   
+        _timeFormat = timeFormat;
         _expiration_date = ExpirationDateCalculator(ttl);
         _expirationCondition = expirationCondition;
         _origin = origin;
@@ -62,7 +62,7 @@ public class Purpose
 
         DateTime expirationDate = DateTime.Now.AddYears(-years).AddMonths(-months).AddDays(-days).AddHours(-hours)
             .AddMinutes(-minutes);
-        return expirationDate.ToString(_timeFormat,CultureInfo.InvariantCulture);
+        return expirationDate.ToString(_timeFormat, CultureInfo.InvariantCulture);
     }
 
     private int GetNumberFromComponentGetNumberFromComponent(string inputString)
@@ -74,5 +74,17 @@ public class Purpose
     private DateTime ExpirationDateAsDatetime()
     {
         return DateTime.ParseExact(_expiration_date, _timeFormat, CultureInfo.InvariantCulture);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return Equals(obj as Purpose);
+    }
+
+    private bool Equals(Purpose? other)
+    {
+        return other != null && GetExpirationDate == other.GetExpirationDate &&
+               GetLegallyRequired == other.GetLegallyRequired && other._name == _name &&
+               other._expirationCondition == _expirationCondition;
     }
 }
