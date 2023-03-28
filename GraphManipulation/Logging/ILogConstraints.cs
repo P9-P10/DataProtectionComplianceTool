@@ -2,7 +2,7 @@ using GraphManipulation.Logging.Logs;
 
 namespace GraphManipulation.Logging;
 
-public interface ILoggerConstraints
+public interface ILogConstraints
 {
     IOrderedEnumerable<ILog> ApplyConstraintsToLogs(IEnumerable<ILog> logs);
 }
