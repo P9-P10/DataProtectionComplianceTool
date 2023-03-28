@@ -2,6 +2,7 @@ using System.Data.SQLite;
 using GraphManipulation.Components;
 using GraphManipulation.Extensions;
 using GraphManipulation.Helpers;
+using GraphManipulation.MetadataManagement;
 using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Stores;
 using VDS.RDF;

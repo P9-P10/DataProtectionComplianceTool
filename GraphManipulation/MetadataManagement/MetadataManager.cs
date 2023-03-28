@@ -1,11 +1,24 @@
 ﻿using System.Collections;
 using System.Data;
+using System.Reflection;
 using Dapper;
 using GraphManipulation.Helpers;
 using GraphManipulation.MetadataManagement.AttributeMapping;
 using GraphManipulation.Models.Metadata;
 
-namespace GraphManipulation.Components;
+namespace GraphManipulation.MetadataManagement;
+
+public class PropWithAttribute<T> where T : Attribute
+{
+    public PropertyInfo Property { get; }
+    public T Attribute { get; }
+    
+    public PropWithAttribute(PropertyInfo prop, T attr)
+    {
+        Property = prop;
+        Attribute = attr;
+    }
+}
 
 public class MetadataManager
 {
@@ -97,13 +110,15 @@ public class MetadataManager
         _connection.Execute(addReferencesToMetadataStatement);
     }
 
+    /// <summary>
+    /// Updates the row in the table gdpr_metadata with the given entryId.
+    /// Only columns where the corresponding property is not null value is updated.
+    /// </summary>
+    /// <param name="entryId">The id of the row</param>
+    /// <param name="value">Object defining the updated values</param>
     public void UpdateMetadataEntry(int entryId, GDPRMetadata value)
     {
-        IEnumerable<(string, object)> columns = typeof(GDPRMetadata).GetProperties().Where(prop => prop.GetValue(value) != null).Select(prop =>
-            (prop.GetCustomAttributes(true).OfType<ColumnAttribute>().FirstOrDefault().Name, prop.GetValue(value)));
-
-        IEnumerable<string> valueUpdates = columns
-            .Select((col) => col.Item2 is string ? $"{col.Item1} = '{col.Item2}'" : $"{col.Item1} = {col.Item2.ToString().ToLower()}");
+        IEnumerable<string> valueUpdates = CreateValuesUpdates(value);
         
         string setValues = string.Join(", ", valueUpdates);
         string updateStatement = $@"
@@ -113,6 +128,36 @@ public class MetadataManager
         ";
 
         _connection.Execute(updateStatement);
+    }
+
+    private static IEnumerable<string> CreateValuesUpdates(GDPRMetadata value)
+    {
+        // Get PropWithAttribute for properties that are not null
+        IEnumerable<PropWithAttribute<ColumnAttribute>> propsWithAttributes =
+            GetPropertiesWithAttributes<GDPRMetadata, ColumnAttribute>()
+                .Where(pair => pair.Property.GetValue(value) != null);
+        
+        IEnumerable<string> columns = GetColumnNames(propsWithAttributes);
+        IEnumerable<string> values = GetColumnValues(value, propsWithAttributes);
+
+        IEnumerable<string> valueUpdates = columns.Zip(values, (col, val) => $"{col} = {val}");
+        return valueUpdates;
+    }
+
+    private static IEnumerable<string> GetColumnNames(IEnumerable<PropWithAttribute<ColumnAttribute>> result)
+    {
+        IEnumerable<string> columns = result.Select(pair => pair.Attribute.Name);
+        return columns;
+    }
+
+    private static IEnumerable<string> GetColumnValues(GDPRMetadata value, IEnumerable<PropWithAttribute<ColumnAttribute>> result)
+    {
+        // Get the value of the properties as strings.
+        // If the value is already a string, it must be surrounded by singlequotes
+        IEnumerable<string> values = result
+            .Select(pair => pair.Property.GetValue(value))
+            .Select(val => val is string ? $"'{val}'" : $"{val.ToString().ToLower()}");
+        return values;
     }
 
     public GDPRMetadata GetMetadataEntry(int entryId)
@@ -125,13 +170,27 @@ public class MetadataManager
     
     public IEnumerable<GDPRMetadata> GetMetadataWithNullValues()
     {
-        IEnumerable<string> columns = typeof(GDPRMetadata).GetProperties().Select(prop =>
-            prop.GetCustomAttributes(true).OfType<ColumnAttribute>().FirstOrDefault().Name);
-        
+        IEnumerable<string> columns = GetPropertiesWithAttributes<GDPRMetadata, ColumnAttribute>()
+            .Select(pair => pair.Attribute.Name);
+
         IEnumerable<GDPRMetadata> result = _connection.Query<GDPRMetadata>(@$"
             select {string.Join(", ", columns)} from gdpr_metadata 
             where {string.Join(" IS NULL OR ", columns)} IS NULL");
 
         return result;
     }
+
+    /// <summary>
+    /// Returns an IEnumerable<PropWithAttribute> for the properties of T1 that have the attribute T2
+    /// </summary>
+    /// <typeparam name="T1">Type with properties with attributes</typeparam>
+    /// <typeparam name="T2">Type of the attributes</typeparam>
+    /// <returns></returns>
+    private static IEnumerable<PropWithAttribute<T2>> GetPropertiesWithAttributes<T1, T2> () where T2 : Attribute
+    {
+        return typeof(T1).GetProperties()
+            .Where(prop => prop.GetCustomAttribute<T2>(true) != null)
+            .Select(prop => new PropWithAttribute<T2>(prop, prop.GetCustomAttribute<T2>()));
+    }
 }
+

@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using GraphManipulation.Components;
 using GraphManipulation.Helpers;
+using GraphManipulation.MetadataManagement;
 using GraphManipulation.Models.Metadata;
 using GraphManipulation.Models.Stores;
 using J2N.Collections.Generic.Extensions;

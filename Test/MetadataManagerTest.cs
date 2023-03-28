@@ -5,6 +5,7 @@ using System.Data.SQLite;
 using System.IO;
 using Dapper;
 using GraphManipulation.Components;
+using GraphManipulation.MetadataManagement;
 using GraphManipulation.Models.Metadata;
 using Xunit;
 
