@@ -61,7 +61,7 @@ public class VacuumerTest
 
 
         string expected =
-            $"SELECT Column FROM Table WHERE Exists(Condition) OR Exists(SecondCondition);";
+            $"SELECT Column FROM Table WHERE Exists(Condition) AND Exists(SecondCondition);";
         Assert.Contains(expected, query);
     }
 

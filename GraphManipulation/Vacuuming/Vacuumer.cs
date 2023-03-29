@@ -13,28 +13,31 @@ public class Vacuumer : IVacuumer
 
     public List<string> GenerateSqlQueryForDeletion(string predefinedExpirationDate = "")
     {
-        List<string> outputQuery = new List<string>(); 
+        List<string> outputQuery = new List<string>();
         foreach (TableColumnPair tcPair in _tableColumnPairs)
         {
             string query = $"SELECT {tcPair.Column} FROM {tcPair.Table} WHERE ";
+            string logicOperator = " AND ";
             foreach (var purpose in tcPair.GetPurposes)
             {
                 query +=
                     $"Exists({purpose.ExpirationCondition})";
-                query += " OR ";
+                query += logicOperator;
             }
 
-            outputQuery.Add(ReplaceLastOr(query));
+            outputQuery.Add(ReplaceLastOccurrenceOfString(query, logicOperator));
         }
 
         return outputQuery;
     }
 
-    private string ReplaceLastOr(string inputString)
+    private string ReplaceLastOccurrenceOfString(string inputString, string occurrenceToReplace,
+        string replaceWith = ";")
     {
-        string orString = " OR ";
-        int place = inputString.LastIndexOf(orString, StringComparison.Ordinal);
+        int place = inputString.LastIndexOf(occurrenceToReplace, StringComparison.Ordinal);
 
-        return place == -1 ? inputString : inputString.Remove(place, orString.Length).Insert(place, ";");
+        return place == -1
+            ? inputString
+            : inputString.Remove(place, occurrenceToReplace.Length).Insert(place, replaceWith);
     }
 }
