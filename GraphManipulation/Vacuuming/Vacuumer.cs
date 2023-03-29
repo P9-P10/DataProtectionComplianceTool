@@ -16,11 +16,11 @@ public class Vacuumer : IVacuumer
         List<string> outputQuery = new List<string>(); 
         foreach (TableColumnPair tcPair in _tableColumnPairs)
         {
-            string query = "";
+            string query = $"SELECT {tcPair.Column} FROM {tcPair.Table} WHERE ";
             foreach (var purpose in tcPair.GetPurposes)
             {
                 query +=
-                    $"SELECT {tcPair.Column} FROM {tcPair.Table} WHERE Exists({purpose.ExpirationCondition})";
+                    $"Exists({purpose.ExpirationCondition})";
                 query += " OR ";
             }
 
