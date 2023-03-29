@@ -17,11 +17,9 @@ public class VacuumerTest
 
 
         GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
-        string query = vacuumer.GenerateSqlQueryForDeletion();
-
-
-        string expected = "";
-        Assert.Equal(query, expected);
+        List<string> query = vacuumer.GenerateSqlQueryForDeletion();
+        
+        Assert.Empty(query);
     }
 
     [Fact]
@@ -36,12 +34,12 @@ public class VacuumerTest
 
         string expectedTime = DateTime.Now.AddYears(-2).ToString("yyyy-M-d h:m", CultureInfo.InvariantCulture);
         GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
-        string query = vacuumer.GenerateSqlQueryForDeletion(expectedTime);
+        List<string> query = vacuumer.GenerateSqlQueryForDeletion(expectedTime);
 
 
         string expected =
             $"SELECT Column FROM Table WHERE Exists(Condition);";
-        Assert.Equal(query, expected);
+        Assert.Contains(expected, query);
     }
 
     [Fact]
@@ -59,12 +57,12 @@ public class VacuumerTest
 
         string expectedTime = DateTime.Now.AddYears(-2).ToString("yyyy-M-d h:m", CultureInfo.InvariantCulture);
         GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
-        string query = vacuumer.GenerateSqlQueryForDeletion(expectedTime);
+        List<string> query = vacuumer.GenerateSqlQueryForDeletion(expectedTime);
 
 
         string expected =
-            $"SELECT Column FROM Table WHERE Exists(Condition);SELECT Column FROM Table WHERE Exists(SecondCondition);";
-        Assert.Equal(query, expected);
+            $"SELECT Column FROM Table WHERE Exists(Condition) OR SELECT Column FROM Table WHERE Exists(SecondCondition);";
+        Assert.Contains(expected, query);
     }
 
     [Fact]
@@ -82,11 +80,13 @@ public class VacuumerTest
 
         string expectedTime = DateTime.Now.AddYears(-2).ToString("yyyy-M-d h:m", CultureInfo.InvariantCulture);
         GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
-        string query = vacuumer.GenerateSqlQueryForDeletion(expectedTime);
+        List<string> query = vacuumer.GenerateSqlQueryForDeletion(expectedTime);
 
 
-        string expected =
-            $"SELECT Column FROM Table WHERE Exists(Condition);SELECT SecondColumn FROM SecondTable WHERE Exists(Condition);";
-        Assert.Equal(query, expected);
+        string firstExpected =
+            $"SELECT Column FROM Table WHERE Exists(Condition);";
+        string secondExpected = "SELECT SecondColumn FROM SecondTable WHERE Exists(Condition);";
+        Assert.Contains(firstExpected, query);
+        Assert.Contains(secondExpected, query);
     }
 }
