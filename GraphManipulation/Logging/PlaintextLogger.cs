@@ -7,56 +7,56 @@ namespace GraphManipulation.Logging;
 
 public class PlaintextLogger : Logger
 {
-    public PlaintextLogger(ConfigManager configManager) : base(configManager)
+    public PlaintextLogger(ConfigManager configManager/*, ILogFileSegmenter logFileSegmenter*/) 
+        : base(configManager/*, logFileSegmenter*/)
     {
-        
     }
 
-    public override ILog CreateLog(LogType logType, LogMessageFormat logMessageFormat, string message)
+    protected override ILog CreateLog(IMutableLog mutableLog)
     {
-        return new PlaintextLog(ServeNextLogNumber(), DateTime.Now, logType, logMessageFormat, message);
+        return CreateLog(mutableLog.LogType, mutableLog.LogMessageFormat, mutableLog.Message);
     }
 
-    public override void Append(ILog log)
+    protected override ILog CreateLog(LogType logType, LogMessageFormat logMessageFormat, string message)
     {
-        var writer = File.AppendText(GetLogPath());
+        return new Log(ServeNextLogNumber(), DateTime.Now, logType, logMessageFormat, message);
+    }
+
+    protected override void AppendLogToFile(ILog log)
+    {
+        var writer = File.AppendText(GetLogFilePath());
         writer.WriteLine(log.ToString());
-        writer.Dispose();
+        writer.Flush();
+        writer.Close();
     }
 
-    public override IOrderedEnumerable<ILog> Read(ILoggerConstraints constraints)
+    public override IOrderedEnumerable<ILog> Read(ILogConstraints constraints)
     {
-        var logs = File.ReadLines(GetLogPath()).Select(s => new PlaintextLog(s));
+        var logs = File.ReadLines(GetLogFilePath()).Select(s => new Log(s));
         return constraints.ApplyConstraintsToLogs(logs);
     }
 
-    public override void CreateAndAppendLog(LogType logType, LogMessageFormat logMessageFormat, string message)
+    protected override int LoadCurrentLogNumber()
     {
-        Append(CreateLog(logType, logMessageFormat, message));
-    }
-
-    protected override int GetCurrentLogNumberFromFile()
-    {
-        var path = GetLogPath();
-
-        if (!File.Exists(path))
+        var filePath = GetLogFilePath();
+    
+        if (!File.Exists(filePath))
         {
-            var openWrite = File.OpenWrite(path);
-            openWrite.Dispose();
+            return 1;
         }
-
-        var lastLogString = File.ReadLines(path).LastOrDefault();
-
+    
+        var lastLogString = File.ReadLines(filePath).LastOrDefault();
+    
         if (lastLogString is null)
         {
             return 1;
         }
-
+    
         if (Log.IsValidLogString(lastLogString))
         {
-            return new PlaintextLog(lastLogString).LogNumber + 1;
+            return new Log(lastLogString).LogNumber + 1;
         }
-
+    
         throw new LoggerException("Log could not be parsed: " + lastLogString);
     }
 }

@@ -34,7 +34,7 @@ public static class LogStringParser
 
         try
         {
-            return DateTime.ParseExact(creationTimeString, "dd/MM/yyyy HH.mm.ss", CultureInfo.InvariantCulture);
+            return DateTime.ParseExact(creationTimeString, Log.CreationTimeStampFormat(), CultureInfo.InvariantCulture);
         }
         catch (Exception)
         {

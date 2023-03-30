@@ -3,9 +3,9 @@ using GraphManipulation.Logging.Logs;
 
 namespace GraphManipulation.Logging;
 
-public class LoggerConstraints : ILoggerConstraints
+public class LogConstraints : ILogConstraints
 {
-    public LoggerConstraints(NumberRange? logNumberRange = null, TimeRange? timeRange = null,
+    public LogConstraints(NumberRange? logNumberRange = null, TimeRange? timeRange = null,
         List<LogType>? logTypes = null,
         List<LogMessageFormat>? logMessageFormats = null)
     {

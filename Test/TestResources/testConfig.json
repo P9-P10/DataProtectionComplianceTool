@@ -7,5 +7,6 @@
   "OutputFileName": "output.ttl",
   "OutputPath": "",
   "OntologyPath": "",
+  "LogFolderPath": "/home/ane/Documents/GitHub/GraphManipulation/Test/TestResources/logs/",
   "LogPath": "/home/ane/Documents/GitHub/GraphManipulation/Test/TestResources/log"
 }
