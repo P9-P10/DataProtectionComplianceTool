@@ -7,8 +7,8 @@ namespace GraphManipulation.Logging;
 
 public class PlaintextLogger : Logger
 {
-    public PlaintextLogger(ConfigManager configManager, ILogFileSegmenter logFileSegmenter) 
-        : base(configManager, logFileSegmenter)
+    public PlaintextLogger(ConfigManager configManager/*, ILogFileSegmenter logFileSegmenter*/) 
+        : base(configManager/*, logFileSegmenter*/)
     {
     }
 

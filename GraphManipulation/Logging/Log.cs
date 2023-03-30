@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.RegularExpressions;
 using GraphManipulation.Helpers;
 using GraphManipulation.Logging.Logs;
@@ -38,7 +39,7 @@ public class Log : ILog
 
     public string GetCreationTimeStamp()
     {
-        return CreationTime.ToString(CreationTimeStampFormat());
+        return CreationTime.ToString(CreationTimeStampFormat(), CultureInfo.InvariantCulture);
         // return CreationTime.ToShortDateString() + " " + CreationTime.ToLongTimeString() + CreationTime;
     }
 
@@ -58,7 +59,7 @@ public class Log : ILog
     // 
     private static string ValidLogStringPattern()
     {
-        return $"^\\d+{LogDelimiter()}\\d+-\\d+-\\d+ \\d+:\\d+:\\d+\\.\\d+{LogDelimiter()}[a-zA-Z0-9_]+{LogDelimiter()}[a-zA-Z0-9_]+{LogDelimiter()}.*$";
+        return $"^\\d+{LogDelimiter()}\\d+-\\d+-\\d+ \\d+:\\d+:\\d+{LogDelimiter()}[a-zA-Z0-9_]+{LogDelimiter()}[a-zA-Z0-9_]+{LogDelimiter()}.*$";
     }
 
     public static bool IsValidLogString(string logString)
@@ -69,7 +70,7 @@ public class Log : ILog
     // TODO: Ikke brug ffff, find på noget andet (millisekunder?) eller drop det
     public static string CreationTimeStampFormat()
     {
-        return "dd-MM-yyyy HH:mm:ss.ffff";
+        return "dd-MM-yyyy HH:mm:ss";
     }
     
     public override string ToString()

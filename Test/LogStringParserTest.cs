@@ -22,7 +22,7 @@ public class LogStringParserTest
     private static string GetTestLogString()
     {
         return "123" + Log.LogDelimiter() +
-               "12-05-1937 09:57:33.4321" + Log.LogDelimiter() +
+               "12-05-1937 09:57:33" + Log.LogDelimiter() +
                LogType.Vacuuming + Log.LogDelimiter() +
                LogMessageFormat.Plaintext + Log.LogDelimiter() +
                "This is a message";
@@ -31,7 +31,7 @@ public class LogStringParserTest
     [Fact]
     public void ParseCreationTimeReturnsCorrectDateTime()
     {
-        var expected = new DateTime(1937, 5, 12, 9, 57, 33, 4321);
+        var expected = new DateTime(1937, 5, 12, 9, 57, 33);
         var actual = LogStringParser.ParseCreationTime(GetTestLogString());
         Assert.Equal(expected, actual);
     }
