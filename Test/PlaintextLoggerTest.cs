@@ -140,24 +140,16 @@ public class PlaintextLoggerTest : LogTest
         [Fact]
         public void LoggerUsesCorrectFormat()
         {
-            Assert.True(false);
+            var configManager = CreateConfigManager();
+            var logger = new PlaintextLogger(configManager);
             
-            // var configManager = CreateConfigManager();
-            // var logger = new PlaintextLogger(configManager);
-            //
-            // var log = new MutableLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
-            //
-            // logger.Append(log);
-            //
-            // var actual = File.ReadLines(GetTestLogsFolderPath()).First();
-            //
-            // Assert.Equal("1" + Log.LogDelimiter() +
-            //              log.GetCreationTimeStamp() + Log.LogDelimiter() +
-            //              "Metadata" + Log.LogDelimiter() +
-            //              "Plaintext" + Log.LogDelimiter() +
-            //              "Test message",
-            //     actual);
-            // Assert.True(Log.IsValidLogString(actual));
+            var log = new MutableLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
+            
+            logger.Append(log);
+            
+            var actual = File.ReadLines(GetTestLogFilePath()).First();
+          
+            Assert.True(Log.IsValidLogString(actual));
         }
     
         [Fact]
@@ -202,47 +194,46 @@ public class PlaintextLoggerTest : LogTest
         [Fact]
         public void LogFileWithExistingLogsStartsAtLastNumber()
         {
-            Assert.True(false);
+            var configManager = CreateConfigManager();
+            var logger1 = new PlaintextLogger(configManager);
+            var log1 = new MutableLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message A");
             
-            // var configManager = CreateConfigManager();
-            // var logger1 = new PlaintextLogger(configManager);
-            //
-            // var log1 = logger1.CreateLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message A");
-            // var logString = log1.ToString();
-            // var splitString = logString.Split(Log.LogDelimiter());
-            // splitString[0] = "4567";
-            // var modifiedLogString = string.Join(Log.LogDelimiter(), splitString);
-            //
-            // File.WriteAllLines(GetTestLogsFolderPath(), new[] { modifiedLogString });
-            //
-            // var logger2 = new PlaintextLogger(configManager);
-            //
-            // var log2 = logger2.CreateLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message b");
-            //
-            // logger2.Append(log2);
-            //
-            // var actual = File.ReadLines(GetTestLogsFolderPath()).Last();
-            //
-            // Assert.Equal("4568", actual.Split(Log.LogDelimiter()).First());
+            logger1.Append(log1);
+
+            var logString = File.ReadAllLines(GetTestLogFilePath()).First();
+            var splitString = logString.Split(Log.LogDelimiter());
+            splitString[0] = "4567";
+            var modifiedLogString = string.Join(Log.LogDelimiter(), splitString);
+            
+            File.WriteAllLines(GetTestLogFilePath(), new List<string> {modifiedLogString});
+
+            var logger2 = new PlaintextLogger(configManager);
+            var log2 = new MutableLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message B");
+            
+            logger2.Append(log2);
+            
+            var actual = File.ReadLines(GetTestLogFilePath()).Last();
+            
+            Assert.Equal("4568", actual.Split(Log.LogDelimiter()).First());
         }
     
         [Fact]
         public void LogFileWithLineNumberThatDoesNotParseThrowsException()
         {
-            Assert.True(false);
+            var configManager = CreateConfigManager();
+            var logger = new PlaintextLogger(configManager);
             
-            // var configManager = CreateConfigManager();
-            // var logger = new PlaintextLogger(configManager);
-            //
-            // var log = logger.CreateLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
-            // var logString = log.ToString();
-            // var splitString = logString.Split(Log.LogDelimiter());
-            // splitString[0] = "This should not parse";
-            // var modifiedLogString = string.Join(Log.LogDelimiter(), splitString);
-            //
-            // File.WriteAllLines(GetTestLogsFolderPath(), new[] { modifiedLogString });
-            //
-            // Assert.Throws<LoggerException>(() => new PlaintextLogger(configManager));
+            var log = new MutableLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
+            logger.Append(log);
+
+            var logString = File.ReadAllText(GetTestLogFilePath());
+            var splitString = logString.Split(Log.LogDelimiter());
+            splitString[0] = "This should not parse";
+            var modifiedLogString = string.Join(Log.LogDelimiter(), splitString);
+            
+            File.WriteAllLines(GetTestLogFilePath(), new[] { modifiedLogString });
+            
+            Assert.Throws<LoggerException>(() => new PlaintextLogger(configManager));
         }
     }
     
@@ -459,14 +450,19 @@ public class PlaintextLoggerTest : LogTest
             var log3 = new MutableLog(LogType.Vacuuming, LogMessageFormat.Turtle, "");
             var log4 = new MutableLog(LogType.Metadata, LogMessageFormat.Plaintext, "");
             
-            var logStrings = new List<string> { log1.ToString(), log2.ToString(), log3.ToString(), log4.ToString() };
+            logger.Append(log1);
+            logger.Append(log2);
+            logger.Append(log3);
+            logger.Append(log4);
+
+            var logStrings = File.ReadLines(GetTestLogFilePath());
             
             var timeIndex = 1;
             
             var modifiedStrings = logStrings.Select(s =>
             {
                 var split = s.Split(Log.LogDelimiter());
-                split[1] = $"0{timeIndex}/0{timeIndex}/000{timeIndex} 0{timeIndex}.0{timeIndex}.0{timeIndex}";
+                split[1] = $"0{timeIndex}-0{timeIndex}-000{timeIndex} 0{timeIndex}:0{timeIndex}:0{timeIndex}";
                 timeIndex++;
                 return string.Join(Log.LogDelimiter(), split);
             }).ToList();
