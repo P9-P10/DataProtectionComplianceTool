@@ -1,4 +1,7 @@
-﻿namespace GraphManipulation.Helpers;
+using System.Reflection;
+using GraphManipulation.MetadataManagement.AttributeMapping;
+
+namespace GraphManipulation.Helpers;
 
 public class InsertStatementBuilder
 {
@@ -18,13 +21,10 @@ public class InsertStatementBuilder
         var valuesAsStrings = new List<string>();
         foreach (var prop in props)
         {
-            var value = prop.GetValue(InsertValues, null);
-            if (value == null)
-            {
-                continue; // Exclude properties that do not define values
-            }
-
-            columns.Add(prop.Name);
+            string columnName = getColumnName(prop);
+            object value = prop.GetValue(InsertValues, null);
+            if (value == null) continue; // Exclude properties that do not define values
+            columns.Add(columnName);
             valuesAsStrings.Add(
                 value is string
                     ? $"'{value}'" // If the value is a string it must be surrounded by singlequotes
@@ -38,5 +38,11 @@ public class InsertStatementBuilder
         var columnsString = $"({string.Join(", ", columns)})";
 
         return $"INSERT INTO {Table} {columnsString} VALUES({valuesString});";
+    }
+    
+    private string getColumnName(PropertyInfo prop)
+    {
+        ColumnAttribute? colAttr = prop.GetCustomAttributes(true).OfType<ColumnAttribute>().FirstOrDefault();
+        return colAttr == null ? prop.Name : colAttr.Name;
     }
 }

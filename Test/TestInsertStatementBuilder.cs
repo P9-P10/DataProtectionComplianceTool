@@ -1,4 +1,4 @@
-﻿using GraphManipulation.Helpers;
+using GraphManipulation.Helpers;
 using GraphManipulation.Models.Metadata;
 using Xunit;
 
@@ -20,9 +20,8 @@ public class TestInsertStatementBuilder
     [Fact]
     public void BuildInsertFromNonAnonymousType()
     {
-        var builder = new InsertStatementBuilder("gdpr_metadata");
-        builder.InsertValues = new GDPRMetadata
-            { target_table = "test_table", target_column = "test_column", purpose = "Testing" };
+        InsertStatementBuilder builder = new InsertStatementBuilder("gdpr_metadata");
+        builder.InsertValues = new GDPRMetadata("mockTable", "mockColumn") { TargetTable = "test_table", TargetColumn = "test_column", Purpose = "Testing" };
 
         var result = builder.Build();
 
