@@ -31,6 +31,13 @@ public class Purpose
         _legallyRequired = legallyRequired;
     }
 
+    /// <summary>
+    /// Calculates the expiration date for data, by parsing the input string.
+    /// This function is however no longer used in the code, as the same functionality can be achieved through SQL.
+    /// However, different SQL engines, have different ways, so we might choose to use this method later.
+    /// </summary>
+    /// <param name="inputString"></param>
+    /// <returns></returns>
     private string ExpirationDateCalculator(string inputString)
     {
         int years = 0, months = 0, days = 0, hours = 0, minutes = 0;

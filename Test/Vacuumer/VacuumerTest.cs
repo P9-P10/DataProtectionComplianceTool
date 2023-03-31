@@ -17,7 +17,7 @@ public class VacuumerTest
 
 
         GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
-        List<string> query = vacuumer.GenerateSqlQueryForDeletion();
+        List<string> query = vacuumer.GenerateSelectStatementForDataToDelete();
         
         Assert.Empty(query);
     }
@@ -34,11 +34,11 @@ public class VacuumerTest
 
         string expectedTime = DateTime.Now.AddYears(-2).ToString("yyyy-M-d h:m", CultureInfo.InvariantCulture);
         GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
-        List<string> query = vacuumer.GenerateSqlQueryForDeletion(expectedTime);
+        List<string> query = vacuumer.GenerateSelectStatementForDataToDelete(expectedTime);
 
 
         string expected =
-            $"SELECT Column FROM Table WHERE Exists(Condition);";
+            $"SELECT Column FROM Table WHERE (Condition);";
         Assert.Contains(expected, query);
     }
 
@@ -57,11 +57,11 @@ public class VacuumerTest
 
         string expectedTime = DateTime.Now.AddYears(-2).ToString("yyyy-M-d h:m", CultureInfo.InvariantCulture);
         GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
-        List<string> query = vacuumer.GenerateSqlQueryForDeletion(expectedTime);
+        List<string> query = vacuumer.GenerateSelectStatementForDataToDelete(expectedTime);
 
 
         string expected =
-            $"SELECT Column FROM Table WHERE Exists(Condition) AND Exists(SecondCondition);";
+            $"SELECT Column FROM Table WHERE (Condition) AND (SecondCondition);";
         Assert.Contains(expected, query);
     }
 
@@ -80,12 +80,12 @@ public class VacuumerTest
 
         string expectedTime = DateTime.Now.AddYears(-2).ToString("yyyy-M-d h:m", CultureInfo.InvariantCulture);
         GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
-        List<string> query = vacuumer.GenerateSqlQueryForDeletion(expectedTime);
+        List<string> query = vacuumer.GenerateSelectStatementForDataToDelete(expectedTime);
 
 
         string firstExpected =
-            $"SELECT Column FROM Table WHERE Exists(Condition);";
-        string secondExpected = "SELECT SecondColumn FROM SecondTable WHERE Exists(Condition);";
+            $"SELECT Column FROM Table WHERE (Condition);";
+        string secondExpected = "SELECT SecondColumn FROM SecondTable WHERE (Condition);";
         Assert.Contains(firstExpected, query);
         Assert.Contains(secondExpected, query);
     }

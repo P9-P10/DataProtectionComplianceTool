@@ -11,7 +11,7 @@ public class Vacuumer : IVacuumer
         _tableColumnPairs = tableColumnPairs;
     }
 
-    public List<string> GenerateSqlQueryForDeletion(string predefinedExpirationDate = "")
+    public List<string> GenerateSelectStatementForDataToDelete(string predefinedExpirationDate = "")
     {
         List<string> outputQuery = new List<string>();
         foreach (TableColumnPair tcPair in _tableColumnPairs)
@@ -21,7 +21,7 @@ public class Vacuumer : IVacuumer
             foreach (var purpose in tcPair.GetPurposes)
             {
                 query +=
-                    $"Exists({purpose.ExpirationCondition})";
+                    $"({purpose.ExpirationCondition})";
                 query += logicOperator;
             }
 
