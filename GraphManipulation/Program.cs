@@ -4,6 +4,7 @@ using System.Data.SQLite;
 using GraphManipulation.Components;
 using GraphManipulation.Extensions;
 using GraphManipulation.Helpers;
+using GraphManipulation.Logging;
 using GraphManipulation.Manipulation;
 using GraphManipulation.Models.Stores;
 using VDS.RDF;
@@ -45,7 +46,7 @@ public static class Program
 
     private static void Interactive()
     {
-        var interactive = new InteractiveMode(Cf);
+        var interactive = new InteractiveMode(Cf, new PlaintextLogger(Cf));
         interactive.Run();
     }
 

@@ -2,6 +2,7 @@ using System.Data.SQLite;
 using GraphManipulation.Components;
 using GraphManipulation.Extensions;
 using GraphManipulation.Helpers;
+using GraphManipulation.Logging;
 using GraphManipulation.Models.Entity;
 using GraphManipulation.Models.Stores;
 using VDS.RDF;
@@ -12,10 +13,12 @@ namespace GraphManipulation.Manipulation;
 public class InteractiveMode
 {
     private readonly ConfigManager _cf;
+    private ILogger _logger;
 
-    public InteractiveMode(ConfigManager configManager)
+    public InteractiveMode(ConfigManager configManager, ILogger logger)
     {
         _cf = configManager;
+        _logger = logger;
     }
 
     public void Run()
