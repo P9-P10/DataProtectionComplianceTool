@@ -1,6 +1,6 @@
 using GraphManipulation.MetadataManagement.AttributeMapping;
 
-namespace GraphManipulation.Models.Metadata;
+namespace GraphManipulation.MetadataManagement;
 
 public class GDPRMetadata
 {
@@ -22,15 +22,15 @@ public class GDPRMetadata
 
     [Column("ttl")] public string? TTL { get; init; }
 
-    [Column("target_table")] public string TargetTable { get; set; }
+    [Column("target_table")] public string? TargetTable { get; set; }
 
-    [Column("target_column")] public string TargetColumn { get; set; }
+    [Column("target_column")] public string? TargetColumn { get; set; }
 
     [Column("origin")] public string? Origin { get; init; }
 
     [Column("start_time")] public string? StartTime { get; init; }
 
-    [Column("legally_required")] public bool? LegallyRequired { get; set; }
+    [Column("legally_required")] public bool? LegallyRequired { get; init; }
 
     protected bool Equals(GDPRMetadata other)
     {

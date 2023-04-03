@@ -1,4 +1,5 @@
-﻿using GraphManipulation.Manipulation;
+﻿using System.Collections.Generic;
+using GraphManipulation.Manipulation;
 using Xunit;
 
 namespace Test;

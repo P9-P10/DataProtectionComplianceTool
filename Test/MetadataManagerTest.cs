@@ -5,7 +5,6 @@ using System.Data.SQLite;
 using System.IO;
 using Dapper;
 using GraphManipulation.MetadataManagement;
-using GraphManipulation.Models.Metadata;
 using Xunit;
 
 namespace Test;

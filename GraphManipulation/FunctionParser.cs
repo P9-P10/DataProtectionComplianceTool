@@ -1,6 +1,5 @@
 using System.Text.RegularExpressions;
 using GraphManipulation.MetadataManagement;
-using GraphManipulation.Models.Metadata;
 using GraphManipulation.SchemaEvolution.Components;
 using GraphManipulation.SchemaEvolution.Models.Stores;
 
@@ -55,7 +54,7 @@ public static class FunctionParser
         }
     }
 
-    public static List<string> GetParametersFromQuery(string query)
+    public static List<string?> GetParametersFromQuery(string query)
     {
         // Splits input string on:
         // " "; ")"; "("; ","
@@ -67,7 +66,7 @@ public static class FunctionParser
         return new Uri(parameters[index]);
     }
 
-    public static bool IsValidMarkAsPersonalDataQuery(List<string> parameters)
+    public static bool IsValidMarkAsPersonalDataQuery(List<string?> parameters)
     {
         if (parameters.Count >= 4)
         {

@@ -1,5 +1,5 @@
 using GraphManipulation.Helpers;
-using GraphManipulation.Models.Metadata;
+using GraphManipulation.MetadataManagement;
 using Xunit;
 
 namespace Test;
