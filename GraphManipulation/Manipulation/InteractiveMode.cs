@@ -48,11 +48,11 @@ public class InteractiveMode
         {
             var managedDatabases = graphStorage.GetListOfManagedDatabasesWithType();
 
-            var choice = PresentManagedDatabasesReturnChoice(managedDatabases);
+            var choice = UserInteraction.PresentManagedDatabasesReturnChoice(managedDatabases);
 
             InitOrManageDatabase(choice, managedDatabases, graphStorage, metadataManager);
 
-            if (PresentExit("the program"))
+            if (UserInteraction.PresentExit("the program"))
             {
                 stop = true;
             }
@@ -68,7 +68,7 @@ public class InteractiveMode
             return ontologyPath;
         }
 
-        ontologyPath = GetOntologyPathFromUser();
+        ontologyPath = UserInteraction.GetOntologyPathFromUser();
         _cf.UpdateValue("OntologyPath", ontologyPath);
 
         return ontologyPath;
@@ -83,7 +83,7 @@ public class InteractiveMode
             return graphStorageConnectionString;
         }
 
-        graphStorageConnectionString = GetGraphStorageConnectionStringFromUser();
+        graphStorageConnectionString = UserInteraction.GetGraphStorageConnectionStringFromUser();
         _cf.UpdateValue("GraphStoragePath", graphStorageConnectionString);
 
         return graphStorageConnectionString;
@@ -92,134 +92,19 @@ public class InteractiveMode
     private string GetBaseUriFromUser()
     {
         var baseUri = _cf.GetValue("BaseURI");
-        if (baseUri == "")
+        
+        if (baseUri != "")
         {
-            Console.WriteLine();
-            Console.WriteLine("Please input the Base Uri for your system: ");
-            baseUri = GetStringFromUser(
-                s => !Entity.IsValidUri(s.Trim()),
-                "Uri must be valid, try again");
+            return baseUri;
         }
 
+        Console.WriteLine();
+        Console.WriteLine("Please input the Base Uri for your system: ");
+        baseUri = UserInteraction.GetStringFromUser(
+            s => !Entity.IsValidUri(s.Trim()),
+            "Uri must be valid, try again");
+
         return baseUri;
-    }
-
-    private string GetOntologyPathFromUser()
-    {
-        Console.WriteLine();
-        Console.WriteLine("Please input the absolute path to your ontology turtle file (.ttl): ");
-        var ontologyPath = GetStringFromUser(
-            s => !File.Exists(s),
-            "Could not find the ontology on the given path, please try again");
-
-        return ontologyPath;
-    }
-
-    private string GetGraphStorageConnectionStringFromUser()
-    {
-        Console.WriteLine();
-        Console.WriteLine("Please input the absolute path to your GraphStorage (.sqlite): ");
-        var graphStoragePath = GetStringFromUser(
-            s =>
-            {
-                var suffixIsCorrect = s.Contains(".sqlite");
-
-                if (suffixIsCorrect && !File.Exists(s))
-                {
-                    Console.WriteLine($"Creating file at: {s}");
-                }
-
-                return !s.Contains(".sqlite");
-            },
-            "Path must include the .sqlite suffix");
-
-        return graphStoragePath;
-    }
-
-    private string GetStringFromUser(Func<string, bool> errorPredicate, string errorMessage)
-    {
-        string result;
-        var flag = false;
-
-        do
-        {
-            result = Console.ReadLine()!;
-
-            if (errorPredicate(result))
-            {
-                Console.WriteLine(errorMessage);
-            }
-            else
-            {
-                flag = true;
-            }
-        } while (!flag);
-
-        return result;
-    }
-
-    private int GetIntFromUser(Func<int, bool> errorPredicate, string errorMessage)
-    {
-        int result;
-        var flag = false;
-
-        do
-        {
-            var numberString = GetStringFromUser(
-                s => !int.TryParse(s, out _),
-                "Input cannot be converted to an integer, please try again");
-
-            int.TryParse(numberString, out result);
-
-            if (errorPredicate(result))
-            {
-                Console.WriteLine(errorMessage);
-            }
-            else
-            {
-                flag = true;
-            }
-        } while (!flag);
-
-        return result;
-    }
-
-    private bool GetBoolFromUser(string trueEquivalent, string falseEquivalent)
-    {
-        var boolString = GetStringFromUser(
-            s =>
-                !string.Equals(s, trueEquivalent, StringComparison.CurrentCultureIgnoreCase)
-                &&
-                !string.Equals(s, falseEquivalent, StringComparison.CurrentCultureIgnoreCase),
-            "Input cannot be converted be parsed, please try again");
-
-        return boolString == trueEquivalent;
-    }
-
-    private int PresentManagedDatabasesReturnChoice(List<(string, string)> managedDatabases)
-    {
-        Console.WriteLine();
-        Console.WriteLine("These are the currently managed databases: ");
-
-        var index = 1;
-
-        managedDatabases.ForEach(tuple => Console.WriteLine($"({index++}) : {tuple.Item1} - {tuple.Item2}"));
-        Console.WriteLine("\n(0) - Insert new database");
-
-        Console.WriteLine();
-        Console.WriteLine("Please select which database you want to manipulate: ");
-        var choice = GetIntFromUser(
-            i => i < 0 || i > managedDatabases.Count,
-            $"Please choose a number between 0 and {managedDatabases.Count} (inclusive)");
-
-        return choice;
-    }
-
-    private bool PresentExit(string exitFrom)
-    {
-        Console.WriteLine();
-        Console.WriteLine($"Do you want to exit from {exitFrom}? (y/n)");
-        return GetBoolFromUser("y", "n");
     }
 
     private void InitOrManageDatabase(int choice, List<(string, string)> managedDatabases,
@@ -253,7 +138,7 @@ public class InteractiveMode
         Console.WriteLine();
         Console.WriteLine("Please provide the type of database you want to manage: ");
         PresentDatabaseTypes();
-        var choice = GetIntFromUser(
+        var choice = UserInteraction.GetIntFromUser(
             s => s != 0,
             "Please choose a supported database");
 
@@ -267,7 +152,7 @@ public class InteractiveMode
         }
     }
 
-    private void InitSqlite(GraphStorage graphStorage, string baseUri)
+    private static void InitSqlite(GraphStorage graphStorage, string baseUri)
     {
         Console.WriteLine();
         Console.WriteLine("Please provide the path to the SQLite: ");
@@ -278,7 +163,7 @@ public class InteractiveMode
 
         do
         {
-            var sqlitePath = GetStringFromUser(_ => false, "");
+            var sqlitePath = UserInteraction.GetStringFromUser(_ => false, "");
 
             sqlite = new Sqlite("", baseUri, new SQLiteConnection($"Data Source={sqlitePath}"));
             sqlite.BuildFromDataSource();
@@ -303,7 +188,7 @@ public class InteractiveMode
         Console.WriteLine("(0) : SQLite");
     }
 
-    private void ManageSelectedDatabase<T>(Uri databaseUri, GraphStorage graphStorage, MetadataManager metadataManager)
+    private static void ManageSelectedDatabase<T>(Uri databaseUri, GraphStorage graphStorage, MetadataManager metadataManager)
         where T : Database
     {
         var graph = graphStorage.GetLatest(databaseUri);
@@ -315,7 +200,7 @@ public class InteractiveMode
         while (!stop)
         {
             Console.WriteLine("Please write manipulation query: ");
-            var manipulationQuery = GetStringFromUser(
+            var manipulationQuery = UserInteraction.GetStringFromUser(
                 s => !FunctionParser.IsValidManipulationQuery(s),
                 "The manipulation query is invalid, please try again");
 
@@ -330,7 +215,7 @@ public class InteractiveMode
             }
 
             Console.WriteLine("Commit changes? (y/n)");
-            var doCommit = GetBoolFromUser("y", "n");
+            var doCommit = UserInteraction.GetBoolFromUser("y", "n");
 
             if (!doCommit)
             {
@@ -347,7 +232,7 @@ public class InteractiveMode
                 return;
             }
 
-            if (PresentExit($"manipulating {databaseUri}"))
+            if (UserInteraction.PresentExit($"manipulating {databaseUri}"))
             {
                 stop = true;
             }
