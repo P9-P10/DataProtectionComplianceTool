@@ -40,7 +40,6 @@ public class Log : ILog
     public string GetCreationTimeStamp()
     {
         return CreationTime.ToString(CreationTimeStampFormat(), CultureInfo.InvariantCulture);
-        // return CreationTime.ToShortDateString() + " " + CreationTime.ToLongTimeString() + CreationTime;
     }
 
     public override string ToString()
@@ -78,7 +77,6 @@ public class Log : ILog
         return Regex.IsMatch(logString, ValidLogStringPattern());
     }
 
-    // TODO: Ikke brug ffff, find på noget andet (millisekunder?) eller drop det
     public static string CreationTimeStampFormat()
     {
         return "dd-MM-yyyy HH:mm:ss";
