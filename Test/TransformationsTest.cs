@@ -1,7 +1,7 @@
-using GraphManipulation.Extensions;
-using GraphManipulation.Models;
-using GraphManipulation.Models.Stores;
-using GraphManipulation.Models.Structures;
+using GraphManipulation.SchemaEvolution.Extensions;
+using GraphManipulation.SchemaEvolution.Models;
+using GraphManipulation.SchemaEvolution.Models.Stores;
+using GraphManipulation.SchemaEvolution.Models.Structures;
 using Xunit;
 using Xunit.Abstractions;
 
