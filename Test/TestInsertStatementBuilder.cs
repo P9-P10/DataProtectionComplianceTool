@@ -20,8 +20,9 @@ public class TestInsertStatementBuilder
     [Fact]
     public void BuildInsertFromNonAnonymousType()
     {
-        InsertStatementBuilder builder = new InsertStatementBuilder("gdpr_metadata");
-        builder.InsertValues = new GDPRMetadata("mockTable", "mockColumn") { TargetTable = "test_table", TargetColumn = "test_column", Purpose = "Testing" };
+        var builder = new InsertStatementBuilder("gdpr_metadata");
+        builder.InsertValues = new GDPRMetadata("mockTable", "mockColumn")
+            { TargetTable = "test_table", TargetColumn = "test_column", Purpose = "Testing" };
 
         var result = builder.Build();
 

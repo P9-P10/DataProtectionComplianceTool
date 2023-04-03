@@ -21,9 +21,13 @@ public class InsertStatementBuilder
         var valuesAsStrings = new List<string>();
         foreach (var prop in props)
         {
-            string columnName = getColumnName(prop);
-            object value = prop.GetValue(InsertValues, null);
-            if (value == null) continue; // Exclude properties that do not define values
+            var columnName = getColumnName(prop);
+            var value = prop.GetValue(InsertValues, null);
+            if (value == null)
+            {
+                continue; // Exclude properties that do not define values
+            }
+
             columns.Add(columnName);
             valuesAsStrings.Add(
                 value is string
@@ -39,10 +43,10 @@ public class InsertStatementBuilder
 
         return $"INSERT INTO {Table} {columnsString} VALUES({valuesString});";
     }
-    
+
     private string getColumnName(PropertyInfo prop)
     {
-        ColumnAttribute? colAttr = prop.GetCustomAttributes(true).OfType<ColumnAttribute>().FirstOrDefault();
+        var colAttr = prop.GetCustomAttributes(true).OfType<ColumnAttribute>().FirstOrDefault();
         return colAttr == null ? prop.Name : colAttr.Name;
     }
 }

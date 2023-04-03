@@ -3,12 +3,10 @@ using GraphManipulation.Logging.Logs;
 
 namespace GraphManipulation.Logging;
 
-// TODO: Lav en ny log fil per [indsæt segmenterings faktor], hav unikt index i hver fil (dato + tidspunkt + index = unik)
-
 public class PlaintextLogger : Logger
 {
-    public PlaintextLogger(ConfigManager configManager/*, ILogFileSegmenter logFileSegmenter*/) 
-        : base(configManager/*, logFileSegmenter*/)
+    public PlaintextLogger(ConfigManager configManager)
+        : base(configManager)
     {
     }
 
@@ -39,24 +37,24 @@ public class PlaintextLogger : Logger
     protected override int LoadCurrentLogNumber()
     {
         var filePath = GetLogFilePath();
-    
+
         if (!File.Exists(filePath))
         {
             return 1;
         }
-    
+
         var lastLogString = File.ReadLines(filePath).LastOrDefault();
-    
+
         if (lastLogString is null)
         {
             return 1;
         }
-    
+
         if (Log.IsValidLogString(lastLogString))
         {
             return new Log(lastLogString).LogNumber + 1;
         }
-    
+
         throw new LoggerException("Log could not be parsed: " + lastLogString);
     }
 }

@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using GraphManipulation.Helpers;
 using GraphManipulation.Logging.Logs;
 
@@ -7,19 +6,21 @@ namespace GraphManipulation.Logging;
 public abstract class Logger : ILogger
 {
     private readonly ConfigManager _configManager;
-    // private readonly ILogFileSegmenter _logFileSegmenter;
-    private int _logNumber;
+
     private string _currentLogFileName;
 
-    protected Logger(ConfigManager configManager/*, ILogFileSegmenter logFileSegmenter*/)
+    // private readonly ILogFileSegmenter _logFileSegmenter;
+    private int _logNumber;
+
+    protected Logger(ConfigManager configManager /*, ILogFileSegmenter logFileSegmenter*/)
     {
         _configManager = configManager;
-        
+
         if (string.IsNullOrEmpty(GetLogFilePath()))
         {
             throw new LoggerException("Value for log path must be set in config file");
         }
-        
+
         // _logFileSegmenter = logFileSegmenter;
         // _currentLogFileName = LoadCurrentLogFileName();
         _currentLogFileName = "log";
@@ -40,15 +41,21 @@ public abstract class Logger : ILogger
 
         AppendLogToFile(log);
     }
-    protected abstract void AppendLogToFile(ILog log);
-    
+
     public abstract IOrderedEnumerable<ILog> Read(ILogConstraints constraints);
+    protected abstract void AppendLogToFile(ILog log);
     protected abstract ILog CreateLog(IMutableLog mutableLog);
     protected abstract ILog CreateLog(LogType logType, LogMessageFormat logMessageFormat, string message);
 
-    private string GetLogFolderPath() => _configManager.GetValue("LogFolderPath");
+    private string GetLogFolderPath()
+    {
+        return _configManager.GetValue("LogFolderPath");
+    }
 
-    protected string GetLogFilePath() => _configManager.GetValue("LogPath");
+    protected string GetLogFilePath()
+    {
+        return _configManager.GetValue("LogPath");
+    }
     // protected string GetLogFilePath() => GetLogFolderPath() + _currentLogFileName;
     // protected string GetCurrentLogFileNamePath() => GetLogFolderPath() + "current_log_file_name";
 
@@ -66,6 +73,7 @@ public abstract class Logger : ILogger
     {
         _logNumber = 1;
     }
+
     protected int ServeNextLogNumber()
     {
         return _logNumber++;

@@ -1,5 +1,3 @@
-using Xunit;
-
 namespace Test;
 
 public class SystemLoggingTest
@@ -34,7 +32,7 @@ public class SystemLoggingTest
          * When a vacuuming rule is deleted
          */
     }
-    
+
     public class SchemaEvolution
     {
         /*

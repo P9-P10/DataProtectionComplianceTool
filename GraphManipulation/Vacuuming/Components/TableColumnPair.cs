@@ -2,25 +2,15 @@
 
 public class TableColumnPair
 {
-    private string _table;
-    private string _column;
-    private string _updateValue;
-    private List<Purpose> _purposes = new();
-    public string Table => _table;
-    public string Column => _column;
-    public string UpdateValue => _updateValue;
-
-    public List<Purpose> GetPurposes => _purposes;
-
-    public TableColumnPair(string table, string column,string updateValue = "Null")
+    public TableColumnPair(string table, string column, string updateValue = "Null")
     {
-        _table = table;
-        _column = column;
-        _updateValue = updateValue;
+        Table = table;
+        Column = column;
+        UpdateValue = updateValue;
     }
 
     /// <summary>
-    /// Constructor used to create TableColumn pair from dapper.
+    ///     Constructor used to create TableColumn pair from dapper.
     /// </summary>
     /// <param name="purpose"></param>
     /// <param name="target_table"></param>
@@ -32,39 +22,45 @@ public class TableColumnPair
     public TableColumnPair(string purpose, string ttl, string target_table, string target_column,
         string legally_required, string origin, string start_time)
     {
-        _table = target_table;
-        _column = target_column;
-        _updateValue = "Null";
+        Table = target_table;
+        Column = target_column;
+        UpdateValue = "Null";
 
         Purpose newPurpose = new(purpose, ttl, start_time, origin, legally_required.ToLower() == "1");
         AddPurpose(newPurpose);
     }
 
+    public string Table { get; }
+
+    public string Column { get; }
+
+    public string UpdateValue { get; }
+
+    public List<Purpose> GetPurposes { get; } = new();
+
     public void AddPurpose(Purpose purpose)
     {
-        if (!_purposes.Contains(purpose))
+        if (!GetPurposes.Contains(purpose))
         {
-            _purposes.Add(purpose);
+            GetPurposes.Add(purpose);
         }
     }
 
     public void AddPurposes(List<Purpose> purposes)
     {
-        foreach (Purpose purpose in purposes)
-        {
+        foreach (var purpose in purposes)
             AddPurpose(purpose);
-        }
     }
 
     public IEnumerable<Purpose> GetPurposeWithLegalReason()
     {
-        return _purposes.Where(purpose => purpose.GetLegallyRequired).ToList();
+        return GetPurposes.Where(purpose => purpose.GetLegallyRequired).ToList();
     }
 
     public Purpose GetPurposeWithOldestExpirationDate()
     {
-        return _purposes.Aggregate(((purpose, purpose1) =>
-            purpose.GetExpirationDateAsDateTime < purpose1.GetExpirationDateAsDateTime ? purpose : purpose1));
+        return GetPurposes.Aggregate((purpose, purpose1) =>
+            purpose.GetExpirationDateAsDateTime < purpose1.GetExpirationDateAsDateTime ? purpose : purpose1);
     }
 
     public override bool Equals(object? obj)
@@ -74,12 +70,11 @@ public class TableColumnPair
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_table, _column);
+        return HashCode.Combine(Table, Column);
     }
 
     private bool Equals(TableColumnPair? other)
     {
         return other != null && Table == other.Table && Column == other.Column;
     }
-    
 }

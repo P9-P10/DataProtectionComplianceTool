@@ -92,7 +92,7 @@ public class InteractiveMode
     private string GetBaseUriFromUser()
     {
         var baseUri = _cf.GetValue("BaseURI");
-        
+
         if (baseUri != "")
         {
             return baseUri;
@@ -188,7 +188,8 @@ public class InteractiveMode
         Console.WriteLine("(0) : SQLite");
     }
 
-    private static void ManageSelectedDatabase<T>(Uri databaseUri, GraphStorage graphStorage, MetadataManager metadataManager)
+    private static void ManageSelectedDatabase<T>(Uri databaseUri, GraphStorage graphStorage,
+        MetadataManager metadataManager)
         where T : Database
     {
         var graph = graphStorage.GetLatest(databaseUri);

@@ -15,7 +15,7 @@ public class ColumnAttributeTypeMapper<T> : FallBackTypeMapper
                             .Any(attribute => attribute.Name == columnName)
                     )
             ),
-            new DefaultTypeMap(typeof(T)) 
+            new DefaultTypeMap(typeof(T))
         })
     {
     }

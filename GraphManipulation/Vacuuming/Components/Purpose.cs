@@ -5,36 +5,33 @@ namespace GraphManipulation.Vacuuming.Components;
 
 public class Purpose
 {
-    private string _name;
-    private string _expirationCondition;
-    private string _origin;
-    private bool _legallyRequired;
-    private string _expiration_date;
-
-    public string ExpirationCondition => _expirationCondition;
-    public string GetExpirationDate => _expiration_date;
-
-    public DateTime GetExpirationDateAsDateTime => ExpirationDateAsDatetime();
-
     private readonly string _timeFormat;
-
-    public bool GetLegallyRequired => _legallyRequired;
+    private readonly string _name;
+    private readonly string _origin;
 
     public Purpose(string name, string ttl, string expirationCondition, string origin, bool legallyRequired,
         string timeFormat = "yyyy-M-d h:m")
     {
         _name = name;
         _timeFormat = timeFormat;
-        _expiration_date = ExpirationDateCalculator(ttl);
-        _expirationCondition = expirationCondition.Replace("#", "'");
+        GetExpirationDate = ExpirationDateCalculator(ttl);
+        ExpirationCondition = expirationCondition.Replace("#", "'");
         _origin = origin;
-        _legallyRequired = legallyRequired;
+        GetLegallyRequired = legallyRequired;
     }
 
+    public string ExpirationCondition { get; }
+
+    public string GetExpirationDate { get; }
+
+    public DateTime GetExpirationDateAsDateTime => ExpirationDateAsDatetime();
+
+    public bool GetLegallyRequired { get; }
+
     /// <summary>
-    /// Calculates the expiration date for data, by parsing the input string.
-    /// This function is however no longer used in the code, as the same functionality can be achieved through SQL.
-    /// However, different SQL engines, have different ways, so we might choose to use this method later.
+    ///     Calculates the expiration date for data, by parsing the input string.
+    ///     This function is however no longer used in the code, as the same functionality can be achieved through SQL.
+    ///     However, different SQL engines, have different ways, so we might choose to use this method later.
     /// </summary>
     /// <param name="inputString"></param>
     /// <returns></returns>
@@ -42,11 +39,11 @@ public class Purpose
     {
         int years = 0, months = 0, days = 0, hours = 0, minutes = 0;
 
-        string[] compontents = inputString.Split(" ");
+        var compontents = inputString.Split(" ");
 
-        foreach (string component in compontents)
+        foreach (var component in compontents)
         {
-            int componentNumber = GetNumberFromComponentGetNumberFromComponent(component);
+            var componentNumber = GetNumberFromComponentGetNumberFromComponent(component);
             switch (component)
             {
                 case { } when component.Contains('y'):
@@ -67,20 +64,20 @@ public class Purpose
             }
         }
 
-        DateTime expirationDate = DateTime.Now.AddYears(-years).AddMonths(-months).AddDays(-days).AddHours(-hours)
+        var expirationDate = DateTime.Now.AddYears(-years).AddMonths(-months).AddDays(-days).AddHours(-hours)
             .AddMinutes(-minutes);
         return expirationDate.ToString(_timeFormat, CultureInfo.InvariantCulture);
     }
 
     private int GetNumberFromComponentGetNumberFromComponent(string inputString)
     {
-        Match match = Regex.Match(inputString, @"\d");
+        var match = Regex.Match(inputString, @"\d");
         return match.Success ? Convert.ToInt32(match.Value) : 0;
     }
 
     private DateTime ExpirationDateAsDatetime()
     {
-        return DateTime.ParseExact(_expiration_date, _timeFormat, CultureInfo.InvariantCulture);
+        return DateTime.ParseExact(GetExpirationDate, _timeFormat, CultureInfo.InvariantCulture);
     }
 
     public override bool Equals(object? obj)
@@ -90,13 +87,14 @@ public class Purpose
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_name, _expirationCondition, _origin, _legallyRequired, _expiration_date, _timeFormat);
+        return HashCode.Combine(_name, ExpirationCondition, _origin, GetLegallyRequired, GetExpirationDate,
+            _timeFormat);
     }
 
     private bool Equals(Purpose? other)
     {
         return other != null && GetExpirationDate == other.GetExpirationDate &&
                GetLegallyRequired == other.GetLegallyRequired && other._name == _name &&
-               other._expirationCondition == _expirationCondition;
+               other.ExpirationCondition == ExpirationCondition;
     }
 }

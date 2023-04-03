@@ -5,5 +5,5 @@ public enum LogType
     SchemaChange,
     Vacuuming,
     Metadata,
-    System,
+    System
 }

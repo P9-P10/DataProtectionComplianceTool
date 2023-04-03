@@ -6,7 +6,7 @@ namespace GraphManipulation.Vacuuming;
 
 public class TableColumnPairParser
 {
-    private IDbConnection _dbConnection;
+    private readonly IDbConnection _dbConnection;
 
     public TableColumnPairParser(IDbConnection dbConnection)
     {
@@ -14,13 +14,13 @@ public class TableColumnPairParser
     }
 
     /// <summary>
-    /// Fetches TableColumnPairs from the provided SQLConnection
+    ///     Fetches TableColumnPairs from the provided SQLConnection
     /// </summary>
     /// <returns></returns>
     public List<TableColumnPair> FetchTableColumnPairs()
     {
-        List<TableColumnPair> output = new List<TableColumnPair>();
-        
+        var output = new List<TableColumnPair>();
+
         var queryResult =
             _dbConnection.Query<TableColumnPair>(
                 "SELECT purpose, ttl, target_table, target_column, legally_required, origin, start_time " +
@@ -28,8 +28,7 @@ public class TableColumnPairParser
                 "ORDER BY target_table,target_column;");
 
         var tableColumnPairs = queryResult.ToList();
-        foreach (TableColumnPair? tcpair in tableColumnPairs)
-        {
+        foreach (var tcpair in tableColumnPairs)
             if (output.Contains(tcpair))
             {
                 var index = output.IndexOf(tcpair);
@@ -39,7 +38,6 @@ public class TableColumnPairParser
             {
                 output.Add(tcpair);
             }
-        }
 
         return output;
     }

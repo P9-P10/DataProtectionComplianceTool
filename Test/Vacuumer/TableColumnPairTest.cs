@@ -43,9 +43,8 @@ public class TableColumnPairTest
         tp.AddPurpose(legalPurpose);
         Assert.DoesNotContain(legalPurpose, tp.GetPurposeWithLegalReason());
         Assert.Empty(tp.GetPurposeWithLegalReason());
-        
     }
-    
+
     [Fact]
     public void GetPurposesWithLegalRequirementsReturnsMultiplePurposesIfMultipleExistsWithLegalRequirements()
     {
@@ -58,8 +57,7 @@ public class TableColumnPairTest
         tp.AddPurpose(legalPurpose1);
         Assert.Contains(legalPurpose, tp.GetPurposeWithLegalReason());
         Assert.Contains(legalPurpose1, tp.GetPurposeWithLegalReason());
-        Assert.DoesNotContain(nonLegalPurpose,tp.GetPurposeWithLegalReason());
-        
+        Assert.DoesNotContain(nonLegalPurpose, tp.GetPurposeWithLegalReason());
     }
 
     [Fact]
@@ -72,7 +70,7 @@ public class TableColumnPairTest
         tp.AddPurpose(legalPurpose);
         tp.AddPurpose(nonLegalPurpose);
         tp.AddPurpose(legalPurpose1);
-        
-        Assert.Equal(nonLegalPurpose,tp.GetPurposeWithOldestExpirationDate());
+
+        Assert.Equal(nonLegalPurpose, tp.GetPurposeWithOldestExpirationDate());
     }
 }

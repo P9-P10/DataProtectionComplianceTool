@@ -13,11 +13,11 @@ public class Vacuumer : IVacuumer
 
     public List<string> GenerateUpdateStatement(string predefinedExpirationDate = "")
     {
-        List<string> outputQuery = new List<string>();
-        foreach (TableColumnPair tcPair in _tableColumnPairs)
+        var outputQuery = new List<string>();
+        foreach (var tcPair in _tableColumnPairs)
         {
-            string query = $"UPDATE {tcPair.Table} SET {tcPair.Column} = {tcPair.UpdateValue} WHERE ";
-            string logicOperator = " AND ";
+            var query = $"UPDATE {tcPair.Table} SET {tcPair.Column} = {tcPair.UpdateValue} WHERE ";
+            var logicOperator = " AND ";
             foreach (var purpose in tcPair.GetPurposes)
             {
                 query +=
@@ -34,7 +34,7 @@ public class Vacuumer : IVacuumer
     private string ReplaceLastOccurrenceOfString(string inputString, string occurrenceToReplace,
         string replaceWith = ";")
     {
-        int place = inputString.LastIndexOf(occurrenceToReplace, StringComparison.Ordinal);
+        var place = inputString.LastIndexOf(occurrenceToReplace, StringComparison.Ordinal);
 
         return place == -1
             ? inputString
