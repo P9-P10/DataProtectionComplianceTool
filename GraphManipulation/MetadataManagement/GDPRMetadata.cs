@@ -32,15 +32,6 @@ public class GDPRMetadata
 
     [Column("legally_required")] public bool? LegallyRequired { get; set; }
 
-    // These properties are named to be consistent with the corresponding columns in the database
-    public string purpose { get; set; }
-    public string ttl { get; set; }
-    public string target_table { get; set; }
-    public string target_column { get; set; }
-    public string origin { get; set; }
-    public string start_time { get; set; }
-    public bool? legally_required { get; set; }
-
     protected bool Equals(GDPRMetadata other)
     {
         return Purpose == other.Purpose && TTL == other.TTL && TargetTable == other.TargetTable &&
