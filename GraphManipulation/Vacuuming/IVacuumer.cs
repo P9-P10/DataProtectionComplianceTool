@@ -2,6 +2,6 @@
 
 public interface IVacuumer
 {
-    public List<string> GenerateSelectStatementForDataToDelete(string predefinedExpirationDate="");
+    public List<string> GenerateUpdateStatement(string predefinedExpirationDate="");
     
 }

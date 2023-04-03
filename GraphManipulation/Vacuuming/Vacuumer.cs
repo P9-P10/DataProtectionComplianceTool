@@ -11,12 +11,12 @@ public class Vacuumer : IVacuumer
         _tableColumnPairs = tableColumnPairs;
     }
 
-    public List<string> GenerateSelectStatementForDataToDelete(string predefinedExpirationDate = "")
+    public List<string> GenerateUpdateStatement(string predefinedExpirationDate = "")
     {
         List<string> outputQuery = new List<string>();
         foreach (TableColumnPair tcPair in _tableColumnPairs)
         {
-            string query = $"SELECT {tcPair.Column} FROM {tcPair.Table} WHERE ";
+            string query = $"UPDATE {tcPair.Table} SET {tcPair.Column} = {tcPair.UpdateValue} WHERE ";
             string logicOperator = " AND ";
             foreach (var purpose in tcPair.GetPurposes)
             {

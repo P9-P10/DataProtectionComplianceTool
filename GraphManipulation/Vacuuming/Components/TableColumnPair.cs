@@ -4,17 +4,19 @@ public class TableColumnPair
 {
     private string _table;
     private string _column;
+    private string _updateValue;
     private List<Purpose> _purposes = new();
     public string Table => _table;
     public string Column => _column;
-
+    public string UpdateValue => _updateValue;
 
     public List<Purpose> GetPurposes => _purposes;
 
-    public TableColumnPair(string table, string column)
+    public TableColumnPair(string table, string column,string updateValue = "Null")
     {
         _table = table;
         _column = column;
+        _updateValue = updateValue;
     }
 
     /// <summary>
@@ -32,6 +34,7 @@ public class TableColumnPair
     {
         _table = target_table;
         _column = target_column;
+        _updateValue = "Null";
 
         Purpose newPurpose = new(purpose, ttl, start_time, origin, legally_required.ToLower() == "1");
         AddPurpose(newPurpose);

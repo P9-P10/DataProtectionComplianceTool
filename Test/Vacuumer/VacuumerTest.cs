@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Globalization;
 using GraphManipulation.Vacuuming.Components;
-using Moq;
 using Xunit;
 
 namespace Test.Vacuumer;
@@ -17,7 +15,7 @@ public class VacuumerTest
 
 
         GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
-        List<string> query = vacuumer.GenerateSelectStatementForDataToDelete();
+        List<string> query = vacuumer.GenerateUpdateStatement();
         
         Assert.Empty(query);
     }
@@ -34,11 +32,11 @@ public class VacuumerTest
 
         string expectedTime = DateTime.Now.AddYears(-2).ToString("yyyy-M-d h:m", CultureInfo.InvariantCulture);
         GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
-        List<string> query = vacuumer.GenerateSelectStatementForDataToDelete(expectedTime);
+        List<string> query = vacuumer.GenerateUpdateStatement(expectedTime);
 
 
         string expected =
-            $"SELECT Column FROM Table WHERE (Condition);";
+            $"UPDATE Table SET Column = Null WHERE (Condition);";
         Assert.Contains(expected, query);
     }
 
@@ -57,11 +55,11 @@ public class VacuumerTest
 
         string expectedTime = DateTime.Now.AddYears(-2).ToString("yyyy-M-d h:m", CultureInfo.InvariantCulture);
         GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
-        List<string> query = vacuumer.GenerateSelectStatementForDataToDelete(expectedTime);
+        List<string> query = vacuumer.GenerateUpdateStatement(expectedTime);
 
 
         string expected =
-            $"SELECT Column FROM Table WHERE (Condition) AND (SecondCondition);";
+            $"UPDATE Table SET Column = Null WHERE (Condition) AND (SecondCondition);";
         Assert.Contains(expected, query);
     }
 
@@ -80,13 +78,33 @@ public class VacuumerTest
 
         string expectedTime = DateTime.Now.AddYears(-2).ToString("yyyy-M-d h:m", CultureInfo.InvariantCulture);
         GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
-        List<string> query = vacuumer.GenerateSelectStatementForDataToDelete(expectedTime);
+        List<string> query = vacuumer.GenerateUpdateStatement(expectedTime);
 
 
         string firstExpected =
-            $"SELECT Column FROM Table WHERE (Condition);";
-        string secondExpected = "SELECT SecondColumn FROM SecondTable WHERE (Condition);";
+            $"UPDATE Table SET Column = Null WHERE (Condition);";
+        string secondExpected = "UPDATE SecondTable SET SecondColumn = Null WHERE (Condition);";
         Assert.Contains(firstExpected, query);
         Assert.Contains(secondExpected, query);
+    }
+    
+    [Fact]
+    public void TestGenerateSqlQueryForDeletion_Returns_Correct_Query_When_Provided_TablePairs_With_Default_UpdateValue_Defined()
+    {
+        Purpose purpose = new("Name", "2y", "Condition", "Local", true);
+        TableColumnPair tableColumnPair1 = new("Table", "Column","UpdateValue");
+        List<TableColumnPair> tableColumnPairs = new List<TableColumnPair>();
+        tableColumnPair1.AddPurpose(purpose);
+        tableColumnPairs.Add(tableColumnPair1);
+
+
+        string expectedTime = DateTime.Now.AddYears(-2).ToString("yyyy-M-d h:m", CultureInfo.InvariantCulture);
+        GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
+        List<string> query = vacuumer.GenerateUpdateStatement(expectedTime);
+
+
+        string expected =
+            $"UPDATE Table SET Column = UpdateValue WHERE (Condition);";
+        Assert.Contains(expected, query);
     }
 }
