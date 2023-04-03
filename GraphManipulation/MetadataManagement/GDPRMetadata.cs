@@ -1,4 +1,4 @@
-﻿using GraphManipulation.MetadataManagement.AttributeMapping;
+using GraphManipulation.MetadataManagement.AttributeMapping;
 
 namespace GraphManipulation.Models.Metadata;
 
@@ -23,13 +23,24 @@ public class GDPRMetadata
     // Parameterless constructor.
     // According to https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/how-to-initialize-objects-by-using-an-object-initializer 
     // This is needed in order to allow for the use of object initializers
-    public GDPRMetadata() { }
+    public GDPRMetadata()
+    {
+    }
 
     public GDPRMetadata(string targetTable, string targetColumn)
     {
         TargetTable = targetTable;
         TargetColumn = targetColumn;
     }
+
+    // These properties are named to be consistent with the corresponding columns in the database
+    public string purpose { get; set; }
+    public string ttl { get; set; }
+    public string target_table { get; set; }
+    public string target_column { get; set; }
+    public string origin { get; set; }
+    public string start_time { get; set; }
+    public bool? legally_required { get; set; }
 
     protected bool Equals(GDPRMetadata other)
     {
@@ -38,9 +49,21 @@ public class GDPRMetadata
 
     public override bool Equals(object? obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
+        if (ReferenceEquals(null, obj))
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, obj))
+        {
+            return true;
+        }
+
+        if (obj.GetType() != GetType())
+        {
+            return false;
+        }
+
         return Equals((GDPRMetadata)obj);
     }
 

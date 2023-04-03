@@ -29,7 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <EmbeddedResource Remove="Models\Metadata\**" />
+        <EmbeddedResource Remove="Models\Metadata\**" />
     </ItemGroup>
 
 </Project>

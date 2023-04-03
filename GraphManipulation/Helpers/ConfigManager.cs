@@ -16,10 +16,13 @@ public class ConfigManager
 
     public string GetValue(string query)
     {
-        if (!_config.ContainsKey(query)) throw new KeyNotFoundException();
-        string result = _config[query];
-        return result;
+        if (!_config.ContainsKey(query))
+        {
+            throw new KeyNotFoundException();
+        }
 
+        var result = _config[query];
+        return result;
     }
 
     public void UpdateValue(string key, string value)
@@ -33,16 +36,17 @@ public class ConfigManager
     {
         if (!File.Exists(_filepath))
         {
-            Dictionary<string, string> initialConfig = new Dictionary<string, string>()
+            var initialConfig = new Dictionary<string, string>
             {
-                {"GraphStoragePath", ""},
-                {"OptimizedDatabaseName", "OptimizedAdvancedDatabase.sqlite"},
-                {"SimpleDatabaseName", "SimpleDatabase.sqlite"},
-                {"DatabasePath", ""},
-                {"BaseURI", "http://www.test.com/"},
-                {"OutputFileName", "output.ttl"},
-                {"OutputPath", ""},
-                {"OntologyPath", ""}
+                { "GraphStoragePath", "" },
+                { "OptimizedDatabaseName", "OptimizedAdvancedDatabase.sqlite" },
+                { "SimpleDatabaseName", "SimpleDatabase.sqlite" },
+                { "DatabasePath", "" },
+                { "BaseURI", "http://www.test.com/" },
+                { "OutputFileName", "output.ttl" },
+                { "OutputPath", "" },
+                { "OntologyPath", "" },
+                { "LogFolderPath", "" }
             };
             using var file = File.CreateText(_filepath);
             var json = JsonConvert.SerializeObject(initialConfig, Formatting.Indented);
@@ -50,6 +54,6 @@ public class ConfigManager
         }
 
         _config = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(_filepath)) ??
-                 throw new Exception($"Config file in {_filepath} is empty, please delete and run the program again.");
+                  throw new Exception($"Config file in {_filepath} is empty, please delete and run the program again.");
     }
 }

@@ -315,7 +315,6 @@ public class GraphManipulatorTest
     {
     }
 
-    
 
     private class TestDatabaseFixture
     {

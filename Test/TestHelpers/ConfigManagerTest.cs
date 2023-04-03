@@ -12,7 +12,7 @@ public class ConfigManagerTest
     [Fact]
     public void TestInitCreatesFile()
     {
-        ConfigManager cf = new ConfigManager("testConfig.json");
+        var cf = new ConfigManager("testConfig.json");
         Assert.True(File.Exists("testConfig.json"));
         File.Delete("testConfig.json");
     }
@@ -20,7 +20,7 @@ public class ConfigManagerTest
     [Fact]
     public void GetValueReturnsEmptyValue()
     {
-        ConfigManager cf = new ConfigManager("testConfig.json");
+        var cf = new ConfigManager("testConfig.json");
 
         Assert.True(cf.GetValue("OutputPath") == "");
         File.Delete("testConfig.json");
@@ -29,7 +29,7 @@ public class ConfigManagerTest
     [Fact]
     public void GetValueRaisesKeyNotFoundOnIncorrectKey()
     {
-        ConfigManager cf = new ConfigManager("testConfig.json");
+        var cf = new ConfigManager("testConfig.json");
 
         Assert.Throws<KeyNotFoundException>(() => cf.GetValue("ThisKeyDoesNotExist"));
         File.Delete("testConfig.json");
@@ -39,16 +39,16 @@ public class ConfigManagerTest
     [Fact]
     public void TestGetValueReturnsCorrectValue()
     {
-        string path = $"TestResources{Path.DirectorySeparatorChar}newConfigFile.json";
+        var path = $"TestResources{Path.DirectorySeparatorChar}newConfigFile.json";
 
-        Dictionary<string, string> configContent =
-            new Dictionary<string, string>()
+        var configContent =
+            new Dictionary<string, string>
             {
-                {"TestValue", "SomeValue"}
+                { "TestValue", "SomeValue" }
             };
-        using (FileStream fs = File.Create(path))
+        using (var fs = File.Create(path))
         {
-            char[] value = JsonConvert.SerializeObject(configContent).ToCharArray();
+            var value = JsonConvert.SerializeObject(configContent).ToCharArray();
             fs.Write(Encoding.UTF8.GetBytes(value), 0, value.Length);
         }
 
