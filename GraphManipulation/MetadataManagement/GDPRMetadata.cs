@@ -18,17 +18,17 @@ public class GDPRMetadata
     }
 
     // These properties are named to be consistent with the corresponding columns in the database
-    [Column("purpose")] public string Purpose { get; set; }
+    [Column("purpose")] public string? Purpose { get; init; }
 
-    [Column("ttl")] public string TTL { get; set; }
+    [Column("ttl")] public string? TTL { get; init; }
 
     [Column("target_table")] public string TargetTable { get; set; }
 
     [Column("target_column")] public string TargetColumn { get; set; }
 
-    [Column("origin")] public string Origin { get; set; }
+    [Column("origin")] public string? Origin { get; init; }
 
-    [Column("start_time")] public string StartTime { get; set; }
+    [Column("start_time")] public string? StartTime { get; init; }
 
     [Column("legally_required")] public bool? LegallyRequired { get; set; }
 
