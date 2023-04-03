@@ -1,8 +1,8 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
 using GraphManipulation.Manipulation;
+using GraphManipulation.SchemaEvolution.Helpers;
 
 namespace GraphManipulation;
 

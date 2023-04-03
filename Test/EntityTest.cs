@@ -1,7 +1,7 @@
 using System.Linq;
-using GraphManipulation.Models.Entity;
-using GraphManipulation.Models.Stores;
-using GraphManipulation.Models.Structures;
+using GraphManipulation.SchemaEvolution.Models.Entity;
+using GraphManipulation.SchemaEvolution.Models.Stores;
+using GraphManipulation.SchemaEvolution.Models.Structures;
 using Xunit;
 
 namespace Test;

@@ -1,5 +1,5 @@
-using GraphManipulation.Models;
-using GraphManipulation.Models.Structures;
+using GraphManipulation.SchemaEvolution.Models;
+using GraphManipulation.SchemaEvolution.Models.Structures;
 using Xunit;
 
 namespace Test;

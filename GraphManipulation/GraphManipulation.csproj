@@ -32,4 +32,8 @@
         <EmbeddedResource Remove="Models\Metadata\**" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="SchemaEvolution" />
+    </ItemGroup>
+
 </Project>

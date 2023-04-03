@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
-using GraphManipulation.Helpers;
 using GraphManipulation.Logging.Logs;
+using GraphManipulation.SchemaEvolution.Helpers;
 
 namespace GraphManipulation.Logging;
 

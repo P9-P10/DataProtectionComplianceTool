@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GraphManipulation.Components;
-using GraphManipulation.Extensions;
-using GraphManipulation.Models.Stores;
-using GraphManipulation.Models.Structures;
+using GraphManipulation.SchemaEvolution.Components;
+using GraphManipulation.SchemaEvolution.Extensions;
+using GraphManipulation.SchemaEvolution.Models.Stores;
+using GraphManipulation.SchemaEvolution.Models.Structures;
 using VDS.RDF;
 using Xunit;
 

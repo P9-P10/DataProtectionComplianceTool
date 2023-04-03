@@ -1,4 +1,4 @@
-using GraphManipulation.Models.Structures;
+using GraphManipulation.SchemaEvolution.Models.Structures;
 using Xunit;
 
 namespace Test;
