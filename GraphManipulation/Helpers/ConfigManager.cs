@@ -46,7 +46,7 @@ public class ConfigManager
                 { "OutputFileName", "output.ttl" },
                 { "OutputPath", "" },
                 { "OntologyPath", "" },
-                { "LogFolderPath", "" }
+                { "LogPath", "" }
             };
             using var file = File.CreateText(_filepath);
             var json = JsonConvert.SerializeObject(initialConfig, Formatting.Indented);

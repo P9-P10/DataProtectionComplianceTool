@@ -6,13 +6,9 @@ namespace GraphManipulation.Logging;
 public abstract class Logger : ILogger
 {
     private readonly ConfigManager _configManager;
-
-    private string _currentLogFileName;
-
-    // private readonly ILogFileSegmenter _logFileSegmenter;
     private int _logNumber;
 
-    protected Logger(ConfigManager configManager /*, ILogFileSegmenter logFileSegmenter*/)
+    protected Logger(ConfigManager configManager)
     {
         _configManager = configManager;
 
@@ -20,24 +16,13 @@ public abstract class Logger : ILogger
         {
             throw new LoggerException("Value for log path must be set in config file");
         }
-
-        // _logFileSegmenter = logFileSegmenter;
-        // _currentLogFileName = LoadCurrentLogFileName();
-        _currentLogFileName = "log";
+        
         _logNumber = LoadCurrentLogNumber();
     }
 
     public void Append(IMutableLog mutableLog)
     {
         var log = CreateLog(mutableLog);
-
-        // if (string.IsNullOrEmpty(_currentLogFileName)/* || _logFileSegmenter.IsCriteriaMetForSegmentation(log)*/)
-        // {
-        //     ResetLogNumber();
-        //     log = CreateLog(mutableLog);
-        //     _currentLogFileName = log.GetCreationTimeStamp();
-        //     SaveCurrentLogFileName(_currentLogFileName);
-        // }
 
         AppendLogToFile(log);
     }
@@ -47,31 +32,9 @@ public abstract class Logger : ILogger
     protected abstract ILog CreateLog(IMutableLog mutableLog);
     protected abstract ILog CreateLog(LogType logType, LogMessageFormat logMessageFormat, string message);
 
-    private string GetLogFolderPath()
-    {
-        return _configManager.GetValue("LogFolderPath");
-    }
-
     protected string GetLogFilePath()
     {
         return _configManager.GetValue("LogPath");
-    }
-    // protected string GetLogFilePath() => GetLogFolderPath() + _currentLogFileName;
-    // protected string GetCurrentLogFileNamePath() => GetLogFolderPath() + "current_log_file_name";
-
-    // private string LoadCurrentLogFileName()
-    // {
-    //     return File.Exists(GetCurrentLogFileNamePath()) ? File.ReadAllText(GetCurrentLogFileNamePath()) : "";
-    // }
-    //
-    // private void SaveCurrentLogFileName(string logFileName)
-    // {
-    //     File.WriteAllText(GetCurrentLogFileNamePath(), logFileName);
-    // }
-
-    private void ResetLogNumber()
-    {
-        _logNumber = 1;
     }
 
     protected int ServeNextLogNumber()
@@ -80,11 +43,6 @@ public abstract class Logger : ILogger
     }
 
     protected abstract int LoadCurrentLogNumber();
-    // {
-    //     return string.IsNullOrEmpty(_currentLogFileName) ? 1 : ActuallyLoadCurrentLogNumber();
-    // }
-
-    // protected abstract int ActuallyLoadCurrentLogNumber();
 }
 
 public class LoggerException : Exception
