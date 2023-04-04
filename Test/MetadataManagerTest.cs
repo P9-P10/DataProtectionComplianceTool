@@ -113,7 +113,7 @@ public class MetadataManagerTest : IDisposable
         var manager = new MetadataManager(Connection, IndividualsTable);
         manager.CreateMetadataTables();
 
-        var expected = new GDPRMetadata("mockTable", "mockColumn") { Purpose = "Testing", TTL = "today" };
+        var expected = new GDPRMetadata("mockTable", "mockColumn") { Purpose = "Testing", Origin = "Imagination" };
         manager.MarkAsPersonalData(expected);
 
         var actual = manager.GetMetadataEntry(1);
@@ -137,20 +137,6 @@ public class MetadataManagerTest : IDisposable
     }
 
     [Fact]
-    public void AddsTTL()
-    {
-        var manager = new MetadataManager(Connection, IndividualsTable);
-        manager.CreateMetadataTables();
-        manager.MarkAsPersonalData(new GDPRMetadata("mockTable", "mockColumn"));
-
-        manager.UpdateMetadataEntry(1, new GDPRMetadata("mockTable", "mockColumn") { TTL = "one" });
-
-        var ttl = Connection.QuerySingle<string>("select ttl from gdpr_metadata where id = 1");
-
-        Assert.Equal("one", ttl);
-    }
-
-    [Fact]
     public void AddsOrigin()
     {
         var manager = new MetadataManager(Connection, IndividualsTable);
@@ -162,20 +148,6 @@ public class MetadataManagerTest : IDisposable
         var origin = Connection.QuerySingle<string>("select origin from gdpr_metadata where id = 1");
 
         Assert.Equal("Imagination", origin);
-    }
-
-    [Fact]
-    public void AddsStartTime()
-    {
-        var manager = new MetadataManager(Connection, IndividualsTable);
-        manager.CreateMetadataTables();
-        manager.MarkAsPersonalData(new GDPRMetadata("mockTable", "mockColumn"));
-
-        manager.UpdateMetadataEntry(1, new GDPRMetadata("mockTable", "mockColumn") { StartTime = "Yesterday" });
-
-        var startTime = Connection.QuerySingle<string>("select start_time from gdpr_metadata where id = 1");
-
-        Assert.Equal("Yesterday", startTime);
     }
 
     [Fact]
@@ -222,16 +194,12 @@ public class MetadataManagerTest : IDisposable
             Purpose = "purpose",
             LegallyRequired = false,
             Origin = "test",
-            StartTime = "now",
-            TTL = "3 days"
         };
         // Defines all values except 'origin'
         var three = new GDPRMetadata("mockTable", "mockColumn")
         {
             Purpose = "purpose",
             LegallyRequired = false,
-            StartTime = "now",
-            TTL = "3 days"
         };
 
         manager.MarkAsPersonalData(one);

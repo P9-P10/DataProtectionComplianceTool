@@ -20,22 +20,18 @@ public class GDPRMetadata
     // These properties are named to be consistent with the corresponding columns in the database
     [Column("purpose")] public string? Purpose { get; init; }
 
-    [Column("ttl")] public string? TTL { get; init; }
-
     [Column("target_table")] public string? TargetTable { get; set; }
 
     [Column("target_column")] public string? TargetColumn { get; set; }
 
     [Column("origin")] public string? Origin { get; init; }
 
-    [Column("start_time")] public string? StartTime { get; init; }
-
     [Column("legally_required")] public bool? LegallyRequired { get; init; }
 
     protected bool Equals(GDPRMetadata other)
     {
-        return Purpose == other.Purpose && TTL == other.TTL && TargetTable == other.TargetTable &&
-               TargetColumn == other.TargetColumn && Origin == other.Origin && StartTime == other.StartTime &&
+        return Purpose == other.Purpose && TargetTable == other.TargetTable &&
+               TargetColumn == other.TargetColumn && Origin == other.Origin &&
                LegallyRequired == other.LegallyRequired;
     }
 
@@ -61,6 +57,6 @@ public class GDPRMetadata
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Purpose, TTL, TargetTable, TargetColumn, Origin, StartTime, LegallyRequired);
+        return HashCode.Combine(Purpose, TargetTable, TargetColumn, Origin, LegallyRequired);
     }
 }
