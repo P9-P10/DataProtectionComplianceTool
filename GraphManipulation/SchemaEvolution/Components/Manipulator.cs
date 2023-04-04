@@ -1,8 +1,8 @@
-using GraphManipulation.Ontologies;
 using GraphManipulation.SchemaEvolution.Extensions;
 using GraphManipulation.SchemaEvolution.Models.Entity;
 using GraphManipulation.SchemaEvolution.Models.Stores;
 using GraphManipulation.SchemaEvolution.Models.Structures;
+using GraphManipulation.SchemaEvolution.Ontologies;
 using VDS.RDF;
 
 namespace GraphManipulation.SchemaEvolution.Components;

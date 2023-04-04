@@ -1,5 +1,4 @@
-using GraphManipulation.Logging.Logs;
-using GraphManipulation.SchemaEvolution.Helpers;
+using GraphManipulation.Helpers;
 
 namespace GraphManipulation.Logging;
 

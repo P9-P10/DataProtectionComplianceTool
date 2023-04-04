@@ -3,7 +3,6 @@ using GraphManipulation.SchemaEvolution.Models;
 using GraphManipulation.SchemaEvolution.Models.Stores;
 using GraphManipulation.SchemaEvolution.Models.Structures;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Test;
 
@@ -11,13 +10,6 @@ public class TransformationsTest
 {
     public class ToSqlCreateStatement
     {
-        private readonly ITestOutputHelper _testOutputHelper;
-
-        public ToSqlCreateStatement(ITestOutputHelper testOutputHelper)
-        {
-            _testOutputHelper = testOutputHelper;
-        }
-
         [Fact]
         public void Column()
         {

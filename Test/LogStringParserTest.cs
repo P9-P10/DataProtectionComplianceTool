@@ -1,7 +1,6 @@
 using System;
+using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
-using GraphManipulation.Logging.Logs;
-using GraphManipulation.SchemaEvolution.Helpers;
 using Xunit;
 
 namespace Test;

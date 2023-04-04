@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using GraphManipulation.SchemaEvolution.Helpers;
+using GraphManipulation.Helpers;
 using Newtonsoft.Json;
 using Xunit;
 

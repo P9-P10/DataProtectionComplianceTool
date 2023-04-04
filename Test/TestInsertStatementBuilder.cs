@@ -1,4 +1,3 @@
-using GraphManipulation.Helpers;
 using GraphManipulation.MetadataManagement;
 using Xunit;
 

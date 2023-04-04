@@ -1,5 +1,5 @@
 using System;
-using GraphManipulation.SchemaEvolution.Helpers;
+using GraphManipulation.Helpers;
 using Xunit;
 
 namespace Test;

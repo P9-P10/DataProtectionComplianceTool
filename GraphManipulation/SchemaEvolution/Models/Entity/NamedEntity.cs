@@ -1,6 +1,6 @@
 namespace GraphManipulation.SchemaEvolution.Models.Entity;
 
-public abstract class NamedEntity : SchemaEvolution.Models.Entity.Entity
+public abstract class NamedEntity : Entity
 {
     protected NamedEntity(string name) : base(name)
     {
