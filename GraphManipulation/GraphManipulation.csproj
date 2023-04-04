@@ -9,6 +9,7 @@
 
     <ItemGroup>
         <PackageReference Include="Dapper" Version="2.0.123" />
+        <PackageReference Include="Dapper.Transaction" Version="2.0.123" />
         <PackageReference Include="dotNetRdf" Version="3.0.0-rc0004" />
         <PackageReference Include="System.Data.SQLite" Version="1.0.116" />
     </ItemGroup>
