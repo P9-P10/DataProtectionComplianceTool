@@ -28,7 +28,7 @@ public abstract class LogTest : IDisposable
     protected static string GetTestConfigPath()
     {
         var projectFolder = GetTestProjectFolder();
-        var filePath = Path.Combine(projectFolder, $"TestResources{Path.PathSeparator}testConfig.json");
+        var filePath = Path.Combine(projectFolder, $"TestResources{Path.DirectorySeparatorChar}testConfig.json");
         if (!File.Exists(filePath))
         {
             var configManager = new ConfigManager(filePath);
@@ -39,7 +39,7 @@ public abstract class LogTest : IDisposable
 
     protected static string GetTestLogFileName()
     {
-        return $"TestResources{Path.PathSeparator}log";
+        return $"TestResources{Path.DirectorySeparatorChar}log";
     }
 
     protected static string GetTestLogFilePath()
