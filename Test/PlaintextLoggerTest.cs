@@ -29,10 +29,14 @@ public abstract class LogTest : IDisposable
     {
         var projectFolder = GetTestProjectFolder();
         var filePath = Path.Combine(projectFolder, $"TestResources{Path.DirectorySeparatorChar}testConfig.json");
-        if (!File.Exists(filePath))
+        
+        if (File.Exists(filePath))
         {
-            var configManager = new ConfigManager(filePath);
+            return filePath;
         }
+
+        var configManager = new ConfigManager(filePath);
+        configManager.UpdateValue("LogPath", GetTestLogFilePath());
 
         return filePath;
     }
