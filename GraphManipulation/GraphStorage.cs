@@ -6,7 +6,7 @@ using GraphManipulation.SchemaEvolution.Models.Stores;
 using Newtonsoft.Json;
 using VDS.RDF;
 
-namespace GraphManipulation.Manipulation;
+namespace GraphManipulation;
 
 public class GraphStorage
 {

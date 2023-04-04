@@ -1,8 +1,7 @@
 using System.Globalization;
 using GraphManipulation.Logging;
-using GraphManipulation.Logging.Logs;
 
-namespace GraphManipulation.SchemaEvolution.Helpers;
+namespace GraphManipulation.Helpers;
 
 public static class LogStringParser
 {

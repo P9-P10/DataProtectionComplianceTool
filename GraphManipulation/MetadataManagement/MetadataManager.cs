@@ -1,7 +1,6 @@
 using System.Data;
 using System.Reflection;
 using Dapper;
-using GraphManipulation.Helpers;
 using GraphManipulation.MetadataManagement.AttributeMapping;
 
 namespace GraphManipulation.MetadataManagement;

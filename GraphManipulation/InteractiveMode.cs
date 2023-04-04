@@ -1,15 +1,15 @@
 using System.Data.SQLite;
+using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
 using GraphManipulation.MetadataManagement;
 using GraphManipulation.SchemaEvolution.Components;
 using GraphManipulation.SchemaEvolution.Extensions;
-using GraphManipulation.SchemaEvolution.Helpers;
 using GraphManipulation.SchemaEvolution.Models.Entity;
 using GraphManipulation.SchemaEvolution.Models.Stores;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 
-namespace GraphManipulation.Manipulation;
+namespace GraphManipulation;
 
 public class InteractiveMode
 {

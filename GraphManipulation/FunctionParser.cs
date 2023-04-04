@@ -3,7 +3,7 @@ using GraphManipulation.MetadataManagement;
 using GraphManipulation.SchemaEvolution.Components;
 using GraphManipulation.SchemaEvolution.Models.Stores;
 
-namespace GraphManipulation.Manipulation;
+namespace GraphManipulation;
 
 public static class FunctionParser
 {

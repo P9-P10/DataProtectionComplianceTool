@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace GraphManipulation.SchemaEvolution.Helpers;
+namespace GraphManipulation.Helpers;
 
 public class ConfigManager
 {

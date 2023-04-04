@@ -1,7 +1,7 @@
 using AngleSharp.Text;
-using GraphManipulation.Ontologies;
 using GraphManipulation.SchemaEvolution.Models.Entity;
 using GraphManipulation.SchemaEvolution.Models.Structures;
+using GraphManipulation.SchemaEvolution.Ontologies;
 using VDS.RDF;
 
 namespace GraphManipulation.SchemaEvolution.Extensions;

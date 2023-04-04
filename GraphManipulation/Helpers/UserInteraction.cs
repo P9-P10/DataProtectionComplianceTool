@@ -1,4 +1,4 @@
-namespace GraphManipulation.SchemaEvolution.Helpers;
+namespace GraphManipulation.Helpers;
 
 public static class UserInteraction
 {
