@@ -5,7 +5,7 @@ using GraphManipulation.Helpers;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace Test.TestHelpers;
+namespace Test;
 
 public class ConfigManagerTest
 {

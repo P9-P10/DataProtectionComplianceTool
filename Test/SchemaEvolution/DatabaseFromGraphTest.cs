@@ -6,7 +6,7 @@ using GraphManipulation.SchemaEvolution.Ontologies;
 using VDS.RDF;
 using Xunit;
 
-namespace Test;
+namespace Test.SchemaEvolution;
 
 public class DatabaseFromGraphTest : IClassFixture<DatabaseFromGraphTest.TestDatabaseFixture>
 {

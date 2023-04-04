@@ -2,7 +2,7 @@ using System;
 using GraphManipulation.Helpers;
 using Xunit;
 
-namespace Test;
+namespace Test.Logging;
 
 public class TimeRangeTest
 {

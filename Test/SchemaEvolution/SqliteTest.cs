@@ -6,7 +6,7 @@ using GraphManipulation.SchemaEvolution.Models.Stores;
 using GraphManipulation.SchemaEvolution.Models.Structures;
 using Xunit;
 
-namespace Test;
+namespace Test.SchemaEvolution;
 
 public class SqliteTest
 {

@@ -6,7 +6,7 @@ using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
 using Xunit;
 
-namespace Test;
+namespace Test.Logging;
 
 public abstract class LogTest : IDisposable
 {
