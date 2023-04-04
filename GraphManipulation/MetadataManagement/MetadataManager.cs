@@ -17,7 +17,7 @@ public class PropWithAttribute<T> where T : Attribute
     public T Attribute { get; }
 }
 
-public class MetadataManager
+public class MetadataManager : IMetadataManager
 {
     private readonly IDbConnection _connection;
     private readonly string _individualsTable;
