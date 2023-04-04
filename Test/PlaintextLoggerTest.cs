@@ -28,12 +28,18 @@ public abstract class LogTest : IDisposable
     protected static string GetTestConfigPath()
     {
         var projectFolder = GetTestProjectFolder();
-        return Path.Combine(projectFolder, "TestResources/testConfig.json");
+        var filePath = Path.Combine(projectFolder, $"TestResources{Path.PathSeparator}testConfig.json");
+        if (!File.Exists(filePath))
+        {
+            var configManager = new ConfigManager(filePath);
+        }
+
+        return filePath;
     }
 
     protected static string GetTestLogFileName()
     {
-        return "TestResources/log";
+        return $"TestResources{Path.PathSeparator}log";
     }
 
     protected static string GetTestLogFilePath()
@@ -42,12 +48,6 @@ public abstract class LogTest : IDisposable
         return Path.Combine(projectFolder, GetTestLogFileName());
     }
 
-    // protected static string GetTestLogsFolderPath()
-    // {
-    //     var projectFolder = GetTestProjectFolder();
-    //     return Path.Combine(projectFolder, GetTestLogFileName());
-    // }
-
     private static void DeleteTestLog()
     {
         if (File.Exists(GetTestLogFilePath()))
@@ -55,16 +55,6 @@ public abstract class LogTest : IDisposable
             File.Delete(GetTestLogFilePath());
         }
     }
-
-    // private static void DeleteTestLogs()
-    // {
-    //     var directoryInfo = new DirectoryInfo(GetTestLogsFolderPath());
-    //     
-    //     foreach (var fileInfo in directoryInfo.GetFiles())
-    //     {
-    //         fileInfo.Delete();
-    //     }
-    // }
 
     protected static ConfigManager CreateConfigManager()
     {
