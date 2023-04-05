@@ -1,7 +1,7 @@
 ﻿using GraphManipulation.Vacuuming.Components;
 using Xunit;
 
-namespace Test.Vacuumer;
+namespace Test.Vacuuming;
 
 public class TableColumnPairTest
 {

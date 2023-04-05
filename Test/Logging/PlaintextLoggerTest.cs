@@ -6,7 +6,7 @@ using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
 using Xunit;
 
-namespace Test;
+namespace Test.Logging;
 
 public abstract class LogTest : IDisposable
 {
@@ -27,26 +27,18 @@ public abstract class LogTest : IDisposable
 
     protected static string GetTestConfigPath()
     {
-        var projectFolder = GetTestProjectFolder();
-        return Path.Combine(projectFolder, "TestResources/testConfig.json");
+        return Path.Combine(GetTestProjectFolder(), $"TestResources{Path.DirectorySeparatorChar}testConfig.json");
     }
 
     protected static string GetTestLogFileName()
     {
-        return "TestResources/log";
+        return $"TestResources{Path.DirectorySeparatorChar}log";
     }
 
     protected static string GetTestLogFilePath()
     {
-        var projectFolder = GetTestProjectFolder();
-        return Path.Combine(projectFolder, GetTestLogFileName());
+        return Path.Combine(GetTestProjectFolder(), GetTestLogFileName());
     }
-
-    // protected static string GetTestLogsFolderPath()
-    // {
-    //     var projectFolder = GetTestProjectFolder();
-    //     return Path.Combine(projectFolder, GetTestLogFileName());
-    // }
 
     private static void DeleteTestLog()
     {
@@ -55,16 +47,6 @@ public abstract class LogTest : IDisposable
             File.Delete(GetTestLogFilePath());
         }
     }
-
-    // private static void DeleteTestLogs()
-    // {
-    //     var directoryInfo = new DirectoryInfo(GetTestLogsFolderPath());
-    //     
-    //     foreach (var fileInfo in directoryInfo.GetFiles())
-    //     {
-    //         fileInfo.Delete();
-    //     }
-    // }
 
     protected static ConfigManager CreateConfigManager()
     {

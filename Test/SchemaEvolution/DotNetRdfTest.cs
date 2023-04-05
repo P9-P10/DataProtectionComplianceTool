@@ -4,7 +4,7 @@ using VDS.RDF.Parsing;
 using VDS.RDF.Writing;
 using Xunit;
 
-namespace Test;
+namespace Test.SchemaEvolution;
 
 public class DotNetRdfTest
 {

@@ -28,15 +28,15 @@ public class TableColumnPairParser
                 "ORDER BY target_table,target_column;");
 
         var tableColumnPairs = queryResult.ToList();
-        foreach (var tcpair in tableColumnPairs)
-            if (output.Contains(tcpair))
+        foreach (var tcPair in tableColumnPairs)
+            if (output.Contains(tcPair))
             {
-                var index = output.IndexOf(tcpair);
-                output[index].AddPurposes(tcpair.GetPurposes);
+                var index = output.IndexOf(tcPair);
+                output[index].AddPurposes(tcPair.GetPurposes);
             }
             else
             {
-                output.Add(tcpair);
+                output.Add(tcPair);
             }
 
         return output;

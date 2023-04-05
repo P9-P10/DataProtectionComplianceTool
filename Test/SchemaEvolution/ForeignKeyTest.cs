@@ -2,7 +2,7 @@ using GraphManipulation.SchemaEvolution.Models;
 using GraphManipulation.SchemaEvolution.Models.Structures;
 using Xunit;
 
-namespace Test;
+namespace Test.SchemaEvolution;
 
 public class ForeignKeyTest
 {
