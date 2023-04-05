@@ -18,6 +18,10 @@ public class PropWithAttribute<T> where T : Attribute
     public T Attribute { get; }
 }
 
+// TODO: Vi skal have en måde at hive alle nuværende rækker i gdpr_metadata ud, så brugeren kan se hvilke entryID'er de har
+
+// TODO: Vi skal have en måde at hive delete conditions ud, så vi kan logge hvilke conditions der er blevet håndhævet
+
 public class MetadataManager : IMetadataManager
 {
     private readonly IDbConnection _connection;
