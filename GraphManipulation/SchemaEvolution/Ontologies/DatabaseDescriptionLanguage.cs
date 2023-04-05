@@ -1,6 +1,6 @@
 using VDS.RDF;
 
-namespace GraphManipulation.Ontologies;
+namespace GraphManipulation.SchemaEvolution.Ontologies;
 
 public static class DatabaseDescriptionLanguage
 {

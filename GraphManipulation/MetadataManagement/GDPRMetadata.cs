@@ -1,6 +1,6 @@
 using GraphManipulation.MetadataManagement.AttributeMapping;
 
-namespace GraphManipulation.Models.Metadata;
+namespace GraphManipulation.MetadataManagement;
 
 public class GDPRMetadata
 {
@@ -18,33 +18,20 @@ public class GDPRMetadata
     }
 
     // These properties are named to be consistent with the corresponding columns in the database
-    [Column("purpose")] public string Purpose { get; set; }
+    [Column("purpose")] public string? Purpose { get; init; }
 
-    [Column("ttl")] public string TTL { get; set; }
+    [Column("target_table")] public string? TargetTable { get; set; }
 
-    [Column("target_table")] public string TargetTable { get; set; }
+    [Column("target_column")] public string? TargetColumn { get; set; }
 
-    [Column("target_column")] public string TargetColumn { get; set; }
+    [Column("origin")] public string? Origin { get; init; }
 
-    [Column("origin")] public string Origin { get; set; }
-
-    [Column("start_time")] public string StartTime { get; set; }
-
-    [Column("legally_required")] public bool? LegallyRequired { get; set; }
-
-    // These properties are named to be consistent with the corresponding columns in the database
-    public string purpose { get; set; }
-    public string ttl { get; set; }
-    public string target_table { get; set; }
-    public string target_column { get; set; }
-    public string origin { get; set; }
-    public string start_time { get; set; }
-    public bool? legally_required { get; set; }
+    [Column("legally_required")] public bool? LegallyRequired { get; init; }
 
     protected bool Equals(GDPRMetadata other)
     {
-        return Purpose == other.Purpose && TTL == other.TTL && TargetTable == other.TargetTable &&
-               TargetColumn == other.TargetColumn && Origin == other.Origin && StartTime == other.StartTime &&
+        return Purpose == other.Purpose && TargetTable == other.TargetTable &&
+               TargetColumn == other.TargetColumn && Origin == other.Origin &&
                LegallyRequired == other.LegallyRequired;
     }
 
@@ -70,6 +57,6 @@ public class GDPRMetadata
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Purpose, TTL, TargetTable, TargetColumn, Origin, StartTime, LegallyRequired);
+        return HashCode.Combine(Purpose, TargetTable, TargetColumn, Origin, LegallyRequired);
     }
 }

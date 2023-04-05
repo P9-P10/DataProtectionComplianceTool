@@ -8,7 +8,7 @@ using GraphManipulation.SchemaEvolution.Models.Structures;
 using VDS.RDF;
 using Xunit;
 
-namespace Test;
+namespace Test.SchemaEvolution;
 
 public class GraphManipulatorTest
 {

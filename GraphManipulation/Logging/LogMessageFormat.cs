@@ -1,4 +1,4 @@
-namespace GraphManipulation.Logging.Logs;
+namespace GraphManipulation.Logging;
 
 public enum LogMessageFormat
 {

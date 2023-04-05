@@ -1,7 +1,7 @@
 using System.Reflection;
 using GraphManipulation.MetadataManagement.AttributeMapping;
 
-namespace GraphManipulation.Helpers;
+namespace GraphManipulation.MetadataManagement;
 
 public class InsertStatementBuilder
 {
