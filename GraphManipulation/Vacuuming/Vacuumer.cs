@@ -1,27 +1,28 @@
-﻿using GraphManipulation.Vacuuming.Components;
+﻿using GraphManipulation.DataAccess.Entities;
+using GraphManipulation.Services;
 
 namespace GraphManipulation.Vacuuming;
 
 public class Vacuumer : IVacuumer
 {
-    private readonly List<TableColumnPair> _tableColumnPairs;
+    private IEnumerable<PersonDataColumn> _personDataColumn;
 
-    public Vacuumer(List<TableColumnPair> tableColumnPairs)
+    public Vacuumer(IPersonDataColumnService personDataColumnService)
     {
-        _tableColumnPairs = tableColumnPairs;
+        _personDataColumn = personDataColumnService.GetColumns();
     }
 
     public List<string> GenerateUpdateStatement(string predefinedExpirationDate = "")
     {
         var outputQuery = new List<string>();
-        foreach (var tcPair in _tableColumnPairs)
+        foreach (var personDataColumn in _personDataColumn)
         {
-            var query = $"UPDATE {tcPair.Table} SET {tcPair.Column} = {tcPair.UpdateValue} WHERE ";
+            var query = $"UPDATE {personDataColumn.TableName} SET {personDataColumn.ColumnName} = {personDataColumn.DefaultValue} WHERE ";
             var logicOperator = " AND ";
-            foreach (var purpose in tcPair.GetPurposes)
+            foreach (var deleteCondition in personDataColumn.DeleteConditions)
             {
                 query +=
-                    $"({purpose.ExpirationCondition})";
+                    $"({deleteCondition.Condition})";
                 query += logicOperator;
             }
 
@@ -29,6 +30,11 @@ public class Vacuumer : IVacuumer
         }
 
         return outputQuery;
+    }
+
+    public List<DeletionExecution> Execute()
+    {
+        return new List<DeletionExecution>();
     }
 
     private string ReplaceLastOccurrenceOfString(string inputString, string occurrenceToReplace,
