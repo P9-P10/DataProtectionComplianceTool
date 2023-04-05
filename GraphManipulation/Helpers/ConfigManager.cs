@@ -39,12 +39,7 @@ public class ConfigManager
             var initialConfig = new Dictionary<string, string>
             {
                 { "GraphStoragePath", "" },
-                { "OptimizedDatabaseName", "OptimizedAdvancedDatabase.sqlite" },
-                { "SimpleDatabaseName", "SimpleDatabase.sqlite" },
-                { "DatabasePath", "" },
                 { "BaseURI", "http://www.test.com/" },
-                { "OutputFileName", "output.ttl" },
-                { "OutputPath", "" },
                 { "OntologyPath", "" },
                 { "LogPath", "" }
             };
