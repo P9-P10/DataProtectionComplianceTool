@@ -1,7 +1,7 @@
 using GraphManipulation.MetadataManagement;
 using Xunit;
 
-namespace Test;
+namespace Test.Metadata;
 
 public class TestInsertStatementBuilder
 {
@@ -21,12 +21,12 @@ public class TestInsertStatementBuilder
     {
         var builder = new InsertStatementBuilder("gdpr_metadata");
         builder.InsertValues = new GDPRMetadata("mockTable", "mockColumn")
-            { TargetTable = "test_table", TargetColumn = "test_column", Purpose = "Testing" };
+            { TargetTable = "test_table", TargetColumn = "test_column", Purpose = "Testing", LegallyRequired = false};
 
         var result = builder.Build();
 
         Assert.Equal(
-            "INSERT INTO gdpr_metadata (purpose, target_table, target_column) VALUES('Testing', 'test_table', 'test_column');",
+            "INSERT INTO gdpr_metadata (purpose, target_table, target_column, legally_required) VALUES('Testing', 'test_table', 'test_column', false);",
             result);
     }
 }

@@ -4,10 +4,11 @@ using System.Data;
 using System.Data.SQLite;
 using System.IO;
 using Dapper;
+using FluentAssertions;
 using GraphManipulation.MetadataManagement;
 using Xunit;
 
-namespace Test;
+namespace Test.Metadata;
 
 public class MetadataManagerTest : IDisposable
 {
@@ -58,11 +59,18 @@ public class MetadataManagerTest : IDisposable
         manager.CreateMetadataTables();
 
         // Database should now contain metadata tables
-        Assert.Equal(
-            new List<string> { IndividualsTable, "gdpr_metadata", "user_metadata", "personal_data_processing" },
-            getTablesInDatabase()
-        );
-
+        getTablesInDatabase().Should().Contain(new List<string>
+        {
+            IndividualsTable,
+            "metadata_columns",
+            "metadata_origins",
+            "metadata_purposes",
+            "gdpr_metadata",
+            "delete_conditions",
+            "user_metadata",
+            "personal_data_processing"
+        });
+        
         // Remove the metadata tables
         manager.DropMetadataTables();
 
@@ -94,10 +102,16 @@ public class MetadataManagerTest : IDisposable
         manager.MarkAsPersonalData(new GDPRMetadata("mockTable", "mockColumn"));
 
         var insertedRow =
-            Connection.QuerySingle<(int, string, string)>("select id, target_table, target_column from gdpr_metadata");
+            Connection.QuerySingle<(int, int)>("select id, target_column from gdpr_metadata");
 
         // Check that the expected values were inserted into gdpr_metadata
-        Assert.Equal((1, "mockTable", "mockColumn"), insertedRow);
+        Assert.Equal((1, 1), insertedRow);
+
+        var targetColumn =
+            Connection.QuerySingle<(int, string, string)>(
+                "select id, target_table, target_column from metadata_columns");
+        
+        Assert.Equal((1, "mockTable", "mockColumn"), targetColumn);
 
         var insertedReferences = Connection.Query<(int, int)>("select user_id, metadata_id from user_metadata");
 
@@ -105,6 +119,15 @@ public class MetadataManagerTest : IDisposable
         Assert.Contains((1, 1), insertedReferences);
         Assert.Contains((2, 1), insertedReferences);
         Assert.Contains((3, 1), insertedReferences);
+    }
+    
+    [Fact]
+    public void ThrowsExceptionIfTargetTableAndColumnNotDefined()
+    {
+        var manager = new MetadataManager(Connection, IndividualsTable);
+        manager.CreateMetadataTables();
+        
+        Assert.Throws<ArgumentException>(() => manager.MarkAsPersonalData(new GDPRMetadata()));
     }
 
     [Fact]
@@ -131,7 +154,7 @@ public class MetadataManagerTest : IDisposable
 
         manager.UpdateMetadataEntry(1, new GDPRMetadata("mockTable", "mockColumn") { Purpose = "Testing!" });
 
-        var purpose = Connection.QuerySingle<string>("select purpose from gdpr_metadata where id = 1");
+        var purpose = Connection.QuerySingle<string>("select pur.purpose from gdpr_metadata as md join metadata_purposes as pur where pur.id = md.purpose");
 
         Assert.Equal("Testing!", purpose);
     }
@@ -145,7 +168,7 @@ public class MetadataManagerTest : IDisposable
 
         manager.UpdateMetadataEntry(1, new GDPRMetadata("mockTable", "mockColumn") { Origin = "Imagination" });
 
-        var origin = Connection.QuerySingle<string>("select origin from gdpr_metadata where id = 1");
+        var origin = Connection.QuerySingle<string>("select org.origin from gdpr_metadata as md join metadata_origins as org where org.id = md.origin");
 
         Assert.Equal("Imagination", origin);
     }
@@ -173,7 +196,7 @@ public class MetadataManagerTest : IDisposable
 
         manager.UpdateMetadataEntry(1, new GDPRMetadata("mockTable", "mockColumn") { LegallyRequired = true });
 
-        var purpose = Connection.QuerySingle<string>("select purpose from gdpr_metadata where id = 1");
+        var purpose = Connection.QuerySingle<string>("select pur.purpose from gdpr_metadata as md join metadata_purposes as pur where pur.id = md.purpose");
         var legallyRequired = Connection.QuerySingle<bool>("select legally_required from gdpr_metadata where id = 1");
 
         Assert.Equal("Test", purpose);
@@ -192,7 +215,7 @@ public class MetadataManagerTest : IDisposable
         var two = new GDPRMetadata("mockTable", "mockColumn")
         {
             Purpose = "purpose",
-            LegallyRequired = false,
+            LegallyRequired = true,
             Origin = "test",
         };
         // Defines all values except 'origin'
