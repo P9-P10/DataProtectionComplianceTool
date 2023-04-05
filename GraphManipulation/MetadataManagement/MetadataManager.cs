@@ -147,6 +147,12 @@ public class MetadataManager : IMetadataManager
                         int originId = getRowId(transaction, metadata.Origin, "origin", "metadata_origins");
                         definedColumns.Add("origin", originId);
                     }
+                    // Legally required
+                    if (metadata.LegallyRequired != null)
+                    {
+                        // Convert bool to integer
+                        definedColumns.Add("legally_required", metadata.LegallyRequired == true ? 1 : 0);
+                    }
 
                     string columns = string.Join(", ", definedColumns.Keys);
                     string values = string.Join(", ", definedColumns.Values.Select(val => val.ToString()));

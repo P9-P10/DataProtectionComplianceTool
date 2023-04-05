@@ -26,7 +26,7 @@ public class GDPRMetadata
 
     [Column("origin")] public string? Origin { get; init; }
 
-    [Column("legally_required")] public bool LegallyRequired { get; init; }
+    [Column("legally_required")] public bool? LegallyRequired { get; init; }
 
     protected bool Equals(GDPRMetadata other)
     {
