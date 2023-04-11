@@ -3,51 +3,23 @@ using System.Linq;
 using GraphManipulation.DataAccess.Entities;
 using GraphManipulation.Services;
 using GraphManipulation.Vacuuming;
+using Test.Vacuuming.TestClasses;
 using Xunit;
 
 namespace Test.Vacuuming;
 
 public class VacuumerTest
 {
-    private class TestPersonDataColumnService : IPersonDataColumnService
+    private Vacuumer VacuumInstantiate(IPersonDataColumnService? personDataColumnService = null,
+        IQueryExecutor? queryExecutor = null, IVacuumerStore? vacuumerStore = null)
     {
-        private readonly List<PersonDataColumn> _personDataColumns = new();
+        personDataColumnService ??= new TestPersonDataColumnService();
 
-        public void AddColumn(PersonDataColumn inputColumn)
-        {
-            _personDataColumns.Add(inputColumn);
-        }
+        queryExecutor ??= new TestQueryExecutor();
 
-        public IEnumerable<PersonDataColumn> GetColumns()
-        {
-            return _personDataColumns;
-        }
-    }
+        vacuumerStore ??= new TestVacuumerStore();
 
-    private class TestQueryExecutor : IQueryExecutor
-    {
-        public List<string> Query;
-
-        public TestQueryExecutor()
-        {
-            Query = new List<string>();
-        }
-
-        public void Execute(string query)
-        {
-            if (!Query.Contains(query))
-            {
-                Query.Add(query);
-            }
-        }
-    }
-
-    private Vacuumer VacuumInstantiate()
-    {
-        TestPersonDataColumnService personDataColumnService = new();
-        TestQueryExecutor testQueryExecutor = new();
-
-        Vacuumer vacuumer = new(personDataColumnService, testQueryExecutor);
+        Vacuumer vacuumer = new(personDataColumnService, queryExecutor, vacuumerStore);
         return vacuumer;
     }
 
@@ -94,15 +66,12 @@ public class VacuumerTest
     [Fact]
     public void TestGenerateSqlQueryForDeletion_Returns_Correct_Query_When_Provided_TablePairs()
     {
-        TestPersonDataColumnService personDataColumnService = new();
-        TestQueryExecutor testQueryExecutor = new();
-
+        TestPersonDataColumnService? personDataColumnService = new();
+        Vacuumer vacuumer = VacuumInstantiate(personDataColumnService);
         personDataColumnService.AddColumn(PersonDataColumnMaker());
-
-        Vacuumer vacuumer = new(personDataColumnService, testQueryExecutor);
-
+        
         var query = vacuumer.GenerateUpdateStatement();
-
+        
         DeletionExecution expected = DeletionExecutionMaker("UPDATE Table SET Column = Null WHERE (Condition);");
         Assert.Contains(expected, query);
     }
@@ -112,17 +81,16 @@ public class VacuumerTest
     public void
         TestGenerateSqlQueryForDeletion_Returns_Correct_Query_When_Provided_Multiple_Purposes_One_TableColumnPair()
     {
-        TestPersonDataColumnService personDataColumnService = new();
-        TestQueryExecutor testQueryExecutor = new();
-
+        TestPersonDataColumnService? personDataColumnService = new();
+        Vacuumer vacuumer = VacuumInstantiate(personDataColumnService);
         personDataColumnService.AddColumn(PersonDataColumnMaker(multipleDeleteConditions: true));
 
-        Vacuumer vacuumer = new(personDataColumnService, testQueryExecutor);
+
         var query = vacuumer.GenerateUpdateStatement();
+
 
         DeletionExecution expected = DeletionExecutionMaker("UPDATE Table SET Column = Null " +
                                                             "WHERE (Condition) AND (SecondCondition);");
-
         Assert.Contains(expected, query);
     }
 
@@ -130,13 +98,12 @@ public class VacuumerTest
     [Fact]
     public void TestGenerateSqlQueryForDeletion_Returns_Correct_Query_When_Provided_Multiple_TableColumnPairs_()
     {
-        TestPersonDataColumnService personDataColumnService = new();
-        TestQueryExecutor testQueryExecutor = new();
-
+        TestPersonDataColumnService? personDataColumnService = new();
+        Vacuumer vacuumer = VacuumInstantiate(personDataColumnService);
         personDataColumnService.AddColumn(PersonDataColumnMaker());
         personDataColumnService.AddColumn(PersonDataColumnMaker(tableName: "SecondTable", columnName: "SecondColumn"));
 
-        Vacuumer vacuumer = new(personDataColumnService, testQueryExecutor);
+
         var query = vacuumer.GenerateUpdateStatement();
 
 
@@ -152,36 +119,35 @@ public class VacuumerTest
     [Fact]
     public void TestExecuteExecutesCorrectly()
     {
-        TestPersonDataColumnService personDataColumnService = new();
+        TestPersonDataColumnService? personDataColumnService = new();
+        Vacuumer vacuumer = VacuumInstantiate(personDataColumnService);
+        personDataColumnService.AddColumn(PersonDataColumnMaker());
         TestQueryExecutor testQueryExecutor = new();
 
-        personDataColumnService.AddColumn(PersonDataColumnMaker());
-
-        Vacuumer vacuumer = new(personDataColumnService, testQueryExecutor);
 
         vacuumer.Execute();
 
-        const string expectedQuery = "UPDATE Table SET Column = Null WHERE (Condition);";
 
+        const string expectedQuery = "UPDATE Table SET Column = Null WHERE (Condition);";
         Assert.Contains(expectedQuery, testQueryExecutor.Query);
     }
 
     [Fact]
     public void TestExecute_Executes_Correctly_With_Multiple_Executions()
     {
-        TestPersonDataColumnService personDataColumnService = new();
-        TestQueryExecutor testQueryExecutor = new();
-
+        TestPersonDataColumnService? personDataColumnService = new();
+        TestQueryExecutor? testQueryExecutor = new();
+        Vacuumer vacuumer = VacuumInstantiate(personDataColumnService, testQueryExecutor);
         personDataColumnService.AddColumn(PersonDataColumnMaker());
         personDataColumnService.AddColumn(PersonDataColumnMaker(tableName: "SecondTable", columnName: "SecondColumn"));
 
-        Vacuumer vacuumer = new(personDataColumnService, testQueryExecutor);
+
         vacuumer.Execute();
+
 
 
         const string firstQuery = "UPDATE Table SET Column = Null WHERE (Condition);";
         const string secondQuery = "UPDATE SecondTable SET SecondColumn = Null WHERE (Condition);";
-
         Assert.Contains(firstQuery, testQueryExecutor.Query);
         Assert.Contains(secondQuery, testQueryExecutor.Query);
     }
@@ -189,13 +155,13 @@ public class VacuumerTest
     [Fact]
     public void TestExecute_Executes_Correctly_With_Multiple_Executions_Returns_Correct_DeletionExecutions()
     {
-        TestPersonDataColumnService personDataColumnService = new();
-        TestQueryExecutor testQueryExecutor = new();
-
+        TestPersonDataColumnService? personDataColumnService = new();
+        TestQueryExecutor? testQueryExecutor = new();
+        Vacuumer vacuumer = VacuumInstantiate(personDataColumnService, testQueryExecutor);
         personDataColumnService.AddColumn(PersonDataColumnMaker());
         personDataColumnService.AddColumn(PersonDataColumnMaker(tableName: "SecondTable", columnName: "SecondColumn"));
 
-        Vacuumer vacuumer = new(personDataColumnService, testQueryExecutor);
+
         var query = vacuumer.Execute();
 
 
