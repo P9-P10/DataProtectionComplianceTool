@@ -1,23 +1,22 @@
-﻿using GraphManipulation.DataAccess.Entities;
-using GraphManipulation.Services;
+﻿using GraphManipulation.Services;
 
 namespace GraphManipulation.Vacuuming;
 
 public class Vacuumer : IVacuumer
 {
-    private readonly IEnumerable<PersonDataColumn> _personDataColumn;
+    private readonly IPersonDataColumnService _personDataColumnService;
     private readonly IQueryExecutor _queryExecutor;
 
     public Vacuumer(IPersonDataColumnService personDataColumnService, IQueryExecutor queryExecutor)
     {
+        _personDataColumnService = personDataColumnService;
         _queryExecutor = queryExecutor;
-        _personDataColumn = personDataColumnService.GetColumns();
     }
 
-    public List<DeletionExecution> GenerateUpdateStatement(string predefinedExpirationDate = "")
+    public IEnumerable<DeletionExecution> GenerateUpdateStatement(string predefinedExpirationDate = "")
     {
         var executions = new List<DeletionExecution>();
-        foreach (var personDataColumn in _personDataColumn)
+        foreach (var personDataColumn in _personDataColumnService.GetColumns())
         {
             var currentExecution = new DeletionExecution();
             var query =
@@ -43,10 +42,10 @@ public class Vacuumer : IVacuumer
         return executions;
     }
 
-    public List<DeletionExecution> Execute()
+    public IEnumerable<DeletionExecution> Execute()
     {
-        List<DeletionExecution> executions = GenerateUpdateStatement();
-        foreach (var deletionExecution in executions)
+        IEnumerable<DeletionExecution> executions = GenerateUpdateStatement();
+        foreach (var deletionExecution in executions.ToList())
         {
             _queryExecutor.Execute(deletionExecution.Query);
         }
