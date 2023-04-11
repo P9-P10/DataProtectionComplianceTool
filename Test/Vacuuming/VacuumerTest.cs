@@ -103,10 +103,7 @@ public class VacuumerTest
 
         var query = vacuumer.GenerateUpdateStatement();
 
-
-        List<string> purposes = new List<string>() {"Purpose"};
-        const string expectedQuery = "UPDATE Table SET Column = Null WHERE (Condition);";
-        DeletionExecution expected = new(purposes, "Column", "Table", expectedQuery);
+        DeletionExecution expected = DeletionExecutionMaker("UPDATE Table SET Column = Null WHERE (Condition);");
         Assert.Contains(expected, query);
     }
 
@@ -123,9 +120,8 @@ public class VacuumerTest
         Vacuumer vacuumer = new(personDataColumnService, testQueryExecutor);
         var query = vacuumer.GenerateUpdateStatement();
 
-        List<string> purposes = new List<string>() {"Purpose"};
-        const string expectedQuery = "UPDATE Table SET Column = Null WHERE (Condition) AND (SecondCondition);";
-        DeletionExecution expected = new(purposes, "Column", "Table", expectedQuery);
+        DeletionExecution expected = DeletionExecutionMaker("UPDATE Table SET Column = Null " +
+                                                            "WHERE (Condition) AND (SecondCondition);");
 
         Assert.Contains(expected, query);
     }
@@ -182,14 +178,14 @@ public class VacuumerTest
         Vacuumer vacuumer = new(personDataColumnService, testQueryExecutor);
         vacuumer.Execute();
 
-        
+
         const string firstQuery = "UPDATE Table SET Column = Null WHERE (Condition);";
         const string secondQuery = "UPDATE SecondTable SET SecondColumn = Null WHERE (Condition);";
 
         Assert.Contains(firstQuery, testQueryExecutor.Query);
         Assert.Contains(secondQuery, testQueryExecutor.Query);
     }
-    
+
     [Fact]
     public void TestExecute_Executes_Correctly_With_Multiple_Executions_Returns_Correct_DeletionExecutions()
     {
@@ -211,5 +207,4 @@ public class VacuumerTest
         Assert.Contains(firstExpected, deletionExecutions);
         Assert.Contains(secondExpected, deletionExecutions);
     }
-
 }
