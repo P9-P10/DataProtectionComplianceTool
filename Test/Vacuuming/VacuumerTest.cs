@@ -25,8 +25,16 @@ public class VacuumerTest
 
     private class TestQueryExecutor : IQueryExecutor
     {
+        public string Query;
+
+        public TestQueryExecutor()
+        {
+            Query = "";
+        }
+
         public void Execute(string query)
         {
+            Query = query;
         }
     }
 
@@ -146,5 +154,30 @@ public class VacuumerTest
         const string expectedQuery = "UPDATE Table SET Column = UpdateValue WHERE (Condition);";
         DeletionExecution expected = new(purposes, "Column", "Table", expectedQuery);
         Assert.Contains(expected, query);
+    }
+
+    [Fact]
+    public void TestExecuteExecutesCorrectly()
+    {
+        TestPersonDataColumnService personDataColumnService = new();
+        TestQueryExecutor testQueryExecutor = new();
+        DeleteCondition deleteCondition = new("Condition", "Purpose");
+        List<DeleteCondition> deleteConditions = new List<DeleteCondition> {deleteCondition};
+        PersonDataColumn personDataColumn = new("Table",
+            "Column",
+            "Null",
+            deleteConditions);
+        personDataColumnService.AddColumn(personDataColumn);
+
+        personDataColumnService.AddColumn(personDataColumn);
+
+
+        Vacuumer vacuumer = new(personDataColumnService, testQueryExecutor);
+
+        var query = vacuumer.Execute();
+        
+        const string expectedQuery = "UPDATE Table SET Column = Null WHERE (Condition);";
+        
+        Assert.Equal(testQueryExecutor.Query, expectedQuery);
     }
 }
