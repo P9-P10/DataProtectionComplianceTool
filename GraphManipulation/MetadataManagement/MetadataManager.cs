@@ -278,6 +278,16 @@ public class MetadataManager : IMetadataManager
             }
     }
 
+    public void DeleteMetadataEntry(int entryId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void LinkVacuumingRuleToMetadata(int ruleId, int metadataId)
+    {
+        throw new NotImplementedException();
+    }
+
     private static IEnumerable<string> CreateValuesUpdates(GDPRMetadata value)
     {
         // Get PropWithAttribute for properties that are not null
