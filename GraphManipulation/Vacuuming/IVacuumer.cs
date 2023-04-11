@@ -2,7 +2,7 @@
 
 public interface IVacuumer
 {
-    public List<string> GenerateUpdateStatement(string predefinedExpirationDate = "");
+    public List<DeletionExecution> GenerateUpdateStatement(string predefinedExpirationDate = "");
 
     public List<DeletionExecution> Execute();
 }

@@ -5,36 +5,53 @@ namespace GraphManipulation.Vacuuming;
 
 public class Vacuumer : IVacuumer
 {
-    private IEnumerable<PersonDataColumn> _personDataColumn;
+    private readonly IEnumerable<PersonDataColumn> _personDataColumn;
+    private readonly IQueryExecutor _queryExecutor;
 
-    public Vacuumer(IPersonDataColumnService personDataColumnService)
+    public Vacuumer(IPersonDataColumnService personDataColumnService, IQueryExecutor queryExecutor)
     {
+        _queryExecutor = queryExecutor;
         _personDataColumn = personDataColumnService.GetColumns();
     }
 
-    public List<string> GenerateUpdateStatement(string predefinedExpirationDate = "")
+    public List<DeletionExecution> GenerateUpdateStatement(string predefinedExpirationDate = "")
     {
-        var outputQuery = new List<string>();
+        var executions = new List<DeletionExecution>();
         foreach (var personDataColumn in _personDataColumn)
         {
-            var query = $"UPDATE {personDataColumn.TableName} SET {personDataColumn.ColumnName} = {personDataColumn.DefaultValue} WHERE ";
+            var currentExecution = new DeletionExecution();
+            var query =
+                $"UPDATE {personDataColumn.TableName} SET {personDataColumn.ColumnName} = {personDataColumn.DefaultValue} WHERE ";
             var logicOperator = " AND ";
             foreach (var deleteCondition in personDataColumn.DeleteConditions)
             {
                 query +=
                     $"({deleteCondition.Condition})";
                 query += logicOperator;
+                currentExecution.AddPurpose(deleteCondition.Purpose);
             }
 
-            outputQuery.Add(ReplaceLastOccurrenceOfString(query, logicOperator));
+            currentExecution.Column = personDataColumn.ColumnName;
+            currentExecution.Table = personDataColumn.TableName;
+
+            currentExecution.Query = ReplaceLastOccurrenceOfString(query, logicOperator);
+
+
+            executions.Add(currentExecution);
         }
 
-        return outputQuery;
+        return executions;
     }
 
     public List<DeletionExecution> Execute()
     {
-        return new List<DeletionExecution>();
+        List<DeletionExecution> executions = GenerateUpdateStatement();
+        foreach (var deletionExecution in executions)
+        {
+            _queryExecutor.Execute(deletionExecution.Query);
+        }
+
+        return executions;
     }
 
     private string ReplaceLastOccurrenceOfString(string inputString, string occurrenceToReplace,

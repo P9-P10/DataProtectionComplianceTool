@@ -23,11 +23,20 @@ public class VacuumerTest
         }
     }
 
+    private class TestQueryExecutor : IQueryExecutor
+    {
+        public void Execute(string query)
+        {
+        }
+    }
+
     [Fact]
     public void TestGenerateSqlQueryForDeletion_Returns_Empty_Query_when_No_TablePairs_Provided()
     {
         TestPersonDataColumnService personDataColumnService = new();
-        Vacuumer vacuumer = new(personDataColumnService);
+        TestQueryExecutor testQueryExecutor = new();
+
+        Vacuumer vacuumer = new(personDataColumnService, testQueryExecutor);
         var query = vacuumer.GenerateUpdateStatement();
 
         Assert.Empty(query);
@@ -37,6 +46,7 @@ public class VacuumerTest
     public void TestGenerateSqlQueryForDeletion_Returns_Correct_Query_When_Provided_TablePairs()
     {
         TestPersonDataColumnService personDataColumnService = new();
+        TestQueryExecutor testQueryExecutor = new();
         DeleteCondition deleteCondition = new("Condition", "Purpose");
         List<DeleteCondition> deleteConditions = new List<DeleteCondition> {deleteCondition};
         PersonDataColumn personDataColumn = new("Table",
@@ -45,12 +55,15 @@ public class VacuumerTest
             deleteConditions);
         personDataColumnService.AddColumn(personDataColumn);
 
-        Vacuumer vacuumer = new(personDataColumnService);
+
+        Vacuumer vacuumer = new(personDataColumnService, testQueryExecutor);
+
         var query = vacuumer.GenerateUpdateStatement();
 
 
-        var expected =
-            "UPDATE Table SET Column = Null WHERE (Condition);";
+        List<string> purposes = new List<string>() {"Purpose"};
+        const string expectedQuery = "UPDATE Table SET Column = Null WHERE (Condition);";
+        DeletionExecution expected = new(purposes, "Column", "Table", expectedQuery);
         Assert.Contains(expected, query);
     }
 
@@ -60,6 +73,7 @@ public class VacuumerTest
         TestGenerateSqlQueryForDeletion_Returns_Correct_Query_When_Provided_Multiple_Purposes_One_TableColumnPair()
     {
         TestPersonDataColumnService personDataColumnService = new();
+        TestQueryExecutor testQueryExecutor = new();
         DeleteCondition deleteCondition = new("Condition", "Purpose");
         DeleteCondition deleteCondition2 = new DeleteCondition("SecondCondition", "Purpose");
         List<DeleteCondition> deleteConditions = new List<DeleteCondition> {deleteCondition, deleteCondition2};
@@ -69,12 +83,13 @@ public class VacuumerTest
             deleteConditions);
         personDataColumnService.AddColumn(personDataColumn);
 
-        Vacuumer vacuumer = new(personDataColumnService);
+        Vacuumer vacuumer = new(personDataColumnService, testQueryExecutor);
         var query = vacuumer.GenerateUpdateStatement();
 
+        List<string> purposes = new List<string>() {"Purpose"};
+        const string expectedQuery = "UPDATE Table SET Column = Null WHERE (Condition) AND (SecondCondition);";
+        DeletionExecution expected = new(purposes, "Column", "Table", expectedQuery);
 
-        var expected =
-            "UPDATE Table SET Column = Null WHERE (Condition) AND (SecondCondition);";
         Assert.Contains(expected, query);
     }
 
@@ -83,6 +98,7 @@ public class VacuumerTest
     public void TestGenerateSqlQueryForDeletion_Returns_Correct_Query_When_Provided_Multiple_TableColumnPairs_()
     {
         TestPersonDataColumnService personDataColumnService = new();
+        TestQueryExecutor testQueryExecutor = new();
         DeleteCondition deleteCondition = new("Condition", "Purpose");
         List<DeleteCondition> deleteConditions = new List<DeleteCondition> {deleteCondition};
         PersonDataColumn personDataColumn = new("Table",
@@ -93,13 +109,16 @@ public class VacuumerTest
         personDataColumnService.AddColumn(personDataColumn);
         personDataColumnService.AddColumn(personDataColumn2);
 
-        Vacuumer vacuumer = new(personDataColumnService);
+        Vacuumer vacuumer = new(personDataColumnService, testQueryExecutor);
         var query = vacuumer.GenerateUpdateStatement();
 
 
-        var firstExpected =
-            "UPDATE Table SET Column = Null WHERE (Condition);";
-        var secondExpected = "UPDATE SecondTable SET SecondColumn = Null WHERE (Condition);";
+        List<string> purposes = new List<string>() {"Purpose"};
+        const string firstExpectedQuery = "UPDATE Table SET Column = Null WHERE (Condition);";
+        DeletionExecution firstExpected = new(purposes, "Column", "Table", firstExpectedQuery);
+        const string secondExpectedQuery = "UPDATE SecondTable SET SecondColumn = Null WHERE (Condition);";
+        DeletionExecution secondExpected = new(purposes, "SecondColumn", "SecondTable", secondExpectedQuery);
+
         Assert.Contains(firstExpected, query);
         Assert.Contains(secondExpected, query);
     }
@@ -110,6 +129,7 @@ public class VacuumerTest
         TestGenerateSqlQueryForDeletion_Returns_Correct_Query_When_Provided_TablePairs_With_Default_UpdateValue_Defined()
     {
         TestPersonDataColumnService personDataColumnService = new();
+        TestQueryExecutor testQueryExecutor = new();
         DeleteCondition deleteCondition = new("Condition", "Purpose");
         List<DeleteCondition> deleteConditions = new List<DeleteCondition> {deleteCondition};
         PersonDataColumn personDataColumn = new("Table",
@@ -118,12 +138,13 @@ public class VacuumerTest
             deleteConditions);
         personDataColumnService.AddColumn(personDataColumn);
 
-        Vacuumer vacuumer = new(personDataColumnService);
+        Vacuumer vacuumer = new(personDataColumnService, testQueryExecutor);
         var query = vacuumer.GenerateUpdateStatement();
 
 
-        var expected =
-            "UPDATE Table SET Column = UpdateValue WHERE (Condition);";
+        List<string> purposes = new List<string>() {"Purpose"};
+        const string expectedQuery = "UPDATE Table SET Column = UpdateValue WHERE (Condition);";
+        DeletionExecution expected = new(purposes, "Column", "Table", expectedQuery);
         Assert.Contains(expected, query);
     }
 }
