@@ -52,7 +52,32 @@ public class Vacuumer : IVacuumer
 
         return executions;
     }
+    
+    public void RunVacuumingRule(int ruleId)
+    {
+        throw new NotImplementedException();
+    }
 
+    public void RunAllVacuumingRules()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void AddVacuumingRule(string rule)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void UpdateVacuumingRule(int ruleId, string updatedRule)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void DeleteVacuumingRule(int ruleId)
+    {
+        throw new NotImplementedException();
+    }
+    
     private string ReplaceLastOccurrenceOfString(string inputString, string occurrenceToReplace,
         string replaceWith = ";")
     {
