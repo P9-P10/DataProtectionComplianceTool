@@ -13,5 +13,5 @@ public class ColumnMetadata
     [Column("default_value")]
     public string DefaultValue { get; set; }
     
-    public ICollection<GdprMetadata> Metadata { get; }
+    public ICollection<GdprMetadataEntity> Metadata { get; }
 }

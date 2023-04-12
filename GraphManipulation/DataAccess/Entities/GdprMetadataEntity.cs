@@ -3,7 +3,7 @@
 namespace GraphManipulation.DataAccess.Entities;
 
 [Table("gdpr_metadata")]
-public class GdprMetadata
+public class GdprMetadataEntity
 {
     public int Id { get; set; }
     public string? Purpose { get; set; }

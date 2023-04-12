@@ -42,7 +42,7 @@ public class MetadataManager : IMetadataManager, IDisposable
         CREATE TABLE gdpr_metadata(
                id INTEGER PRIMARY KEY AUTOINCREMENT,
                purpose VARCHAR,
-               target_column INTEGER,
+               target_column INTEGER NOT NULL,
                origin VARCHAR,
                legally_required INTEGER,
                FOREIGN KEY (target_column) REFERENCES metadata_columns(id)
@@ -96,7 +96,7 @@ public class MetadataManager : IMetadataManager, IDisposable
 
         ColumnMetadata targetColumn = GetOrCreateColumn(metadata.TargetTable, metadata.TargetColumn);
 
-        var insertedMetadata = _context.metadata.Add(new GdprMetadata()
+        var insertedMetadata = _context.metadata.Add(new GdprMetadataEntity()
         {
             Column = targetColumn, Purpose = metadata.Purpose, Origin = metadata.Origin,
             LegallyRequired = metadata.LegallyRequired
@@ -108,7 +108,7 @@ public class MetadataManager : IMetadataManager, IDisposable
 	                    SELECT id, {insertedMetadata.Entity.Id}, false, false from {_individualsTable}
                     ";
                     
-        _context.Connection.Execute(addReferencesToMetadataStatement);
+        Connection.Execute(addReferencesToMetadataStatement);
     }
 
     private ColumnMetadata GetOrCreateColumn(string targetTable, string targetColumn)
@@ -144,8 +144,15 @@ public class MetadataManager : IMetadataManager, IDisposable
     
     public GDPRMetadata GetMetadataEntry(int entryId)
     {
-        GdprMetadata entry = _context.metadata.Include(entry => entry.Column).Single(entry => entry.Id == entryId);
+        GdprMetadataEntity entry = _context.metadata.Include(entry => entry.Column).Single(entry => entry.Id == entryId);
+        
+        return MapMetadata(entry);
+    }
 
+    
+    private static GDPRMetadata MapMetadata(GdprMetadataEntity entry)
+    {
+        // Maps from the EFCore entity GdprMetadataEntity to the Domain Entity GDPRMetadata
         GDPRMetadata result = new GDPRMetadata()
         {
             TargetTable = entry.Column.TargetTable, TargetColumn = entry.Column.TargetColumn, Purpose = entry.Purpose,
@@ -156,15 +163,13 @@ public class MetadataManager : IMetadataManager, IDisposable
 
     public IEnumerable<GDPRMetadata> GetMetadataWithNullValues()
     {
-        IEnumerable<string> columns = new[] { "id", "purpose", "target_column", "origin" };
-        var result = Connection.Query<int>(@$"
-            select id from gdpr_metadata 
-            where {string.Join(" IS NULL OR ", columns)} IS NULL");
+        var res = _context.metadata.Where(e =>
+            e.Purpose == null ||
+            e.Origin == null ||
+            e.LegallyRequired == null
+        ).AsEnumerable().Select(MapMetadata).ToList();
 
-        if (result.Any())
-            return result.Select(GetMetadataEntry).ToList();
-        else
-            return new List<GDPRMetadata>();
+        return res.Any() ? res : new List<GDPRMetadata>();
     }
 
     public void Dispose()

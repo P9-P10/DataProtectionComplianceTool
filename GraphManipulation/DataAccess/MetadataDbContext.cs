@@ -27,21 +27,21 @@ public class MetadataDbContext : DbContext
             .HasForeignKey(e => e.TargetColumn)
             .HasPrincipalKey(e => e.Id);
         
-        modelBuilder.Entity<GdprMetadata>()
+        modelBuilder.Entity<GdprMetadataEntity>()
             .HasMany(e => e.Conditions)
-            .WithOne(e => e.Metadata)
+            .WithOne(e => e.MetadataEntity)
             .HasForeignKey(e => e.MetadataId)
             .HasPrincipalKey(e => e.Id);
         
-        modelBuilder.Entity<GdprMetadata>()
+        modelBuilder.Entity<GdprMetadataEntity>()
             .HasMany(e => e.Processes)
-            .WithOne(e => e.Metadata)
+            .WithOne(e => e.MetadataEntity)
             .HasForeignKey(e => e.MetadataId)
             .HasPrincipalKey(e => e.Id);
     }
     
     public DbSet<ColumnMetadata> columns { get; set; }
-    public DbSet<GdprMetadata> metadata { get; set; }
+    public DbSet<GdprMetadataEntity> metadata { get; set; }
     public DbSet<ConditionMetadata> conditions { get; set; }
     public DbSet<ProcessingMetadata> processes { get; set; }
     public IDbConnection Connection => Database.GetDbConnection();

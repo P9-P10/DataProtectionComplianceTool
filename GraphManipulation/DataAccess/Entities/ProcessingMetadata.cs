@@ -9,5 +9,5 @@ public class ProcessingMetadata
     public string Process { get; set; }
     
     public int MetadataId { get; set; }
-    public GdprMetadata Metadata { get; set; }
+    public GdprMetadataEntity MetadataEntity { get; set; }
 }
