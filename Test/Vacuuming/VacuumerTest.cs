@@ -69,9 +69,9 @@ public class VacuumerTest
         TestPersonDataColumnService? personDataColumnService = new();
         Vacuumer vacuumer = VacuumInstantiate(personDataColumnService);
         personDataColumnService.AddColumn(PersonDataColumnMaker());
-        
+
         var query = vacuumer.GenerateUpdateStatement();
-        
+
         DeletionExecution expected = DeletionExecutionMaker("UPDATE Table SET Column = Null WHERE (Condition);");
         Assert.Contains(expected, query);
     }
@@ -120,9 +120,9 @@ public class VacuumerTest
     public void TestExecuteExecutesCorrectly()
     {
         TestPersonDataColumnService? personDataColumnService = new();
-        Vacuumer vacuumer = VacuumInstantiate(personDataColumnService);
-        personDataColumnService.AddColumn(PersonDataColumnMaker());
         TestQueryExecutor testQueryExecutor = new();
+        Vacuumer vacuumer = VacuumInstantiate(personDataColumnService, testQueryExecutor);
+        personDataColumnService.AddColumn(PersonDataColumnMaker());
 
 
         vacuumer.Execute();
@@ -143,7 +143,6 @@ public class VacuumerTest
 
 
         vacuumer.Execute();
-
 
 
         const string firstQuery = "UPDATE Table SET Column = Null WHERE (Condition);";
@@ -172,5 +171,75 @@ public class VacuumerTest
                 table: "SecondTable", column: "SecondColumn");
         Assert.Contains(firstExpected, deletionExecutions);
         Assert.Contains(secondExpected, deletionExecutions);
+    }
+
+    [Fact]
+    public void TestAddVacuumingRule_Adds_Correct_Rule()
+    {
+        TestVacuumerStore vacuumerStore = new();
+        Vacuumer vacuumer = VacuumInstantiate(vacuumerStore: vacuumerStore);
+
+        int id = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
+
+        VacuumingRule rule = new("Rule", "Purpose", "2y 5d");
+        Assert.True(vacuumerStore.FetchVacuumingRules().ToList().Count == 1);
+        Assert.Contains(rule, vacuumerStore.FetchVacuumingRules());
+        Assert.Equal(1, id);
+    }
+
+    [Fact]
+    public void TestUpdateVacuumingRule_Updates_Values()
+    {
+        TestVacuumerStore vacuumerStore = new();
+        Vacuumer vacuumer = VacuumInstantiate(vacuumerStore: vacuumerStore);
+        int id = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
+
+        vacuumer.UpdateVacuumingRule(id, "NewName", "NewPurpose", "2y 20d");
+
+
+        VacuumingRule expected = new("NewName", "NewPurpose", "2y 20d");
+        VacuumingRule oldUnexpected = new("Rule", "Purpose", "2y 5d");
+
+        List<VacuumingRule> storedRules = vacuumerStore.FetchVacuumingRules().ToList();
+        Assert.DoesNotContain(oldUnexpected, storedRules);
+        Assert.Contains(expected, storedRules);
+        Assert.Single(storedRules);
+    }
+
+    [Fact]
+    public void TestUpdateVacuumingRule_Updates_Values_Multiple_Rules()
+    {
+        TestVacuumerStore vacuumerStore = new();
+        Vacuumer vacuumer = VacuumInstantiate(vacuumerStore: vacuumerStore);
+        int id = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
+        vacuumer.AddVacuumingRule("AnotherRule", "AnotherPurpose", "2y 5d");
+
+        vacuumer.UpdateVacuumingRule(id, "NewName", "NewPurpose", "2y 20d");
+
+
+        VacuumingRule expected = new("NewName", "NewPurpose", "2y 20d");
+        VacuumingRule oldUnexpected = new("Rule", "Purpose", "2y 5d");
+
+
+        List<VacuumingRule> storedRules = vacuumerStore.FetchVacuumingRules().ToList();
+        Assert.DoesNotContain(oldUnexpected, storedRules);
+        Assert.Contains(expected, storedRules);
+        Assert.Equal(2, storedRules.Count);
+    }
+
+    [Fact]
+    public void TestDeleteVacuumingRule_Removes_Rule()
+    {
+        TestVacuumerStore vacuumerStore = new();
+        Vacuumer vacuumer = VacuumInstantiate(vacuumerStore: vacuumerStore);
+        int id = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
+
+        vacuumer.DeleteVacuumingRule(id);
+
+
+        List<VacuumingRule> storedRules = vacuumerStore.FetchVacuumingRules().ToList();
+        VacuumingRule oldUnexpected = new("Rule", "Purpose", "2y 5d");
+        Assert.DoesNotContain(oldUnexpected, storedRules);
+        Assert.Empty(storedRules);
     }
 }

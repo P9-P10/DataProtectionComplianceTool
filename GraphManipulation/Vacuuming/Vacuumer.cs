@@ -4,13 +4,16 @@ namespace GraphManipulation.Vacuuming;
 
 public class Vacuumer : IVacuumer
 {
-    private readonly IPersonDataColumnService _personDataColumnService;
-    private readonly IQueryExecutor _queryExecutor;
+    private readonly IPersonDataColumnService? _personDataColumnService;
+    private readonly IQueryExecutor? _queryExecutor;
+    private readonly IVacuumerStore _vacuumerStore;
 
-    public Vacuumer(IPersonDataColumnService personDataColumnService, IQueryExecutor queryExecutor)
+    public Vacuumer(IPersonDataColumnService? personDataColumnService, IQueryExecutor? queryExecutor,
+        IVacuumerStore vacuumerStore)
     {
         _personDataColumnService = personDataColumnService;
         _queryExecutor = queryExecutor;
+        _vacuumerStore = vacuumerStore;
     }
 
     public IEnumerable<DeletionExecution> GenerateUpdateStatement(string predefinedExpirationDate = "")
@@ -52,7 +55,7 @@ public class Vacuumer : IVacuumer
 
         return executions;
     }
-    
+
     public void RunVacuumingRule(int ruleId)
     {
         throw new NotImplementedException();
@@ -60,24 +63,42 @@ public class Vacuumer : IVacuumer
 
     public void RunAllVacuumingRules()
     {
-        throw new NotImplementedException();
+        Execute();
     }
 
-    public void AddVacuumingRule(string rule)
+    public int AddVacuumingRule(string ruleName, string purpose, string interval)
     {
-        throw new NotImplementedException();
+        VacuumingRule vacuumingRule = new(ruleName, purpose, interval);
+        return _vacuumerStore.StoreVacuumingRule(vacuumingRule);
     }
 
-    public void UpdateVacuumingRule(int ruleId, string updatedRule)
+    public void UpdateVacuumingRule(int ruleId, string newRuleName = "", string newPurpose = "",
+        string newInterval = "")
     {
-        throw new NotImplementedException();
+        VacuumingRule rule = _vacuumerStore.FetchVacuumingRule(ruleId);
+        if (newRuleName != "")
+        {
+            rule.Rule = newRuleName;
+        }
+
+        if (newPurpose != "")
+        {
+            rule.Purpose = newPurpose;
+        }
+
+        if (newInterval != "")
+        {
+            rule.Interval = newInterval;
+        }
+
+        _vacuumerStore.UpdateVacuumingRule(ruleId, rule);
     }
 
     public void DeleteVacuumingRule(int ruleId)
     {
-        throw new NotImplementedException();
+        _vacuumerStore.DeleteVacuumingRule(ruleId);
     }
-    
+
     private string ReplaceLastOccurrenceOfString(string inputString, string occurrenceToReplace,
         string replaceWith = ";")
     {

@@ -5,18 +5,40 @@ namespace Test.Vacuuming.TestClasses;
 
 public class TestVacuumerStore : IVacuumerStore
 {
-    public int StoreVacuumingRule(string purpose, string interval)
+    private List<VacuumingRule> _rules;
+
+    public TestVacuumerStore()
     {
-        throw new System.NotImplementedException();
+        _rules = new List<VacuumingRule>();
+    }
+
+    public int StoreVacuumingRule(VacuumingRule vacuumingRule)
+    {
+        if (_rules.Contains(vacuumingRule)) return _rules.IndexOf(vacuumingRule);
+        _rules.Add(vacuumingRule);
+        return _rules.Count;
     }
 
     public IEnumerable<VacuumingRule> FetchVacuumingRules()
     {
-        throw new System.NotImplementedException();
+        return _rules;
     }
 
     public VacuumingRule FetchVacuumingRule(int id)
     {
-        throw new System.NotImplementedException();
+        return _rules[id-1];
+    }
+
+    public void DeleteVacuumingRule(int id)
+    {
+        _rules.RemoveAt(id-1);
+    }
+
+    public bool UpdateVacuumingRule(int id, VacuumingRule newRule)
+    {
+        if (_rules.Count >= id) return false;
+        _rules[id] = newRule;
+        return true;
+
     }
 }

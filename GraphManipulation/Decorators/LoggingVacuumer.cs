@@ -34,12 +34,12 @@ public class LoggingVacuumer : IVacuumer
         throw new NotImplementedException();
     }
 
-    public void AddVacuumingRule(string rule)
+    public int AddVacuumingRule(string ruleName, string purpose, string interval)
     {
         throw new NotImplementedException();
     }
 
-    public void UpdateVacuumingRule(int ruleId, string updatedRule)
+    public void UpdateVacuumingRule(int ruleId, string newRuleName, string newPurpose, string newInterval)
     {
         throw new NotImplementedException();
     }

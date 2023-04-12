@@ -10,7 +10,7 @@ public interface IVacuumer
     
     public void RunVacuumingRule(int ruleId);
     public void RunAllVacuumingRules();
-    public void AddVacuumingRule(string rule);
-    public void UpdateVacuumingRule(int ruleId, string updatedRule);
+    public int AddVacuumingRule(string ruleName, string purpose, string interval);
+    public void UpdateVacuumingRule(int ruleId, string newRuleName, string newPurpose, string newInterval);
 
 }
