@@ -4,7 +4,6 @@ using Dapper;
 using Dapper.Transaction;
 using GraphManipulation.DataAccess;
 using GraphManipulation.DataAccess.Entities;
-using GraphManipulation.MetadataManagement.AttributeMapping;
 using Microsoft.Data.Sqlite;
 
 namespace GraphManipulation.MetadataManagement;
@@ -25,11 +24,6 @@ public class MetadataManager : IMetadataManager, IDisposable
         _individualsTable = tableContainingIndividuals;
         _context = new MetadataDbContext(connectionString);
         Connection = _context.Connection;
-
-        // Add custom mapper that uses attributes to map columns to properties to dapper.
-        SqlMapper.SetTypeMap(
-            typeof(GDPRMetadata),
-            new ColumnAttributeTypeMapper<GDPRMetadata>());
     }
 
     /// <summary>

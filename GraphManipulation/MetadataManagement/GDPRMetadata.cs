@@ -1,5 +1,3 @@
-using GraphManipulation.MetadataManagement.AttributeMapping;
-
 namespace GraphManipulation.MetadataManagement;
 
 public class GDPRMetadata
@@ -18,15 +16,15 @@ public class GDPRMetadata
     }
 
     public int Id { get; set; }
-    [Column("purpose")] public string? Purpose { get; init; }
+    public string? Purpose { get; init; }
 
-    [Column("target_table")] public string? TargetTable { get; set; }
+    public string? TargetTable { get; set; }
 
-    [Column("target_column")] public string? TargetColumn { get; set; }
+    public string? TargetColumn { get; set; }
 
-    [Column("origin")] public string? Origin { get; init; }
+    public string? Origin { get; init; }
 
-    [Column("legally_required")] public bool? LegallyRequired { get; init; }
+    public bool? LegallyRequired { get; init; }
 
     protected bool Equals(GDPRMetadata other)
     {
