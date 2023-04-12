@@ -17,7 +17,7 @@ public class GDPRMetadata
         TargetColumn = targetColumn;
     }
 
-    // These properties are named to be consistent with the corresponding columns in the database
+    public int Id { get; set; }
     [Column("purpose")] public string? Purpose { get; init; }
 
     [Column("target_table")] public string? TargetTable { get; set; }

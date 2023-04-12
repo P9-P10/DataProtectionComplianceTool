@@ -38,7 +38,7 @@ public class InteractiveMode
         var metadataConnection = new SQLiteConnection();
         const string metadataConnectionString = "";
         metadataConnection.ConnectionString = $"Data Source={metadataConnectionString}";
-        var metadataManager = new MetadataManager(metadataConnection, "placeholder_individuals_table");
+        var metadataManager = new MetadataManager(metadataConnection.ConnectionString, "placeholder_individuals_table");
 
         var graphStorage = new GraphStorage(graphStorageConnectionString, ontology);
 
