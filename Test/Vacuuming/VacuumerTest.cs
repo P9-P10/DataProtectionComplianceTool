@@ -24,18 +24,18 @@ public class VacuumerTest
     }
 
     private PersonDataColumn PersonDataColumnMaker(string defaultValue = "Null", bool multipleDeleteConditions = false,
-        string tableName = "Table", string columnName = "Column")
+        string tableName = "Table", string columnName = "Column", string purpose = "Purpose")
     {
         List<DeleteCondition> deleteConditions = new List<DeleteCondition>();
         if (!multipleDeleteConditions)
         {
-            DeleteCondition deleteCondition = new("Condition", "Purpose");
+            DeleteCondition deleteCondition = new("Condition", purpose);
             deleteConditions.Add(deleteCondition);
         }
         else
         {
-            DeleteCondition deleteCondition = new("Condition", "Purpose");
-            DeleteCondition deleteCondition2 = new("SecondCondition", "Purpose");
+            DeleteCondition deleteCondition = new("Condition", purpose);
+            DeleteCondition deleteCondition2 = new("SecondCondition", purpose);
             deleteConditions.Add(deleteCondition);
             deleteConditions.Add(deleteCondition2);
         }
@@ -205,7 +205,7 @@ public class VacuumerTest
         Assert.Contains(expected, storedRules);
         Assert.Single(storedRules);
     }
-    
+
     [Fact]
     public void TestUpdateVacuumingRule_Only_Updates_Specified_Values()
     {
@@ -213,7 +213,7 @@ public class VacuumerTest
         Vacuumer vacuumer = VacuumInstantiate(vacuumerStore: vacuumerStore);
         int id = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
 
-        vacuumer.UpdateVacuumingRule(id, "NewName", newInterval:"2y 20d");
+        vacuumer.UpdateVacuumingRule(id, "NewName", newInterval: "2y 20d");
 
 
         VacuumingRule expected = new("NewName", "Purpose", "2y 20d");
@@ -259,5 +259,50 @@ public class VacuumerTest
         VacuumingRule oldUnexpected = new("Rule", "Purpose", "2y 5d");
         Assert.DoesNotContain(oldUnexpected, storedRules);
         Assert.Empty(storedRules);
+    }
+
+    [Fact]
+    public void TestRunVacuumingRule_Executes_Correct_Execution()
+    {
+        TestVacuumerStore vacuumerStore = new();
+        TestQueryExecutor testExecutor = new();
+        TestPersonDataColumnService personDataColumnService = new();
+        personDataColumnService.AddColumn(PersonDataColumnMaker());
+        personDataColumnService.AddColumn(PersonDataColumnMaker(purpose: "AnotherPurpose"));
+        Vacuumer vacuumer = VacuumInstantiate(vacuumerStore: vacuumerStore, queryExecutor: testExecutor,
+            personDataColumnService: personDataColumnService);
+        int id = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
+
+        List<DeletionExecution> executions = vacuumer.RunVacuumingRule(id).ToList();
+
+
+        DeletionExecution expected = DeletionExecutionMaker("UPDATE Table SET Column = Null WHERE (Condition);");
+
+        Assert.Contains(expected, executions);
+        Assert.True(1 == executions.Count);
+    }
+
+    [Fact]
+    public void TestRunVacuumingRule_Executes_Correct_Executions_Different_Executions_With_Same_Purpose()
+    {
+        TestVacuumerStore vacuumerStore = new();
+        TestQueryExecutor testExecutor = new();
+        TestPersonDataColumnService personDataColumnService = new();
+        personDataColumnService.AddColumn(PersonDataColumnMaker());
+        personDataColumnService.AddColumn(PersonDataColumnMaker(purpose: "Purpose",
+            columnName: "AnotherColumn"));
+        Vacuumer vacuumer = VacuumInstantiate(vacuumerStore: vacuumerStore, queryExecutor: testExecutor,
+            personDataColumnService: personDataColumnService);
+        int id = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
+
+        List<DeletionExecution> executions = vacuumer.RunVacuumingRule(id).ToList();
+
+
+        DeletionExecution expected = DeletionExecutionMaker("UPDATE Table SET Column = Null WHERE (Condition);");
+        DeletionExecution secondExpected =
+            DeletionExecutionMaker("UPDATE Table SET AnotherColumn = Null WHERE (Condition);",column:"AnotherColumn");
+
+        Assert.Contains(expected, executions);
+        Assert.True(2 == executions.Count);
     }
 }

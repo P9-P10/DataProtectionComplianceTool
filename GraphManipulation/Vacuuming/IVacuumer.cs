@@ -8,7 +8,7 @@ public interface IVacuumer
     public IEnumerable<DeletionExecution> Execute();
 
     
-    public void RunVacuumingRule(int ruleId);
+    public IEnumerable<DeletionExecution> RunVacuumingRule(int ruleId);
     public void RunAllVacuumingRules();
     public int AddVacuumingRule(string ruleName, string purpose, string interval);
     public void UpdateVacuumingRule(int ruleId, string newRuleName, string newPurpose, string newInterval);

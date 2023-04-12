@@ -1,14 +1,15 @@
-﻿using GraphManipulation.Services;
+﻿using GraphManipulation.DataAccess.Entities;
+using GraphManipulation.Services;
 
 namespace GraphManipulation.Vacuuming;
 
 public class Vacuumer : IVacuumer
 {
-    private readonly IPersonDataColumnService? _personDataColumnService;
-    private readonly IQueryExecutor? _queryExecutor;
+    private readonly IPersonDataColumnService _personDataColumnService;
+    private readonly IQueryExecutor _queryExecutor;
     private readonly IVacuumerStore _vacuumerStore;
 
-    public Vacuumer(IPersonDataColumnService? personDataColumnService, IQueryExecutor? queryExecutor,
+    public Vacuumer(IPersonDataColumnService personDataColumnService, IQueryExecutor queryExecutor,
         IVacuumerStore vacuumerStore)
     {
         _personDataColumnService = personDataColumnService;
@@ -18,51 +19,93 @@ public class Vacuumer : IVacuumer
 
     public IEnumerable<DeletionExecution> GenerateUpdateStatement(string predefinedExpirationDate = "")
     {
-        var executions = new List<DeletionExecution>();
-        foreach (var personDataColumn in _personDataColumnService.GetColumns())
+        return _personDataColumnService.GetColumns().Select(CreateDeletionExecution).ToList();
+    }
+
+    private DeletionExecution CreateDeletionExecution(PersonDataColumn personDataColumn)
+    {
+        DeletionExecution deletionExecution = new();
+        var logicOperator = " AND ";
+        string query = CreateUpdateQuery(personDataColumn);
+
+        query += AppendConditions(personDataColumn, logicOperator, deletionExecution);
+
+        deletionExecution.Column = personDataColumn.ColumnName;
+        deletionExecution.Table = personDataColumn.TableName;
+
+        deletionExecution.Query = ReplaceLastOccurrenceOfString(query, logicOperator);
+        return deletionExecution;
+    }
+
+    private static string AppendConditions(PersonDataColumn personDataColumn, string logicOperator,
+        DeletionExecution deletionExecution)
+    {
+        string conditionalStatement = "";
+        foreach (DeleteCondition deleteCondition in personDataColumn.DeleteConditions)
         {
-            var currentExecution = new DeletionExecution();
-            var query =
-                $"UPDATE {personDataColumn.TableName} SET {personDataColumn.ColumnName} = {personDataColumn.DefaultValue} WHERE ";
-            var logicOperator = " AND ";
-            foreach (var deleteCondition in personDataColumn.DeleteConditions)
-            {
-                query +=
-                    $"({deleteCondition.Condition})";
-                query += logicOperator;
-                currentExecution.AddPurpose(deleteCondition.Purpose);
-            }
-
-            currentExecution.Column = personDataColumn.ColumnName;
-            currentExecution.Table = personDataColumn.TableName;
-
-            currentExecution.Query = ReplaceLastOccurrenceOfString(query, logicOperator);
-
-
-            executions.Add(currentExecution);
+            conditionalStatement += $"({deleteCondition.Condition})";
+            conditionalStatement += logicOperator;
+            deletionExecution.AddPurpose(deleteCondition.Purpose);
         }
 
-        return executions;
+        return conditionalStatement;
+    }
+
+    private static string CreateUpdateQuery(PersonDataColumn personDataColumn)
+    {
+        return
+            $"UPDATE {personDataColumn.TableName} SET {personDataColumn.ColumnName} = {personDataColumn.DefaultValue} WHERE ";
     }
 
     public IEnumerable<DeletionExecution> Execute()
     {
         IEnumerable<DeletionExecution> executions = GenerateUpdateStatement();
-        foreach (var deletionExecution in executions.ToList())
+        var deletionExecutions = executions.ToList();
+        foreach (var deletionExecution in deletionExecutions)
         {
             _queryExecutor.Execute(deletionExecution.Query);
         }
 
-        return executions;
+        return deletionExecutions;
     }
 
-    public void RunVacuumingRule(int ruleId)
+    /// <summary>
+    /// This function executes a specified vacuuming rule.
+    /// It does not vacuum data if its protected by other purposes.
+    /// </summary>
+    /// <param name="ruleId">ID of the vacuuming rule</param>
+    /// <returns></returns>
+    public IEnumerable<DeletionExecution> RunVacuumingRule(int ruleId)
     {
-        throw new NotImplementedException();
+        List<DeletionExecution> conditions = new List<DeletionExecution>();
+        VacuumingRule rule = _vacuumerStore.FetchVacuumingRule(ruleId);
+
+        List<PersonDataColumn> personDataColumns = _personDataColumnService.GetColumns().ToList();
+
+        foreach (var personDataColumn in personDataColumns)
+        {
+            bool containsCorrectCondition = ContainsCorrectCondition(personDataColumn, rule);
+            if (!containsCorrectCondition) continue;
+
+            DeletionExecution execution = CreateDeletionExecution(personDataColumn);
+            conditions.Add(execution);
+            _queryExecutor.Execute(execution.Query);
+        }
+
+        return conditions;
     }
 
+    private static bool ContainsCorrectCondition(PersonDataColumn personDataColumn, VacuumingRule rule)
+    {
+        return personDataColumn.DeleteConditions.Any(x => x.Purpose == rule.Purpose);
+    }
+
+    /// <summary>
+    /// Same as Execute
+    /// </summary>
     public void RunAllVacuumingRules()
     {
+        // TODO Find ud af om vi kalder den RunAll eller Execute.
         Execute();
     }
 
