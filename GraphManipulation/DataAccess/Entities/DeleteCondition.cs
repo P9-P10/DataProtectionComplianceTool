@@ -1,5 +1,7 @@
-﻿namespace GraphManipulation.DataAccess.Entities;
+﻿
+namespace GraphManipulation.DataAccess.Entities;
 
+// TODO: Consider moving to another directory, as this is not mapped directly to the database
 public class DeleteCondition
 {
     public DeleteCondition(string condition, string purpose)
