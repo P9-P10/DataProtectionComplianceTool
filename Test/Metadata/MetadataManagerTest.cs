@@ -103,17 +103,10 @@ public class MetadataManagerTest : IDisposable
 
         Manager.MarkAsPersonalData(new GDPRMetadata("mockTable", "mockColumn"));
 
-        var insertedRow =
-            Connection.QuerySingle<(int, int)>("select id, target_column from gdpr_metadata");
-
-        // Check that the expected values were inserted into gdpr_metadata
-        Assert.Equal((1, 1), insertedRow);
-
-        var targetColumn =
-            Connection.QuerySingle<(int, string, string)>(
-                "select id, target_table, target_column from metadata_columns");
+        var insertedValue = Manager.GetMetadataEntry(1);
         
-        Assert.Equal((1, "mockTable", "mockColumn"), targetColumn);
+        Assert.Equal("mockTable", insertedValue.TargetTable);
+        Assert.Equal("mockColumn", insertedValue.TargetColumn);
 
         var insertedReferences = Connection.Query<(int, int)>("select user_id, metadata_id from user_metadata");
 
@@ -153,7 +146,7 @@ public class MetadataManagerTest : IDisposable
 
         Manager.UpdateMetadataEntry(1, new GDPRMetadata("mockTable", "mockColumn") { Purpose = "Testing!" });
 
-        var purpose = Connection.QuerySingle<string>("select purpose from gdpr_metadata");
+        var purpose = Manager.GetMetadataEntry(1).Purpose;
 
         Assert.Equal("Testing!", purpose);
     }
@@ -166,7 +159,7 @@ public class MetadataManagerTest : IDisposable
 
         Manager.UpdateMetadataEntry(1, new GDPRMetadata("mockTable", "mockColumn") { Origin = "Imagination" });
 
-        var origin = Connection.QuerySingle<string>("select origin from gdpr_metadata");
+        var origin = Manager.GetMetadataEntry(1).Origin;
 
         Assert.Equal("Imagination", origin);
     }
@@ -179,7 +172,7 @@ public class MetadataManagerTest : IDisposable
 
         Manager.UpdateMetadataEntry(1, new GDPRMetadata("mockTable", "mockColumn") { LegallyRequired = true });
 
-        var legallyRequired = Connection.QuerySingle<bool>("select legally_required from gdpr_metadata where id = 1");
+        var legallyRequired = Manager.GetMetadataEntry(1).LegallyRequired;
 
         Assert.Equal(true, legallyRequired);
     }
@@ -191,12 +184,10 @@ public class MetadataManagerTest : IDisposable
         Manager.MarkAsPersonalData(new GDPRMetadata("mockTable", "mockColumn") { Purpose = "Test" });
 
         Manager.UpdateMetadataEntry(1, new GDPRMetadata("mockTable", "mockColumn") { LegallyRequired = true });
-
-        var purpose = Connection.QuerySingle<string>("select purpose from gdpr_metadata");
-        var legallyRequired = Connection.QuerySingle<bool>("select legally_required from gdpr_metadata where id = 1");
-
-        Assert.Equal("Test", purpose);
-        Assert.Equal(true, legallyRequired);
+        var updatedEntry = Manager.GetMetadataEntry(1);
+        
+        Assert.Equal("Test", updatedEntry.Purpose);
+        Assert.Equal(true, updatedEntry.LegallyRequired);
     }
 
     [Fact]
