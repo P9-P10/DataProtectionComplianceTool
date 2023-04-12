@@ -7,6 +7,9 @@ using GraphManipulation.DataAccess.Entities;
 using Microsoft.Data.Sqlite;
 
 namespace GraphManipulation.MetadataManagement;
+// TODO: Vi skal have en måde at hive alle nuværende rækker i gdpr_metadata ud, så brugeren kan se hvilke entryID'er de har
+
+// TODO: Vi skal have en måde at hive delete conditions ud, så vi kan logge hvilke conditions der er blevet håndhævet
 
 public class MetadataManager : IMetadataManager, IDisposable
 {
@@ -141,7 +144,17 @@ public class MetadataManager : IMetadataManager, IDisposable
 
         _context.SaveChanges();
     }
-    
+
+    public void DeleteMetadataEntry(int entryId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void LinkVacuumingRuleToMetadata(int ruleId, int metadataId)
+    {
+        throw new NotImplementedException();
+    }
+
     public GDPRMetadata GetMetadataEntry(int entryId)
     {
         GdprMetadataEntity entry = _context.metadata.Include(entry => entry.Column).Single(entry => entry.Id == entryId);
