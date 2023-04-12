@@ -205,6 +205,24 @@ public class VacuumerTest
         Assert.Contains(expected, storedRules);
         Assert.Single(storedRules);
     }
+    
+    [Fact]
+    public void TestUpdateVacuumingRule_Only_Updates_Specified_Values()
+    {
+        TestVacuumerStore vacuumerStore = new();
+        Vacuumer vacuumer = VacuumInstantiate(vacuumerStore: vacuumerStore);
+        int id = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
+
+        vacuumer.UpdateVacuumingRule(id, "NewName", newInterval:"2y 20d");
+
+
+        VacuumingRule expected = new("NewName", "Purpose", "2y 20d");
+        VacuumingRule oldUnexpected = new("Rule", "Purpose", "2y 5d");
+
+        List<VacuumingRule> storedRules = vacuumerStore.FetchVacuumingRules().ToList();
+        Assert.DoesNotContain(oldUnexpected, storedRules);
+        Assert.Contains(expected, storedRules);
+    }
 
     [Fact]
     public void TestUpdateVacuumingRule_Updates_Values_Multiple_Rules()
