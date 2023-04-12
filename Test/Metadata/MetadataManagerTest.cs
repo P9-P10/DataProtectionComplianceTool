@@ -189,6 +189,19 @@ public class MetadataManagerTest : IDisposable
         Assert.Equal("Test", updatedEntry.Purpose);
         Assert.Equal(true, updatedEntry.LegallyRequired);
     }
+    
+    [Fact]
+    public void UpdatingNonExistingEntryDoesNothing()
+    {
+        Manager.CreateMetadataTables();
+        var insertedEntry = new GDPRMetadata("mockTable", "mockColumn") { Purpose = "Test" };
+        Manager.MarkAsPersonalData(insertedEntry);
+
+        Manager.UpdateMetadataEntry(123, new GDPRMetadata("mockTable", "mockColumn") { LegallyRequired = true });
+        var unchangedEntry = Manager.GetMetadataEntry(1);
+        
+        Assert.Equal(insertedEntry, unchangedEntry);
+    }
 
     [Fact]
     public void GetsMetadataWithMissingValues()
@@ -221,6 +234,15 @@ public class MetadataManagerTest : IDisposable
         Assert.DoesNotContain(two, result);
         Assert.Contains(three, result);
     }
+    
+    [Fact]
+    public void GetMetadataWithNullValuesReturnsEmptyListWhenNoRowsWithMissingValues()
+    {
+        Manager.CreateMetadataTables();
+        var result = Manager.GetMetadataWithNullValues();
+
+        Assert.Empty(result);
+    }
 
     [Fact]
     public void GettingNonExistingEntryReturnsNull()
@@ -248,5 +270,26 @@ public class MetadataManagerTest : IDisposable
         Assert.Equal("TableOne", notDeleted.TargetTable);
         // Check that fetching the deleted entry returns null
         Assert.Null(deleted);
+    }
+    
+    [Fact]
+    public void DeletingNonExistingEntryDoesNothing()
+    {
+        Manager.CreateMetadataTables();
+        var one = new GDPRMetadata("TableOne", "ColumnOne");
+        var two = new GDPRMetadata("TableTwo", "ColumnTwo");
+        Manager.MarkAsPersonalData(one);
+        Manager.MarkAsPersonalData(two);
+        
+        // If DeleteMetadataEntry is called with a non existing id it does nothing
+        // An alternative approach is to throw an exception.
+        Manager.DeleteMetadataEntry(299);
+
+        var notDeleted = Manager.GetMetadataEntry(1);
+        var alsoNotDeleted = Manager.GetMetadataEntry(2);
+        
+        // Check that both entries still exist
+        Assert.Equal("TableOne", notDeleted.TargetTable);
+        Assert.Equal("TableTwo", alsoNotDeleted.TargetTable);
     }
 }

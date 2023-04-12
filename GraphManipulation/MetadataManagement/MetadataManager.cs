@@ -1,7 +1,6 @@
 using System.Data;
 using System.Data.Entity;
 using Dapper;
-using Dapper.Transaction;
 using GraphManipulation.DataAccess;
 using GraphManipulation.DataAccess.Entities;
 using Microsoft.Data.Sqlite;
@@ -136,7 +135,11 @@ public class MetadataManager : IMetadataManager, IDisposable
     /// <param name="value">Object defining the updated values</param>
     public void UpdateMetadataEntry(int entryId, GDPRMetadata value)
     {
-        var existingMetadata = _context.metadata.Single(e => e.Id == entryId);
+        var existingMetadata = _context.metadata.FirstOrDefault(e => e.Id == entryId);
+        
+        // If there is no entry with the given id, do nothing
+        if (existingMetadata is null)
+            return;
         
         existingMetadata.Purpose = value.Purpose ?? existingMetadata.Purpose;
         existingMetadata.Origin = value.Origin ?? existingMetadata.Origin;
@@ -147,7 +150,12 @@ public class MetadataManager : IMetadataManager, IDisposable
 
     public void DeleteMetadataEntry(int entryId)
     {
-        _context.Remove(_context.metadata.Single(e => e.Id == entryId));
+        var entryToDelete = _context.metadata.FirstOrDefault(e => e.Id == entryId);
+        // If there is no entry with the given id, do nothing
+        if (entryToDelete is null)
+            return;
+        
+        _context.Remove(entryToDelete);
         _context.SaveChanges();
     }
 
