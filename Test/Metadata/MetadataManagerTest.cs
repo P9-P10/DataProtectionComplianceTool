@@ -221,4 +221,32 @@ public class MetadataManagerTest : IDisposable
         Assert.DoesNotContain(two, result);
         Assert.Contains(three, result);
     }
+
+    [Fact]
+    public void GettingNonExistingEntryReturnsNull()
+    {
+        Manager.CreateMetadataTables();
+        
+        Assert.Null(Manager.GetMetadataEntry(1));
+    }
+
+    [Fact]
+    public void DeletesMetadataEntryWithGivenId()
+    {
+        Manager.CreateMetadataTables();
+        var one = new GDPRMetadata("TableOne", "ColumnOne");
+        var two = new GDPRMetadata("TableTwo", "ColumnTwo");
+        Manager.MarkAsPersonalData(one);
+        Manager.MarkAsPersonalData(two);
+        
+        Manager.DeleteMetadataEntry(2);
+
+        var notDeleted = Manager.GetMetadataEntry(1);
+        var deleted = Manager.GetMetadataEntry(2);
+        
+        // Check that the first is not deleted and has the correct value
+        Assert.Equal("TableOne", notDeleted.TargetTable);
+        // Check that fetching the deleted entry returns null
+        Assert.Null(deleted);
+    }
 }
