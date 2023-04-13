@@ -155,6 +155,11 @@ public class MetadataManager : IMetadataManager, IDisposable
         throw new NotImplementedException();
     }
 
+    public IEnumerable<GDPRMetadata> GetAllMetadataEntries()
+    {
+        throw new NotImplementedException();
+    }
+
     public GDPRMetadata GetMetadataEntry(int entryId)
     {
         GdprMetadataEntity entry = _context.metadata.Include(entry => entry.Column).Single(entry => entry.Id == entryId);

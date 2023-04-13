@@ -1,4 +1,4 @@
-﻿namespace GraphManipulation.Vacuuming;
+namespace GraphManipulation.Vacuuming;
 
 public interface IVacuumer
 {
@@ -10,4 +10,6 @@ public interface IVacuumer
     public void UpdateVacuumingRule(int ruleId, string updatedRule);
     public void DeleteVacuumingRule(int ruleId);
 
+    public string GetVacuumingRule(int ruleId);
+    public IEnumerable<string> GetAllVacuumingRules();
 }

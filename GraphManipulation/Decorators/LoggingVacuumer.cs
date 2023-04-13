@@ -43,4 +43,14 @@ public class LoggingVacuumer : IVacuumer
     {
         throw new NotImplementedException();
     }
+
+    public string GetVacuumingRule(int ruleId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<string> GetAllVacuumingRules()
+    {
+        throw new NotImplementedException();
+    }
 }
