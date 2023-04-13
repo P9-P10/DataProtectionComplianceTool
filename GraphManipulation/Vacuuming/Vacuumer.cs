@@ -1,4 +1,4 @@
-using GraphManipulation.Vacuuming.Components;
+﻿using GraphManipulation.Vacuuming.Components;
 
 namespace GraphManipulation.Vacuuming;
 
@@ -55,17 +55,7 @@ public class Vacuumer : IVacuumer
     {
         throw new NotImplementedException();
     }
-
-    public string GetVacuumingRule(int ruleId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public IEnumerable<string> GetAllVacuumingRules()
-    {
-        throw new NotImplementedException();
-    }
-
+    
     private string ReplaceLastOccurrenceOfString(string inputString, string occurrenceToReplace,
         string replaceWith = ";")
     {
