@@ -26,18 +26,20 @@ public class MetadataDbContext : DbContext
             .WithOne(e => e.Column)
             .HasForeignKey(e => e.TargetColumn)
             .HasPrincipalKey(e => e.Id);
-        
+
         modelBuilder.Entity<GdprMetadataEntity>()
             .HasMany(e => e.Conditions)
             .WithOne(e => e.MetadataEntity)
             .HasForeignKey(e => e.MetadataId)
-            .HasPrincipalKey(e => e.Id);
-        
+            .HasPrincipalKey(e => e.Id)
+            .OnDelete(DeleteBehavior.Cascade);
+
         modelBuilder.Entity<GdprMetadataEntity>()
             .HasMany(e => e.Processes)
             .WithOne(e => e.MetadataEntity)
             .HasForeignKey(e => e.MetadataId)
-            .HasPrincipalKey(e => e.Id);
+            .HasPrincipalKey(e => e.Id)
+            .OnDelete(DeleteBehavior.Cascade);
     }
     
     public DbSet<ColumnMetadata> columns { get; set; }

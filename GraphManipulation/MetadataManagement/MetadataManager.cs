@@ -1,7 +1,6 @@
 using System.Data;
 using System.Data.Entity;
 using Dapper;
-using Dapper.Transaction;
 using GraphManipulation.DataAccess;
 using GraphManipulation.DataAccess.Entities;
 using Microsoft.Data.Sqlite;
@@ -55,7 +54,7 @@ public class MetadataManager : IMetadataManager, IDisposable
                id INTEGER PRIMARY KEY AUTOINCREMENT,
                metadata_id INTEGER,
                condition VARCHAR,
-               FOREIGN KEY (metadata_id) REFERENCES gdpr_metadata(id)
+               FOREIGN KEY (metadata_id) REFERENCES gdpr_metadata(id) ON DELETE CASCADE
                );
 
         CREATE TABLE user_metadata(
@@ -65,14 +64,14 @@ public class MetadataManager : IMetadataManager, IDisposable
              automated_decisionmaking INTEGER,
              PRIMARY KEY (user_id, metadata_id),
              FOREIGN KEY (user_id) REFERENCES {_individualsTable}(id),
-             FOREIGN KEY (metadata_id) REFERENCES gdpr_metadata(id)
+             FOREIGN KEY (metadata_id) REFERENCES gdpr_metadata(id) ON DELETE CASCADE
              );
 
         CREATE TABLE personal_data_processing(
              id INTEGER PRIMARY KEY AUTOINCREMENT,
              metadata_id INTEGER,
              process VARCHAR,
-             FOREIGN KEY (metadata_id) REFERENCES gdpr_metadata(id)
+             FOREIGN KEY (metadata_id) REFERENCES gdpr_metadata(id) ON DELETE CASCADE
              );
     ";
 
@@ -92,7 +91,7 @@ public class MetadataManager : IMetadataManager, IDisposable
         Connection.Execute(dropMetadataStatement);
     }
 
-    public void MarkAsPersonalData(GDPRMetadata metadata)
+    public void MarkAsPersonalData(GDPRMetadata? metadata)
     {
         if (metadata.TargetTable is null || metadata.TargetColumn is null)
             throw new ArgumentException("TargetTable and TargetColumn must be defined");
@@ -136,7 +135,11 @@ public class MetadataManager : IMetadataManager, IDisposable
     /// <param name="value">Object defining the updated values</param>
     public void UpdateMetadataEntry(int entryId, GDPRMetadata value)
     {
-        var existingMetadata = _context.metadata.Single(e => e.Id == entryId);
+        var existingMetadata = _context.metadata.FirstOrDefault(e => e.Id == entryId);
+        
+        // If there is no entry with the given id, do nothing
+        if (existingMetadata is null)
+            return;
         
         existingMetadata.Purpose = value.Purpose ?? existingMetadata.Purpose;
         existingMetadata.Origin = value.Origin ?? existingMetadata.Origin;
@@ -147,7 +150,13 @@ public class MetadataManager : IMetadataManager, IDisposable
 
     public void DeleteMetadataEntry(int entryId)
     {
-        throw new NotImplementedException();
+        var entryToDelete = _context.metadata.FirstOrDefault(e => e.Id == entryId);
+        // If there is no entry with the given id, do nothing
+        if (entryToDelete is null)
+            return;
+        
+        _context.Remove(entryToDelete);
+        _context.SaveChanges();
     }
 
     public void LinkVacuumingRuleToMetadata(int ruleId, int metadataId)
@@ -159,19 +168,26 @@ public class MetadataManager : IMetadataManager, IDisposable
     {
         throw new NotImplementedException();
     }
-
-    public GDPRMetadata GetMetadataEntry(int entryId)
+    
+    /// <summary>
+    /// Returns GDPRMetadata with matching id, or null if no such entry exists
+    /// </summary>
+    /// <param name="entryId">Id of the metadata</param>
+    /// <returns>GDPRMetadata entry with given id</returns>
+    public GDPRMetadata? GetMetadataEntry(int entryId)
     {
-        GdprMetadataEntity entry = _context.metadata.Include(entry => entry.Column).Single(entry => entry.Id == entryId);
-        
-        return MapMetadata(entry);
+        GdprMetadataEntity? entry = _context.metadata
+            .Include(entry => entry.Column)
+            .FirstOrDefault(entry => entry.Id == entryId);
+
+        return entry is null ? null : MapMetadata(entry);
     }
 
     
     private static GDPRMetadata MapMetadata(GdprMetadataEntity entry)
     {
         // Maps from the EFCore entity GdprMetadataEntity to the Domain Entity GDPRMetadata
-        GDPRMetadata result = new GDPRMetadata()
+        GDPRMetadata? result = new GDPRMetadata()
         {
             TargetTable = entry.Column.TargetTable, TargetColumn = entry.Column.TargetColumn, Purpose = entry.Purpose,
             Origin = entry.Origin, LegallyRequired = entry.LegallyRequired

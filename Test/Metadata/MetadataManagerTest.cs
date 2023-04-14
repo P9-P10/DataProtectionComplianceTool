@@ -103,17 +103,10 @@ public class MetadataManagerTest : IDisposable
 
         Manager.MarkAsPersonalData(new GDPRMetadata("mockTable", "mockColumn"));
 
-        var insertedRow =
-            Connection.QuerySingle<(int, int)>("select id, target_column from gdpr_metadata");
-
-        // Check that the expected values were inserted into gdpr_metadata
-        Assert.Equal((1, 1), insertedRow);
-
-        var targetColumn =
-            Connection.QuerySingle<(int, string, string)>(
-                "select id, target_table, target_column from metadata_columns");
+        var insertedValue = Manager.GetMetadataEntry(1);
         
-        Assert.Equal((1, "mockTable", "mockColumn"), targetColumn);
+        Assert.Equal("mockTable", insertedValue.TargetTable);
+        Assert.Equal("mockColumn", insertedValue.TargetColumn);
 
         var insertedReferences = Connection.Query<(int, int)>("select user_id, metadata_id from user_metadata");
 
@@ -153,7 +146,7 @@ public class MetadataManagerTest : IDisposable
 
         Manager.UpdateMetadataEntry(1, new GDPRMetadata("mockTable", "mockColumn") { Purpose = "Testing!" });
 
-        var purpose = Connection.QuerySingle<string>("select purpose from gdpr_metadata");
+        var purpose = Manager.GetMetadataEntry(1).Purpose;
 
         Assert.Equal("Testing!", purpose);
     }
@@ -166,7 +159,7 @@ public class MetadataManagerTest : IDisposable
 
         Manager.UpdateMetadataEntry(1, new GDPRMetadata("mockTable", "mockColumn") { Origin = "Imagination" });
 
-        var origin = Connection.QuerySingle<string>("select origin from gdpr_metadata");
+        var origin = Manager.GetMetadataEntry(1).Origin;
 
         Assert.Equal("Imagination", origin);
     }
@@ -179,7 +172,7 @@ public class MetadataManagerTest : IDisposable
 
         Manager.UpdateMetadataEntry(1, new GDPRMetadata("mockTable", "mockColumn") { LegallyRequired = true });
 
-        var legallyRequired = Connection.QuerySingle<bool>("select legally_required from gdpr_metadata where id = 1");
+        var legallyRequired = Manager.GetMetadataEntry(1).LegallyRequired;
 
         Assert.Equal(true, legallyRequired);
     }
@@ -191,12 +184,23 @@ public class MetadataManagerTest : IDisposable
         Manager.MarkAsPersonalData(new GDPRMetadata("mockTable", "mockColumn") { Purpose = "Test" });
 
         Manager.UpdateMetadataEntry(1, new GDPRMetadata("mockTable", "mockColumn") { LegallyRequired = true });
+        var updatedEntry = Manager.GetMetadataEntry(1);
+        
+        Assert.Equal("Test", updatedEntry.Purpose);
+        Assert.Equal(true, updatedEntry.LegallyRequired);
+    }
+    
+    [Fact]
+    public void UpdatingNonExistingEntryDoesNothing()
+    {
+        Manager.CreateMetadataTables();
+        var insertedEntry = new GDPRMetadata("mockTable", "mockColumn") { Purpose = "Test" };
+        Manager.MarkAsPersonalData(insertedEntry);
 
-        var purpose = Connection.QuerySingle<string>("select purpose from gdpr_metadata");
-        var legallyRequired = Connection.QuerySingle<bool>("select legally_required from gdpr_metadata where id = 1");
-
-        Assert.Equal("Test", purpose);
-        Assert.Equal(true, legallyRequired);
+        Manager.UpdateMetadataEntry(123, new GDPRMetadata("mockTable", "mockColumn") { LegallyRequired = true });
+        var unchangedEntry = Manager.GetMetadataEntry(1);
+        
+        Assert.Equal(insertedEntry, unchangedEntry);
     }
 
     [Fact]
@@ -229,5 +233,63 @@ public class MetadataManagerTest : IDisposable
         Assert.Contains(one, result);
         Assert.DoesNotContain(two, result);
         Assert.Contains(three, result);
+    }
+    
+    [Fact]
+    public void GetMetadataWithNullValuesReturnsEmptyListWhenNoRowsWithMissingValues()
+    {
+        Manager.CreateMetadataTables();
+        var result = Manager.GetMetadataWithNullValues();
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void GettingNonExistingEntryReturnsNull()
+    {
+        Manager.CreateMetadataTables();
+        
+        Assert.Null(Manager.GetMetadataEntry(1));
+    }
+
+    [Fact]
+    public void DeletesMetadataEntryWithGivenId()
+    {
+        Manager.CreateMetadataTables();
+        var one = new GDPRMetadata("TableOne", "ColumnOne");
+        var two = new GDPRMetadata("TableTwo", "ColumnTwo");
+        Manager.MarkAsPersonalData(one);
+        Manager.MarkAsPersonalData(two);
+        
+        Manager.DeleteMetadataEntry(2);
+
+        var notDeleted = Manager.GetMetadataEntry(1);
+        var deleted = Manager.GetMetadataEntry(2);
+        
+        // Check that the first is not deleted and has the correct value
+        Assert.Equal("TableOne", notDeleted.TargetTable);
+        // Check that fetching the deleted entry returns null
+        Assert.Null(deleted);
+    }
+    
+    [Fact]
+    public void DeletingNonExistingEntryDoesNothing()
+    {
+        Manager.CreateMetadataTables();
+        var one = new GDPRMetadata("TableOne", "ColumnOne");
+        var two = new GDPRMetadata("TableTwo", "ColumnTwo");
+        Manager.MarkAsPersonalData(one);
+        Manager.MarkAsPersonalData(two);
+        
+        // If DeleteMetadataEntry is called with a non existing id it does nothing
+        // An alternative approach is to throw an exception.
+        Manager.DeleteMetadataEntry(299);
+
+        var notDeleted = Manager.GetMetadataEntry(1);
+        var alsoNotDeleted = Manager.GetMetadataEntry(2);
+        
+        // Check that both entries still exist
+        Assert.Equal("TableOne", notDeleted.TargetTable);
+        Assert.Equal("TableTwo", alsoNotDeleted.TargetTable);
     }
 }

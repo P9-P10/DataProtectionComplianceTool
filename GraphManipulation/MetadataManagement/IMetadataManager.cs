@@ -14,7 +14,7 @@ public interface IMetadataManager
 
     public IEnumerable<GDPRMetadata> GetAllMetadataEntries();
 
-    public GDPRMetadata GetMetadataEntry(int entryId);
+    public GDPRMetadata? GetMetadataEntry(int entryId);
 
     public IEnumerable<GDPRMetadata> GetMetadataWithNullValues();
 }
