@@ -16,15 +16,15 @@ public class GDPRMetadata
     }
 
     public int Id { get; set; }
-    public string? Purpose { get; init; }
+    public string? Purpose { get; set; }
 
     public string? TargetTable { get; set; }
 
     public string? TargetColumn { get; set; }
 
-    public string? Origin { get; init; }
+    public string? Origin { get; set; }
 
-    public bool? LegallyRequired { get; init; }
+    public bool? LegallyRequired { get; set; }
 
     protected bool Equals(GDPRMetadata other)
     {

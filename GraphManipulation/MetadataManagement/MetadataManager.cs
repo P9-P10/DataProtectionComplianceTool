@@ -182,11 +182,13 @@ public class MetadataManager : IMetadataManager, IDisposable
     private static GDPRMetadata MapMetadata(GdprMetadataEntity entry)
     {
         // Maps from the EFCore entity GdprMetadataEntity to the Domain Entity GDPRMetadata
-        GDPRMetadata? result = new GDPRMetadata()
-        {
-            TargetTable = entry.Column.TargetTable, TargetColumn = entry.Column.TargetColumn, Purpose = entry.Purpose,
-            Origin = entry.Origin, LegallyRequired = entry.LegallyRequired
-        };
+        var result = MetadataFactory
+            .CreateMetadata()
+            .For(entry.Column)
+            .WithPurpose(entry.Purpose)
+            .From(entry.Origin)
+            .IsLegallyRequired(entry.LegallyRequired);
+        
         return result;
     }
 
