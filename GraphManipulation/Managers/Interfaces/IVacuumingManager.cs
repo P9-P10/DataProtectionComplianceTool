@@ -6,6 +6,6 @@ namespace GraphManipulation.Managers.Interfaces;
 
 public interface IVacuumingManager<T> : IManager<VacuumingRule<T>, T>
 {
-    public IEnumerable<DeletionExecution> Execute(T vacuumingRule);
+    public IEnumerable<DeletionExecution> Execute(T id);
     public IEnumerable<DeletionExecution> ExecuteAll();
 }

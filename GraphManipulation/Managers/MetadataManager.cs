@@ -4,29 +4,29 @@ using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Managers;
 
-public class MetadataManager : IMetadataManager<int>
+public class MetadataManager<T> : IMetadataManager<T>
 {
-    public void Add(Metadata<int> value)
+    public void Add(Metadata<T> value)
     {
         throw new NotImplementedException();
     }
 
-    public void Update(int id, Metadata<int> value)
+    public void Update(T id, Metadata<T> value)
     {
         throw new NotImplementedException();
     }
 
-    public void Delete(int id)
+    public void Delete(T id)
     {
         throw new NotImplementedException();
     }
 
-    public Metadata<int> Get(int id)
+    public Metadata<T> Get(T id)
     {
         throw new NotImplementedException();
     }
 
-    public IEnumerable<Metadata<int>> GetAll()
+    public IEnumerable<Metadata<T>> GetAll()
     {
         throw new NotImplementedException();
     }
@@ -41,7 +41,7 @@ public class MetadataManager : IMetadataManager<int>
         throw new NotImplementedException();
     }
 
-    public IEnumerable<Metadata<int>> GetMetadataWithNullValues()
+    public IEnumerable<Metadata<T>> GetMetadataWithNullValues()
     {
         throw new NotImplementedException();
     }

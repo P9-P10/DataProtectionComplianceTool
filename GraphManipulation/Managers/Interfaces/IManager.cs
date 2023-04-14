@@ -1,8 +1,6 @@
-using GraphManipulation.Models;
+namespace GraphManipulation.Managers.Interfaces;
 
-namespace GraphManipulation.Managers;
-
-public interface IManager<TValue, TIdentifier>
+public interface IManager<TValue, in TIdentifier>
 {
     public void Add(TValue value);
     public void Update(TIdentifier id, TValue value);

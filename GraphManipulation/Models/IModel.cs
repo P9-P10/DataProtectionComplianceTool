@@ -1,7 +1,8 @@
 namespace GraphManipulation.Models.Interfaces;
 
-public interface IModel<T>
+public interface IModel<T> 
 {
-    public T Identifier { get; set; }
-    public string Description { get; set; }
+    public T Identifier { get; }
+    public string Description { get; }
+    public string Name { get; }
 }

@@ -1,17 +1,16 @@
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
-using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Managers;
 
-public class PurposeManager<T> : IPurposeManager<T>
+public class OriginManager<T> : IOriginManager<T>
 {
-    public void Add(Purpose<T> value)
+    public void Add(Origin<T> value)
     {
         throw new NotImplementedException();
     }
 
-    public void Update(T id, Purpose<T> value)
+    public void Update(T id, Origin<T> value)
     {
         throw new NotImplementedException();
     }
@@ -21,12 +20,12 @@ public class PurposeManager<T> : IPurposeManager<T>
         throw new NotImplementedException();
     }
 
-    public Purpose<T> Get(T id)
+    public Origin<T> Get(T id)
     {
         throw new NotImplementedException();
     }
 
-    public IEnumerable<Purpose<T>> GetAll()
+    public IEnumerable<Origin<T>> GetAll()
     {
         throw new NotImplementedException();
     }
