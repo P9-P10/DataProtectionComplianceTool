@@ -43,7 +43,7 @@ public class SqliteVacuumerStoreTest
         IVacuumerStore sqLiteVacuumerStore = InitiateVacuumerStore();
         VacuumingRule insertedRule = new("Rule", "Purpose", "Interval");
         VacuumingRule secondRule = new("SecondRule", "SecondPurpose", "Interval");
-        int resultId = sqLiteVacuumerStore.StoreVacuumingRule(insertedRule);
+        sqLiteVacuumerStore.StoreVacuumingRule(insertedRule);
         sqLiteVacuumerStore.StoreVacuumingRule(secondRule);
 
         IEnumerable<VacuumingRule> result = sqLiteVacuumerStore.FetchVacuumingRules();
