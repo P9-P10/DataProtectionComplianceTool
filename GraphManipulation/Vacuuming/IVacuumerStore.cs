@@ -2,6 +2,11 @@
 
 public interface IVacuumerStore
 {
+    /// <summary>
+    /// Stores a new vacuuming rule in the system.
+    /// </summary>
+    /// <param name="vacuumingRule"></param>
+    /// <returns>Returns the ID of the newly inserted rule.</returns>
     public int StoreVacuumingRule(VacuumingRule? vacuumingRule);
 
     
