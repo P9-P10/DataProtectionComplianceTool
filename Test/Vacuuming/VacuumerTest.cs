@@ -181,7 +181,7 @@ public class VacuumerTest
 
         int id = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
 
-        VacuumingRule rule = new("Rule", "Purpose", "2y 5d");
+        VacuumingRule? rule = new("Rule", "Purpose", "2y 5d");
         Assert.True(vacuumerStore.FetchVacuumingRules().ToList().Count == 1);
         Assert.Contains(rule, vacuumerStore.FetchVacuumingRules());
         Assert.Equal(1, id);
@@ -197,10 +197,10 @@ public class VacuumerTest
         vacuumer.UpdateVacuumingRule(id, "NewName", "NewPurpose", "2y 20d");
 
 
-        VacuumingRule expected = new("NewName", "NewPurpose", "2y 20d");
-        VacuumingRule oldUnexpected = new("Rule", "Purpose", "2y 5d");
+        VacuumingRule? expected = new("NewName", "NewPurpose", "2y 20d");
+        VacuumingRule? oldUnexpected = new("Rule", "Purpose", "2y 5d");
 
-        List<VacuumingRule> storedRules = vacuumerStore.FetchVacuumingRules().ToList();
+        List<VacuumingRule?> storedRules = vacuumerStore.FetchVacuumingRules().ToList();
         Assert.DoesNotContain(oldUnexpected, storedRules);
         Assert.Contains(expected, storedRules);
         Assert.Single(storedRules);
@@ -216,10 +216,10 @@ public class VacuumerTest
         vacuumer.UpdateVacuumingRule(id, "NewName", newInterval: "2y 20d");
 
 
-        VacuumingRule expected = new("NewName", "Purpose", "2y 20d");
-        VacuumingRule oldUnexpected = new("Rule", "Purpose", "2y 5d");
+        VacuumingRule? expected = new("NewName", "Purpose", "2y 20d");
+        VacuumingRule? oldUnexpected = new("Rule", "Purpose", "2y 5d");
 
-        List<VacuumingRule> storedRules = vacuumerStore.FetchVacuumingRules().ToList();
+        List<VacuumingRule?> storedRules = vacuumerStore.FetchVacuumingRules().ToList();
         Assert.DoesNotContain(oldUnexpected, storedRules);
         Assert.Contains(expected, storedRules);
     }
@@ -235,11 +235,11 @@ public class VacuumerTest
         vacuumer.UpdateVacuumingRule(id, "NewName", "NewPurpose", "2y 20d");
 
 
-        VacuumingRule expected = new("NewName", "NewPurpose", "2y 20d");
-        VacuumingRule oldUnexpected = new("Rule", "Purpose", "2y 5d");
+        VacuumingRule? expected = new("NewName", "NewPurpose", "2y 20d");
+        VacuumingRule? oldUnexpected = new("Rule", "Purpose", "2y 5d");
 
 
-        List<VacuumingRule> storedRules = vacuumerStore.FetchVacuumingRules().ToList();
+        List<VacuumingRule?> storedRules = vacuumerStore.FetchVacuumingRules().ToList();
         Assert.DoesNotContain(oldUnexpected, storedRules);
         Assert.Contains(expected, storedRules);
         Assert.Equal(2, storedRules.Count);
@@ -255,8 +255,8 @@ public class VacuumerTest
         vacuumer.DeleteVacuumingRule(id);
 
 
-        List<VacuumingRule> storedRules = vacuumerStore.FetchVacuumingRules().ToList();
-        VacuumingRule oldUnexpected = new("Rule", "Purpose", "2y 5d");
+        List<VacuumingRule?> storedRules = vacuumerStore.FetchVacuumingRules().ToList();
+        VacuumingRule? oldUnexpected = new("Rule", "Purpose", "2y 5d");
         Assert.DoesNotContain(oldUnexpected, storedRules);
         Assert.Empty(storedRules);
     }
