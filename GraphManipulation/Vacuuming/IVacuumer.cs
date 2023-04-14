@@ -1,13 +1,18 @@
-﻿namespace GraphManipulation.Vacuuming;
+namespace GraphManipulation.Vacuuming;
 
 public interface IVacuumer
 {
-    public List<string> GenerateUpdateStatement(string predefinedExpirationDate = "");
-    
-    public void RunVacuumingRule(int ruleId);
-    public void RunAllVacuumingRules();
-    public void AddVacuumingRule(string rule);
-    public void UpdateVacuumingRule(int ruleId, string updatedRule);
-    public void DeleteVacuumingRule(int ruleId);
 
+    public IEnumerable<DeletionExecution> GenerateUpdateStatement(string predefinedExpirationDate = "");
+
+    public IEnumerable<DeletionExecution> Execute();
+
+    
+    public IEnumerable<DeletionExecution> RunVacuumingRule(int ruleId);
+    public void RunAllVacuumingRules();
+    public int AddVacuumingRule(string ruleName, string purpose, string interval);
+    public void UpdateVacuumingRule(int ruleId, string newRuleName, string newPurpose, string newInterval);
+
+    public string GetVacuumingRule(int ruleId);
+    public IEnumerable<string> GetAllVacuumingRules();
 }

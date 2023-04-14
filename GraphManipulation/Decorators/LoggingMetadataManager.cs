@@ -134,6 +134,11 @@ public class LoggingMetadataManager : IMetadataManager
     {
         throw new NotImplementedException();
     }
+    
+    public IEnumerable<GDPRMetadata> GetAllMetadataEntries()
+    {
+        throw new NotImplementedException();
+    }
 
     public GDPRMetadata? GetMetadataEntry(int entryId)
     {

@@ -13,13 +13,18 @@ public class LoggingVacuumer : IVacuumer
         _vacuumer = vacuumer;
         _logger = logger;
     }
-    
-    public List<string> GenerateUpdateStatement(string predefinedExpirationDate = "")
+
+    public IEnumerable<DeletionExecution> Execute()
     {
         throw new NotImplementedException();
     }
 
-    public void RunVacuumingRule(int ruleId)
+    IEnumerable<DeletionExecution> IVacuumer.GenerateUpdateStatement(string predefinedExpirationDate)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<DeletionExecution> RunVacuumingRule(int ruleId)
     {
         throw new NotImplementedException();
     }
@@ -29,17 +34,27 @@ public class LoggingVacuumer : IVacuumer
         throw new NotImplementedException();
     }
 
-    public void AddVacuumingRule(string rule)
+    public int AddVacuumingRule(string ruleName, string purpose, string interval)
     {
         throw new NotImplementedException();
     }
 
-    public void UpdateVacuumingRule(int ruleId, string updatedRule)
+    public void UpdateVacuumingRule(int ruleId, string newRuleName, string newPurpose, string newInterval)
     {
         throw new NotImplementedException();
     }
 
     public void DeleteVacuumingRule(int ruleId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public string GetVacuumingRule(int ruleId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<string> GetAllVacuumingRules()
     {
         throw new NotImplementedException();
     }

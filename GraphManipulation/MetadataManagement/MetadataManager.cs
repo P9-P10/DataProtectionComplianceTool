@@ -164,6 +164,11 @@ public class MetadataManager : IMetadataManager, IDisposable
         throw new NotImplementedException();
     }
 
+    public IEnumerable<GDPRMetadata> GetAllMetadataEntries()
+    {
+        throw new NotImplementedException();
+    }
+    
     /// <summary>
     /// Returns GDPRMetadata with matching id, or null if no such entry exists
     /// </summary>
