@@ -6,13 +6,13 @@ public class VacuumingRule
 
     public string Purpose { get; set; }
 
-    public string Rule { get; set; }
+    public string RuleName { get; set; }
 
-    public VacuumingRule(string rule, string purpose, string interval)
+    public VacuumingRule(string ruleName, string purpose, string interval)
     {
         Purpose = purpose;
         Interval = interval;
-        Rule = rule;
+        RuleName = ruleName;
     }
 
     public override bool Equals(object? obj)
@@ -22,11 +22,11 @@ public class VacuumingRule
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Interval, Purpose, Rule);
+        return HashCode.Combine(Interval, Purpose, RuleName);
     }
 
     bool Equals(VacuumingRule? other)
     {
-        return other.Purpose == Purpose && other.Interval == Interval && other.Rule == Rule;
+        return other.Purpose == Purpose && other.Interval == Interval && other.RuleName == RuleName;
     }
 }

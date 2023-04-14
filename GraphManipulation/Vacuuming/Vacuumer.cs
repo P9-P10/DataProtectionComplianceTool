@@ -78,7 +78,7 @@ public class Vacuumer : IVacuumer
     public IEnumerable<DeletionExecution> RunVacuumingRule(int ruleId)
     {
         List<DeletionExecution> conditions = new List<DeletionExecution>();
-        VacuumingRule rule = _vacuumerStore.FetchVacuumingRule(ruleId);
+        VacuumingRule? rule = _vacuumerStore.FetchVacuumingRule(ruleId);
 
         List<PersonDataColumn> personDataColumns = _personDataColumnService.GetColumns().ToList();
 
@@ -95,7 +95,7 @@ public class Vacuumer : IVacuumer
         return conditions;
     }
 
-    private static bool ContainsCorrectCondition(PersonDataColumn personDataColumn, VacuumingRule rule)
+    private static bool ContainsCorrectCondition(PersonDataColumn personDataColumn, VacuumingRule? rule)
     {
         return personDataColumn.DeleteConditions.Any(x => x.Purpose == rule.Purpose);
     }
@@ -111,17 +111,17 @@ public class Vacuumer : IVacuumer
 
     public int AddVacuumingRule(string ruleName, string purpose, string interval)
     {
-        VacuumingRule vacuumingRule = new(ruleName, purpose, interval);
+        VacuumingRule? vacuumingRule = new(ruleName, purpose, interval);
         return _vacuumerStore.StoreVacuumingRule(vacuumingRule);
     }
 
     public void UpdateVacuumingRule(int ruleId, string newRuleName = "", string newPurpose = "",
         string newInterval = "")
     {
-        VacuumingRule rule = _vacuumerStore.FetchVacuumingRule(ruleId);
+        VacuumingRule? rule = _vacuumerStore.FetchVacuumingRule(ruleId);
         if (newRuleName != "")
         {
-            rule.Rule = newRuleName;
+            rule.RuleName = newRuleName;
         }
 
         if (newPurpose != "")

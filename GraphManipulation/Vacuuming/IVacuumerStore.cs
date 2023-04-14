@@ -2,13 +2,28 @@
 
 public interface IVacuumerStore
 {
-    public int StoreVacuumingRule(VacuumingRule vacuumingRule);
+    public int StoreVacuumingRule(VacuumingRule? vacuumingRule);
 
+    
+    /// <summary>
+    /// Fetches existing Vacuuming rules.
+    /// </summary>
+    /// <returns></returns>
     public IEnumerable<VacuumingRule> FetchVacuumingRules();
 
-    public VacuumingRule FetchVacuumingRule(int id);
+    /// <summary>
+    /// Fetches vacuuming rule by ID if it exists.
+    /// If no vacuuming rule with the id exists, it returns null.
+    /// </summary>
+    /// <param name="id">Id of the vacuuming rule</param>
+    /// <returns>Vacuuming rule or null.</returns>
+    public VacuumingRule? FetchVacuumingRule(int id);
 
+    /// <summary>
+    /// Deletes vacuuming rule from the system.
+    /// </summary>
+    /// <param name="id">Id of the vacuuming rule to delete</param>
     public void DeleteVacuumingRule(int id);
 
-    public bool UpdateVacuumingRule(int id, VacuumingRule newRule);
+    public bool UpdateVacuumingRule(int id, VacuumingRule? newRule);
 }
