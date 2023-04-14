@@ -13,6 +13,6 @@ public interface IVacuumer
     public int AddVacuumingRule(string ruleName, string purpose, string interval);
     public void UpdateVacuumingRule(int ruleId, string newRuleName, string newPurpose, string newInterval);
 
-    public string GetVacuumingRule(int ruleId);
-    public IEnumerable<string> GetAllVacuumingRules();
+    public VacuumingRule GetVacuumingRule(int ruleId);
+    public IEnumerable<VacuumingRule> GetAllVacuumingRules();
 }

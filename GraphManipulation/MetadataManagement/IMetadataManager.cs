@@ -12,8 +12,6 @@ public interface IMetadataManager
 
     public void DeleteMetadataEntry(int entryId);
 
-    public void LinkVacuumingRuleToMetadata(int ruleId, int metadataId);
-
     public IEnumerable<GDPRMetadata> GetAllMetadataEntries();
 
     public GDPRMetadata GetMetadataEntry(int entryId);

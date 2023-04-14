@@ -142,12 +142,12 @@ public class Vacuumer : IVacuumer
         _vacuumerStore.DeleteVacuumingRule(ruleId);
     }
 
-    public string GetVacuumingRule(int ruleId)
+    public VacuumingRule GetVacuumingRule(int ruleId)
     {
         throw new NotImplementedException();
     }
 
-    public IEnumerable<string> GetAllVacuumingRules()
+    public IEnumerable<VacuumingRule> GetAllVacuumingRules()
     {
         throw new NotImplementedException();
     }
