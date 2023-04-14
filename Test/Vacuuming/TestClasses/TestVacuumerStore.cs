@@ -12,7 +12,7 @@ public class TestVacuumerStore : IVacuumerStore
         _rules = new List<VacuumingRule?>();
     }
 
-    public int StoreVacuumingRule(VacuumingRule? vacuumingRule)
+    public int StoreVacuumingRule(VacuumingRule vacuumingRule)
     {
         if (_rules.Contains(vacuumingRule)) return _rules.IndexOf(vacuumingRule);
         _rules.Add(vacuumingRule);
@@ -34,7 +34,7 @@ public class TestVacuumerStore : IVacuumerStore
         _rules.RemoveAt(id-1);
     }
 
-    public bool UpdateVacuumingRule(int id, VacuumingRule? newRule)
+    public bool UpdateVacuumingRule(int id, VacuumingRule newRule)
     {
         if (_rules.Count >= id) return false;
         _rules[id] = newRule;

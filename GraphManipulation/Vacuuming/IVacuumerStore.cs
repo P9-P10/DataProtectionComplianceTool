@@ -7,7 +7,7 @@ public interface IVacuumerStore
     /// </summary>
     /// <param name="vacuumingRule"></param>
     /// <returns>Returns the ID of the newly inserted rule.</returns>
-    public int StoreVacuumingRule(VacuumingRule? vacuumingRule);
+    public int StoreVacuumingRule(VacuumingRule vacuumingRule);
 
     
     /// <summary>
@@ -30,5 +30,11 @@ public interface IVacuumerStore
     /// <param name="id">Id of the vacuuming rule to delete</param>
     public void DeleteVacuumingRule(int id);
 
-    public bool UpdateVacuumingRule(int id, VacuumingRule? newRule);
+    /// <summary>
+    /// Updates a vacuuming rule.
+    /// </summary>
+    /// <param name="id">Id of the vacuuming rule to update.</param>
+    /// <param name="newRule">The rule containing the values which it should be updated to.</param>
+    /// <returns></returns>
+    public bool UpdateVacuumingRule(int id, VacuumingRule newRule);
 }

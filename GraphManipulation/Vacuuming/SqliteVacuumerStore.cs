@@ -35,7 +35,7 @@ public class SqliteVacuumerStore : IVacuumerStore
         return result.ToArray()[0];
     }
 
-    public int StoreVacuumingRule(VacuumingRule? vacuumingRule)
+    public int StoreVacuumingRule(VacuumingRule vacuumingRule)
     {
         return Store(vacuumingRule);
     }
@@ -76,7 +76,7 @@ public class SqliteVacuumerStore : IVacuumerStore
         _dbConnection.Execute($"DELETE FROM vacuuming_rules WHERE id = {id};");
     }
 
-    public bool UpdateVacuumingRule(int id, VacuumingRule? newRule)
+    public bool UpdateVacuumingRule(int id, VacuumingRule newRule)
     {
         int result = _dbConnection.Execute(
             $"UPDATE vacuuming_rules SET purpose = '{newRule.Purpose}',interval = '{newRule.Interval}',ruleName = '{newRule.RuleName}' WHERE id = {id};");
