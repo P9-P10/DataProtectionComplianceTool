@@ -1,20 +1,63 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using GraphManipulation.Vacuuming.Components;
+﻿using System.Collections.Generic;
+using System.Linq;
+using GraphManipulation.DataAccess.Entities;
+using GraphManipulation.Services;
+using GraphManipulation.Vacuuming;
+using Test.Vacuuming.TestClasses;
 using Xunit;
 
 namespace Test.Vacuuming;
 
 public class VacuumerTest
 {
+    private Vacuumer VacuumInstantiate(IPersonDataColumnService? personDataColumnService = null,
+        IQueryExecutor? queryExecutor = null, IVacuumerStore? vacuumerStore = null)
+    {
+        personDataColumnService ??= new TestPersonDataColumnService();
+
+        queryExecutor ??= new TestQueryExecutor();
+
+        vacuumerStore ??= new TestVacuumerStore();
+
+        Vacuumer vacuumer = new(personDataColumnService, queryExecutor, vacuumerStore);
+        return vacuumer;
+    }
+
+    private PersonDataColumn PersonDataColumnMaker(string defaultValue = "Null", bool multipleDeleteConditions = false,
+        string tableName = "Table", string columnName = "Column", string purpose = "Purpose")
+    {
+        List<DeleteCondition> deleteConditions = new List<DeleteCondition>();
+        if (!multipleDeleteConditions)
+        {
+            DeleteCondition deleteCondition = new("Condition", purpose);
+            deleteConditions.Add(deleteCondition);
+        }
+        else
+        {
+            DeleteCondition deleteCondition = new("Condition", purpose);
+            DeleteCondition deleteCondition2 = new("SecondCondition", purpose);
+            deleteConditions.Add(deleteCondition);
+            deleteConditions.Add(deleteCondition2);
+        }
+
+        PersonDataColumn personDataColumn = new(tableName,
+            columnName,
+            defaultValue,
+            deleteConditions);
+        return personDataColumn;
+    }
+
+    private DeletionExecution DeletionExecutionMaker(string query, string table = "Table", string column = "Column")
+    {
+        List<string> purposes = new List<string>() {"Purpose"};
+        DeletionExecution deletionExecution = new(purposes, column, table, query);
+        return deletionExecution;
+    }
+
     [Fact]
     public void TestGenerateSqlQueryForDeletion_Returns_Empty_Query_when_No_TablePairs_Provided()
     {
-        var tableColumnPairs = new List<TableColumnPair>();
-
-
-        GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
+        Vacuumer vacuumer = VacuumInstantiate();
         var query = vacuumer.GenerateUpdateStatement();
 
         Assert.Empty(query);
@@ -23,89 +66,243 @@ public class VacuumerTest
     [Fact]
     public void TestGenerateSqlQueryForDeletion_Returns_Correct_Query_When_Provided_TablePairs()
     {
-        Purpose purpose = new("Name", "2y", "Condition", "Local", true);
-        TableColumnPair tableColumnPair1 = new("Table", "Column");
-        var tableColumnPairs = new List<TableColumnPair>();
-        tableColumnPair1.AddPurpose(purpose);
-        tableColumnPairs.Add(tableColumnPair1);
+        TestPersonDataColumnService? personDataColumnService = new();
+        Vacuumer vacuumer = VacuumInstantiate(personDataColumnService);
+        personDataColumnService.AddColumn(PersonDataColumnMaker());
 
+        var query = vacuumer.GenerateUpdateStatement();
 
-        var expectedTime = DateTime.Now.AddYears(-2).ToString("yyyy-M-d h:m", CultureInfo.InvariantCulture);
-        GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
-        var query = vacuumer.GenerateUpdateStatement(expectedTime);
-
-
-        var expected =
-            "UPDATE Table SET Column = Null WHERE (Condition);";
+        DeletionExecution expected = DeletionExecutionMaker("UPDATE Table SET Column = Null WHERE (Condition);");
         Assert.Contains(expected, query);
     }
+
 
     [Fact]
     public void
         TestGenerateSqlQueryForDeletion_Returns_Correct_Query_When_Provided_Multiple_Purposes_One_TableColumnPair()
     {
-        Purpose purpose = new("Name", "2y", "Condition", "Local", true);
-        Purpose purpose2 = new("Second", "3y", "SecondCondition", "Local", true);
-        TableColumnPair tableColumnPair1 = new("Table", "Column");
-        var tableColumnPairs = new List<TableColumnPair>();
-        tableColumnPair1.AddPurpose(purpose);
-        tableColumnPair1.AddPurpose(purpose2);
-        tableColumnPairs.Add(tableColumnPair1);
+        TestPersonDataColumnService? personDataColumnService = new();
+        Vacuumer vacuumer = VacuumInstantiate(personDataColumnService);
+        personDataColumnService.AddColumn(PersonDataColumnMaker(multipleDeleteConditions: true));
 
 
-        var expectedTime = DateTime.Now.AddYears(-2).ToString("yyyy-M-d h:m", CultureInfo.InvariantCulture);
-        GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
-        var query = vacuumer.GenerateUpdateStatement(expectedTime);
+        var query = vacuumer.GenerateUpdateStatement();
 
 
-        var expected =
-            "UPDATE Table SET Column = Null WHERE (Condition) AND (SecondCondition);";
+        DeletionExecution expected = DeletionExecutionMaker("UPDATE Table SET Column = Null " +
+                                                            "WHERE (Condition) AND (SecondCondition);");
         Assert.Contains(expected, query);
     }
+
 
     [Fact]
     public void TestGenerateSqlQueryForDeletion_Returns_Correct_Query_When_Provided_Multiple_TableColumnPairs_()
     {
-        Purpose purpose = new("Name", "2y", "Condition", "Local", true);
-        TableColumnPair tableColumnPair1 = new("Table", "Column");
-        TableColumnPair tableColumnPair2 = new("SecondTable", "SecondColumn");
-        var tableColumnPairs = new List<TableColumnPair>();
-        tableColumnPair1.AddPurpose(purpose);
-        tableColumnPair2.AddPurpose(purpose);
-        tableColumnPairs.Add(tableColumnPair1);
-        tableColumnPairs.Add(tableColumnPair2);
+        TestPersonDataColumnService? personDataColumnService = new();
+        Vacuumer vacuumer = VacuumInstantiate(personDataColumnService);
+        personDataColumnService.AddColumn(PersonDataColumnMaker());
+        personDataColumnService.AddColumn(PersonDataColumnMaker(tableName: "SecondTable", columnName: "SecondColumn"));
 
 
-        var expectedTime = DateTime.Now.AddYears(-2).ToString("yyyy-M-d h:m", CultureInfo.InvariantCulture);
-        GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
-        var query = vacuumer.GenerateUpdateStatement(expectedTime);
+        var query = vacuumer.GenerateUpdateStatement();
 
 
-        var firstExpected =
-            "UPDATE Table SET Column = Null WHERE (Condition);";
-        var secondExpected = "UPDATE SecondTable SET SecondColumn = Null WHERE (Condition);";
-        Assert.Contains(firstExpected, query);
-        Assert.Contains(secondExpected, query);
+        var deletionExecutions = query.ToList();
+        DeletionExecution firstExpected = DeletionExecutionMaker("UPDATE Table SET Column = Null WHERE (Condition);");
+        DeletionExecution secondExpected =
+            DeletionExecutionMaker("UPDATE SecondTable SET SecondColumn = Null WHERE (Condition);",
+                table: "SecondTable", column: "SecondColumn");
+        Assert.Contains(firstExpected, deletionExecutions);
+        Assert.Contains(secondExpected, deletionExecutions);
     }
 
     [Fact]
-    public void
-        TestGenerateSqlQueryForDeletion_Returns_Correct_Query_When_Provided_TablePairs_With_Default_UpdateValue_Defined()
+    public void TestExecuteExecutesCorrectly()
     {
-        Purpose purpose = new("Name", "2y", "Condition", "Local", true);
-        TableColumnPair tableColumnPair1 = new("Table", "Column", "UpdateValue");
-        var tableColumnPairs = new List<TableColumnPair>();
-        tableColumnPair1.AddPurpose(purpose);
-        tableColumnPairs.Add(tableColumnPair1);
+        TestPersonDataColumnService? personDataColumnService = new();
+        TestQueryExecutor testQueryExecutor = new();
+        Vacuumer vacuumer = VacuumInstantiate(personDataColumnService, testQueryExecutor);
+        personDataColumnService.AddColumn(PersonDataColumnMaker());
 
 
-        var expectedTime = DateTime.Now.AddYears(-2).ToString("yyyy-M-d h:m", CultureInfo.InvariantCulture);
-        GraphManipulation.Vacuuming.Vacuumer vacuumer = new(tableColumnPairs);
-        var query = vacuumer.GenerateUpdateStatement(expectedTime);
+        vacuumer.Execute();
 
 
-        var expected =
-            "UPDATE Table SET Column = UpdateValue WHERE (Condition);";
-        Assert.Contains(expected, query);
+        const string expectedQuery = "UPDATE Table SET Column = Null WHERE (Condition);";
+        Assert.Contains(expectedQuery, testQueryExecutor.Query);
+    }
+
+    [Fact]
+    public void TestExecute_Executes_Correctly_With_Multiple_Executions()
+    {
+        TestPersonDataColumnService? personDataColumnService = new();
+        TestQueryExecutor? testQueryExecutor = new();
+        Vacuumer vacuumer = VacuumInstantiate(personDataColumnService, testQueryExecutor);
+        personDataColumnService.AddColumn(PersonDataColumnMaker());
+        personDataColumnService.AddColumn(PersonDataColumnMaker(tableName: "SecondTable", columnName: "SecondColumn"));
+
+
+        vacuumer.Execute();
+
+
+        const string firstQuery = "UPDATE Table SET Column = Null WHERE (Condition);";
+        const string secondQuery = "UPDATE SecondTable SET SecondColumn = Null WHERE (Condition);";
+        Assert.Contains(firstQuery, testQueryExecutor.Query);
+        Assert.Contains(secondQuery, testQueryExecutor.Query);
+    }
+
+    [Fact]
+    public void TestExecute_Executes_Correctly_With_Multiple_Executions_Returns_Correct_DeletionExecutions()
+    {
+        TestPersonDataColumnService? personDataColumnService = new();
+        TestQueryExecutor? testQueryExecutor = new();
+        Vacuumer vacuumer = VacuumInstantiate(personDataColumnService, testQueryExecutor);
+        personDataColumnService.AddColumn(PersonDataColumnMaker());
+        personDataColumnService.AddColumn(PersonDataColumnMaker(tableName: "SecondTable", columnName: "SecondColumn"));
+
+
+        var query = vacuumer.Execute();
+
+
+        var deletionExecutions = query.ToList();
+        DeletionExecution firstExpected = DeletionExecutionMaker("UPDATE Table SET Column = Null WHERE (Condition);");
+        DeletionExecution secondExpected =
+            DeletionExecutionMaker("UPDATE SecondTable SET SecondColumn = Null WHERE (Condition);",
+                table: "SecondTable", column: "SecondColumn");
+        Assert.Contains(firstExpected, deletionExecutions);
+        Assert.Contains(secondExpected, deletionExecutions);
+    }
+
+    [Fact]
+    public void TestAddVacuumingRule_Adds_Correct_Rule()
+    {
+        TestVacuumerStore vacuumerStore = new();
+        Vacuumer vacuumer = VacuumInstantiate(vacuumerStore: vacuumerStore);
+
+        int id = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
+
+        VacuumingRule? rule = new("Rule", "Purpose", "2y 5d");
+        Assert.True(vacuumerStore.FetchVacuumingRules().ToList().Count == 1);
+        Assert.Contains(rule, vacuumerStore.FetchVacuumingRules());
+        Assert.Equal(1, id);
+    }
+
+    [Fact]
+    public void TestUpdateVacuumingRule_Updates_Values()
+    {
+        TestVacuumerStore vacuumerStore = new();
+        Vacuumer vacuumer = VacuumInstantiate(vacuumerStore: vacuumerStore);
+        int id = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
+
+        vacuumer.UpdateVacuumingRule(id, "NewName", "NewPurpose", "2y 20d");
+
+
+        VacuumingRule? expected = new("NewName", "NewPurpose", "2y 20d");
+        VacuumingRule? oldUnexpected = new("Rule", "Purpose", "2y 5d");
+
+        List<VacuumingRule?> storedRules = vacuumerStore.FetchVacuumingRules().ToList();
+        Assert.DoesNotContain(oldUnexpected, storedRules);
+        Assert.Contains(expected, storedRules);
+        Assert.Single(storedRules);
+    }
+
+    [Fact]
+    public void TestUpdateVacuumingRule_Only_Updates_Specified_Values()
+    {
+        TestVacuumerStore vacuumerStore = new();
+        Vacuumer vacuumer = VacuumInstantiate(vacuumerStore: vacuumerStore);
+        int id = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
+
+        vacuumer.UpdateVacuumingRule(id, "NewName", newInterval: "2y 20d");
+
+
+        VacuumingRule? expected = new("NewName", "Purpose", "2y 20d");
+        VacuumingRule? oldUnexpected = new("Rule", "Purpose", "2y 5d");
+
+        List<VacuumingRule?> storedRules = vacuumerStore.FetchVacuumingRules().ToList();
+        Assert.DoesNotContain(oldUnexpected, storedRules);
+        Assert.Contains(expected, storedRules);
+    }
+
+    [Fact]
+    public void TestUpdateVacuumingRule_Updates_Values_Multiple_Rules()
+    {
+        TestVacuumerStore vacuumerStore = new();
+        Vacuumer vacuumer = VacuumInstantiate(vacuumerStore: vacuumerStore);
+        int id = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
+        vacuumer.AddVacuumingRule("AnotherRule", "AnotherPurpose", "2y 5d");
+
+        vacuumer.UpdateVacuumingRule(id, "NewName", "NewPurpose", "2y 20d");
+
+
+        VacuumingRule? expected = new("NewName", "NewPurpose", "2y 20d");
+        VacuumingRule? oldUnexpected = new("Rule", "Purpose", "2y 5d");
+
+
+        List<VacuumingRule?> storedRules = vacuumerStore.FetchVacuumingRules().ToList();
+        Assert.DoesNotContain(oldUnexpected, storedRules);
+        Assert.Contains(expected, storedRules);
+        Assert.Equal(2, storedRules.Count);
+    }
+
+    [Fact]
+    public void TestDeleteVacuumingRule_Removes_Rule()
+    {
+        TestVacuumerStore vacuumerStore = new();
+        Vacuumer vacuumer = VacuumInstantiate(vacuumerStore: vacuumerStore);
+        int id = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
+
+        vacuumer.DeleteVacuumingRule(id);
+
+
+        List<VacuumingRule?> storedRules = vacuumerStore.FetchVacuumingRules().ToList();
+        VacuumingRule? oldUnexpected = new("Rule", "Purpose", "2y 5d");
+        Assert.DoesNotContain(oldUnexpected, storedRules);
+        Assert.Empty(storedRules);
+    }
+
+    [Fact]
+    public void TestRunVacuumingRule_Executes_Correct_Execution()
+    {
+        TestVacuumerStore vacuumerStore = new();
+        TestQueryExecutor testExecutor = new();
+        TestPersonDataColumnService personDataColumnService = new();
+        personDataColumnService.AddColumn(PersonDataColumnMaker());
+        personDataColumnService.AddColumn(PersonDataColumnMaker(purpose: "AnotherPurpose"));
+        Vacuumer vacuumer = VacuumInstantiate(vacuumerStore: vacuumerStore, queryExecutor: testExecutor,
+            personDataColumnService: personDataColumnService);
+        int id = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
+
+        List<DeletionExecution> executions = vacuumer.RunVacuumingRule(id).ToList();
+
+
+        DeletionExecution expected = DeletionExecutionMaker("UPDATE Table SET Column = Null WHERE (Condition);");
+
+        Assert.Contains(expected, executions);
+        Assert.True(1 == executions.Count);
+    }
+
+    [Fact]
+    public void TestRunVacuumingRule_Executes_Correct_Executions_Different_Executions_With_Same_Purpose()
+    {
+        TestVacuumerStore vacuumerStore = new();
+        TestQueryExecutor testExecutor = new();
+        TestPersonDataColumnService personDataColumnService = new();
+        personDataColumnService.AddColumn(PersonDataColumnMaker());
+        personDataColumnService.AddColumn(PersonDataColumnMaker(purpose: "Purpose",
+            columnName: "AnotherColumn"));
+        Vacuumer vacuumer = VacuumInstantiate(vacuumerStore: vacuumerStore, queryExecutor: testExecutor,
+            personDataColumnService: personDataColumnService);
+        int id = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
+
+        List<DeletionExecution> executions = vacuumer.RunVacuumingRule(id).ToList();
+
+
+        DeletionExecution expected = DeletionExecutionMaker("UPDATE Table SET Column = Null WHERE (Condition);");
+        DeletionExecution secondExpected =
+            DeletionExecutionMaker("UPDATE Table SET AnotherColumn = Null WHERE (Condition);",column:"AnotherColumn");
+
+        Assert.Contains(expected, executions);
+        Assert.True(2 == executions.Count);
     }
 }

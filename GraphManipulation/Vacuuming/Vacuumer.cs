@@ -1,59 +1,145 @@
-using GraphManipulation.Vacuuming.Components;
+using GraphManipulation.DataAccess.Entities;
+using GraphManipulation.Services;
 
 namespace GraphManipulation.Vacuuming;
 
 public class Vacuumer : IVacuumer
 {
-    private readonly List<TableColumnPair> _tableColumnPairs;
+    private readonly IPersonDataColumnService _personDataColumnService;
+    private readonly IQueryExecutor _queryExecutor;
+    private readonly IVacuumerStore _vacuumerStore;
 
-    public Vacuumer(List<TableColumnPair> tableColumnPairs)
+    public Vacuumer(IPersonDataColumnService personDataColumnService, IQueryExecutor queryExecutor,
+        IVacuumerStore vacuumerStore)
     {
-        _tableColumnPairs = tableColumnPairs;
+        _personDataColumnService = personDataColumnService;
+        _queryExecutor = queryExecutor;
+        _vacuumerStore = vacuumerStore;
     }
 
-    public List<string> GenerateUpdateStatement(string predefinedExpirationDate = "")
+    public IEnumerable<DeletionExecution> GenerateUpdateStatement(string predefinedExpirationDate = "")
     {
-        var outputQuery = new List<string>();
-        foreach (var tcPair in _tableColumnPairs)
-        {
-            var query = $"UPDATE {tcPair.Table} SET {tcPair.Column} = {tcPair.UpdateValue} WHERE ";
-            var logicOperator = " AND ";
-            foreach (var purpose in tcPair.GetPurposes)
-            {
-                query +=
-                    $"({purpose.ExpirationCondition})";
-                query += logicOperator;
-            }
+        return _personDataColumnService.GetColumns().Select(CreateDeletionExecution).ToList();
+    }
 
-            outputQuery.Add(ReplaceLastOccurrenceOfString(query, logicOperator));
+    private DeletionExecution CreateDeletionExecution(PersonDataColumn personDataColumn)
+    {
+        DeletionExecution deletionExecution = new();
+        var logicOperator = " AND ";
+        string query = CreateUpdateQuery(personDataColumn);
+
+        query += AppendConditions(personDataColumn, logicOperator, deletionExecution);
+
+        deletionExecution.Column = personDataColumn.ColumnName;
+        deletionExecution.Table = personDataColumn.TableName;
+
+        deletionExecution.Query = ReplaceLastOccurrenceOfString(query, logicOperator);
+        return deletionExecution;
+    }
+
+    private static string AppendConditions(PersonDataColumn personDataColumn, string logicOperator,
+        DeletionExecution deletionExecution)
+    {
+        string conditionalStatement = "";
+        foreach (DeleteCondition deleteCondition in personDataColumn.DeleteConditions)
+        {
+            conditionalStatement += $"({deleteCondition.Condition})";
+            conditionalStatement += logicOperator;
+            deletionExecution.AddPurpose(deleteCondition.Purpose);
         }
 
-        return outputQuery;
-    }
-    
-    public void RunVacuumingRule(int ruleId)
-    {
-        throw new NotImplementedException();
+        return conditionalStatement;
     }
 
+    private static string CreateUpdateQuery(PersonDataColumn personDataColumn)
+    {
+        return
+            $"UPDATE {personDataColumn.TableName} SET {personDataColumn.ColumnName} = {personDataColumn.DefaultValue} WHERE ";
+    }
+
+    public IEnumerable<DeletionExecution> Execute()
+    {
+        IEnumerable<DeletionExecution> executions = GenerateUpdateStatement();
+        var deletionExecutions = executions.ToList();
+        foreach (var deletionExecution in deletionExecutions)
+        {
+            _queryExecutor.Execute(deletionExecution.Query);
+        }
+
+        return deletionExecutions;
+    }
+
+    /// <summary>
+    /// This function executes a specified vacuuming rule.
+    /// It does not vacuum data if its protected by other purposes.
+    /// </summary>
+    /// <param name="ruleId">ID of the vacuuming rule</param>
+    /// <returns></returns>
+    public IEnumerable<DeletionExecution> RunVacuumingRule(int ruleId)
+    {
+        List<DeletionExecution> conditions = new List<DeletionExecution>();
+        VacuumingRule? rule = _vacuumerStore.FetchVacuumingRule(ruleId);
+
+        List<PersonDataColumn> personDataColumns = _personDataColumnService.GetColumns().ToList();
+
+        foreach (var personDataColumn in personDataColumns)
+        {
+            bool containsCorrectCondition = ContainsCorrectCondition(personDataColumn, rule);
+            if (!containsCorrectCondition) continue;
+
+            DeletionExecution execution = CreateDeletionExecution(personDataColumn);
+            conditions.Add(execution);
+            _queryExecutor.Execute(execution.Query);
+        }
+
+        return conditions;
+    }
+
+    private static bool ContainsCorrectCondition(PersonDataColumn personDataColumn, VacuumingRule? rule)
+    {
+        return personDataColumn.DeleteConditions.Any(x => x.Purpose == rule.Purpose);
+    }
+
+    /// <summary>
+    /// Same as Execute
+    /// </summary>
     public void RunAllVacuumingRules()
     {
-        throw new NotImplementedException();
+        // TODO Find ud af om vi kalder den RunAll eller Execute.
+        Execute();
     }
 
-    public void AddVacuumingRule(string rule)
+    public int AddVacuumingRule(string ruleName, string purpose, string interval)
     {
-        throw new NotImplementedException();
+        VacuumingRule? vacuumingRule = new(ruleName, purpose, interval);
+        return _vacuumerStore.StoreVacuumingRule(vacuumingRule);
     }
 
-    public void UpdateVacuumingRule(int ruleId, string updatedRule)
+    public void UpdateVacuumingRule(int ruleId, string newRuleName = "", string newPurpose = "",
+        string newInterval = "")
     {
-        throw new NotImplementedException();
+        VacuumingRule? rule = _vacuumerStore.FetchVacuumingRule(ruleId);
+        if (newRuleName != "")
+        {
+            rule.RuleName = newRuleName;
+        }
+
+        if (newPurpose != "")
+        {
+            rule.Purpose = newPurpose;
+        }
+
+        if (newInterval != "")
+        {
+            rule.Interval = newInterval;
+        }
+
+        _vacuumerStore.UpdateVacuumingRule(ruleId, rule);
     }
 
     public void DeleteVacuumingRule(int ruleId)
     {
-        throw new NotImplementedException();
+        _vacuumerStore.DeleteVacuumingRule(ruleId);
     }
 
     public string GetVacuumingRule(int ruleId)
