@@ -14,7 +14,7 @@ public class PersonMapper : IMapper<Person>
         throw new NotImplementedException();
     }
 
-    public Person FindSingle(Func<Person, bool> condition)
+    public Person? FindSingle(Func<Person, bool> condition)
     {
         throw new NotImplementedException();
     }

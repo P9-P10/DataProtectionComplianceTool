@@ -14,7 +14,7 @@ public class PurposeMapper : IMapper<Purpose>
         throw new NotImplementedException();
     }
 
-    public Purpose FindSingle(Func<Purpose, bool> condition)
+    public Purpose? FindSingle(Func<Purpose, bool> condition)
     {
         throw new NotImplementedException();
     }

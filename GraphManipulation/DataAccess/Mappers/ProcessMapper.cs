@@ -14,7 +14,7 @@ public class ProcessMapper : IMapper<Process>
         throw new NotImplementedException();
     }
 
-    public Process FindSingle(Func<Process, bool> condition)
+    public Process? FindSingle(Func<Process, bool> condition)
     {
         throw new NotImplementedException();
     }
