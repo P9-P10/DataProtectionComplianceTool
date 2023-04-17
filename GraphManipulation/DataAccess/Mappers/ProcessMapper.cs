@@ -2,29 +2,29 @@
 
 namespace GraphManipulation.DataAccess.Mappers;
 
-public class ColumnMapper : IMapper<Column>
+public class ProcessMapper : IMapper<Process>
 {
-    public Column Insert(Column value)
+    public Process Insert(Process value)
     {
         throw new NotImplementedException();
     }
 
-    public IEnumerable<Column> Find(Func<Column, bool> condition)
+    public IEnumerable<Process> Find(Func<Process, bool> condition)
     {
         throw new NotImplementedException();
     }
 
-    public Column FindSingle(Func<Column, bool> condition)
+    public Process FindSingle(Func<Process, bool> condition)
     {
         throw new NotImplementedException();
     }
 
-    public Column Update(Column value)
+    public Process Update(Process value)
     {
         throw new NotImplementedException();
     }
 
-    public void Delete(Column value)
+    public void Delete(Process value)
     {
         throw new NotImplementedException();
     }
