@@ -8,7 +8,8 @@ namespace Test.Vacuuming;
 
 public static class VacuumingModelsMakers
 {
-    public static PersonDataColumn PersonDataColumnMaker(string defaultValue = "Null", bool multipleDeleteConditions = false,
+    public static PersonDataColumn PersonDataColumnMaker(string defaultValue = "Null",
+        bool multipleDeleteConditions = false,
         string tableName = "Table", string columnName = "Column", string purpose = "Purpose")
     {
         List<DeleteCondition> deleteConditions = new List<DeleteCondition>();
@@ -32,25 +33,32 @@ public static class VacuumingModelsMakers
         return personDataColumn;
     }
 
-    public static DeletionExecution DeletionExecutionMaker(string query, string table = "Table", string column = "Column")
+    public static DeletionExecution DeletionExecutionMaker(string query, string table = "Table",
+        string column = "Column")
     {
         List<Purpose> purposes = new List<Purpose>() {new("Name", "Description")};
         DeletionExecution deletionExecution = new(purposes, column, table, query);
         return deletionExecution;
     }
 
-    public static VacuumingRule VacuumingRuleMaker(string name = "Name",string description = "Description", string interval = "2y 5d",IEnumerable<Purpose>? purposes = null)
+    public static VacuumingRule VacuumingRuleMaker(string name = "Name", string description = "Description",
+        string interval = "2y 5d", IEnumerable<Purpose>? purposes = null)
     {
         purposes ??= PurposesMaker();
-        return new VacuumingRule(name, description, interval,purposes);
+        return new VacuumingRule(name, description, interval, purposes);
     }
 
     private static IEnumerable<Purpose> PurposesMaker()
     {
         List<Purpose> purposes = new List<Purpose>();
-        
-        purposes.Add(new Purpose("Name", "Description"));
+
+        purposes.Add(new Purpose(0,"Name", "Description",PersonDataColumns(),new List<VacuumingRule>()));
 
         return purposes;
+    }
+
+    private static IEnumerable<PersonDataColumn>? PersonDataColumns()
+    {
+        return new List<PersonDataColumn>() {PersonDataColumnMaker()};
     }
 }

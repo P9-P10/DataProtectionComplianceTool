@@ -240,7 +240,7 @@ public class VacuumerTest
     public void TestRunVacuumingRule_Executes_Correct_Execution()
     {
         Vacuumer vacuumer = VacuumInstantiate();
-        VacuumingRule vacuumingRule = new("Name","Description", "2d 5y");
+        VacuumingRule vacuumingRule = VacuumingRuleMaker("Name","Description", "2d 5y");
 
         List<DeletionExecution> executions = vacuumer.RunVacuumingRule(vacuumingRule).ToList();
 
