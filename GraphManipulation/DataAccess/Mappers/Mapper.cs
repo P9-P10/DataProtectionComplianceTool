@@ -1,4 +1,6 @@
-﻿namespace GraphManipulation.DataAccess.Mappers;
+﻿using GraphManipulation.Models;
+
+namespace GraphManipulation.DataAccess.Mappers;
 
 public class Mapper<T> : IMapper<T> where T : class
 {
@@ -20,11 +22,12 @@ public class Mapper<T> : IMapper<T> where T : class
 
     public IEnumerable<T> Find(Func<T, bool> condition)
     {
-        return _context.Set<T>().Where(condition);
+        return _context.Set<T>().Where(condition).ToList();
     }
 
     public T? FindSingle(Func<T, bool> condition)
     {
+        // Throws InvalidOperationException if there are multiple matches
         return _context.Set<T>().SingleOrDefault(condition);
     }
 
@@ -38,6 +41,7 @@ public class Mapper<T> : IMapper<T> where T : class
 
     public void Delete(T value)
     {
+        // Throws exception when attempting to delete entry not in the database.
         ValidateArgument(value);
         _context.Remove(value);
         _context.SaveChanges();
