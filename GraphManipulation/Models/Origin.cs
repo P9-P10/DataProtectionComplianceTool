@@ -1,10 +1,10 @@
-using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Models;
 
-public class Origin<T> : IModel<T>
+public class Origin
 {
-    public T Identifier { get; private set; }
+    public int Identifier { get; private set; }
     public string Description { get; private set; }
     public string Name { get; }
+    public IEnumerable<PersonDataColumn> Columns { get; set; }
 }

@@ -143,7 +143,7 @@ public class MetadataManager : IMetadataManager, IDisposable
         
         existingMetadata.Purpose = value.Purpose ?? existingMetadata.Purpose;
         existingMetadata.Origin = value.Origin ?? existingMetadata.Origin;
-        existingMetadata.LegallyRequired = value.LegallyRequired ?? value.LegallyRequired;
+        existingMetadata.LegallyRequired = value.LegallyRequired ?? existingMetadata.LegallyRequired;
 
         _context.SaveChanges();
     }
@@ -157,11 +157,6 @@ public class MetadataManager : IMetadataManager, IDisposable
         
         _context.Remove(entryToDelete);
         _context.SaveChanges();
-    }
-
-    public void LinkVacuumingRuleToMetadata(int ruleId, int metadataId)
-    {
-        throw new NotImplementedException();
     }
 
     public IEnumerable<GDPRMetadata> GetAllMetadataEntries()
