@@ -1,4 +1,5 @@
 using GraphManipulation.Logging;
+using GraphManipulation.Models;
 using GraphManipulation.Vacuuming;
 
 namespace GraphManipulation.Decorators;
@@ -14,17 +15,18 @@ public class LoggingVacuumer : IVacuumer
         _logger = logger;
     }
 
+
+    public IEnumerable<DeletionExecution> GenerateUpdateStatement(string predefinedExpirationDate = "")
+    {
+        throw new NotImplementedException();
+    }
+
     public IEnumerable<DeletionExecution> Execute()
     {
         throw new NotImplementedException();
     }
 
-    IEnumerable<DeletionExecution> IVacuumer.GenerateUpdateStatement(string predefinedExpirationDate)
-    {
-        throw new NotImplementedException();
-    }
-
-    public IEnumerable<DeletionExecution> RunVacuumingRule(int ruleId)
+    public IEnumerable<DeletionExecution> RunVacuumingRule(VacuumingRule vacuumingRule)
     {
         throw new NotImplementedException();
     }
@@ -34,22 +36,13 @@ public class LoggingVacuumer : IVacuumer
         throw new NotImplementedException();
     }
 
-    public int AddVacuumingRule(string ruleName, string purpose, string interval)
+    public VacuumingRule AddVacuumingRule(string ruleName, string purpose, string interval, List<Purpose>? purposes)
     {
         throw new NotImplementedException();
     }
 
-    public void UpdateVacuumingRule(int ruleId, string newRuleName, string newPurpose, string newInterval)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void DeleteVacuumingRule(int ruleId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public VacuumingRule GetVacuumingRule(int ruleId)
+    public void UpdateVacuumingRule(VacuumingRule vacuumingRule, string newName = "", string newDescription = "",
+        string newInterval = "")
     {
         throw new NotImplementedException();
     }

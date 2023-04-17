@@ -1,58 +1,31 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using GraphManipulation.DataAccess.Entities;
+using GraphManipulation.DataAccess.Mappers;
+using GraphManipulation.Models;
 using GraphManipulation.Services;
 using GraphManipulation.Vacuuming;
 using Test.Vacuuming.TestClasses;
 using Xunit;
+using static Test.Vacuuming.VacuumingModelsMakers;
 
 namespace Test.Vacuuming;
 
 public class VacuumerTest
 {
     private Vacuumer VacuumInstantiate(IPersonDataColumnService? personDataColumnService = null,
-        IQueryExecutor? queryExecutor = null, IVacuumerStore? vacuumerStore = null)
+        IQueryExecutor? queryExecutor = null, IMapper<VacuumingRule> vacuumingRuleMapper = null)
     {
         personDataColumnService ??= new TestPersonDataColumnService();
 
         queryExecutor ??= new TestQueryExecutor();
 
-        vacuumerStore ??= new TestVacuumerStore();
+        vacuumingRuleMapper ??= new VacuumingRuleMapper();
 
-        Vacuumer vacuumer = new(personDataColumnService, queryExecutor, vacuumerStore);
+        Vacuumer vacuumer = new(personDataColumnService, queryExecutor, vacuumingRuleMapper);
         return vacuumer;
     }
 
-    private PersonDataColumn PersonDataColumnMaker(string defaultValue = "Null", bool multipleDeleteConditions = false,
-        string tableName = "Table", string columnName = "Column", string purpose = "Purpose")
-    {
-        List<DeleteCondition> deleteConditions = new List<DeleteCondition>();
-        if (!multipleDeleteConditions)
-        {
-            DeleteCondition deleteCondition = new("Condition", purpose);
-            deleteConditions.Add(deleteCondition);
-        }
-        else
-        {
-            DeleteCondition deleteCondition = new("Condition", purpose);
-            DeleteCondition deleteCondition2 = new("SecondCondition", purpose);
-            deleteConditions.Add(deleteCondition);
-            deleteConditions.Add(deleteCondition2);
-        }
 
-        PersonDataColumn personDataColumn = new(tableName,
-            columnName,
-            defaultValue,
-            deleteConditions);
-        return personDataColumn;
-    }
-
-    private DeletionExecution DeletionExecutionMaker(string query, string table = "Table", string column = "Column")
-    {
-        List<string> purposes = new List<string>() {"Purpose"};
-        DeletionExecution deletionExecution = new(purposes, column, table, query);
-        return deletionExecution;
-    }
 
     [Fact]
     public void TestGenerateSqlQueryForDeletion_Returns_Empty_Query_when_No_TablePairs_Provided()
@@ -68,7 +41,7 @@ public class VacuumerTest
     {
         TestPersonDataColumnService? personDataColumnService = new();
         Vacuumer vacuumer = VacuumInstantiate(personDataColumnService);
-        personDataColumnService.AddColumn(PersonDataColumnMaker());
+        personDataColumnService.AddColumn(VacuumingModelsMakers.PersonDataColumnMaker());
 
         var query = vacuumer.GenerateUpdateStatement();
 
@@ -176,31 +149,31 @@ public class VacuumerTest
     [Fact]
     public void TestAddVacuumingRule_Adds_Correct_Rule()
     {
-        TestVacuumerStore vacuumerStore = new();
-        Vacuumer vacuumer = VacuumInstantiate(vacuumerStore: vacuumerStore);
+        TestVacuumingRuleMapper testVacuumingRuleMapper = new();
+        Vacuumer vacuumer = VacuumInstantiate(vacuumingRuleMapper: testVacuumingRuleMapper);
 
-        int id = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
+        VacuumingRule actual = vacuumer.AddVacuumingRule("Rule", "2y 5d", "Description");
 
-        VacuumingRule? rule = new("Rule", "Purpose", "2y 5d");
-        Assert.True(vacuumerStore.FetchVacuumingRules().ToList().Count == 1);
-        Assert.Contains(rule, vacuumerStore.FetchVacuumingRules());
-        Assert.Equal(1, id);
+        VacuumingRule? expected = new(0, "Description", "Rule", "2y 5d", new List<Purpose>());
+        Assert.True(testVacuumingRuleMapper.FetchVacuumingRules().ToList().Count == 1);
+        Assert.Contains(expected, testVacuumingRuleMapper.FetchVacuumingRules());
+        Assert.Equal(expected, actual);
     }
 
     [Fact]
     public void TestUpdateVacuumingRule_Updates_Values()
     {
-        TestVacuumerStore vacuumerStore = new();
-        Vacuumer vacuumer = VacuumInstantiate(vacuumerStore: vacuumerStore);
-        int id = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
+        TestVacuumingRuleMapper testVacuumingRuleMapper = new();
+        Vacuumer vacuumer = VacuumInstantiate(vacuumingRuleMapper: testVacuumingRuleMapper);
+        VacuumingRule oldRule = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
 
-        vacuumer.UpdateVacuumingRule(id, "NewName", "NewPurpose", "2y 20d");
+        vacuumer.UpdateVacuumingRule(oldRule,newName:"NewName",newDescription:"Description",newInterval:"2y 20d");
 
 
-        VacuumingRule? expected = new("NewName", "NewPurpose", "2y 20d");
-        VacuumingRule? oldUnexpected = new("Rule", "Purpose", "2y 5d");
+        VacuumingRule? expected = new(0,"Description", "NewName", "2y 20d");
+        VacuumingRule? oldUnexpected = new(0,"Rule", "Purpose", "2y 5d");
 
-        List<VacuumingRule?> storedRules = vacuumerStore.FetchVacuumingRules().ToList();
+        List<VacuumingRule> storedRules = testVacuumingRuleMapper.FetchVacuumingRules();
         Assert.DoesNotContain(oldUnexpected, storedRules);
         Assert.Contains(expected, storedRules);
         Assert.Single(storedRules);
@@ -209,17 +182,18 @@ public class VacuumerTest
     [Fact]
     public void TestUpdateVacuumingRule_Only_Updates_Specified_Values()
     {
-        TestVacuumerStore vacuumerStore = new();
-        Vacuumer vacuumer = VacuumInstantiate(vacuumerStore: vacuumerStore);
-        int id = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
+        TestVacuumingRuleMapper testVacuumingRuleMapper = new();
+        Vacuumer vacuumer = VacuumInstantiate(vacuumingRuleMapper: testVacuumingRuleMapper);
+        VacuumingRule oldVacuumingRule = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
 
-        vacuumer.UpdateVacuumingRule(id, "NewName", newInterval: "2y 20d");
+        vacuumer.UpdateVacuumingRule(oldVacuumingRule, newDescription: "NewDescription", newInterval: "2y 20d",
+            newName: "Purpose");
 
 
-        VacuumingRule? expected = new("NewName", "Purpose", "2y 20d");
-        VacuumingRule? oldUnexpected = new("Rule", "Purpose", "2y 5d");
+        VacuumingRule? expected = new(0, "NewDescription", "Purpose", "2y 20d");
+        VacuumingRule? oldUnexpected = new(0, "Rule", "Purpose", "2y 5d");
 
-        List<VacuumingRule?> storedRules = vacuumerStore.FetchVacuumingRules().ToList();
+        List<VacuumingRule> storedRules = testVacuumingRuleMapper.FetchVacuumingRules();
         Assert.DoesNotContain(oldUnexpected, storedRules);
         Assert.Contains(expected, storedRules);
     }
@@ -227,19 +201,20 @@ public class VacuumerTest
     [Fact]
     public void TestUpdateVacuumingRule_Updates_Values_Multiple_Rules()
     {
-        TestVacuumerStore vacuumerStore = new();
-        Vacuumer vacuumer = VacuumInstantiate(vacuumerStore: vacuumerStore);
-        int id = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
+        TestVacuumingRuleMapper testVacuumingRuleMapper = new();
+        Vacuumer vacuumer = VacuumInstantiate(vacuumingRuleMapper: testVacuumingRuleMapper);
+        VacuumingRule oldVacuumingRule = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
         vacuumer.AddVacuumingRule("AnotherRule", "AnotherPurpose", "2y 5d");
 
-        vacuumer.UpdateVacuumingRule(id, "NewName", "NewPurpose", "2y 20d");
+        vacuumer.UpdateVacuumingRule(oldVacuumingRule, newDescription: "NewDescription", newInterval: "2y 20d",
+            newName: "NewPurpose");
 
 
-        VacuumingRule? expected = new("NewName", "NewPurpose", "2y 20d");
-        VacuumingRule? oldUnexpected = new("Rule", "Purpose", "2y 5d");
+        VacuumingRule? expected = new(0,"NewDescription", "NewPurpose", "2y 20d");
+        VacuumingRule? oldUnexpected = new(0,"Rule", "Purpose", "2y 5d");
 
 
-        List<VacuumingRule?> storedRules = vacuumerStore.FetchVacuumingRules().ToList();
+        List<VacuumingRule> storedRules = testVacuumingRuleMapper.FetchVacuumingRules();
         Assert.DoesNotContain(oldUnexpected, storedRules);
         Assert.Contains(expected, storedRules);
         Assert.Equal(2, storedRules.Count);
@@ -248,15 +223,15 @@ public class VacuumerTest
     [Fact]
     public void TestDeleteVacuumingRule_Removes_Rule()
     {
-        TestVacuumerStore vacuumerStore = new();
-        Vacuumer vacuumer = VacuumInstantiate(vacuumerStore: vacuumerStore);
-        int id = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
+        TestVacuumingRuleMapper testVacuumingRuleMapper = new();
+        Vacuumer vacuumer = VacuumInstantiate(vacuumingRuleMapper: testVacuumingRuleMapper);
+        VacuumingRule oldVacuumingRule = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
 
-        vacuumer.DeleteVacuumingRule(id);
+        vacuumer.DeleteVacuumingRule(oldVacuumingRule);
 
 
-        List<VacuumingRule?> storedRules = vacuumerStore.FetchVacuumingRules().ToList();
-        VacuumingRule? oldUnexpected = new("Rule", "Purpose", "2y 5d");
+        List<VacuumingRule> storedRules = testVacuumingRuleMapper.FetchVacuumingRules();
+        VacuumingRule? oldUnexpected = new("Purpose", "Rule", "2y 5d");
         Assert.DoesNotContain(oldUnexpected, storedRules);
         Assert.Empty(storedRules);
     }
@@ -264,16 +239,10 @@ public class VacuumerTest
     [Fact]
     public void TestRunVacuumingRule_Executes_Correct_Execution()
     {
-        TestVacuumerStore vacuumerStore = new();
-        TestQueryExecutor testExecutor = new();
-        TestPersonDataColumnService personDataColumnService = new();
-        personDataColumnService.AddColumn(PersonDataColumnMaker());
-        personDataColumnService.AddColumn(PersonDataColumnMaker(purpose: "AnotherPurpose"));
-        Vacuumer vacuumer = VacuumInstantiate(vacuumerStore: vacuumerStore, queryExecutor: testExecutor,
-            personDataColumnService: personDataColumnService);
-        int id = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
+        Vacuumer vacuumer = VacuumInstantiate();
+        VacuumingRule vacuumingRule = new("Name","Description", "2d 5y");
 
-        List<DeletionExecution> executions = vacuumer.RunVacuumingRule(id).ToList();
+        List<DeletionExecution> executions = vacuumer.RunVacuumingRule(vacuumingRule).ToList();
 
 
         DeletionExecution expected = DeletionExecutionMaker("UPDATE Table SET Column = Null WHERE (Condition);");
@@ -285,22 +254,24 @@ public class VacuumerTest
     [Fact]
     public void TestRunVacuumingRule_Executes_Correct_Executions_Different_Executions_With_Same_Purpose()
     {
-        TestVacuumerStore vacuumerStore = new();
+        TestVacuumingRuleMapper testVacuumingRuleMapper = new();
         TestQueryExecutor testExecutor = new();
         TestPersonDataColumnService personDataColumnService = new();
         personDataColumnService.AddColumn(PersonDataColumnMaker());
         personDataColumnService.AddColumn(PersonDataColumnMaker(purpose: "Purpose",
             columnName: "AnotherColumn"));
-        Vacuumer vacuumer = VacuumInstantiate(vacuumerStore: vacuumerStore, queryExecutor: testExecutor,
+        Vacuumer vacuumer = VacuumInstantiate(vacuumingRuleMapper: testVacuumingRuleMapper, queryExecutor: testExecutor,
             personDataColumnService: personDataColumnService);
-        int id = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
+        Purpose purpose = new Purpose(identifier: 0, description: "Description", name: "Purpose");
+        VacuumingRule vacuumingRule = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
 
-        List<DeletionExecution> executions = vacuumer.RunVacuumingRule(id).ToList();
+
+        List<DeletionExecution> executions = vacuumer.RunVacuumingRule(vacuumingRule).ToList();
 
 
         DeletionExecution expected = DeletionExecutionMaker("UPDATE Table SET Column = Null WHERE (Condition);");
         DeletionExecution secondExpected =
-            DeletionExecutionMaker("UPDATE Table SET AnotherColumn = Null WHERE (Condition);",column:"AnotherColumn");
+            DeletionExecutionMaker("UPDATE Table SET AnotherColumn = Null WHERE (Condition);", column: "AnotherColumn");
 
         Assert.Contains(expected, executions);
         Assert.True(2 == executions.Count);

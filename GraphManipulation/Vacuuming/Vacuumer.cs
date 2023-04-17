@@ -1,5 +1,8 @@
 using GraphManipulation.DataAccess.Entities;
+using GraphManipulation.DataAccess.Mappers;
+using GraphManipulation.Models;
 using GraphManipulation.Services;
+using PersonDataColumn = GraphManipulation.DataAccess.Entities.PersonDataColumn;
 
 namespace GraphManipulation.Vacuuming;
 
@@ -7,14 +10,14 @@ public class Vacuumer : IVacuumer
 {
     private readonly IPersonDataColumnService _personDataColumnService;
     private readonly IQueryExecutor _queryExecutor;
-    private readonly IVacuumerStore _vacuumerStore;
+    private readonly IMapper<VacuumingRule> _vacuumingRuleMapper;
 
     public Vacuumer(IPersonDataColumnService personDataColumnService, IQueryExecutor queryExecutor,
-        IVacuumerStore vacuumerStore)
+        IMapper<VacuumingRule> vacuumingRuleMapper)
     {
         _personDataColumnService = personDataColumnService;
         _queryExecutor = queryExecutor;
-        _vacuumerStore = vacuumerStore;
+        _vacuumingRuleMapper = vacuumingRuleMapper;
     }
 
     public IEnumerable<DeletionExecution> GenerateUpdateStatement(string predefinedExpirationDate = "")
@@ -73,12 +76,11 @@ public class Vacuumer : IVacuumer
     /// This function executes a specified vacuuming rule.
     /// It does not vacuum data if its protected by other purposes.
     /// </summary>
-    /// <param name="ruleId">ID of the vacuuming rule</param>
+    /// <param name="rule"></param>
     /// <returns></returns>
-    public IEnumerable<DeletionExecution> RunVacuumingRule(int ruleId)
+    public IEnumerable<DeletionExecution> RunVacuumingRule(VacuumingRule rule)
     {
         List<DeletionExecution> conditions = new List<DeletionExecution>();
-        VacuumingRule? rule = _vacuumerStore.FetchVacuumingRule(ruleId);
 
         List<PersonDataColumn> personDataColumns = _personDataColumnService.GetColumns().ToList();
 
@@ -97,7 +99,15 @@ public class Vacuumer : IVacuumer
 
     private static bool ContainsCorrectCondition(PersonDataColumn personDataColumn, VacuumingRule? rule)
     {
-        return personDataColumn.DeleteConditions.Any(x => x.Purpose == rule.Purpose);
+        foreach (var deleteCondition in personDataColumn.DeleteConditions)
+        {
+            if (rule != null && rule.Purposes.Contains(deleteCondition.Purpose))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /// <summary>
@@ -109,37 +119,38 @@ public class Vacuumer : IVacuumer
         Execute();
     }
 
-    public int AddVacuumingRule(string ruleName, string purpose, string interval)
+    public VacuumingRule AddVacuumingRule(string ruleName, string interval, string description,
+        List<Purpose>? purposes = null)
     {
-        VacuumingRule? vacuumingRule = new(ruleName, purpose, interval);
-        return _vacuumerStore.StoreVacuumingRule(vacuumingRule);
+        purposes ??= new List<Purpose>();
+        VacuumingRule? vacuumingRule = new(description, ruleName, interval, purposes);
+        return _vacuumingRuleMapper.Insert(vacuumingRule);
     }
 
-    public void UpdateVacuumingRule(int ruleId, string newRuleName = "", string newPurpose = "",
+    public void UpdateVacuumingRule(VacuumingRule vacuumingRule, string newName = "", string newDescription = "",
         string newInterval = "")
     {
-        VacuumingRule? rule = _vacuumerStore.FetchVacuumingRule(ruleId);
-        if (newRuleName != "")
+        if (newName != "")
         {
-            rule.RuleName = newRuleName;
+            vacuumingRule.Name = newName;
         }
 
-        if (newPurpose != "")
+        if (newDescription != "")
         {
-            rule.Purpose = newPurpose;
+            vacuumingRule.Description = newDescription;
         }
 
         if (newInterval != "")
         {
-            rule.Interval = newInterval;
+            vacuumingRule.Interval = newInterval;
         }
 
-        _vacuumerStore.UpdateVacuumingRule(ruleId, rule);
+        _vacuumingRuleMapper.Update(vacuumingRule);
     }
 
-    public void DeleteVacuumingRule(int ruleId)
+    public void DeleteVacuumingRule(VacuumingRule vacuumingRule)
     {
-        _vacuumerStore.DeleteVacuumingRule(ruleId);
+        _vacuumingRuleMapper.Delete(vacuumingRule);
     }
 
     public VacuumingRule GetVacuumingRule(int ruleId)
