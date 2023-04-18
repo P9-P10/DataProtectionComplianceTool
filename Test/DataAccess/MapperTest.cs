@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
-using System.Linq;
 using FluentAssertions;
 using GraphManipulation.DataAccess;
 using GraphManipulation.DataAccess.Mappers;
@@ -50,8 +49,8 @@ public class MapperTest
             public static Column column1 = new Column() { ColumnName = "columnOne", TableName = "tableOne" };
             public static Column column2 = new Column() { ColumnName = "columnTwo", TableName = "tableTwo" };
 
-            public static VacuumingRule rule1 = new VacuumingRule() { Name = "ruleOne", Rule = "one" };
-            public static VacuumingRule rule2 = new VacuumingRule() { Name = "ruleTwo", Rule = "two" };
+            public static VacuumingRule rule1 = new VacuumingRule() { Name = "ruleOne", Interval = "one" };
+            public static VacuumingRule rule2 = new VacuumingRule() { Name = "ruleTwo", Interval = "two" };
 
             public static Purpose purpose1 = new Purpose()
             {

@@ -31,8 +31,12 @@ public class VacuumingRule
         Purposes = new List<Purpose>();
     }
 
+    public VacuumingRule()
+    {
+    }
+
     public int? Id { get; set; }
-    public string Description { get; set; }
+    public string? Description { get; set; }
     public string Name { get;  set; }
     public string Interval { get;  set; }
     public IEnumerable<Purpose>? Purposes { get; set; }
