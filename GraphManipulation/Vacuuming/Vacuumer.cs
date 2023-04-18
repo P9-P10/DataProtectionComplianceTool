@@ -2,7 +2,6 @@ using GraphManipulation.DataAccess.Entities;
 using GraphManipulation.DataAccess.Mappers;
 using GraphManipulation.Models;
 using GraphManipulation.Services;
-using PersonDataColumn = GraphManipulation.DataAccess.Entities.PersonDataColumn;
 
 namespace GraphManipulation.Vacuuming;
 
@@ -80,7 +79,7 @@ public class Vacuumer : IVacuumer
     /// <returns></returns>
     public IEnumerable<DeletionExecution> RunVacuumingRule(VacuumingRule rule)
     {
-        List<DeletionExecution> conditions = new List<DeletionExecution>();
+        List<DeletionExecution> executions = new List<DeletionExecution>();
 
         List<PersonDataColumn> personDataColumns = _personDataColumnService.GetColumns().ToList();
 
@@ -90,11 +89,11 @@ public class Vacuumer : IVacuumer
             if (!containsCorrectCondition) continue;
 
             DeletionExecution execution = CreateDeletionExecution(personDataColumn);
-            conditions.Add(execution);
+            executions.Add(execution);
             _queryExecutor.Execute(execution.Query);
         }
 
-        return conditions;
+        return executions;
     }
 
     private static bool ContainsCorrectCondition(PersonDataColumn personDataColumn, VacuumingRule? rule)

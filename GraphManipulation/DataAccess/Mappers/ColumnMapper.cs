@@ -2,29 +2,29 @@
 
 namespace GraphManipulation.DataAccess.Mappers;
 
-public class ColumnMapper : IMapper<PersonDataColumn>
+public class ColumnMapper : IMapper<Column>
 {
-    public PersonDataColumn Insert(PersonDataColumn value)
+    public Column Insert(Column value)
     {
         throw new NotImplementedException();
     }
 
-    public IEnumerable<PersonDataColumn> Find(Func<PersonDataColumn, bool> condition)
+    public IEnumerable<Column> Find(Func<Column, bool> condition)
     {
         throw new NotImplementedException();
     }
 
-    public PersonDataColumn FindSingle(Func<PersonDataColumn, bool> condition)
+    public Column FindSingle(Func<Column, bool> condition)
     {
         throw new NotImplementedException();
     }
 
-    public PersonDataColumn Update(PersonDataColumn value)
+    public Column Update(Column value)
     {
         throw new NotImplementedException();
     }
 
-    public void Delete(PersonDataColumn value)
+    public void Delete(Column value)
     {
         throw new NotImplementedException();
     }

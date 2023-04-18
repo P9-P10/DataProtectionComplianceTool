@@ -239,7 +239,9 @@ public class VacuumerTest
     [Fact]
     public void TestRunVacuumingRule_Executes_Correct_Execution()
     {
-        Vacuumer vacuumer = VacuumInstantiate();
+        TestPersonDataColumnService personDataColumnService = new();
+        personDataColumnService.AddColumn(PersonDataColumnMaker());
+        Vacuumer vacuumer = VacuumInstantiate(personDataColumnService:personDataColumnService);
         VacuumingRule vacuumingRule = VacuumingRuleMaker("Name","Description", "2d 5y");
 
         List<DeletionExecution> executions = vacuumer.RunVacuumingRule(vacuumingRule).ToList();
@@ -254,17 +256,13 @@ public class VacuumerTest
     [Fact]
     public void TestRunVacuumingRule_Executes_Correct_Executions_Different_Executions_With_Same_Purpose()
     {
-        TestVacuumingRuleMapper testVacuumingRuleMapper = new();
-        TestQueryExecutor testExecutor = new();
         TestPersonDataColumnService personDataColumnService = new();
         personDataColumnService.AddColumn(PersonDataColumnMaker());
+        Vacuumer vacuumer = VacuumInstantiate(personDataColumnService:personDataColumnService);
         personDataColumnService.AddColumn(PersonDataColumnMaker(purpose: "Purpose",
             columnName: "AnotherColumn"));
-        Vacuumer vacuumer = VacuumInstantiate(vacuumingRuleMapper: testVacuumingRuleMapper, queryExecutor: testExecutor,
-            personDataColumnService: personDataColumnService);
-        Purpose purpose = new Purpose(identifier: 0, description: "Description", name: "Purpose");
-        VacuumingRule vacuumingRule = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
-
+        VacuumingRule vacuumingRule = VacuumingRuleMaker("Name","Description", "2d 5y");
+        
 
         List<DeletionExecution> executions = vacuumer.RunVacuumingRule(vacuumingRule).ToList();
 
@@ -274,6 +272,7 @@ public class VacuumerTest
             DeletionExecutionMaker("UPDATE Table SET AnotherColumn = Null WHERE (Condition);", column: "AnotherColumn");
 
         Assert.Contains(expected, executions);
+        Assert.Contains(secondExpected, executions);
         Assert.True(2 == executions.Count);
     }
 }

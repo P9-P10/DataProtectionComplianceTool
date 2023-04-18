@@ -14,7 +14,7 @@ public class VacuumingRuleMapper : IMapper<VacuumingRule>
         throw new NotImplementedException();
     }
 
-    public VacuumingRule FindSingle(Func<VacuumingRule, bool> condition)
+    public VacuumingRule? FindSingle(Func<VacuumingRule, bool> condition)
     {
         throw new NotImplementedException();
     }

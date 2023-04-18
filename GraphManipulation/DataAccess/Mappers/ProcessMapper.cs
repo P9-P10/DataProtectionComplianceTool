@@ -2,29 +2,29 @@
 
 namespace GraphManipulation.DataAccess.Mappers;
 
-public class PurposeMapper : IMapper<Purpose>
+public class ProcessMapper : IMapper<Process>
 {
-    public Purpose Insert(Purpose value)
+    public Process Insert(Process value)
     {
         throw new NotImplementedException();
     }
 
-    public IEnumerable<Purpose> Find(Func<Purpose, bool> condition)
+    public IEnumerable<Process> Find(Func<Process, bool> condition)
     {
         throw new NotImplementedException();
     }
 
-    public Purpose? FindSingle(Func<Purpose, bool> condition)
+    public Process? FindSingle(Func<Process, bool> condition)
     {
         throw new NotImplementedException();
     }
 
-    public Purpose Update(Purpose value)
+    public Process Update(Process value)
     {
         throw new NotImplementedException();
     }
 
-    public void Delete(Purpose value)
+    public void Delete(Process value)
     {
         throw new NotImplementedException();
     }

@@ -2,7 +2,6 @@
 using GraphManipulation.DataAccess.Entities;
 using GraphManipulation.Models;
 using GraphManipulation.Vacuuming;
-using PersonDataColumn = GraphManipulation.DataAccess.Entities.PersonDataColumn;
 
 namespace Test.Vacuuming;
 
@@ -15,13 +14,13 @@ public static class VacuumingModelsMakers
         List<DeleteCondition> deleteConditions = new List<DeleteCondition>();
         if (!multipleDeleteConditions)
         {
-            DeleteCondition deleteCondition = new("Condition", new Purpose("Name", "Description"));
+            DeleteCondition deleteCondition = new("Condition", new Purpose(0,"Name", "Description"));
             deleteConditions.Add(deleteCondition);
         }
         else
         {
-            DeleteCondition deleteCondition = new("Condition", new Purpose("Name", "Description"));
-            DeleteCondition deleteCondition2 = new("SecondCondition", new Purpose("SecondName", "Description"));
+            DeleteCondition deleteCondition = new("Condition", new Purpose(0,"Name", "Description"));
+            DeleteCondition deleteCondition2 = new("SecondCondition", new Purpose(1,"SecondName", "Description"));
             deleteConditions.Add(deleteCondition);
             deleteConditions.Add(deleteCondition2);
         }
@@ -52,13 +51,13 @@ public static class VacuumingModelsMakers
     {
         List<Purpose> purposes = new List<Purpose>();
 
-        purposes.Add(new Purpose(0,"Name", "Description",PersonDataColumns(),new List<VacuumingRule>()));
+        purposes.Add(new Purpose(0, "Name", "Description", PersonDataColumns(), new List<VacuumingRule>()));
 
         return purposes;
     }
 
-    private static IEnumerable<PersonDataColumn>? PersonDataColumns()
+    private static IEnumerable<Column>? PersonDataColumns()
     {
-        return new List<PersonDataColumn>() {PersonDataColumnMaker()};
+        return new List<Column>() {new Column(0, "Table", "Column", new List<Purpose>())};
     }
 }
