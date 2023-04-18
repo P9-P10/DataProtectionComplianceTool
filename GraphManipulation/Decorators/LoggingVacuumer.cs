@@ -26,7 +26,7 @@ public class LoggingVacuumer : IVacuumer
         throw new NotImplementedException();
     }
 
-    public IEnumerable<DeletionExecution> RunVacuumingRule(VacuumingRule vacuumingRule)
+    public IEnumerable<DeletionExecution> RunVacuumingRules(IEnumerable<VacuumingRule> rules)
     {
         throw new NotImplementedException();
     }

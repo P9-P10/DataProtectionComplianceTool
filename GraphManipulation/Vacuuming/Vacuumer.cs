@@ -75,9 +75,9 @@ public class Vacuumer : IVacuumer
     /// This function executes a specified vacuuming rule.
     /// It does not vacuum data if its protected by other purposes.
     /// </summary>
-    /// <param name="rule"></param>
+    /// <param name="rules"></param>
     /// <returns></returns>
-    public IEnumerable<DeletionExecution> RunVacuumingRule(VacuumingRule rule)
+    public IEnumerable<DeletionExecution> RunVacuumingRules(IEnumerable<VacuumingRule> rules)
     {
         List<DeletionExecution> executions = new List<DeletionExecution>();
 
@@ -85,12 +85,16 @@ public class Vacuumer : IVacuumer
 
         foreach (var personDataColumn in personDataColumns)
         {
-            bool containsCorrectCondition = ContainsCorrectCondition(personDataColumn, rule);
-            if (!containsCorrectCondition) continue;
+            foreach (var rule in rules)
+            {
+                bool containsCorrectCondition = ContainsCorrectCondition(personDataColumn, rule);
+                if (!containsCorrectCondition) continue;
 
-            DeletionExecution execution = CreateDeletionExecution(personDataColumn);
-            executions.Add(execution);
-            _queryExecutor.Execute(execution.Query);
+                DeletionExecution execution = CreateDeletionExecution(personDataColumn);
+                executions.Add(execution);
+                _queryExecutor.Execute(execution.Query);
+            }
+           
         }
 
         return executions;
