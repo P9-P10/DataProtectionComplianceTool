@@ -23,7 +23,7 @@ public class GdprMetadataContext : DbContext
 
     }
     
-    public DbSet<Column> columns { get; set; }
+    public DbSet<PersonalDataColumn> columns { get; set; }
     public DbSet<VacuumingRule> vacuumingRules { get; set; }
     public DbSet<Process> processes { get; set; }
     public DbSet<Person> people { get; set; }

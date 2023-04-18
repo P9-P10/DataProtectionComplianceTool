@@ -48,8 +48,8 @@ public class MapperTest
     {
         private static class SeedData
         {
-            public static Column column1 = new Column() { ColumnName = "columnOne", TableName = "tableOne" };
-            public static Column column2 = new Column() { ColumnName = "columnTwo", TableName = "tableTwo" };
+            public static PersonalDataColumn column1 = new PersonalDataColumn() { ColumnName = "columnOne", TableName = "tableOne" };
+            public static PersonalDataColumn column2 = new PersonalDataColumn() { ColumnName = "columnTwo", TableName = "tableTwo" };
 
             public static VacuumingRule rule1 = new VacuumingRule() { Name = "ruleOne", Rule = "one" };
             public static VacuumingRule rule2 = new VacuumingRule() { Name = "ruleTwo", Rule = "two" };
