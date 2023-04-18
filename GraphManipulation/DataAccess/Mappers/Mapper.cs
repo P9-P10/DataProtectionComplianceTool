@@ -2,7 +2,7 @@
 
 namespace GraphManipulation.DataAccess.Mappers;
 
-public class Mapper<T> : IMapper<T> where T : class
+public class Mapper<T> : IMapper<T> where T : DomainEntity
 {
     private readonly GdprMetadataContext _context;
 

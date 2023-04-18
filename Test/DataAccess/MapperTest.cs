@@ -13,12 +13,13 @@ namespace Test.DataAccess;
 
 public class MapperTest
 {
+    private class DomainEntityStub : DomainEntity { }
     public class Insert
     {
         [Fact]
         public void ThrowsArgumentNullExceptionIfArgumentIsNull()
         {
-            Mapper<object> mapper = new Mapper<object>(null);
+            Mapper<DomainEntityStub> mapper = new Mapper<DomainEntityStub>(null);
             Assert.Throws<ArgumentNullException>(() => mapper.Insert(null));
         }
     }
@@ -28,7 +29,7 @@ public class MapperTest
         [Fact]
         public void ThrowsArgumentNullExceptionIfArgumentIsNull()
         {
-            Mapper<object> mapper = new Mapper<object>(null);
+            Mapper<DomainEntityStub> mapper = new Mapper<DomainEntityStub>(null);
             Assert.Throws<ArgumentNullException>(() => mapper.Update(null));
         }
     }
@@ -38,7 +39,7 @@ public class MapperTest
         [Fact]
         public void ThrowsArgumentNullExceptionIfArgumentIsNull()
         {
-            Mapper<object> mapper = new Mapper<object>(null);
+            Mapper<DomainEntityStub> mapper = new Mapper<DomainEntityStub>(null);
             Assert.Throws<ArgumentNullException>(() => mapper.Delete(null));
         }
     }
