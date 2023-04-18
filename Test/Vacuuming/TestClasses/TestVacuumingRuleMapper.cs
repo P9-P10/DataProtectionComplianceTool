@@ -14,7 +14,7 @@ public class TestVacuumingRuleMapper : IMapper<VacuumingRule>
     public VacuumingRule Insert(VacuumingRule value)
     {
         _vacuumingRules.Add(value);
-        value.Identifier = _vacuumingRules.Count - 1;
+        value.Id = _vacuumingRules.Count - 1;
         return value;
     }
 
@@ -30,9 +30,9 @@ public class TestVacuumingRuleMapper : IMapper<VacuumingRule>
 
     public VacuumingRule Update(VacuumingRule value)
     {
-        if (value.Identifier == null)
+        if (value.Id == null)
             throw new EntityException("Value without identifier provided");
-        _vacuumingRules[(int) value.Identifier] = value;
+        _vacuumingRules[(int) value.Id] = value;
         return value;
     }
 

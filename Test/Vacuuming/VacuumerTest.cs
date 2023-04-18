@@ -258,9 +258,9 @@ public class VacuumerTest
     {
         TestPersonDataColumnService personDataColumnService = new();
         personDataColumnService.AddColumn(PersonDataColumnMaker());
-        Vacuumer vacuumer = VacuumInstantiate(personDataColumnService:personDataColumnService);
         personDataColumnService.AddColumn(PersonDataColumnMaker(purpose: "Purpose",
             columnName: "AnotherColumn"));
+        Vacuumer vacuumer = VacuumInstantiate(personDataColumnService:personDataColumnService);
         VacuumingRule vacuumingRule = VacuumingRuleMaker("Name","Description", "2d 5y");
         
 

@@ -2,10 +2,10 @@ namespace GraphManipulation.Models;
 
 public class VacuumingRule
 {
-    public VacuumingRule(int identifier, string description, string name, string interval,
+    public VacuumingRule(int id, string description, string name, string interval,
         IEnumerable<Purpose>? purposes = null)
     {
-        Identifier = identifier;
+        Id = id;
         Description = description;
         Name = name;
         Interval = interval;
@@ -31,7 +31,7 @@ public class VacuumingRule
         Purposes = new List<Purpose>();
     }
 
-    public int? Identifier { get; set; }
+    public int? Id { get; set; }
     public string Description { get; set; }
     public string Name { get;  set; }
     public string Interval { get;  set; }
@@ -44,11 +44,11 @@ public class VacuumingRule
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Interval, Name, Identifier);
+        return HashCode.Combine(Interval, Name, Id);
     }
 
     bool Equals(VacuumingRule? other)
     {
-        return other.Interval == Interval && other.Name == Name && other.Identifier == Identifier;
+        return other.Interval == Interval && other.Name == Name && other.Id == Id;
     }
 }

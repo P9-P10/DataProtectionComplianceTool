@@ -14,13 +14,31 @@ public static class VacuumingModelsMakers
         List<DeleteCondition> deleteConditions = new List<DeleteCondition>();
         if (!multipleDeleteConditions)
         {
-            DeleteCondition deleteCondition = new("Condition", new Purpose(0,"Name", "Description"));
+            DeleteCondition deleteCondition = new("Condition", new Purpose
+            {
+                Id = 0,
+                Name = "Name",
+                Description = "Description"
+                    
+            });
             deleteConditions.Add(deleteCondition);
         }
         else
         {
-            DeleteCondition deleteCondition = new("Condition", new Purpose(0,"Name", "Description"));
-            DeleteCondition deleteCondition2 = new("SecondCondition", new Purpose(1,"SecondName", "Description"));
+            DeleteCondition deleteCondition = new("Condition", new Purpose
+            {
+                Id = 0,
+                Name = "Name",
+                Description = "Description"
+                    
+            });
+            DeleteCondition deleteCondition2 = new("SecondCondition", new Purpose
+            {
+                Id = 1,
+                Name = "SecondName",
+                Description = "Description"
+                    
+            });
             deleteConditions.Add(deleteCondition);
             deleteConditions.Add(deleteCondition2);
         }
@@ -35,7 +53,11 @@ public static class VacuumingModelsMakers
     public static DeletionExecution DeletionExecutionMaker(string query, string table = "Table",
         string column = "Column")
     {
-        List<Purpose> purposes = new List<Purpose>() {new("Name", "Description")};
+        List<Purpose> purposes = new List<Purpose>() {new()
+        {
+            Name = "Name",
+            Description = "Description"
+        }};
         DeletionExecution deletionExecution = new(purposes, column, table, query);
         return deletionExecution;
     }
@@ -51,13 +73,26 @@ public static class VacuumingModelsMakers
     {
         List<Purpose> purposes = new List<Purpose>();
 
-        purposes.Add(new Purpose(0, "Name", "Description", PersonDataColumns(), new List<VacuumingRule>()));
+        purposes.Add(new Purpose()
+        {
+           Id = 0, 
+           Name ="Name",
+           Description = "Description",
+           Columns = PersonDataColumns(),
+           Rules = new List<VacuumingRule>()
+        });
 
         return purposes;
     }
 
     private static IEnumerable<Column>? PersonDataColumns()
     {
-        return new List<Column>() {new Column(0, "Table", "Column", new List<Purpose>())};
+        return new List<Column>() {new()
+        {
+           Id = 0,
+           TableName = "Table",
+           ColumnName = "Column",
+           Purposes = new List<Purpose>()
+        }};
     }
 }
