@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-namespace GraphManipulation.Models;
+﻿namespace GraphManipulation.Models;
 
 public class Person : DomainEntity
 {

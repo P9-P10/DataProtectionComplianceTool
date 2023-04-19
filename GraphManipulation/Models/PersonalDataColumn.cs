@@ -1,9 +1,18 @@
-﻿namespace GraphManipulation.Models;
+﻿using GraphManipulation.Managers;
+using GraphManipulation.Managers.Interfaces.Base;
 
-public class PersonalDataColumn : DomainEntity
+namespace GraphManipulation.Models;
+
+public class PersonalDataColumn : DomainEntity, IListable
 {
-    public string TableName { get; set; }
-    public string ColumnName { get; set; }
+    public TableColumnPair TableColumnPair { get; set; }
     public string Description { get; set; }
     public IEnumerable<Purpose> Purposes { get; set; }
+
+
+    public string ToListing()
+    {
+        return string.Join(", ", TableColumnPair.ToListing(), Description,
+            "[ " + Purposes.Select(p => p.ToListing()) + " ]");
+    }
 }
