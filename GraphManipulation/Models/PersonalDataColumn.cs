@@ -6,7 +6,7 @@ namespace GraphManipulation.Models;
 public class PersonalDataColumn : DomainEntity, IListable
 {
     public TableColumnPair TableColumnPair { get; set; }
-    public string Description { get; set; }
+    public string? Description { get; set; }
     public IEnumerable<Purpose> Purposes { get; set; }
 
 

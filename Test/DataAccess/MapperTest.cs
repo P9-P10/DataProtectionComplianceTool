@@ -6,6 +6,7 @@ using System.Linq;
 using FluentAssertions;
 using GraphManipulation.DataAccess;
 using GraphManipulation.DataAccess.Mappers;
+using GraphManipulation.Managers;
 using GraphManipulation.Models;
 using Xunit;
 
@@ -48,11 +49,11 @@ public class MapperTest
     {
         private static class SeedData
         {
-            public static PersonalDataColumn column1 = new PersonalDataColumn() { ColumnName = "columnOne", TableName = "tableOne" };
-            public static PersonalDataColumn column2 = new PersonalDataColumn() { ColumnName = "columnTwo", TableName = "tableTwo" };
+            public static PersonalDataColumn column1 = new PersonalDataColumn() { TableColumnPair = new TableColumnPair("tableOne", "columnOne") };
+            public static PersonalDataColumn column2 = new PersonalDataColumn() { TableColumnPair = new TableColumnPair("tableTwo", "columnTwo") };
 
-            public static VacuumingRule rule1 = new VacuumingRule() { Name = "ruleOne", Rule = "one" };
-            public static VacuumingRule rule2 = new VacuumingRule() { Name = "ruleTwo", Rule = "two" };
+            public static VacuumingRule rule1 = new VacuumingRule() { Name = "ruleOne", Interval = "one"};
+            public static VacuumingRule rule2 = new VacuumingRule() { Name = "ruleTwo", Interval = "two" };
 
             public static Purpose purpose1 = new Purpose()
             {

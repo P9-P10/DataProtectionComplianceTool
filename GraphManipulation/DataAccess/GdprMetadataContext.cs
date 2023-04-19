@@ -20,7 +20,7 @@ public class GdprMetadataContext : DbContext
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-
+        modelBuilder.Entity<PersonalDataColumn>().OwnsOne(p => p.TableColumnPair);
     }
     
     public DbSet<PersonalDataColumn> columns { get; set; }
