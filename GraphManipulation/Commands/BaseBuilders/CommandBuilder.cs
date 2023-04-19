@@ -47,6 +47,48 @@ public static class CommandBuilder
         command.Description = description;
         return command;
     }
+
+    public static Command WithSubCommand(this Command command, Command subCommand)
+    {
+        command.AddCommand(subCommand);
+        return command;
+    }
+
+    private static Command BuildCommandWithNameAliasSubject(string name, string alias, string subject = "")
+    {
+        return CreateCommand(name + (string.IsNullOrEmpty(subject) ? "" : $"-{subject}"))
+            .WithAlias(alias + (string.IsNullOrEmpty(subject) ? "" : $"-{subject.First()}"));
+    }
+
+    public static Command BuildAddCommand(string subject = "")
+    {
+        return BuildCommandWithNameAliasSubject("add", "a", subject);
+    }
+
+    public static Command BuildUpdateCommand(string subject = "")
+    {
+        return BuildCommandWithNameAliasSubject("update", "u", subject);
+    }
+    
+    public static Command BuildDeleteCommand(string subject = "")
+    {
+        return BuildCommandWithNameAliasSubject("delete", "d", subject);
+    }
+    
+    public static Command BuildListCommand(string subject = "")
+    {
+        return BuildCommandWithNameAliasSubject("list", "ls", subject);
+    }
+    
+    public static Command BuildSetCommand(string subject = "")
+    {
+        return BuildCommandWithNameAliasSubject("set", "st", subject);
+    }
+    
+    public static Command BuildShowCommand(string subject = "")
+    {
+        return BuildCommandWithNameAliasSubject("show", "sh", subject);
+    }
     
     public static Option<int> BuildIdOption(string description)
     {
