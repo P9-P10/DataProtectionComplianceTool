@@ -1,0 +1,102 @@
+grammar Command;
+
+c : command EOF ;
+
+command : helpCommand | setCommand |  updateCommand |  deleteCommand | showCommand |  linkCommand | runCommand ;
+
+helpCommand : helpKeyword ;
+
+setCommand : setKeyword (setPersonalDataCommand | setVacuumingRuleCommand) ; 
+setPersonalDataCommand :  personalDataKeyword anyIdentifier (',' | ) anyIdentifier initializers ;
+setVacuumingRuleCommand : vacuumingRuleKeyword text ; 
+
+updateCommand : updateKeyword (updatePersonalDataCommand | updateVacuumingRuleCommand) ;
+updatePersonalDataCommand :  personalDataKeyword numberIdentifier metadata text ;
+updateVacuumingRuleCommand : vacuumingRuleKeyword numberIdentifier text ;
+
+deleteCommand : deleteKeyword (deletePersonalDataCommand | deleteVacuumingRuleCommand) ; 
+deletePersonalDataCommand :  personalDataKeyword numberIdentifier ;
+deleteVacuumingRuleCommand : vacuumingRuleKeyword numberIdentifier ;
+  
+runCommand : runKeyword (runVacuumingRuleCommand | runVacuumingRuleAllCommand) ;
+runVacuumingRuleCommand :  vacuumingRuleKeyword numberIdentifier ;
+runVacuumingRuleAllCommand : vacuumingRuleKeyword 'all' ;  
+
+linkCommand : linkKeyword vacuumingRuleKeyword numberIdentifier numberIdentifier ;
+showCommand : showKeyword showOption ;
+
+helpKeyword : 'help' ;
+setKeyword : 'set' ;
+updateKeyword : 'update' ;
+deleteKeyword : 'delete' ;
+runKeyword : 'run' ;
+linkKeyword : 'link' ;
+showKeyword: 'show' ;
+
+metadata : 'purpose' | 'origin' | 'legally_required' ;
+
+// TODO: Dette skal ikke håndteres af syntaks, det skal håndteres af semantik
+initializers : initializer (',' | ) initializers | ;
+//initializer : purposeInitializer | originInitializer | legallyRequiredInitializer ;
+initializer : metadata '=' text ;
+
+//purposeInitializer : 'purpose' '=' text | ;
+//originInitializer : 'origin' '=' text | ;
+//legallyRequiredInitializer : 'legally_required' '=' bool | ;
+
+//bool : 'true' | 'True' | 'false' | 'False' ;
+
+
+numberIdentifier : NUMBER_IDENTIFIER ;
+identifier : IDENTIFIER ;
+anyIdentifier : numberIdentifier | identifier ;
+text : TEXT ;
+
+showOption : helpKeyword | 'gdpr metadata' | 'data processing' | 'vacuuming rules' | 'log' ;
+
+personalDataKeyword : 'personal data';
+vacuumingRuleKeyword : 'vacuuming rule' ;
+
+
+
+fragment LOWERCASE : [a-zæøå];
+fragment UPPERCASE : [A-ZÆØÅ];
+fragment NUMBER : [0-9];
+fragment SPECIAL : [_-];
+fragment WHITESPACE : [ \t\r\n];
+WS : WHITESPACE+ -> skip;
+
+NUMBER_IDENTIFIER : (NUMBER)+;
+IDENTIFIER : (LOWERCASE | UPPERCASE | SPECIAL | NUMBER)+ ;
+
+TEXT : '\'' (LOWERCASE | UPPERCASE | SPECIAL | NUMBER | WHITESPACE)+ '\'';
+ 
+
+
+
+
+
+/*
+ * help
+ * 
+ * set personal data [table] [column]
+ * set personal data [table] [column] <purpose=, origin=, legally_required=, vacuuming_rule=>
+ * 
+ * update personal data [metadata id] [field] [value]
+ * delete personal data [metadata id]
+ * 
+ * show gdpr metadata
+ * show data processing
+ * show vacuuming rules
+ * show log [constraints]
+ * 
+ * link vacuuming rule [vacuuming rule id] [metadata id]
+ * 
+ * 
+ * run vacuuming rule [vacuuming rule id]
+ * run vacuuming rule all
+ * 
+ * set vacuuming rule [vacuuming rule]
+ * update vacuuming rule [vacuuming rule id] [new vacuuming rule]
+ * delete vacuuming rule [vacuuming rule id]
+ */
