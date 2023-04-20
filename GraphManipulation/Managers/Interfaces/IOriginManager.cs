@@ -1,13 +1,14 @@
 using GraphManipulation.Managers.Interfaces.Base;
 using GraphManipulation.Models;
+using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Managers.Interfaces;
 
 public interface IOriginManager : 
-    IGetter<Origin, string>, 
+    IGetter<IOrigin, string>, 
     IDeleter<string>, 
     INameUpdater, 
     IDescriptionUpdater<string>
 {
-    public Origin AddOrigin(string name, string description);
+    public void AddOrigin(string name, string description);
 }

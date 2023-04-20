@@ -1,10 +1,11 @@
 using GraphManipulation.Managers.Interfaces.Base;
 using GraphManipulation.Models;
+using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Managers.Interfaces;
 
 public interface IProcessingManager : 
-    IGetter<Processing, TableColumnPair>,
+    IGetter<IProcessing, TableColumnPair>,
     IDescriptionUpdater<TableColumnPair>,
     IDeleter<TableColumnPair>
 {

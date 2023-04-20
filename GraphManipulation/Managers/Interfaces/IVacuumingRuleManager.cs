@@ -1,10 +1,11 @@
 using GraphManipulation.Managers.Interfaces.Base;
 using GraphManipulation.Models;
+using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Managers.Interfaces;
 
 public interface IVacuumingRuleManager : 
-    IGetter<VacuumingRule, string>, 
+    IGetter<IVacuumingRule, string>, 
     IDeleter<string>, 
     INameUpdater
 {

@@ -1,10 +1,11 @@
 using GraphManipulation.Managers.Interfaces.Base;
 using GraphManipulation.Models;
+using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Managers.Interfaces;
 
 public interface IPersonalDataManager : 
-    IGetter<PersonalDataColumn, TableColumnPair>, 
+    IGetter<IPersonalDataColumn, TableColumnPair>, 
     IDeleter<TableColumnPair>, 
     IDescriptionUpdater<TableColumnPair>
 {
@@ -14,5 +15,5 @@ public interface IPersonalDataManager :
     public void RemovePurpose(TableColumnPair tableColumnPair, string purposeName);
 
     public void SetOriginOf(TableColumnPair tableColumnPair, int individualsId, string originName);
-    public Origin GetOriginOf(TableColumnPair tableColumnPair, int individualsId);
+    public IOrigin GetOriginOf(TableColumnPair tableColumnPair, int individualsId);
 }
