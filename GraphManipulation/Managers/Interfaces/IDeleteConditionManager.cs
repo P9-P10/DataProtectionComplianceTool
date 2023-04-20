@@ -4,11 +4,12 @@ using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Managers.Interfaces;
 
-public interface IOriginManager : 
-    IGetter<IOrigin, string>, 
+public interface IDeleteConditionManager : 
+    IGetter<IDeleteCondition, string>, 
     IDeleter<string>, 
     INameUpdater, 
     IDescriptionUpdater<string>
 {
-    public void AddOrigin(string name, string description);
+    public void Add(string name, string description, string condition);
+    public void UpdateCondition(string name, string condition);
 }

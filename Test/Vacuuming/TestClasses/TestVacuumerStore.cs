@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using GraphManipulation.Models;
 using GraphManipulation.Vacuuming;
 
 namespace Test.Vacuuming.TestClasses;
