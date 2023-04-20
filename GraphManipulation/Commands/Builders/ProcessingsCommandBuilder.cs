@@ -1,13 +1,15 @@
 using System.CommandLine;
+using GraphManipulation.Commands.BaseBuilders;
+using GraphManipulation.Managers.Interfaces;
 
 namespace GraphManipulation.Commands.Builders;
 
 public static class ProcessingsCommandBuilder
 {
-    public static Command Build()
+    public static Command Build(IProcessingsManager processingsManager)
     {
-        return CommandBuilder.CreateCommand("processings")
-            .WithAlias("prs")
+        return CommandBuilder.CreateCommand(CommandNamer.ProcessingsName)
+            .WithAlias(CommandNamer.ProcessingsAlias)
             .WithSubCommand(AddProcessing());
     }
 

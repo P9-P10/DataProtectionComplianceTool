@@ -1,6 +1,6 @@
 using System.CommandLine;
 
-namespace GraphManipulation.Commands;
+namespace GraphManipulation.Commands.BaseBuilders;
 
 public static class RootCommandBuilder
 {

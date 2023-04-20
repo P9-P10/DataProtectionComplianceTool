@@ -1,13 +1,17 @@
 using System.CommandLine;
+using GraphManipulation.Commands.BaseBuilders;
+using GraphManipulation.Managers.Interfaces;
+using GraphManipulation.Models.Interfaces;
+using Lucene.Net.Queries.Mlt;
 
 namespace GraphManipulation.Commands.Builders;
 
 public static class VacuumingRulesCommandBuilder
 {
-    public static Command Build()
+    public static Command Build(IVacuumingRulesManager vacuumingRulesManager)
     {
-        return CommandBuilder.CreateCommand("vacuuming-rules")
-            .WithAlias("vrs")
+        return CommandBuilder.CreateCommand(CommandNamer.VacuumingRulesName)
+            .WithAlias(CommandNamer.VacuumingRulesAlias)
             .WithSubCommand(AddVacuumingRule());
     }
 

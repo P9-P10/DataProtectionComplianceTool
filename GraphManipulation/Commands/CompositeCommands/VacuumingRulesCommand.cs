@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Parsing;
+using GraphManipulation.Commands.BaseBuilders;
 using GraphManipulation.Commands.BaseCommands;
 using GraphManipulation.Vacuuming;
 
@@ -65,13 +66,13 @@ public class VacuumingRulesCommand : AliasedCommand
     {
         public ShowVacuumingRuleCommand(IVacuumer vacuumer, string? description = null) : base(description)
         {
-            var idOption = CommandBuilder.BuildIdOption("The id of the vacuuming rule that should be shown");
-            var allOption = CommandBuilder.BuildAllOption("Shows all vacuuming rules");
+            var idOption = OptionBuilder.CreateIdOption("The id of the vacuuming rule that should be shown");
+            var allOption = OptionBuilder.CreateAllOption("Shows all vacuuming rules");
 
             AddOption(idOption);
             AddOption(allOption);
 
-            AddValidator(commandResult => CommandBuilder.ValidateOneOf(commandResult, idOption, allOption));
+            AddValidator(commandResult => OptionBuilder.ValidateOneOf(commandResult, idOption, allOption));
 
             this.SetHandler(context =>
             {
@@ -86,7 +87,7 @@ public class VacuumingRulesCommand : AliasedCommand
                 }
             });
 
-            Description += CommandBuilder.OneOfRequiredText(idOption, allOption);
+            Description += OptionBuilder.OneOfRequiredText(idOption, allOption);
         }
     }
 
@@ -95,13 +96,13 @@ public class VacuumingRulesCommand : AliasedCommand
         public ExecuteVacuumingRuleCommand(IVacuumer vacuumer, string? description = null)
             : base("execute", "e", description)
         {
-            var idOption = CommandBuilder.BuildIdOption("The id of the vacuuming rule that should be executed");
-            var allOption = CommandBuilder.BuildAllOption("Executes all vacuuming rules");
+            var idOption = OptionBuilder.CreateIdOption("The id of the vacuuming rule that should be executed");
+            var allOption = OptionBuilder.CreateAllOption("Executes all vacuuming rules");
 
             AddOption(idOption);
             AddOption(allOption);
 
-            AddValidator(commandResult => { CommandBuilder.ValidateOneOf(commandResult, idOption, allOption); });
+            AddValidator(commandResult => { OptionBuilder.ValidateOneOf(commandResult, idOption, allOption); });
 
             this.SetHandler(context =>
             {
@@ -116,7 +117,7 @@ public class VacuumingRulesCommand : AliasedCommand
                 }
             });
 
-            Description += CommandBuilder.OneOfRequiredText(idOption, allOption);
+            Description += OptionBuilder.OneOfRequiredText(idOption, allOption);
         }
     }
 }

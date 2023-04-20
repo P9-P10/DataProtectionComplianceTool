@@ -4,7 +4,7 @@ using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Managers.Interfaces;
 
-public interface IProcessingManager : 
+public interface IProcessingsManager : 
     IGetter<IProcessing, TableColumnPair>,
     IDescriptionUpdater<TableColumnPair>,
     IDeleter<TableColumnPair>

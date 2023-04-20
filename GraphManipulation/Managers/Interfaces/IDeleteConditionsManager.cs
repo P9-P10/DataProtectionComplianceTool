@@ -4,7 +4,7 @@ using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Managers.Interfaces;
 
-public interface IDeleteConditionManager : 
+public interface IDeleteConditionsManager : 
     IGetter<IDeleteCondition, string>, 
     IDeleter<string>, 
     INameUpdater, 

@@ -4,7 +4,7 @@ using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Managers.Interfaces;
 
-public interface IOriginManager : 
+public interface IOriginsManager : 
     IGetter<IOrigin, string>, 
     IDeleter<string>, 
     INameUpdater, 
