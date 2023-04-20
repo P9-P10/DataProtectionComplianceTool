@@ -4,7 +4,7 @@ using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Managers.Interfaces;
 
-public interface IPurposeManager : 
+public interface IPurposesManager : 
     IGetter<IPurpose, string>, 
     IDeleter<string>, 
     INameUpdater, 

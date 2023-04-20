@@ -1,13 +1,15 @@
 using System.CommandLine;
+using GraphManipulation.Commands.BaseBuilders;
+using GraphManipulation.Managers.Interfaces;
 
 namespace GraphManipulation.Commands.Builders;
 
 public static class DeleteConditionsCommandBuilder
 {
-    public static Command Build()
+    public static Command Build(IDeleteConditionsManager deleteConditionsManager)
     {
-        return CommandBuilder.CreateCommand("delete-conditions")
-            .WithAlias("dcs")
+        return CommandBuilder.CreateCommand(CommandNamer.DeleteConditionName)
+            .WithAlias(CommandNamer.DeleteConditionAlias)
             .WithSubCommand(AddDeleteCondition());
     }
 
