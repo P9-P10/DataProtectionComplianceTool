@@ -1,5 +1,4 @@
 using System.CommandLine;
-using GraphManipulation.Commands.BaseBuilders;
 using GraphManipulation.Commands.BaseCommands;
 using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
@@ -57,8 +56,8 @@ public class LoggingCommand : AliasedCommand
             AddOption(logTypesOption);
             AddOption(logFormatsOption);
 
-            AddValidator(result => OptionBuilder.ValidateOrder(result, numbersOption));
-            AddValidator(result => OptionBuilder.ValidateOrder(result, dateTimesOption));
+            AddValidator(result => CommandBuilder.ValidateOrder(result, numbersOption));
+            AddValidator(result => CommandBuilder.ValidateOrder(result, dateTimesOption));
 
             this.SetHandler((
                 numbers,

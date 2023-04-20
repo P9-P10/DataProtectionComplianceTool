@@ -1,15 +1,13 @@
 using System.CommandLine;
-using GraphManipulation.Commands.BaseBuilders;
-using GraphManipulation.Managers.Interfaces;
 
 namespace GraphManipulation.Commands.Builders;
 
 public static class PurposesCommandBuilder
 {
-    public static Command Build(IPurposesManager purposesManager)
+    public static Command Build()
     {
-        return CommandBuilder.CreateCommand(CommandNamer.PurposesName)
-            .WithAlias(CommandNamer.PurposesAlias)
+        return CommandBuilder.CreateCommand("purposes")
+            .WithAlias("ps")
             .WithSubCommand(AddPurpose());
     }
 

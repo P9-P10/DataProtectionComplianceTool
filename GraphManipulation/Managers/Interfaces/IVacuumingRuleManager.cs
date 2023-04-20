@@ -4,7 +4,7 @@ using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Managers.Interfaces;
 
-public interface IVacuumingRulesManager : 
+public interface IVacuumingRuleManager : 
     IGetter<IVacuumingRule, string>, 
     IDeleter<string>, 
     INameUpdater

@@ -1,6 +1,5 @@
 using System.CommandLine;
 using System.CommandLine.Parsing;
-using GraphManipulation.Commands.BaseBuilders;
 using GraphManipulation.Commands.BaseCommands;
 using GraphManipulation.MetadataManagement;
 
@@ -21,8 +20,8 @@ public sealed class MetadataEntriesCommand : AliasedCommand
     {
         public AddMetadataEntryCommand(IMetadataManager metadataManager, string? description = null) : base(description)
         {
-            var targetTableArgument = ArgumentBuilder.BuildStringArgument("target table");
-            var targetColumnArgument = ArgumentBuilder.BuildStringArgument("target column");
+            var targetTableArgument = CommandBuilder.BuildStringArgument("target table");
+            var targetColumnArgument = CommandBuilder.BuildStringArgument("target column");
 
             AddArgument(targetTableArgument);
             AddArgument(targetColumnArgument);
@@ -48,7 +47,7 @@ public sealed class MetadataEntriesCommand : AliasedCommand
     {
         public UpdateMetadataEntryCommand(IMetadataManager metadataManager, string? description = null) : base(description)
         {
-            var metadataIdArgument = ArgumentBuilder.BuildIntArgument("metadata id");
+            var metadataIdArgument = CommandBuilder.BuildIntArgument("metadata id");
 
             AddArgument(metadataIdArgument);
 
@@ -78,7 +77,7 @@ public sealed class MetadataEntriesCommand : AliasedCommand
         public DeleteMetadataEntryCommand(IMetadataManager metadataManager, string? description = null) : base(
             description)
         {
-            var metadataIdArgument = ArgumentBuilder.BuildIntArgument("metadata id");
+            var metadataIdArgument = CommandBuilder.BuildIntArgument("metadata id");
 
             AddArgument(metadataIdArgument);
 
@@ -91,10 +90,10 @@ public sealed class MetadataEntriesCommand : AliasedCommand
         public ShowMetadataEntryCommand(IMetadataManager metadataManager, string? description = null) : base(
             description)
         {
-            var idOption = OptionBuilder.CreateIdOption("The id of the metadata entry that should be shown");
-            var allOption = OptionBuilder.CreateAllOption("Shows all metadata entries");
+            var idOption = CommandBuilder.BuildIdOption("The id of the metadata entry that should be shown");
+            var allOption = CommandBuilder.BuildAllOption("Shows all metadata entries");
 
-            var missingDataOption = OptionBuilder.BuildOption<bool>(
+            var missingDataOption = CommandBuilder.BuildOption<bool>(
                 "--missing-data", 
                 "Shows the metadata entries that have missing fields", 
                 "-m"
@@ -106,7 +105,7 @@ public sealed class MetadataEntriesCommand : AliasedCommand
 
             AddValidator(commandResult =>
             {
-                OptionBuilder.ValidateOneOf(commandResult, idOption, allOption, missingDataOption);
+                CommandBuilder.ValidateOneOf(commandResult, idOption, allOption, missingDataOption);
             });
 
             this.SetHandler(context =>
@@ -126,13 +125,13 @@ public sealed class MetadataEntriesCommand : AliasedCommand
                 }
             });
 
-            Description += OptionBuilder.OneOfRequiredText(idOption, allOption, missingDataOption);
+            Description += CommandBuilder.OneOfRequiredText(idOption, allOption, missingDataOption);
         }
     }
 
     private static Option<string?> BuildPurposeOption()
     {
-        return OptionBuilder.BuildOption<string?>(
+        return CommandBuilder.BuildOption<string?>(
             "--purpose",
             "The purpose under which the personal data is stored",
             "-p"
@@ -141,7 +140,7 @@ public sealed class MetadataEntriesCommand : AliasedCommand
 
     private static Option<string?> BuildOriginOption()
     {
-        return OptionBuilder.BuildOption<string?>(
+        return CommandBuilder.BuildOption<string?>(
             "--origin",
             "The origin of the personal data, the place it is collected from",
             "-o"
@@ -150,7 +149,7 @@ public sealed class MetadataEntriesCommand : AliasedCommand
 
     private static Option<bool?> BuildLegallyRequiredOption()
     {
-        return OptionBuilder.BuildOption<bool?>(
+        return CommandBuilder.BuildOption<bool?>(
             "--legally-required",
             "Whether or not the data is legally required to be stored",
             "-l"

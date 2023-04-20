@@ -1,15 +1,13 @@
 using System.CommandLine;
-using GraphManipulation.Commands.BaseBuilders;
-using GraphManipulation.Logging;
 
 namespace GraphManipulation.Commands.Builders;
 
 public static class LoggingCommandBuilder
 {
-    public static Command Build(ILogger logger)
+    public static Command Build()
     {
-        return CommandBuilder.CreateCommand(CommandNamer.LoggingName)
-            .WithAlias(CommandNamer.LoggingAlias)
+        return CommandBuilder.CreateCommand("logs")
+            .WithAlias("lgs")
             .WithSubCommand(ShowLog());
     }
 

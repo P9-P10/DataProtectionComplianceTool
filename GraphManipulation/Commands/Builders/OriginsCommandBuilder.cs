@@ -1,15 +1,13 @@
 using System.CommandLine;
-using GraphManipulation.Commands.BaseBuilders;
-using GraphManipulation.Managers.Interfaces;
 
 namespace GraphManipulation.Commands.Builders;
 
 public static class OriginsCommandBuilder
 {
-    public static Command Build(IOriginsManager originsManager)
+    public static Command Build()
     {
-        return CommandBuilder.CreateCommand(CommandNamer.OriginsName)
-            .WithAlias(CommandNamer.OriginsAlias)
+        return CommandBuilder.CreateCommand("origins")
+            .WithAlias("os")
             .WithSubCommand(AddOrigin());
     }
 

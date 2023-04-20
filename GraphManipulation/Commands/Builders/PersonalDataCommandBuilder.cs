@@ -1,15 +1,13 @@
 using System.CommandLine;
-using GraphManipulation.Commands.BaseBuilders;
-using GraphManipulation.Managers.Interfaces;
 
 namespace GraphManipulation.Commands.Builders;
 
 public static class PersonalDataCommandBuilder
 {
-    public static Command Build(IPersonalDataManager personalDataManager)
+    public static Command Build()
     {
-        return CommandBuilder.CreateCommand(CommandNamer.PersonalDataName)
-            .WithAlias(CommandNamer.PersonalDataAlias)
+        return CommandBuilder.CreateCommand("personal-data")
+            .WithAlias("pd")
             .WithSubCommand(AddPersonalData());
     }
 
