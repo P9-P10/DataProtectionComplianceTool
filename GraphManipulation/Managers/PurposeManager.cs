@@ -19,7 +19,6 @@ public class PurposeManager : NamedEntityManager<Purpose>, IPurposesManager
 
     public IEnumerable<IPurpose> GetAll() => base.GetAll();
     public IPurpose? Get(string key) => base.Get(key);
-    public void UpdateName(string name, string newName) => base.UpdateName(name, newName);
 
     public void UpdateDescription(string key, string description)
     {
