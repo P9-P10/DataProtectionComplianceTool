@@ -10,8 +10,8 @@ public class IntervalBasedVacuuming
         _vacuumer = vacuumer;
         _intervalInMinutes = intervalInMinutes;
 
-        System.Timers.Timer timer = new(intervalInMinutes * 6000);
-        timer.Elapsed += (sender, e) => ExecuteWrapper();
+        System.Timers.Timer timer = new(_intervalInMinutes * 6000);
+        timer.Elapsed += (_, _) => ExecuteWrapper();
         timer.Start();
     }
 
