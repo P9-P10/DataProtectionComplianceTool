@@ -6,38 +6,20 @@ using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Managers;
 
-public class PurposeManager : IPurposesManager
+public class PurposeManager : NamedEntityManager<Purpose>, IPurposesManager
 {
     private IMapper<Purpose> _purposeMapper;
     private IMapper<DeleteCondition> _conditionsManager;
     
-    public PurposeManager(IMapper<Purpose> purposeMapper, IMapper<DeleteCondition> conditionsMapper)
+    public PurposeManager(IMapper<Purpose> purposeMapper, IMapper<DeleteCondition> conditionsMapper) : base(purposeMapper)
     {
         _purposeMapper = purposeMapper;
         _conditionsManager = conditionsMapper;
     }
-    
-    public IEnumerable<IPurpose> GetAll()
-    {
-        return _purposeMapper.Find(_ => true);
-    }
 
-    public IPurpose? Get(string key)
-    {
-        return GetByName(key);
-    }
-
-    public void Delete(string key)
-    {
-        _purposeMapper.Delete(GetByName(key));
-    }
-
-    public void UpdateName(string name, string newName)
-    {
-        var purpose = GetByName(name);
-        purpose.Name = newName;
-        _purposeMapper.Update(purpose);
-    }
+    public IEnumerable<IPurpose> GetAll() => base.GetAll();
+    public IPurpose? Get(string key) => base.Get(key);
+    public void UpdateName(string name, string newName) => base.UpdateName(name, newName);
 
     public void UpdateDescription(string key, string description)
     {
@@ -63,10 +45,5 @@ public class PurposeManager : IPurposesManager
         var purpose = GetByName(purposeName);
         purpose.DeleteCondition = _conditionsManager.FindSingle(condition => condition.Name == deleteConditionName);
         _purposeMapper.Update(purpose);
-    }
-
-    private Purpose? GetByName(string name)
-    {
-        return _purposeMapper.FindSingle(purpose => purpose.Name == name);
     }
 }
