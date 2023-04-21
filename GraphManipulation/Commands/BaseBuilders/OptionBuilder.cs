@@ -52,9 +52,24 @@ public static class OptionBuilder
         return CreateOption<int>("--id").WithAlias("-i").WithDescription(description);
     }
 
+    public static Option<string> CreateDescriptionOption(string description)
+    {
+        return CreateOption<string>("--description").WithAlias("-d").WithDescription(description);
+    }
+
     public static Option<bool> CreateAllOption(string description)
     {
         return CreateOption<bool>("--all").WithAlias("-a").WithDescription(description);
+    }
+
+    public static Option<string> CreateTableOption(string description)
+    {
+        return CreateOption<string>("--table").WithAlias("-t").WithDescription(description);
+    }
+    
+    public static Option<string> CreateColumnOption(string description)
+    {
+        return CreateOption<string>("--column").WithAlias("-c").WithDescription(description);
     }
 
     public static Option<T> BuildOption<T>(string name, string description, string alias)

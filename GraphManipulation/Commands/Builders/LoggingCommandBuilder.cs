@@ -10,11 +10,11 @@ public static class LoggingCommandBuilder
     {
         return CommandBuilder.CreateCommand(CommandNamer.LoggingName)
             .WithAlias(CommandNamer.LoggingAlias)
-            .WithSubCommand(ShowLog());
+            .WithSubCommand(ListLog());
     }
 
-    private static Command ShowLog()
+    private static Command ListLog()
     {
-        return CommandBuilder.BuildShowCommand();
+        return CommandBuilder.BuildListCommand();
     }
 }

@@ -19,15 +19,11 @@ public static class IndividualsCommandBuilder
     private static Command SetSource(IIndividualsManager individualsManager)
     {
         var tableOption = OptionBuilder
-            .CreateOption<string>("--table")
-            .WithAlias("-t")
-            .WithDescription("The table in which the individuals can be found")
+            .CreateTableOption("The table in which the individuals can be found")
             .WithIsRequired(true);
 
         var columnOption = OptionBuilder
-            .CreateOption<string>("--column")
-            .WithAlias("-c")
-            .WithDescription("The column in which the IDs of the individuals are stored")
+            .CreateColumnOption("The column in which the IDs of the individuals are stored")
             .WithIsRequired(true);
 
         var command = CommandBuilder
@@ -74,10 +70,9 @@ public static class IndividualsCommandBuilder
         {
             var individual = individualsManager.Get(id);
             
-            console.WriteLine(individual != null ? individual.ToListing() : "Could not find individual with that id");
+            console.WriteLine(individual != null ? individual.ToListing() : $"Could not find individual with id \"{id}\"");
         }, idOption);
-
-
+        
         return command;
     }
 }
