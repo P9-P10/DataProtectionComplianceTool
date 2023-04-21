@@ -85,7 +85,7 @@ public class Vacuumer : IVacuumer
 
         foreach (var personDataColumn in personDataColumns)
         {
-            foreach (var rule in rules)
+            foreach (var rule in rules.ToList())
             {
                 bool containsCorrectCondition = ContainsCorrectCondition(personDataColumn, rule);
                 if (!containsCorrectCondition) continue;
