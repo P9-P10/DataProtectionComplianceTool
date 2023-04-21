@@ -156,14 +156,14 @@ public class Vacuumer : IVacuumer
         _vacuumingRuleMapper.Delete(vacuumingRule);
     }
 
-    public VacuumingRule GetVacuumingRule(int ruleId)
+    public VacuumingRule? GetVacuumingRule(int ruleId)
     {
-        throw new NotImplementedException();
+        return _vacuumingRuleMapper.FindSingle(vacuumingRule => vacuumingRule.Id == ruleId);
     }
 
     public IEnumerable<VacuumingRule> GetAllVacuumingRules()
     {
-        throw new NotImplementedException();
+        return _vacuumingRuleMapper.Find(_ =>true);
     }
 
     private string ReplaceLastOccurrenceOfString(string inputString, string occurrenceToReplace,

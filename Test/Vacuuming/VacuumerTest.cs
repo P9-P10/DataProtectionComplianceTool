@@ -235,6 +235,49 @@ public class VacuumerTest
         Assert.Empty(storedRules);
     }
 
+
+    [Fact]
+    public void TestGetAllVacuumingRules_Returns_Correct_values_Single_Element_In_List()
+    {
+        TestVacuumingRuleMapper testVacuumingRuleMapper = new();
+        Vacuumer vacuumer = VacuumInstantiate(vacuumingRuleMapper: testVacuumingRuleMapper);
+        VacuumingRule rule = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
+
+        List<VacuumingRule> rules = vacuumer.GetAllVacuumingRules().ToList();
+
+
+        Assert.Contains(rule, rules);
+        Assert.Single(rules);
+    }
+    
+    [Fact]
+    public void TestGetAllVacuumingRules_Returns_Correct_values_Multiple_Elements_In_List()
+    {
+        TestVacuumingRuleMapper testVacuumingRuleMapper = new();
+        Vacuumer vacuumer = VacuumInstantiate(vacuumingRuleMapper: testVacuumingRuleMapper);
+        VacuumingRule rule = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
+        VacuumingRule secondRule = vacuumer.AddVacuumingRule("SecondRUle", "SecondInterval", "Description");
+
+        List<VacuumingRule> rules = vacuumer.GetAllVacuumingRules().ToList();
+
+
+        Assert.Contains(rule, rules);
+        Assert.Contains(secondRule, rules);
+    }
+    
+    [Fact]
+    public void TestGetVacuumingRule_Returns_Correct_Value()
+    {
+        TestVacuumingRuleMapper testVacuumingRuleMapper = new();
+        Vacuumer vacuumer = VacuumInstantiate(vacuumingRuleMapper: testVacuumingRuleMapper);
+        VacuumingRule rule = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
+
+        VacuumingRule foundRule = vacuumer.GetVacuumingRule(0);
+
+
+        Assert.Equal(rule,foundRule);
+    }
+
     [Fact]
     public void TestRunVacuumingRule_Executes_Correct_Execution()
     {
