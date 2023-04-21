@@ -45,7 +45,8 @@ public class DatabaseInteractionTest
                 "people",
                 "PurposeVacuumingRule",
                 "PersonalDataColumnPurpose",
-                "DeleteCondition"
+                "DeleteCondition",
+                "personalDatas"
             });
         }
         

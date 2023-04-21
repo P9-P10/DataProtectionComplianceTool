@@ -15,8 +15,6 @@ public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumin
     }
 
     public IEnumerable<IVacuumingRule> GetAll() => base.GetAll();
-
-
     public IVacuumingRule? Get(string key) => base.Get(key);
 
     public void AddVacuumingRule(string name, string interval, string purposeName)
