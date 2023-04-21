@@ -7,11 +7,13 @@ namespace GraphManipulation.Managers;
 
 public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumingRulesManager
 {
-    private IMapper<VacuumingRule> _mapper;
+    private IMapper<VacuumingRule> _vacuumingRule;
+    private IMapper<Purpose> _purposeMapper;
 
-    public VacuumingRuleManager(IMapper<VacuumingRule> mapper) : base(mapper)
+    public VacuumingRuleManager(IMapper<VacuumingRule> vacuumingRule,IMapper<Purpose> purposeMapper) : base(vacuumingRule)
     {
-        _mapper = mapper;
+        _vacuumingRule = vacuumingRule;
+        _purposeMapper = purposeMapper;
     }
 
     public IEnumerable<IVacuumingRule> GetAll() => base.GetAll();
@@ -19,8 +21,8 @@ public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumin
 
     public void AddVacuumingRule(string name, string interval, string purposeName)
     {
-        _mapper.Insert(new VacuumingRule(name:name, interval:interval, 
-            purposes:new List<Purpose>() {new() {Name = purposeName}}
+        _vacuumingRule.Insert(new VacuumingRule(name:name, interval:interval, 
+            purposes:new List<Purpose>() {_purposeMapper.FindSingle(x=> x.Name == purposeName)}
             )
         );
     }
@@ -30,7 +32,7 @@ public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumin
         VacuumingRule? rule = base.Get(name);
         if (rule == null) return;
         rule.Interval = interval;
-        _mapper.Update(rule);
+        _vacuumingRule.Update(rule);
     }
 
     public void UpdateDescription(string key, string description)
@@ -38,7 +40,7 @@ public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumin
         VacuumingRule? rule = base.Get(description);
         if (rule == null) return;
         rule.Description = description;
-        _mapper.Update(rule);
+        _vacuumingRule.Update(rule);
         
     }
 }
