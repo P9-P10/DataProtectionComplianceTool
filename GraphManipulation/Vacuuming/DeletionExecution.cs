@@ -1,4 +1,6 @@
-﻿namespace GraphManipulation.Vacuuming;
+﻿using GraphManipulation.Models;
+
+namespace GraphManipulation.Vacuuming;
 
 public class DeletionExecution
 {
@@ -8,9 +10,9 @@ public class DeletionExecution
 
     public string Query { get; set; }
 
-    public List<string> Purposes { get; set; }
+    public List<Purpose> Purposes { get; set; }
 
-    public DeletionExecution(List<string> purposes, string column, string table, string query)
+    public DeletionExecution(List<Purpose> purposes, string column, string table, string query)
     {
         Purposes = purposes;
         Column = column;
@@ -20,13 +22,13 @@ public class DeletionExecution
 
     public DeletionExecution()
     {
-        Purposes = new List<string>();
+        Purposes = new List<Purpose>();
         Column = "";
         Query = "";
         Table = "";
     }
 
-    public void AddPurpose(string purpose)
+    public void AddPurpose(Purpose purpose)
     {
         if (!Purposes.Contains(purpose))
         {
