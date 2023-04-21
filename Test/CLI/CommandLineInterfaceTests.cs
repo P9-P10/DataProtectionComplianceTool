@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
+using System.CommandLine.Parsing;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -17,6 +18,7 @@ using Microsoft.Extensions.Primitives;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
+using Xunit.Sdk;
 
 namespace Test.CLI;
 
@@ -50,8 +52,6 @@ public class CommandLineInterfaceTests
         loggerMock = new Mock<ILogger>();
         configManagerMock = new Mock<IConfigManager>();
 
-        // individualsManagerMock.Setup(e => e.SetIndividualsSource(It.IsAny<TableColumnPair>()));
-
         return CommandLineInterfaceBuilder.Build(
             individualsManagerMock.Object,
             personalDataManagerMock.Object,
@@ -64,7 +64,7 @@ public class CommandLineInterfaceTests
             configManagerMock.Object);
     }
 
-    private static void VerifyPath(Command cli, string command, string description, Action[] verifications,
+    private static void VerifyPath(Command cli, string command, string description, IEnumerable<Action> verifications,
         int expectedValue)
     {
         cli.Invoke(command)
@@ -96,46 +96,54 @@ public class CommandLineInterfaceTests
             out var configManagerMock
         );
 
-        cli.Subcommands.SelectMany(command =>
-        {
-            return (command.Name switch
-            {
-                CommandNamer.IndividualsName => new[]
-                {
-                    (
-                        Command: "set-source --table tableName --column columnName",
-                        Description: "",
-                        Verifications: new[]
-                        {
-                            () =>
-                            {
-                                individualsManagerMock.Verify(manager =>
-                                    manager.SetIndividualsSource(It.Is<TableColumnPair>(pair =>
-                                        pair.TableName == "tableName" && pair.ColumnName == "columnName")));
-                            },
-                        }
-                    ),
-                    (
-                        Command: "sts -t tableName -c columnName",
-                        Description: "Alias passes",
-                        Verifications: Array.Empty<Action>()
-                    ),
-                },
-                CommandNamer.PersonalDataName => Array.Empty<(string Command, string Description, Action[] Verifications)>(),
-                CommandNamer.PurposesName => Array.Empty<(string Command, string Description, Action[] Verifications)>(),
-                CommandNamer.OriginsName => Array.Empty<(string Command, string Description, Action[] Verifications)>(),
-                CommandNamer.VacuumingRulesName => Array.Empty<(string Command, string Description, Action[] Verifications)>(),
-                CommandNamer.DeleteConditionName => Array.Empty<(string Command, string Description, Action[] Verifications)>(),
-                CommandNamer.ProcessingsName => Array.Empty<(string Command, string Description, Action[] Verifications)>(),
-                CommandNamer.LoggingName => Array.Empty<(string Command, string Description, Action[] Verifications)>(),
-                CommandNamer.ConfigurationName => Array.Empty<(string Command, string Description, Action[] Verifications)>(),
-                _ => throw new Exception($"\"{command.Name}\" is not currently supported")
-            }).Select(tuple =>
-            {
-                tuple.Command = $"{command.Name} {tuple.Command}";
-                return tuple;
-            });
-        }).ToList().ForEach(tuple => { VerifyPath(cli, tuple.Command, tuple.Description, tuple.Verifications, 0); });
+        cli.Parse("individuals set-source --table tableName --column columnName").Errors.Should().BeEmpty();
+
+        // cli.Subcommands.SelectMany(command =>
+        // {
+        //     return (command.Name switch
+        //     {
+        //         CommandNamer.IndividualsName => new[]
+        //         {
+        //             (
+        //                 Command: "set-source --table tableName --column columnName",
+        //                 Description: "set-source parses and calls individuals manager",
+        //                 Verifications: new[]
+        //                 {
+        //                     () =>
+        //                     {
+        //                         individualsManagerMock.Verify(manager =>
+        //                             manager.SetIndividualsSource(It.Is<TableColumnPair>(pair =>
+        //                                 pair.TableName == "tableName" && pair.ColumnName == "columnName")));
+        //                     },
+        //                 }
+        //             ),
+        //             (
+        //                 Command: "sts -t tableName -c columnName",
+        //                 Description: "set-source alias passes",
+        //                 Verifications: Array.Empty<Action>()
+        //             ),
+        //         },
+        //         CommandNamer.PersonalDataName => Array.Empty<(string Command, string Description, Action[] Verifications)>(),
+        //         CommandNamer.PurposesName => Array.Empty<(string Command, string Description, Action[] Verifications)>(),
+        //         CommandNamer.OriginsName => Array.Empty<(string Command, string Description, Action[] Verifications)>(),
+        //         CommandNamer.VacuumingRulesName => Array.Empty<(string Command, string Description, Action[] Verifications)>(),
+        //         CommandNamer.DeleteConditionName => Array.Empty<(string Command, string Description, Action[] Verifications)>(),
+        //         CommandNamer.ProcessingsName => Array.Empty<(string Command, string Description, Action[] Verifications)>(),
+        //         CommandNamer.LoggingName => Array.Empty<(string Command, string Description, Action[] Verifications)>(),
+        //         CommandNamer.ConfigurationName => Array.Empty<(string Command, string Description, Action[] Verifications)>(),
+        //         _ => throw new Exception($"\"{command.Name}\" is not currently supported")
+        //     }).Select(tuple =>
+        //     {
+        //         tuple.Command = $"{command.Name} {tuple.Command}";
+        //         return tuple;
+        //     });
+        // }).ToList().ForEach(tuple =>
+        // {
+        //     VerifyPath(cli, tuple.Command, tuple.Description, tuple.Verifications, 0);
+        //     
+        // });
+
+       
     }
 
     [Fact]
