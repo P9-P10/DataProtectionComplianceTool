@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using GraphManipulation.DataAccess.Entities;
-using GraphManipulation.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Sqlite;
 

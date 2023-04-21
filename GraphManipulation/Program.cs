@@ -1,9 +1,9 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using System.CommandLine.IO;
-using GraphManipulation.Commands.Builders;
 using GraphManipulation.Helpers;
+using GraphManipulation.Linking;
 using GraphManipulation.Logging;
+using GraphManipulation.Managers;
 
 namespace GraphManipulation;
 
@@ -17,12 +17,21 @@ public static class Program
 
     public static void Main()
     {
+        var demonstration = new Demonstration<int, string, string, int>(
+            new MetadataManager<int>(),
+            new VacuumingManager<string>(),
+            new PurposeManager<string>(),
+            new OriginManager<int>(),
+            new PlaintextLogger(new ConfigManager("")),
+            new VacuumingPurposeLinker<string, string>(),
+            new PurposeMetadataLinker<string, int>(),
+            new OriginMetadataLinker<int, int>());
+        
         Interactive();
     }
 
     private static void Interactive()
     {
-        // var cli = CommandLineInterfaceBuilder.Build(new SystemConsole(), )
         var interactive = new InteractiveMode(Cf, new PlaintextLogger(Cf));
         interactive.Run();
     }
