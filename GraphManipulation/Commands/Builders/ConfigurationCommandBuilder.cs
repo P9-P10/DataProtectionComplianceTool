@@ -6,7 +6,7 @@ namespace GraphManipulation.Commands.Builders;
 
 public static class ConfigurationCommandBuilder
 {
-    public static Command Build(IConfigManager configManager)
+    public static Command Build(IConsole console, IConfigManager configManager)
     {
         return CommandBuilder.CreateCommand(CommandNamer.ConfigurationName)
             .WithAlias(CommandNamer.ConfigurationAlias)

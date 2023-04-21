@@ -8,7 +8,7 @@ namespace GraphManipulation.Commands.Builders;
 
 public static class VacuumingRulesCommandBuilder
 {
-    public static Command Build(IVacuumingRulesManager vacuumingRulesManager)
+    public static Command Build(IConsole console, IVacuumingRulesManager vacuumingRulesManager)
     {
         return CommandBuilder.CreateCommand(CommandNamer.VacuumingRulesName)
             .WithAlias(CommandNamer.VacuumingRulesAlias)

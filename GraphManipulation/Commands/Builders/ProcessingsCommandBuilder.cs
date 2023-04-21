@@ -6,7 +6,7 @@ namespace GraphManipulation.Commands.Builders;
 
 public static class ProcessingsCommandBuilder
 {
-    public static Command Build(IProcessingsManager processingsManager)
+    public static Command Build(IConsole console, IProcessingsManager processingsManager)
     {
         return CommandBuilder.CreateCommand(CommandNamer.ProcessingsName)
             .WithAlias(CommandNamer.ProcessingsAlias)

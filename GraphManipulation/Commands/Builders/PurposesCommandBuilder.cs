@@ -6,7 +6,7 @@ namespace GraphManipulation.Commands.Builders;
 
 public static class PurposesCommandBuilder
 {
-    public static Command Build(IPurposesManager purposesManager)
+    public static Command Build(IConsole console, IPurposesManager purposesManager)
     {
         return CommandBuilder.CreateCommand(CommandNamer.PurposesName)
             .WithAlias(CommandNamer.PurposesAlias)

@@ -8,6 +8,6 @@ public class Individual : DomainEntity, IIndividual
 {
     public string ToListing()
     {
-        return Id.ToString() ?? "Unknown";
+        return Id == null ? "Unknown" : Id.ToString();
     }
 }

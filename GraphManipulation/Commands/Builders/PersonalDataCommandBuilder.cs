@@ -6,7 +6,7 @@ namespace GraphManipulation.Commands.Builders;
 
 public static class PersonalDataCommandBuilder
 {
-    public static Command Build(IPersonalDataManager personalDataManager)
+    public static Command Build(IConsole console, IPersonalDataManager personalDataManager)
     {
         return CommandBuilder.CreateCommand(CommandNamer.PersonalDataName)
             .WithAlias(CommandNamer.PersonalDataAlias)

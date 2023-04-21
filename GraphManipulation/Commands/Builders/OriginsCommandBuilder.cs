@@ -6,7 +6,7 @@ namespace GraphManipulation.Commands.Builders;
 
 public static class OriginsCommandBuilder
 {
-    public static Command Build(IOriginsManager originsManager)
+    public static Command Build(IConsole console, IOriginsManager originsManager)
     {
         return CommandBuilder.CreateCommand(CommandNamer.OriginsName)
             .WithAlias(CommandNamer.OriginsAlias)

@@ -7,11 +7,13 @@ namespace GraphManipulation.Commands.Builders;
 
 public static class IndividualsCommandBuilder
 {
-    public static Command Build(IIndividualsManager individualsManager)
+    public static Command Build(IConsole console, IIndividualsManager individualsManager)
     {
         return CommandBuilder.CreateCommand(CommandNamer.IndividualsName)
             .WithAlias(CommandNamer.IndividualsAlias)
-            .WithSubCommand(SetSource(individualsManager));
+            .WithSubCommand(SetSource(individualsManager))
+            .WithSubCommand(ListIndividuals(individualsManager))
+            .WithSubCommand(ShowIndividual());
     }
 
     private static Command SetSource(IIndividualsManager individualsManager)
@@ -42,9 +44,21 @@ public static class IndividualsCommandBuilder
         return command;
     }
 
-    private static Command ListIndividuals()
+    private static Command ListIndividuals(IIndividualsManager individualsManager)
     {
-        return CommandBuilder.BuildListCommand();
+
+        var command = CommandBuilder
+            .BuildListCommand();
+
+        command.SetHandler(() =>
+        {
+            individualsManager
+                .GetAll()
+                .ToList()
+                .ForEach(s => Console.WriteLine(s.ToListing()));
+        });
+        
+        return command;
     }
 
     private static Command ShowIndividual()

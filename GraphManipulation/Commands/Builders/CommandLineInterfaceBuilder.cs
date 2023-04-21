@@ -9,6 +9,7 @@ namespace GraphManipulation.Commands.Builders;
 public static class CommandLineInterfaceBuilder
 {
     public static RootCommand Build(
+        IConsole console,
         IIndividualsManager individualsManager, 
         IPersonalDataManager personalDataManager,
         IPurposesManager purposesManager, 
@@ -20,15 +21,15 @@ public static class CommandLineInterfaceBuilder
         IConfigManager configManager)
     {
         return RootCommandBuilder.CreateRootCommand("This is a description of the command")
-            .WithCommand(IndividualsCommandBuilder.Build(individualsManager))
-            .WithCommand(PersonalDataCommandBuilder.Build(personalDataManager))
-            .WithCommand(PurposesCommandBuilder.Build(purposesManager))
-            .WithCommand(OriginsCommandBuilder.Build(originsManager))
-            .WithCommand(VacuumingRulesCommandBuilder.Build(vacuumingRulesManager))
-            .WithCommand(DeleteConditionsCommandBuilder.Build(deleteConditionsManager))
-            .WithCommand(ProcessingsCommandBuilder.Build(processingsManager))
-            .WithCommand(LoggingCommandBuilder.Build(logger))
-            .WithCommand(ConfigurationCommandBuilder.Build(configManager));
+            .WithCommand(IndividualsCommandBuilder.Build(console, individualsManager))
+            .WithCommand(PersonalDataCommandBuilder.Build(console, personalDataManager))
+            .WithCommand(PurposesCommandBuilder.Build(console, purposesManager))
+            .WithCommand(OriginsCommandBuilder.Build(console, originsManager))
+            .WithCommand(VacuumingRulesCommandBuilder.Build(console, vacuumingRulesManager))
+            .WithCommand(DeleteConditionsCommandBuilder.Build(console, deleteConditionsManager))
+            .WithCommand(ProcessingsCommandBuilder.Build(console, processingsManager))
+            .WithCommand(LoggingCommandBuilder.Build(console, logger))
+            .WithCommand(ConfigurationCommandBuilder.Build(console, configManager));
     }
 }
 
