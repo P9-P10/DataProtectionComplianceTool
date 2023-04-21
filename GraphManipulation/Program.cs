@@ -1,5 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using System.CommandLine.IO;
+using GraphManipulation.Commands.Builders;
 using GraphManipulation.Helpers;
 using GraphManipulation.Linking;
 using GraphManipulation.Logging;
@@ -32,6 +34,7 @@ public static class Program
 
     private static void Interactive()
     {
+        // var cli = CommandLineInterfaceBuilder.Build(new SystemConsole(), )
         var interactive = new InteractiveMode(Cf, new PlaintextLogger(Cf));
         interactive.Run();
     }
