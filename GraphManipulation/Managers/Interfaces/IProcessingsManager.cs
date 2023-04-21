@@ -5,10 +5,10 @@ using GraphManipulation.Models.Interfaces;
 namespace GraphManipulation.Managers.Interfaces;
 
 public interface IProcessingsManager : 
-    IGetter<IProcessing, TableColumnPair>,
-    IDescriptionUpdater<TableColumnPair>,
-    IDeleter<TableColumnPair>
+    IGetter<IProcessing, string>,
+    IDescriptionUpdater<string>,
+    IDeleter<string>
 {
-    public void AddProcessing(TableColumnPair tableColumnPair, string purposeName, string description);
-    public void UpdatePurpose(TableColumnPair tableColumnPair, string purposeName);
+    public void AddProcessing(string name, TableColumnPair tableColumnPair, string purposeName, string description);
+    public void UpdatePurpose(string name, TableColumnPair tableColumnPair, string purposeName);
 }
