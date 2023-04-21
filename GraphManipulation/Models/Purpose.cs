@@ -1,18 +1,17 @@
-using GraphManipulation.Managers.Interfaces.Base;
 using GraphManipulation.Models.Interfaces;
-using GraphManipulation.Models.Interfaces.Base;
 
 namespace GraphManipulation.Models;
 
 public class Purpose : DomainEntity, IPurpose
 {
-    public string? Description { get; set; }
-    public string Name { get; set; }
     public bool LegallyRequired { get; set; }
     public IEnumerable<PersonalDataColumn> Columns { get; set; }
-    public IEnumerable<VacuumingRule> Rules { get; set; }
     public DeleteCondition? DeleteCondition { get; set; }
-
+    
+    public int? Id { get; set; }
+    public string? Description { get; set; }
+    public string Name { get; set; }
+    public IEnumerable<VacuumingRule>? Rules { get; set; }
 
     public string ToListing()
     {
@@ -44,5 +43,21 @@ public class Purpose : DomainEntity, IPurpose
     public IDeleteCondition? GetDeleteCondition()
     {
         return DeleteCondition;
+    }
+
+
+    public override bool Equals(object? obj)
+    {
+        return Equals(obj as Purpose);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Name, Id, Description);
+    }
+
+    bool Equals(Purpose? other)
+    {
+        return other.Description == Description && other.Name == Name && other.Id == Id;
     }
 }

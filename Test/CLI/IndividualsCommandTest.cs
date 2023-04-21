@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.IO;
-using System.Linq;
 using FluentAssertions;
 using GraphManipulation.Commands.Builders;
 using GraphManipulation.Managers;
@@ -10,7 +8,6 @@ using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
 using GraphManipulation.Models.Interfaces;
 using Moq;
-using VDS.RDF;
 using Xunit;
 
 namespace Test.CLI;
