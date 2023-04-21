@@ -1,6 +1,5 @@
-using GraphManipulation.Models.Interfaces;
 using System.Text.RegularExpressions;
-
+using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Models;
 
@@ -78,10 +77,23 @@ public class VacuumingRule : DomainEntity, IVacuumingRule
         Purposes = new List<Purpose>();
     }
 
-    public VacuumingRule()
+    public VacuumingRule(string name, string interval, List<Purpose> purposes)
     {
+        Name = name;
+        Interval = interval;
+        Purposes = purposes;
     }
 
+    public VacuumingRule(string name, string interval)
+    {
+        Name = name;
+        Interval = interval;
+    }
+
+    public VacuumingRule()
+    {
+        // This constructor is needed.
+    }
 
     public bool ShouldExecute()
     {
