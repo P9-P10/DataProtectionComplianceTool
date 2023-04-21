@@ -17,6 +17,15 @@ namespace Test.CLI;
 
 public class IndividualsCommandTest
 {
+    private class TestTestConsole : IConsole
+    {
+        public IStandardStreamWriter Out { get; }
+        public bool IsOutputRedirected { get; }
+        public IStandardStreamWriter Error { get; }
+        public bool IsErrorRedirected { get; }
+        public bool IsInputRedirected { get; }
+    }
+    
     private static Command BuildCli(out Mock<IIndividualsManager> individualsManager)
     {
         return BuildCli(out individualsManager, out _);
@@ -35,13 +44,11 @@ public class IndividualsCommandTest
 
     private static void VerifyCommand(Command cli, string command, bool happy = true)
     {
-        VerifyCommand(cli, command, out _, happy);
+        VerifyCommand(cli, command, new TestConsole(), happy);
     }
 
-    private static void VerifyCommand(Command cli, string command, out TestConsole console, bool happy = true)
+    private static void VerifyCommand(Command cli, string command, IConsole console, bool happy = true)
     {
-        console = new TestConsole();
-        
         if (happy)
         {
             cli.Parse(command).Errors.Should().BeEmpty();
@@ -108,7 +115,7 @@ public class IndividualsCommandTest
         [Fact]
         public void PrintsToConsole()
         {
-            VerifyCommand(BuildCli(out _), $"{CommandName}", out var console);
+            VerifyCommand(BuildCli(out _, out var console), $"{CommandName}");
             console.Out.ToString()!.Trim().Should().Be("47");
         }
     }
