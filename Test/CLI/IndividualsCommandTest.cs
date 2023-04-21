@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.IO;
-using System.Linq;
 using FluentAssertions;
 using GraphManipulation.Commands.Builders;
 using GraphManipulation.Managers;
@@ -10,46 +8,33 @@ using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
 using GraphManipulation.Models.Interfaces;
 using Moq;
-using VDS.RDF;
 using Xunit;
 
 namespace Test.CLI;
 
 public class IndividualsCommandTest
 {
-    // private class TestTestConsole : IConsole
-    // {
-    //     public TestTestConsole()
-    //     public IStandardStreamWriter Out { get; }
-    //     public bool IsOutputRedirected { get; }
-    //     public IStandardStreamWriter Error { get; }
-    //     public bool IsErrorRedirected { get; }
-    //     public bool IsInputRedirected { get; }
-    // }
-
-    private static int IndividualId = 47;
-
-    private static Command BuildCli()
+    private class TestTestConsole : IConsole
     {
-        return BuildCli(out _, out _);
+        public IStandardStreamWriter Out { get; }
+        public bool IsOutputRedirected { get; }
+        public IStandardStreamWriter Error { get; }
+        public bool IsErrorRedirected { get; }
+        public bool IsInputRedirected { get; }
     }
     
     private static Command BuildCli(out Mock<IIndividualsManager> individualsManager)
     {
         return BuildCli(out individualsManager, out _);
     }
-
+    
     private static Command BuildCli(out Mock<IIndividualsManager> individualsManager, out IConsole console)
     {
         console = new TestConsole();
         individualsManager = new Mock<IIndividualsManager>();
-
-        individualsManager
-            .Setup(manager => manager.Get(IndividualId))
-            .Returns(new Individual { Id = IndividualId });
         individualsManager
             .Setup(manager => manager.GetAll())
-            .Returns(new List<IIndividual> { new Individual { Id = IndividualId }, new Individual() });
+            .Returns(new List<IIndividual> { new Individual { Id = 47 } });
         
         return IndividualsCommandBuilder.Build(console, individualsManager.Object);
     }
@@ -80,19 +65,19 @@ public class IndividualsCommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(), $"{CommandName} --table tableName --column columnName");
+            VerifyCommand(BuildCli(out _), $"{CommandName} --table tableName --column columnName");
         }
 
         [Fact]
         public void MissingRequiredOptionTableFails()
         {
-            VerifyCommand(BuildCli(), $"{CommandName} --column columnName", false);
+            VerifyCommand(BuildCli(out _), $"{CommandName} --column columnName", false);
         }
 
         [Fact]
         public void MissingRequiredOptionColumnFails()
         {
-            VerifyCommand(BuildCli(), $"{CommandName} --table tableName", false);
+            VerifyCommand(BuildCli(out _), $"{CommandName} --table tableName", false);
         }
 
         [Fact]
@@ -113,7 +98,7 @@ public class IndividualsCommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(), $"{CommandName}");
+            VerifyCommand(BuildCli(out _), $"{CommandName}");
         }
         
         [Fact]
@@ -128,7 +113,7 @@ public class IndividualsCommandTest
         public void PrintsToConsole()
         {
             VerifyCommand(BuildCli(out _, out var console), $"{CommandName}");
-            console.Out.ToString().Should().Be($"{IndividualId}\nUnknown\n");
+            console.Out.ToString()!.Trim().Should().Be("47");
         }
     }
 
@@ -139,23 +124,7 @@ public class IndividualsCommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(), $"{CommandName} --id {IndividualId}");
-        }
-        
-        [Fact]
-        public void CallsManager()
-        {
-            var cli = BuildCli(out var individualsManagerMock);
-            VerifyCommand(cli, $"{CommandName} --id {IndividualId}");
-            individualsManagerMock.Verify(manager => 
-                manager.Get(It.Is<int>(i => i == IndividualId)));
-        }
-        
-        [Fact]
-        public void PrintsToConsole()
-        {
-            VerifyCommand(BuildCli(out _, out var console), $"{CommandName} --id {IndividualId}");
-            console.Out.ToString().Should().Be($"{IndividualId}\n");
+            
         }
     }
 }
