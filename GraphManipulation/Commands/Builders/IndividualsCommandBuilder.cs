@@ -12,8 +12,8 @@ public static class IndividualsCommandBuilder
         return CommandBuilder.CreateCommand(CommandNamer.IndividualsName)
             .WithAlias(CommandNamer.IndividualsAlias)
             .WithSubCommand(SetSource(individualsManager))
-            .WithSubCommand(ListIndividuals(individualsManager))
-            .WithSubCommand(ShowIndividual());
+            .WithSubCommand(ListIndividuals(console, individualsManager))
+            .WithSubCommand(ShowIndividual(console, individualsManager));
     }
 
     private static Command SetSource(IIndividualsManager individualsManager)
@@ -44,7 +44,7 @@ public static class IndividualsCommandBuilder
         return command;
     }
 
-    private static Command ListIndividuals(IIndividualsManager individualsManager)
+    private static Command ListIndividuals(IConsole console, IIndividualsManager individualsManager)
     {
 
         var command = CommandBuilder
@@ -55,13 +55,13 @@ public static class IndividualsCommandBuilder
             individualsManager
                 .GetAll()
                 .ToList()
-                .ForEach(s => Console.WriteLine(s.ToListing()));
+                .ForEach(s => console.WriteLine(s.ToListing()));
         });
         
         return command;
     }
 
-    private static Command ShowIndividual()
+    private static Command ShowIndividual(IConsole console, IIndividualsManager individualsManager)
     {
         return CommandBuilder.BuildShowCommand();
     }
