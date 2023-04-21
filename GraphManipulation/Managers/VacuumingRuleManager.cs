@@ -34,4 +34,13 @@ public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumin
         rule.Interval = interval;
         _mapper.Update(rule);
     }
+
+    public void UpdateDescription(string key, string description)
+    {
+        VacuumingRule? rule = base.Get(description);
+        if (rule == null) return;
+        rule.Description = description;
+        _mapper.Update(rule);
+        
+    }
 }
