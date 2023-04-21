@@ -17,27 +17,39 @@ namespace Test.CLI;
 
 public class IndividualsCommandTest
 {
-    private class TestTestConsole : IConsole
+    // private class TestTestConsole : IConsole
+    // {
+    //     public TestTestConsole()
+    //     public IStandardStreamWriter Out { get; }
+    //     public bool IsOutputRedirected { get; }
+    //     public IStandardStreamWriter Error { get; }
+    //     public bool IsErrorRedirected { get; }
+    //     public bool IsInputRedirected { get; }
+    // }
+
+    private static int IndividualId = 47;
+
+    private static Command BuildCli()
     {
-        public IStandardStreamWriter Out { get; }
-        public bool IsOutputRedirected { get; }
-        public IStandardStreamWriter Error { get; }
-        public bool IsErrorRedirected { get; }
-        public bool IsInputRedirected { get; }
+        return BuildCli(out _, out _);
     }
     
     private static Command BuildCli(out Mock<IIndividualsManager> individualsManager)
     {
         return BuildCli(out individualsManager, out _);
     }
-    
+
     private static Command BuildCli(out Mock<IIndividualsManager> individualsManager, out IConsole console)
     {
         console = new TestConsole();
         individualsManager = new Mock<IIndividualsManager>();
+
+        individualsManager
+            .Setup(manager => manager.Get(IndividualId))
+            .Returns(new Individual { Id = IndividualId });
         individualsManager
             .Setup(manager => manager.GetAll())
-            .Returns(new List<IIndividual> { new Individual { Id = 47 } });
+            .Returns(new List<IIndividual> { new Individual { Id = IndividualId }, new Individual() });
         
         return IndividualsCommandBuilder.Build(console, individualsManager.Object);
     }
@@ -68,19 +80,19 @@ public class IndividualsCommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(out _), $"{CommandName} --table tableName --column columnName");
+            VerifyCommand(BuildCli(), $"{CommandName} --table tableName --column columnName");
         }
 
         [Fact]
         public void MissingRequiredOptionTableFails()
         {
-            VerifyCommand(BuildCli(out _), $"{CommandName} --column columnName", false);
+            VerifyCommand(BuildCli(), $"{CommandName} --column columnName", false);
         }
 
         [Fact]
         public void MissingRequiredOptionColumnFails()
         {
-            VerifyCommand(BuildCli(out _), $"{CommandName} --table tableName", false);
+            VerifyCommand(BuildCli(), $"{CommandName} --table tableName", false);
         }
 
         [Fact]
@@ -101,7 +113,7 @@ public class IndividualsCommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(out _), $"{CommandName}");
+            VerifyCommand(BuildCli(), $"{CommandName}");
         }
         
         [Fact]
@@ -116,7 +128,7 @@ public class IndividualsCommandTest
         public void PrintsToConsole()
         {
             VerifyCommand(BuildCli(out _, out var console), $"{CommandName}");
-            console.Out.ToString()!.Trim().Should().Be("47");
+            console.Out.ToString().Should().Be($"{IndividualId}\nUnknown\n");
         }
     }
 
@@ -127,7 +139,23 @@ public class IndividualsCommandTest
         [Fact]
         public void Parses()
         {
-            
+            VerifyCommand(BuildCli(), $"{CommandName} --id {IndividualId}");
+        }
+        
+        [Fact]
+        public void CallsManager()
+        {
+            var cli = BuildCli(out var individualsManagerMock);
+            VerifyCommand(cli, $"{CommandName} --id {IndividualId}");
+            individualsManagerMock.Verify(manager => 
+                manager.Get(It.Is<int>(i => i == IndividualId)));
+        }
+        
+        [Fact]
+        public void PrintsToConsole()
+        {
+            VerifyCommand(BuildCli(out _, out var console), $"{CommandName} --id {IndividualId}");
+            console.Out.ToString().Should().Be($"{IndividualId}\n");
         }
     }
 }

@@ -47,22 +47,37 @@ public static class IndividualsCommandBuilder
     private static Command ListIndividuals(IConsole console, IIndividualsManager individualsManager)
     {
 
-        var command = CommandBuilder
-            .BuildListCommand();
-
-        command.SetHandler(() =>
-        {
-            individualsManager
-                .GetAll()
-                .ToList()
-                .ForEach(s => console.WriteLine(s.ToListing()));
-        });
-        
-        return command;
+        return CommandBuilder
+            .BuildListCommand()
+            .WithDescription("Lists all individuals currently in the system")
+            .WithHandler(_ =>
+            {
+                individualsManager
+                    .GetAll()
+                    .ToList()
+                    .ForEach(s => console.WriteLine(s.ToListing()));
+            });
     }
 
     private static Command ShowIndividual(IConsole console, IIndividualsManager individualsManager)
     {
-        return CommandBuilder.BuildShowCommand();
+        var idOption = OptionBuilder
+            .CreateIdOption("The id of the individual to be shown")
+            .WithIsRequired(true);
+
+        var command = CommandBuilder
+            .BuildShowCommand()
+            .WithDescription("Shows information pertaining to the individual with the given id")
+            .WithOption(idOption);
+        
+        command.SetHandler(id =>
+        {
+            var individual = individualsManager.Get(id);
+            
+            console.WriteLine(individual != null ? individual.ToListing() : "Could not find individual with that id");
+        }, idOption);
+
+
+        return command;
     }
 }
