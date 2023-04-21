@@ -10,5 +10,5 @@ public interface IOriginsManager :
     INameUpdater, 
     IDescriptionUpdater<string>
 {
-    public void AddOrigin(string name, string description);
+    public void Add(string name, string description);
 }
