@@ -7,6 +7,7 @@ namespace GraphManipulation.Managers.Interfaces;
 public interface IVacuumingRulesManager : 
     IGetter<IVacuumingRule, string>, 
     IDeleter<string>, 
+    IDescriptionUpdater<string>,
     INameUpdater
 {
     public void AddVacuumingRule(string name, string interval, string purposeName);
