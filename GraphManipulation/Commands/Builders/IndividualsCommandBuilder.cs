@@ -30,6 +30,7 @@ public static class IndividualsCommandBuilder
 
         var command = CommandBuilder
             .BuildSetCommand("source")
+            .WithDescription("Sets the source of individuals for whom personal data can be managed")
             .WithOption(tableOption)
             .WithOption(columnOption);
         
