@@ -15,7 +15,9 @@ public static class PurposesCommandBuilder
                 AddPurpose(purposesManager),
                 UpdatePurpose(console, purposesManager),
                 DeletePurpose(console, purposesManager),
-                ListPurposes(console, purposesManager)
+                ListPurposes(console, purposesManager),
+                ShowPurpose(console, purposesManager),
+                SetDeleteCondition(console, purposesManager)
             );
     }
 
@@ -133,6 +135,52 @@ public static class PurposesCommandBuilder
     {
         return CommandBuilder.BuildListCommand(console, purposesManager)
             .WithDescription("Lists the purposes currently in the system");
+    }
+
+    private static Command ShowPurpose(IConsole console, IPurposesManager purposesManager)
+    {
+        var nameOption = BuildNameOption()
+            .WithIsRequired(true);
+
+        return CommandBuilder
+            .BuildShowCommand(console, purposesManager, nameOption, "purpose")
+            .WithDescription("Shows details about the given purpose")
+            .WithOptions(nameOption);
+    }
+
+    private static Command SetDeleteCondition(IConsole console, IPurposesManager purposesManager)
+    {
+        var purposeNameOption = OptionBuilder
+            .CreateOption<string>("--purpose-name")
+            .WithAlias("-pn")
+            .WithDescription("The purpose that receives a delete condition")
+            .WithIsRequired(true);
+
+        var deleteConditionOption = OptionBuilder
+            .CreateOption<string>("--delete-condition-name")
+            .WithAlias("-dcn")
+            .WithDescription("The delete condition that the purpose receives")
+            .WithIsRequired(true);
+
+        var command = CommandBuilder
+            .BuildSetCommand("delete-condition")
+            .WithDescription("Sets the delete condition of the given purpose")
+            .WithOptions(purposeNameOption, deleteConditionOption);
+
+        command.SetHandler((purposeName, deleteCondition) =>
+        {
+            var purpose = purposesManager.Get(purposeName);
+
+            if (purpose is null)
+            {
+                console.WriteLine($"Could not find a purpose using {purposeName}");
+            }
+            
+            purposesManager.SetDeleteCondition(purposeName, deleteCondition);
+            
+        }, purposeNameOption, deleteConditionOption);
+        
+        return command;
     }
 
     private static Option<string> BuildNameOption()

@@ -11,7 +11,7 @@ public class Purpose : DomainEntity, IPurpose
     public int? Id { get; set; }
     public string? Description { get; set; }
     public string Name { get; set; }
-    public IEnumerable<VacuumingRule>? Rules { get; set; }
+    public IEnumerable<VacuumingRule> Rules { get; set; }
 
     public string ToListing()
     {
@@ -19,9 +19,9 @@ public class Purpose : DomainEntity, IPurpose
             Name,
             Description,
             LegallyRequired,
-            DeleteCondition.ToListing(),
-            "[ " + Columns.Select(c => c.ToListing()) + " ]",
-            "[ " + Rules.Select(r => r.ToListing()) + " ]"
+            "[ " + (DeleteCondition is null ? "" : DeleteCondition.ToListing()) + " ]",
+            "[ " + string.Join(", ", Columns.Select(c => c.ToListing())) + " ]",
+            "[ " + string.Join(", ",  Rules.Select(r => r.ToListing())) + " ]"
         );
     }
 

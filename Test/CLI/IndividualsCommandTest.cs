@@ -18,11 +18,7 @@ public class IndividualsCommandTest : CommandTest
 
     private static Command BuildCli()
     {
-        public IStandardStreamWriter Out { get; }
-        public bool IsOutputRedirected { get; }
-        public IStandardStreamWriter Error { get; }
-        public bool IsErrorRedirected { get; }
-        public bool IsInputRedirected { get; }
+        return BuildCli(out _, out _);
     }
     
     private static Command BuildCli(out Mock<IIndividualsManager> individualsManager)
@@ -43,7 +39,7 @@ public class IndividualsCommandTest : CommandTest
             .Returns(new Individual { Id = IndividualId });
         individualsManager
             .Setup(manager => manager.GetAll())
-            .Returns(new List<IIndividual> { new Individual { Id = 47 } });
+            .Returns(new List<IIndividual> { new Individual { Id = IndividualId }, new Individual() });
         
         return IndividualsCommandBuilder.Build(console, individualsManager.Object);
     }
@@ -56,19 +52,19 @@ public class IndividualsCommandTest : CommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(out _), $"{CommandName} --table tableName --column columnName");
+            VerifyCommand(BuildCli(), $"{CommandName} --table tableName --column columnName");
         }
 
         [Fact]
         public void MissingRequiredOptionTableFails()
         {
-            VerifyCommand(BuildCli(out _), $"{CommandName} --column columnName", false);
+            VerifyCommand(BuildCli(), $"{CommandName} --column columnName", false);
         }
 
         [Fact]
         public void MissingRequiredOptionColumnFails()
         {
-            VerifyCommand(BuildCli(out _), $"{CommandName} --table tableName", false);
+            VerifyCommand(BuildCli(), $"{CommandName} --table tableName", false);
         }
 
         [Fact]
@@ -90,7 +86,7 @@ public class IndividualsCommandTest : CommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(out _), $"{CommandName}");
+            VerifyCommand(BuildCli(), $"{CommandName}");
         }
 
         [Fact]
@@ -119,7 +115,7 @@ public class IndividualsCommandTest : CommandTest
         [Fact]
         public void Parses()
         {
-            
+            VerifyCommand(BuildCli(), $"{CommandName} --id {IndividualId}");
         }
         
         [Fact]

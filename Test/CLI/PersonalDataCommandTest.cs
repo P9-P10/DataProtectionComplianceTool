@@ -19,10 +19,18 @@ public class PersonalDataCommandTest : CommandTest
     {
         console = new TestConsole();
         managerMock = new Mock<IPersonalDataManager>();
-        
+
         managerMock
-            .Setup(manager => manager.Get(It.Is<TableColumnPair>(pair => pair.TableName == TableName && pair.ColumnName == ColumnName)))
-            .Returns(new PersonalDataColumn {Description = Description, TableColumnPair = new TableColumnPair(TableName, ColumnName)})
+            .Setup(manager =>
+                manager.Get(
+                    It.Is<TableColumnPair>(pair => pair.TableName == TableName && pair.ColumnName == ColumnName)))
+            .Returns(new PersonalDataColumn
+                { 
+                    Description = Description, 
+                    TableColumnPair = new TableColumnPair(TableName, ColumnName), 
+                    Purposes = new List<Purpose>(),
+                    JoinCondition = JoinCondition
+                });
 
         return PersonalDataCommandBuilder.Build(console, managerMock.Object);
     }
@@ -147,7 +155,7 @@ public class PersonalDataCommandTest : CommandTest
                 $"{CommandName} " +
                 $"--table {TableName} " +
                 $"--column {ColumnName} " +
-                $"--description \"{Description}\" "
+                $"--description \"{Description + "NEW"}\" "
             );
         }
 
@@ -158,11 +166,11 @@ public class PersonalDataCommandTest : CommandTest
                 .Invoke($"{CommandName} " +
                         $"--table {TableName} " +
                         $"--column {ColumnName} " +
-                        $"--description \"{Description}\" "
+                        $"--description \"{Description + "NEW"}\" "
                 );
             managerMock.Verify(manager => manager.UpdateDescription(
                 It.Is<TableColumnPair>(pair => pair.TableName == TableName && pair.ColumnName == ColumnName),
-                It.Is<string>(s => s == Description)));
+                It.Is<string>(s => s == Description + "NEW")));
         }
     }
 
@@ -231,7 +239,7 @@ public class PersonalDataCommandTest : CommandTest
             BuildCli(out _, out var console)
                 .Invoke($"{CommandName} --table {TableName} --column {ColumnName}");
             
-            console.Out.ToString().Should().Be($"{TableName}, {ColumnName}\n");
+            console.Out.ToString().Should().StartWith($"{TableName}, {ColumnName}, {JoinCondition}, {Description}");
         }
     }
 

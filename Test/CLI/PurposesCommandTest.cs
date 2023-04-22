@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.IO;
+using FluentAssertions;
 using GraphManipulation.Commands.Builders;
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
@@ -18,7 +20,15 @@ public class PurposesCommandTest : CommandTest
 
         managerMock
             .Setup(manager => manager.Get(It.Is<string>(s => s == PurposeName)))
-            .Returns(new Purpose { Name = PurposeName, Description = Description, LegallyRequired = LegallyRequired });
+            .Returns(new Purpose
+            {
+                Name = PurposeName,
+                Description = Description,
+                LegallyRequired = LegallyRequired,
+                Columns = new List<PersonalDataColumn>(),
+                Rules = new List<VacuumingRule>(),
+                DeleteCondition = DeleteCondition
+            });
 
         return PurposesCommandBuilder.Build(console, managerMock.Object);
     }
@@ -26,6 +36,13 @@ public class PurposesCommandTest : CommandTest
     private const string PurposeName = "purposeName";
     private const string Description = "This is a description";
     private const bool LegallyRequired = true;
+
+    private static readonly DeleteCondition DeleteCondition = new()
+    {
+        Condition = "This is a condition",
+        Name = "deleteCondition",
+        Description = "This is a description"
+    };
 
     public class Add
     {
@@ -84,7 +101,7 @@ public class PurposesCommandTest : CommandTest
                 $"--legally-required {!LegallyRequired} "
             );
         }
-        
+
         [Fact]
         public void AliasParses()
         {
@@ -106,7 +123,7 @@ public class PurposesCommandTest : CommandTest
                         $"--new-name {PurposeName + "NEW"} " +
                         $"--description \"{Description + "NEW"}\" " +
                         $"--legally-required {!LegallyRequired} ");
-            
+
             managerMock.Verify(manager => manager.UpdateName(
                 It.Is<string>(s => s == PurposeName),
                 It.Is<string>(s => s == PurposeName + "NEW")));
@@ -117,7 +134,7 @@ public class PurposesCommandTest : CommandTest
                 It.Is<string>(s => s == PurposeName),
                 It.Is<bool>(s => s == !LegallyRequired)));
         }
-        
+
         [Fact]
         public void CallsManagerWithOnlyOneArgument()
         {
@@ -125,7 +142,7 @@ public class PurposesCommandTest : CommandTest
                 .Invoke($"{CommandName} " +
                         $"--name {PurposeName} " +
                         $"--new-name {PurposeName + "NEW"} ");
-            
+
             managerMock.Verify(manager => manager.UpdateName(
                 It.Is<string>(s => s == PurposeName),
                 It.Is<string>(s => s == PurposeName + "NEW")));
@@ -136,7 +153,7 @@ public class PurposesCommandTest : CommandTest
                 It.Is<string>(s => s == PurposeName),
                 It.IsAny<bool>()), Times.Never);
         }
-        
+
         [Fact]
         public void CallsManagerWithOnlyNecessaryArgument()
         {
@@ -146,7 +163,7 @@ public class PurposesCommandTest : CommandTest
                         $"--new-name {PurposeName + "NEW"} " +
                         $"--description \"{Description}\" " +
                         $"--legally-required {LegallyRequired} ");
-            
+
             managerMock.Verify(manager => manager.UpdateName(
                 It.Is<string>(s => s == PurposeName),
                 It.Is<string>(s => s == PurposeName + "NEW")));
@@ -174,11 +191,11 @@ public class PurposesCommandTest : CommandTest
         {
             BuildCli(out var managerMock, out _)
                 .Invoke($"{CommandName} --name {PurposeName}");
-            
+
             managerMock.Verify(manager => manager.Delete(It.Is<string>(s => s == PurposeName)));
         }
     }
-    
+
     public class List
     {
         private const string CommandName = "list";
@@ -194,7 +211,7 @@ public class PurposesCommandTest : CommandTest
         {
             BuildCli(out var managerMock, out _)
                 .Invoke($"{CommandName}");
-            
+
             managerMock.Verify(manager => manager.GetAll());
         }
     }
@@ -213,7 +230,19 @@ public class PurposesCommandTest : CommandTest
         public void CallsManagerWithCorrectArguments()
         {
             BuildCli(out var managerMock, out _)
-                .Invoke($"{CommandName}");
+                .Invoke($"{CommandName} --name {PurposeName}");
+
+            managerMock.Verify(manager => manager.Get(It.Is<string>(s => s == PurposeName)));
+        }
+
+        [Fact]
+        public void PrintsToConsole()
+        {
+            BuildCli(out _, out var console)
+                .Invoke($"{CommandName} --name {PurposeName}");
+
+            console.Out.ToString().Should()
+                .StartWith($"{PurposeName}, {Description}, {LegallyRequired}, [ {DeleteCondition.ToListing()} ]");
         }
     }
 
@@ -224,32 +253,24 @@ public class PurposesCommandTest : CommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(out _, out _), $"{CommandName}");
+            VerifyCommand(BuildCli(out _, out _),
+                $"{CommandName} " +
+                $"--purpose-name {PurposeName} " +
+                $"--delete-condition-name {DeleteCondition.Name} "
+            );
         }
 
         [Fact]
         public void CallsManagerWithCorrectArguments()
         {
             BuildCli(out var managerMock, out _)
-                .Invoke($"{CommandName}");
-        }
-    }
+                .Invoke($"{CommandName} " +
+                        $"--purpose-name {PurposeName} " +
+                        $"--delete-condition-name {DeleteCondition.Name} ");
 
-    public class ShowDeleteCondition
-    {
-        private const string CommandName = "show-delete-condition";
-
-        [Fact]
-        public void Parses()
-        {
-            VerifyCommand(BuildCli(out _, out _), $"{CommandName}");
-        }
-
-        [Fact]
-        public void CallsManagerWithCorrectArguments()
-        {
-            BuildCli(out var managerMock, out _)
-                .Invoke($"{CommandName}");
+            managerMock.Verify(manager => manager.SetDeleteCondition(
+                It.Is<string>(s => s == PurposeName),
+                It.Is<string>(s => s == DeleteCondition.Name)));
         }
     }
 }

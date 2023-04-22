@@ -12,13 +12,13 @@ public static class IndividualsCommandBuilder
         return CommandBuilder.CreateCommand(CommandNamer.IndividualsName)
             .WithAlias(CommandNamer.IndividualsAlias)
             .WithSubCommands(
-                SetSource(individualsManager),
+                SetSource(console, individualsManager),
                 ListIndividuals(console, individualsManager),
                 ShowIndividual(console, individualsManager)
             );
     }
 
-    private static Command SetSource(IIndividualsManager individualsManager)
+    private static Command SetSource(IConsole console, IIndividualsManager individualsManager)
     {
         var tableOption = OptionBuilder
             .CreateTableOption()
