@@ -1,6 +1,8 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
+using GraphManipulation.Managers.Interfaces.Base;
+using GraphManipulation.Models.Interfaces.Base;
 
 namespace GraphManipulation.Commands.BaseBuilders;
 
@@ -17,15 +19,23 @@ public static class CommandBuilder
         return command;
     }
 
-    public static Command WithOption(this Command command, Option option)
+    public static Command WithOptions(this Command command, params Option[] options)
     {
-        command.AddOption(option);
+        foreach (var option in options)
+        {
+            command.AddOption(option);
+        }
+
         return command;
     }
 
-    public static Command WithArgument(this Command command, Argument argument)
+    public static Command WithArguments(this Command command, params Argument[] arguments)
     {
-        command.AddArgument(argument);
+        foreach (var argument in arguments)
+        {
+            command.AddArgument(argument);
+        }
+
         return command;
     }
 
@@ -40,16 +50,26 @@ public static class CommandBuilder
         command.SetHandler(handle);
         return command;
     }
-    
+
+    public static Command WithHandler(this Command command, Action handle)
+    {
+        command.SetHandler(handle);
+        return command;
+    }
+
     public static Command WithDescription(this Command command, string description)
     {
         command.Description = description;
         return command;
     }
 
-    public static Command WithSubCommand(this Command command, Command subCommand)
+    public static Command WithSubCommands(this Command command, params Command[] subCommands)
     {
-        command.AddCommand(subCommand);
+        foreach (var subCommand in subCommands)
+        {
+            command.AddCommand(subCommand);
+        }
+
         return command;
     }
 
@@ -68,24 +88,53 @@ public static class CommandBuilder
     {
         return BuildCommandWithNameAliasSubject("update", "u", subject);
     }
-    
+
     public static Command BuildDeleteCommand(string subject = "")
     {
         return BuildCommandWithNameAliasSubject("delete", "d", subject);
     }
-    
+
     public static Command BuildListCommand(string subject = "")
     {
         return BuildCommandWithNameAliasSubject("list", "ls", subject);
     }
-    
+
     public static Command BuildSetCommand(string subject = "")
     {
         return BuildCommandWithNameAliasSubject("set", "st", subject);
     }
-    
+
     public static Command BuildShowCommand(string subject = "")
     {
         return BuildCommandWithNameAliasSubject("show", "sh", subject);
+    }
+
+    public static Command BuildListCommand<TResult, TKey>(IConsole console, IGetter<TResult, TKey> getter,
+        string subject = "")
+        where TResult : IListable
+    {
+        return BuildListCommand(subject)
+            .WithHandler(() => getter
+                .GetAll()
+                .ToList()
+                .ForEach(r => console.WriteLine(r.ToListing())
+                ));
+    }
+
+    public static Command BuildShowCommand<TResult, TKey>(IConsole console, IGetter<TResult, TKey> getter,
+        Option<TKey> keyOption, string failureSubject,
+        string subject = "")
+        where TResult : IListable
+    {
+        var command = BuildShowCommand(subject);
+
+        command.SetHandler(key =>
+        {
+            var value = getter.Get(key);
+
+            console.WriteLine(value != null ? value.ToListing() : $"Could not find {failureSubject} using \"{key}\"");
+        }, keyOption);
+
+        return command;
     }
 }

@@ -10,7 +10,7 @@ public static class ProcessingsCommandBuilder
     {
         return CommandBuilder.CreateCommand(CommandNamer.ProcessingsName)
             .WithAlias(CommandNamer.ProcessingsAlias)
-            .WithSubCommand(AddProcessing());
+            .WithSubCommands(AddProcessing());
     }
 
     private static Command AddProcessing()

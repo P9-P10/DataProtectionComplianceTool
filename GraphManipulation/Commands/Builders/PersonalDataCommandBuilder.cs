@@ -11,13 +11,15 @@ public static class PersonalDataCommandBuilder
     {
         return CommandBuilder.CreateCommand(CommandNamer.PersonalDataName)
             .WithAlias(CommandNamer.PersonalDataAlias)
-            .WithSubCommand(AddPersonalData(personalDataManager))
-            .WithSubCommand(UpdatePersonalData(personalDataManager))
-            .WithSubCommand(DeletePersonalData(personalDataManager))
-            .WithSubCommand(ListPersonalData(console, personalDataManager))
-            .WithSubCommand(ShowPersonalData(console, personalDataManager));
+            .WithSubCommands(
+                AddPersonalData(personalDataManager),
+                UpdatePersonalData(console, personalDataManager),
+                DeletePersonalData(console, personalDataManager),
+                ListPersonalData(console, personalDataManager),
+                ShowPersonalData(console, personalDataManager)
+            );
     }
-    
+
     private static Command AddPersonalData(IPersonalDataManager personalDataManager)
     {
         var tableOption = BuildTableOption();
@@ -30,7 +32,8 @@ public static class PersonalDataCommandBuilder
             .WithIsRequired(true);
 
         var descriptionOption = OptionBuilder
-            .CreateDescriptionOption("Description of the personal data")
+            .CreateDescriptionOption<string>()
+            .WithDescription("Description of the personal data")
             .WithGetDefaultValue(() => "");
 
         var purposeOption = OptionBuilder
@@ -44,12 +47,14 @@ public static class PersonalDataCommandBuilder
         var command = CommandBuilder
             .BuildAddCommand()
             .WithDescription("Adds the personal data found in the given column to the data managed by the system")
-            .WithOption(tableOption)
-            .WithOption(columnOption)
-            .WithOption(joinConditionOption)
-            .WithOption(descriptionOption)
-            .WithOption(purposeOption);
-        
+            .WithOptions(
+                tableOption,
+                columnOption,
+                joinConditionOption,
+                descriptionOption,
+                purposeOption
+            );
+
         command.SetHandler((table, column, joinCondition, description, purposes) =>
         {
             var pair = new TableColumnPair(table, column);
@@ -60,32 +65,41 @@ public static class PersonalDataCommandBuilder
         return command;
     }
 
-    private static Command UpdatePersonalData(IPersonalDataManager personalDataManager)
+    private static Command UpdatePersonalData(IConsole console, IPersonalDataManager personalDataManager)
     {
         var tableOption = BuildTableOption();
         var columnOption = BuildColumnOption();
-        
+
         var descriptionOption = OptionBuilder
-            .CreateDescriptionOption("Description of the personal data")
-            .WithIsRequired(true);
-        
+            .CreateDescriptionOption<string?>()
+            .WithDescription("Description of the personal data");
+
         var command = CommandBuilder
             .BuildUpdateCommand()
             .WithDescription("Updates the personal data with the given values")
-            .WithOption(tableOption)
-            .WithOption(columnOption)
-            .WithOption(descriptionOption);
-        
+            .WithOptions(tableOption, columnOption, descriptionOption);
+
         command.SetHandler((table, column, description) =>
         {
             var pair = new TableColumnPair(table, column);
-            personalDataManager.UpdateDescription(pair, description);
+            var old = personalDataManager.Get(pair);
+
+            if (old is null)
+            {
+                console.WriteLine($"Could not find any personal data using \"{table}\" and \"{column}\"");
+                return;
+            }
+
+            if (description is not null && old.GetDescription() != description)
+            {
+                personalDataManager.UpdateDescription(pair, description);
+            }
         }, tableOption, columnOption, descriptionOption);
 
         return command;
     }
 
-    private static Command DeletePersonalData(IPersonalDataManager personalDataManager)
+    private static Command DeletePersonalData(IConsole console, IPersonalDataManager personalDataManager)
     {
         var tableOption = BuildTableOption();
         var columnOption = BuildColumnOption();
@@ -93,49 +107,73 @@ public static class PersonalDataCommandBuilder
         var command = CommandBuilder
             .BuildDeleteCommand()
             .WithDescription("Deletes the specified personal data from the data managed by the system")
-            .WithOption(tableOption)
-            .WithOption(columnOption);
-        
+            .WithOptions(tableOption, columnOption);
+
         command.SetHandler((table, column) =>
-        {
-            personalDataManager.Delete(new TableColumnPair(table, column));
-        }, tableOption, columnOption);
+            {
+                var pair = new TableColumnPair(table, column);
+                var value = personalDataManager.Get(pair);
+
+                if (value is null)
+                {
+                    console.WriteLine($"Could not find any personal data using \"{table}\" and \"{column}\"");
+                    return;
+                }
+                
+                personalDataManager.Delete(pair);
+            },
+            tableOption, columnOption);
 
         return command;
     }
 
     private static Command ListPersonalData(IConsole console, IPersonalDataManager personalDataManager)
     {
-        var command = CommandBuilder
-            .BuildListCommand()
-            .WithDescription("Lists the personal data currently managed by the system")
-            .WithHandler(_ =>
-            {
-                personalDataManager
-                    .GetAll()
-                    .ToList()
-                    .ForEach(s => console.WriteLine(s.ToListing()));
-            });
-
-        return command;
+        return CommandBuilder
+            .BuildListCommand(console, personalDataManager)
+            .WithDescription("Lists the personal data currently managed by the system");
     }
 
     private static Command ShowPersonalData(IConsole console, IPersonalDataManager personalDataManager)
     {
-        return CommandBuilder.BuildShowCommand();
+        var tableOption = BuildTableOption();
+        var columnOption = BuildColumnOption();
+
+        var command = CommandBuilder
+            .BuildShowCommand()
+            .WithDescription("Shows information about the personal data found in the given table and column")
+            .WithOptions(tableOption, columnOption);
+        
+        command.SetHandler((table, column) =>
+        {
+            var pair = new TableColumnPair(table, column);
+            var value = personalDataManager.Get(pair);
+
+            if (value is null)
+            {
+                console.WriteLine($"Could not find any personal data using \"{table}\" and \"{column}\"");
+                return;
+            }
+
+            console.WriteLine(value.ToListing());
+        }, tableOption, columnOption);
+
+        return command;
     }
-    
+
     private static Option<string> BuildTableOption()
     {
         return OptionBuilder
-            .CreateTableOption("The table in which the personal data can be found")
+            .CreateTableOption()
+            .WithDescription("The table in which the personal data can be found")
             .WithIsRequired(true);
     }
-    
+
     private static Option<string> BuildColumnOption()
     {
         return OptionBuilder
-            .CreateColumnOption("The column in which the personal data can be found")
+            .CreateColumnOption()
+            .WithDescription("The column in which the personal data can be found")
             .WithIsRequired(true);
     }
 }

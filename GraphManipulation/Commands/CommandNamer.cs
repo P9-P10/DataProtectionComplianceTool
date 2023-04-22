@@ -2,6 +2,9 @@ namespace GraphManipulation.Commands;
 
 public static class CommandNamer
 {
+    public const string RootCommandName = "root";
+    public const string RootCommandAlias = "r";
+    
     public const string DeleteConditionName = "delete-conditions";
     public const string DeleteConditionAlias = "dcs";
 

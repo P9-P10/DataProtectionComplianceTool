@@ -91,7 +91,8 @@ public sealed class MetadataEntriesCommand : AliasedCommand
         public ShowMetadataEntryCommand(IMetadataManager metadataManager, string? description = null) : base(
             description)
         {
-            var idOption = OptionBuilder.CreateIdOption("The id of the metadata entry that should be shown");
+            var idOption = OptionBuilder.CreateIdOption()
+                .WithDescription("The id of the metadata entry that should be shown");
             var allOption = OptionBuilder.CreateAllOption("Shows all metadata entries");
 
             var missingDataOption = OptionBuilder.BuildOption<bool>(

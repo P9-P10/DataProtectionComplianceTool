@@ -19,6 +19,10 @@ public class PersonalDataCommandTest : CommandTest
     {
         console = new TestConsole();
         managerMock = new Mock<IPersonalDataManager>();
+        
+        managerMock
+            .Setup(manager => manager.Get(It.Is<TableColumnPair>(pair => pair.TableName == TableName && pair.ColumnName == ColumnName)))
+            .Returns(new PersonalDataColumn {Description = Description, TableColumnPair = new TableColumnPair(TableName, ColumnName)})
 
         return PersonalDataCommandBuilder.Build(console, managerMock.Object);
     }
@@ -148,17 +152,6 @@ public class PersonalDataCommandTest : CommandTest
         }
 
         [Fact]
-        public void WithoutDescriptionFails()
-        {
-            VerifyCommand(BuildCli(out _, out _),
-                $"{CommandName} " +
-                $"--table {TableName} " +
-                $"--column {ColumnName} ",
-                false
-            );
-        }
-
-        [Fact]
         public void CallsManagerWithCorrectArguments()
         {
             BuildCli(out var managerMock, out _)
@@ -210,13 +203,6 @@ public class PersonalDataCommandTest : CommandTest
         {
             VerifyCommand(BuildCli(out _, out _), $"{CommandName}");
         }
-
-        [Fact]
-        public void CallsManagerWithCorrectArguments()
-        {
-            BuildCli(out var managerMock, out _)
-                .Invoke($"{CommandName}");
-        }
     }
 
     public class Show
@@ -226,14 +212,26 @@ public class PersonalDataCommandTest : CommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(out _, out _), $"{CommandName}");
+            VerifyCommand(BuildCli(out _, out _), $"{CommandName} --table {TableName} --column {ColumnName}");
         }
 
         [Fact]
         public void CallsManagerWithCorrectArguments()
         {
             BuildCli(out var managerMock, out _)
-                .Invoke($"{CommandName}");
+                .Invoke($"{CommandName} --table {TableName} --column {ColumnName}");
+            
+            managerMock.Verify(manager => manager.Get(
+                It.Is<TableColumnPair>(pair => pair.TableName == TableName && pair.ColumnName == ColumnName)));
+        }
+        
+        [Fact]
+        public void PrintsToConsole()
+        {
+            BuildCli(out _, out var console)
+                .Invoke($"{CommandName} --table {TableName} --column {ColumnName}");
+            
+            console.Out.ToString().Should().Be($"{TableName}, {ColumnName}\n");
         }
     }
 
@@ -270,15 +268,6 @@ public class PersonalDataCommandTest : CommandTest
         {
             BuildCli(out var managerMock, out _)
                 .Invoke($"{CommandName}");
-        }
-        
-        [Fact]
-        public void PrintsToConsole()
-        {
-            BuildCli(out _, out var console)
-                .Invoke($"{CommandName}");
-            
-            console.Out.ToString().Should().Be($"Unknown\n");
         }
     }
 

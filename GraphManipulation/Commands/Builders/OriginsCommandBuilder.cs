@@ -10,7 +10,7 @@ public static class OriginsCommandBuilder
     {
         return CommandBuilder.CreateCommand(CommandNamer.OriginsName)
             .WithAlias(CommandNamer.OriginsAlias)
-            .WithSubCommand(AddOrigin());
+            .WithSubCommands(AddOrigin());
     }
 
     private static Command AddOrigin()

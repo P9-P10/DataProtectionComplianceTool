@@ -8,10 +8,14 @@ public static class RootCommandBuilder
     {
         return new RootCommand(description);
     }
-    
-    public static RootCommand WithCommand(this RootCommand command, Command subCommand)
+
+    public static RootCommand WithCommands(this RootCommand rootCommand, params Command[] commands)
     {
-        command.AddCommand(subCommand);
-        return command;
+        foreach (var subCommand in commands)
+        {
+            rootCommand.AddCommand(subCommand);
+        }
+
+        return rootCommand;
     }
 }

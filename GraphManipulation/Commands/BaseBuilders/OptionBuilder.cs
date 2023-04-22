@@ -47,14 +47,14 @@ public static class OptionBuilder
         return option;
     }
 
-    public static Option<int> CreateIdOption(string description)
+    public static Option<int> CreateIdOption()
     {
-        return CreateOption<int>("--id").WithAlias("-i").WithDescription(description);
+        return CreateOption<int>("--id").WithAlias("-i");
     }
 
-    public static Option<string> CreateDescriptionOption(string description)
+    public static Option<T> CreateDescriptionOption<T>()
     {
-        return CreateOption<string>("--description").WithAlias("-d").WithDescription(description);
+        return CreateOption<T>("--description").WithAlias("-d");
     }
 
     public static Option<bool> CreateAllOption(string description)
@@ -62,14 +62,19 @@ public static class OptionBuilder
         return CreateOption<bool>("--all").WithAlias("-a").WithDescription(description);
     }
 
-    public static Option<string> CreateTableOption(string description)
+    public static Option<string> CreateTableOption()
     {
-        return CreateOption<string>("--table").WithAlias("-t").WithDescription(description);
+        return CreateOption<string>("--table").WithAlias("-t");
     }
     
-    public static Option<string> CreateColumnOption(string description)
+    public static Option<string> CreateColumnOption()
     {
-        return CreateOption<string>("--column").WithAlias("-c").WithDescription(description);
+        return CreateOption<string>("--column").WithAlias("-c");
+    }
+
+    public static Option<string> CreateNameOption()
+    {
+        return CreateOption<string>("--name").WithAlias("-n");
     }
 
     public static Option<T> BuildOption<T>(string name, string description, string alias)

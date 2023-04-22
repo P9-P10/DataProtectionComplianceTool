@@ -8,7 +8,7 @@ namespace GraphManipulation.Commands.Builders;
 
 public static class CommandLineInterfaceBuilder
 {
-    public static RootCommand Build(
+    public static Command Build(
         IConsole console,
         IIndividualsManager individualsManager, 
         IPersonalDataManager personalDataManager,
@@ -20,16 +20,20 @@ public static class CommandLineInterfaceBuilder
         ILogger logger,
         IConfigManager configManager)
     {
-        return RootCommandBuilder.CreateRootCommand("This is a description of the command")
-            .WithCommand(IndividualsCommandBuilder.Build(console, individualsManager))
-            .WithCommand(PersonalDataCommandBuilder.Build(console, personalDataManager))
-            .WithCommand(PurposesCommandBuilder.Build(console, purposesManager))
-            .WithCommand(OriginsCommandBuilder.Build(console, originsManager))
-            .WithCommand(VacuumingRulesCommandBuilder.Build(console, vacuumingRulesManager))
-            .WithCommand(DeleteConditionsCommandBuilder.Build(console, deleteConditionsManager))
-            .WithCommand(ProcessingsCommandBuilder.Build(console, processingsManager))
-            .WithCommand(LoggingCommandBuilder.Build(console, logger))
-            .WithCommand(ConfigurationCommandBuilder.Build(console, configManager));
+        return CommandBuilder.CreateCommand(CommandNamer.RootCommandName)
+            .WithAlias(CommandNamer.RootCommandAlias)
+            .WithDescription("This is a description of the root command")
+            .WithSubCommands(
+                IndividualsCommandBuilder.Build(console, individualsManager),
+                PersonalDataCommandBuilder.Build(console, personalDataManager),
+                PurposesCommandBuilder.Build(console, purposesManager),
+                OriginsCommandBuilder.Build(console, originsManager),
+                VacuumingRulesCommandBuilder.Build(console, vacuumingRulesManager),
+                DeleteConditionsCommandBuilder.Build(console, deleteConditionsManager),
+                ProcessingsCommandBuilder.Build(console, processingsManager),
+                LoggingCommandBuilder.Build(console, logger),
+                ConfigurationCommandBuilder.Build(console, configManager)
+            );
     }
 }
 

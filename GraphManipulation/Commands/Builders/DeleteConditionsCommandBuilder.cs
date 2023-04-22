@@ -10,7 +10,7 @@ public static class DeleteConditionsCommandBuilder
     {
         return CommandBuilder.CreateCommand(CommandNamer.DeleteConditionName)
             .WithAlias(CommandNamer.DeleteConditionAlias)
-            .WithSubCommand(AddDeleteCondition());
+            .WithSubCommands(AddDeleteCondition());
     }
 
     private static Command AddDeleteCondition()

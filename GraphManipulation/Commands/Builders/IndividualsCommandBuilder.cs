@@ -11,68 +11,56 @@ public static class IndividualsCommandBuilder
     {
         return CommandBuilder.CreateCommand(CommandNamer.IndividualsName)
             .WithAlias(CommandNamer.IndividualsAlias)
-            .WithSubCommand(SetSource(individualsManager))
-            .WithSubCommand(ListIndividuals(console, individualsManager))
-            .WithSubCommand(ShowIndividual(console, individualsManager));
+            .WithSubCommands(
+                SetSource(individualsManager),
+                ListIndividuals(console, individualsManager),
+                ShowIndividual(console, individualsManager)
+            );
     }
 
     private static Command SetSource(IIndividualsManager individualsManager)
     {
         var tableOption = OptionBuilder
-            .CreateTableOption("The table in which the individuals can be found")
+            .CreateTableOption()
+            .WithDescription("The table in which the individuals can be found")
             .WithIsRequired(true);
 
         var columnOption = OptionBuilder
-            .CreateColumnOption("The column in which the IDs of the individuals are stored")
+            .CreateColumnOption()
+            .WithDescription("The column in which the IDs of the individuals are stored")
             .WithIsRequired(true);
 
         var command = CommandBuilder
             .BuildSetCommand("source")
             .WithDescription("Sets the source of individuals for whom personal data can be managed")
-            .WithOption(tableOption)
-            .WithOption(columnOption);
-        
-        command.SetHandler((tableName, columnName) =>
-        {
-            individualsManager.SetIndividualsSource(new TableColumnPair(tableName, columnName));
-        }, tableOption, columnOption);
-        
+            .WithOptions(tableOption, columnOption);
+
+        command.SetHandler(
+            (tableName, columnName) =>
+            {
+                individualsManager.SetIndividualsSource(new TableColumnPair(tableName, columnName));
+            }, tableOption, columnOption);
+
         return command;
     }
 
     private static Command ListIndividuals(IConsole console, IIndividualsManager individualsManager)
     {
-
         return CommandBuilder
-            .BuildListCommand()
-            .WithDescription("Lists all individuals currently in the system")
-            .WithHandler(_ =>
-            {
-                individualsManager
-                    .GetAll()
-                    .ToList()
-                    .ForEach(s => console.WriteLine(s.ToListing()));
-            });
+            .BuildListCommand(console, individualsManager)
+            .WithDescription("Lists all individuals currently in the system");
     }
 
     private static Command ShowIndividual(IConsole console, IIndividualsManager individualsManager)
     {
         var idOption = OptionBuilder
-            .CreateIdOption("The id of the individual to be shown")
+            .CreateIdOption()
+            .WithDescription("The id of the individual to be shown")
             .WithIsRequired(true);
 
-        var command = CommandBuilder
-            .BuildShowCommand()
+        return CommandBuilder
+            .BuildShowCommand(console, individualsManager, idOption, "individual")
             .WithDescription("Shows information pertaining to the individual with the given id")
-            .WithOption(idOption);
-        
-        command.SetHandler(id =>
-        {
-            var individual = individualsManager.Get(id);
-            
-            console.WriteLine(individual != null ? individual.ToListing() : $"Could not find individual with id \"{id}\"");
-        }, idOption);
-        
-        return command;
+            .WithOptions(idOption);
     }
 }

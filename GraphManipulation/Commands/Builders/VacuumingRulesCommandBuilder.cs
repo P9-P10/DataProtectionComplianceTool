@@ -12,7 +12,7 @@ public static class VacuumingRulesCommandBuilder
     {
         return CommandBuilder.CreateCommand(CommandNamer.VacuumingRulesName)
             .WithAlias(CommandNamer.VacuumingRulesAlias)
-            .WithSubCommand(AddVacuumingRule());
+            .WithSubCommands(AddVacuumingRule());
     }
 
     private static Command AddVacuumingRule()

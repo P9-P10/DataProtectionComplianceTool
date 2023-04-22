@@ -10,7 +10,7 @@ public static class LoggingCommandBuilder
     {
         return CommandBuilder.CreateCommand(CommandNamer.LoggingName)
             .WithAlias(CommandNamer.LoggingAlias)
-            .WithSubCommand(ListLog());
+            .WithSubCommands(ListLog());
     }
 
     private static Command ListLog()

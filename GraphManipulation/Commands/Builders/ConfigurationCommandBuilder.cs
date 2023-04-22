@@ -10,7 +10,7 @@ public static class ConfigurationCommandBuilder
     {
         return CommandBuilder.CreateCommand(CommandNamer.ConfigurationName)
             .WithAlias(CommandNamer.ConfigurationAlias)
-            .WithSubCommand(UpdateConfig());
+            .WithSubCommands(UpdateConfig());
     }
 
     private static Command UpdateConfig()
