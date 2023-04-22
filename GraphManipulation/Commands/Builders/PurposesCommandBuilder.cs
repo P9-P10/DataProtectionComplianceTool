@@ -7,6 +7,7 @@ namespace GraphManipulation.Commands.Builders;
 
 public static class PurposesCommandBuilder
 {
+    // TODO: DeleteCondition skal bare være en del af Add og Update, og så drop den specifikke command
     public static Command Build(IConsole console, IPurposesManager purposesManager)
     {
         return CommandBuilder.CreateCommand(CommandNamer.PurposesName)

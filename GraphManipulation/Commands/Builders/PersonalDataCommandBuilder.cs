@@ -57,8 +57,10 @@ public static class PersonalDataCommandBuilder
 
         command.SetHandler((table, column, joinCondition, description, purposes) =>
         {
+            // TODO: Der skal lige tjekkes om de purposes der er givet faktisk findes
             var pair = new TableColumnPair(table, column);
             personalDataManager.AddPersonalData(pair, joinCondition, description);
+            
             purposes.ToList().ForEach(purpose => personalDataManager.AddPurpose(pair, purpose));
         }, tableOption, columnOption, joinConditionOption, descriptionOption, purposeOption);
 

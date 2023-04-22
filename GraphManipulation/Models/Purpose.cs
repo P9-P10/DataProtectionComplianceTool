@@ -7,8 +7,6 @@ public class Purpose : DomainEntity, IPurpose
     public bool LegallyRequired { get; set; }
     public IEnumerable<PersonalDataColumn> Columns { get; set; }
     public DeleteCondition? DeleteCondition { get; set; }
-    
-    public int? Id { get; set; }
     public string? Description { get; set; }
     public string Name { get; set; }
     public IEnumerable<VacuumingRule> Rules { get; set; }
