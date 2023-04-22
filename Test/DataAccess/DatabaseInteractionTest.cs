@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Data;
-using System.Data.SqlClient;
 using System.Data.SQLite;
 using System.IO;
-using System.Net.Mime;
 using Dapper;
 using FluentAssertions;
 using GraphManipulation.DataAccess;
-using GraphManipulation.Models;
-using Microsoft.EntityFrameworkCore;
 using Xunit;
-using Xunit.Abstractions;
-using Xunit.Sdk;
 
 namespace Test.DataAccess;
 
@@ -52,7 +45,8 @@ public class DatabaseInteractionTest
                 "people",
                 "PurposeVacuumingRule",
                 "PersonalDataColumnPurpose",
-                "DeleteCondition"
+                "DeleteCondition",
+                "personalDatas"
             });
         }
         

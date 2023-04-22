@@ -2,6 +2,7 @@ using System.CommandLine;
 using System.CommandLine.Parsing;
 using GraphManipulation.Commands.BaseBuilders;
 using GraphManipulation.Commands.BaseCommands;
+using GraphManipulation.Models;
 using GraphManipulation.Vacuuming;
 
 namespace GraphManipulation.Commands.CompositeCommands;
@@ -109,7 +110,7 @@ public class VacuumingRulesCommand : AliasedCommand
                 if (context.ParseResult.HasOption(idOption))
                 {
                     var value = context.ParseResult.GetValueForOption(idOption);
-                    vacuumer.RunVacuumingRule(value);
+                    vacuumer.RunVacuumingRules(new List<VacuumingRule>(value));
                 }
                 else if (context.ParseResult.HasOption(allOption))
                 {

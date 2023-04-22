@@ -26,9 +26,10 @@ public class GdprMetadataContext : DbContext
     public DbSet<PersonalDataColumn> columns { get; set; }
     public DbSet<VacuumingRule> vacuumingRules { get; set; }
     public DbSet<Processing> processes { get; set; }
-    public DbSet<Person> people { get; set; }
+    public DbSet<Individual> people { get; set; }
     public DbSet<Purpose> purposes { get; set; }
     public DbSet<Origin> origins { get; set; }
+    public DbSet<PersonalData> personalDatas { get; set; }
     
     public IDbConnection Connection => Database.GetDbConnection();
 
