@@ -1,6 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Parsing;
-using GraphManipulation.Commands.BaseBuilders;
+using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Commands.BaseCommands;
 using GraphManipulation.Models;
 using GraphManipulation.Vacuuming;

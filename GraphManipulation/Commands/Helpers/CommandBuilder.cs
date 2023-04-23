@@ -4,7 +4,7 @@ using System.CommandLine.Parsing;
 using GraphManipulation.Managers.Interfaces.Base;
 using GraphManipulation.Models.Interfaces.Base;
 
-namespace GraphManipulation.Commands.BaseBuilders;
+namespace GraphManipulation.Commands.Helpers;
 
 public static class CommandBuilder
 {
@@ -54,6 +54,12 @@ public static class CommandBuilder
     public static Command WithHandler(this Command command, Action handle)
     {
         command.SetHandler(handle);
+        return command;
+    }
+
+    public static Command WithHandler(this Command command, ICommandHandler handler)
+    {
+        command.Handler = handler;
         return command;
     }
 
@@ -132,9 +138,45 @@ public static class CommandBuilder
         {
             var value = getter.Get(key);
 
-            console.WriteLine(value != null ? value.ToListing() : $"Could not find {failureSubject} using \"{key}\"");
+            console.WriteLine(value != null ? value.ToListing() : BuildFailureToFindMessage(failureSubject, key));
         }, keyOption);
 
         return command;
+    }
+
+    public static Command BuildDeleteCommand<TManager, TResult, TKey>(IConsole console, TManager manager,
+        Option<TKey> keyOption, string failureSubject, string subject = "") 
+        where TResult : IListable
+        where TManager : IGetter<TResult, TKey>, IDeleter<TKey>
+    {
+        var command = BuildDeleteCommand(subject);
+
+        command.SetHandler(key =>
+        {
+            var value = manager.Get(key);
+
+            if (value is null)
+            {
+                console.WriteLine(BuildFailureToFindMessage(failureSubject, key));
+                return;
+            }
+            
+            manager.Delete(key);
+        }, keyOption);
+
+        return command;
+    }
+
+    public static string BuildFailureToFindMessage<TKey>(string failureSubject, TKey key)
+    {
+        return $"Could not find {failureSubject} using \"{key}\"";
+    }
+}
+
+public class CommandException : Exception
+{
+    public CommandException(string message) : base(message)
+    {
+        
     }
 }

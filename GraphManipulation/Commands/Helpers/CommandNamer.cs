@@ -1,4 +1,4 @@
-namespace GraphManipulation.Commands;
+namespace GraphManipulation.Commands.Helpers;
 
 public static class CommandNamer
 {

@@ -2,7 +2,7 @@ using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.Diagnostics;
 
-namespace GraphManipulation.Commands.BaseBuilders;
+namespace GraphManipulation.Commands.Helpers;
 
 public static class OptionBuilder
 {
@@ -75,6 +75,11 @@ public static class OptionBuilder
     public static Option<string> CreateNameOption()
     {
         return CreateOption<string>("--name").WithAlias("-n");
+    }
+
+    public static Option<T> CreateNewNameOption<T>()
+    {
+        return CreateOption<T>("--new-name").WithAlias("-nn");
     }
 
     public static Option<T> BuildOption<T>(string name, string description, string alias)

@@ -1,5 +1,5 @@
 using System.CommandLine;
-using GraphManipulation.Commands.BaseBuilders;
+using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Managers;
 using GraphManipulation.Managers.Interfaces;
 
@@ -88,7 +88,7 @@ public static class PersonalDataCommandBuilder
 
             if (old is null)
             {
-                console.WriteLine($"Could not find any personal data using \"{table}\" and \"{column}\"");
+                console.WriteLine(BuildFailureToFindMessage(table, column));
                 return;
             }
 
@@ -118,7 +118,7 @@ public static class PersonalDataCommandBuilder
 
                 if (value is null)
                 {
-                    console.WriteLine($"Could not find any personal data using \"{table}\" and \"{column}\"");
+                    console.WriteLine(BuildFailureToFindMessage(table, column));
                     return;
                 }
                 
@@ -153,7 +153,7 @@ public static class PersonalDataCommandBuilder
 
             if (value is null)
             {
-                console.WriteLine($"Could not find any personal data using \"{table}\" and \"{column}\"");
+                console.WriteLine(BuildFailureToFindMessage(table, column));
                 return;
             }
 
@@ -161,6 +161,11 @@ public static class PersonalDataCommandBuilder
         }, tableOption, columnOption);
 
         return command;
+    }
+
+    private static string BuildFailureToFindMessage(string table, string column)
+    {
+        return CommandBuilder.BuildFailureToFindMessage("any personal data", $"{table}\" and \"{column}");
     }
 
     private static Option<string> BuildTableOption()

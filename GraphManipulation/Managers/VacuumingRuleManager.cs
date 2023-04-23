@@ -22,7 +22,7 @@ public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumin
     public void AddVacuumingRule(string name, string interval, string purposeName)
     {
         _vacuumingRule.Insert(new VacuumingRule(name:name, interval:interval, 
-            purposes:new List<Purpose>() {_purposeMapper.FindSingle(x=> x.Name == purposeName)}
+            purposes:new List<Purpose> {_purposeMapper.FindSingle(x=> x.Name == purposeName)}
             )
         );
     }
@@ -37,10 +37,9 @@ public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumin
 
     public void UpdateDescription(string key, string description)
     {
-        VacuumingRule? rule = base.Get(description);
+        VacuumingRule? rule = base.Get(key);
         if (rule == null) return;
         rule.Description = description;
         _vacuumingRule.Update(rule);
-        
     }
 }

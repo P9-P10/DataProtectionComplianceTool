@@ -1,5 +1,5 @@
 using System.CommandLine;
-using GraphManipulation.Commands.BaseBuilders;
+using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Logging;
 
 namespace GraphManipulation.Commands.Builders;

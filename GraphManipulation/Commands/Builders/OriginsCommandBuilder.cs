@@ -1,5 +1,5 @@
 using System.CommandLine;
-using GraphManipulation.Commands.BaseBuilders;
+using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Managers.Interfaces;
 
 namespace GraphManipulation.Commands.Builders;
@@ -10,11 +10,21 @@ public static class OriginsCommandBuilder
     {
         return CommandBuilder.CreateCommand(CommandNamer.OriginsName)
             .WithAlias(CommandNamer.OriginsAlias)
-            .WithSubCommands(AddOrigin());
+            .WithSubCommands(Add());
     }
 
-    private static Command AddOrigin()
+    private static Command Add()
     {
         return CommandBuilder.BuildAddCommand();
+    }
+
+    private static Command Update()
+    {
+        return CommandBuilder.BuildUpdateCommand();
+    }
+
+    private static Command Delete()
+    {
+        return CommandBuilder.BuildDeleteCommand();
     }
 }
