@@ -8,6 +8,7 @@ namespace GraphManipulation.Managers;
 public class IndividualsManager : IIndividualsManager
 {
     private IMapper<Individual> _mapper;
+    private TableColumnPair _individualsSource;
 
     public IndividualsManager(IMapper<Individual> individualsMapper)
     {
@@ -25,6 +26,6 @@ public class IndividualsManager : IIndividualsManager
 
     public void SetIndividualsSource(TableColumnPair source)
     {
-        throw new NotImplementedException();
+        _individualsSource = source;
     }
 }
