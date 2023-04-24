@@ -52,26 +52,26 @@ public class IndividualsCommandTest : CommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(), $"{CommandName} --table tableName --column columnName");
+            VerifyCommand(BuildCli(), $"{CommandName} --table-column tableName columnName");
+        }
+        
+        [Fact]
+        public void AliasParses()
+        {
+            VerifyCommand(BuildCli(), $"{CommandName} -tc tableName columnName");
         }
 
         [Fact]
-        public void MissingRequiredOptionTableFails()
+        public void MissingRequiredArgumentFails()
         {
-            VerifyCommand(BuildCli(), $"{CommandName} --column columnName", false);
-        }
-
-        [Fact]
-        public void MissingRequiredOptionColumnFails()
-        {
-            VerifyCommand(BuildCli(), $"{CommandName} --table tableName", false);
+            VerifyCommand(BuildCli(), $"{CommandName} --table-column tableName", false);
         }
 
         [Fact]
         public void CallsManagerWithCorrectArguments()
         {
             BuildCli(out var individualsManagerMock)
-                .Invoke($"{CommandName} --table tableName --column columnName");
+                .Invoke($"{CommandName} -tc tableName columnName");
             
             individualsManagerMock.Verify(manager =>
                 manager.SetIndividualsSource(It.Is<TableColumnPair>(pair => 

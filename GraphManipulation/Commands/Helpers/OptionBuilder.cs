@@ -1,6 +1,7 @@
 using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.Diagnostics;
+using GraphManipulation.Managers;
 
 namespace GraphManipulation.Commands.Helpers;
 
@@ -70,6 +71,25 @@ public static class OptionBuilder
     public static Option<string> CreateColumnOption()
     {
         return CreateOption<string>("--column").WithAlias("-c");
+    }
+
+    public static Option<TableColumnPair> CreateTableColumnPairOption()
+    {
+        return new Option<TableColumnPair>(
+                name: "--table-column",
+                parseArgument: result =>
+                {
+                    if (result.Tokens.Count == 2)
+                    {
+                        return new TableColumnPair(result.Tokens[0].Value, result.Tokens[1].Value);
+                    }
+
+                    result.ErrorMessage = "--table-column requires two arguments";
+                    return new TableColumnPair("", "");
+                })
+            .WithAlias("-tc")
+            .WithArity(new ArgumentArity(2, 2))
+            .WithAllowMultipleArguments(true);
     }
 
     public static Option<string> CreateNameOption()

@@ -14,18 +14,17 @@ public static class BaseBuilder
     public static void AddHandler<TKey, T1, T2>(InvocationContext context,
         Action<TKey, T1, T2> addAction, Option<TKey> keyOption, Option<T1> option1, Option<T2> option2)
     {
-        var key = GetKey(context, keyOption);
-        
-        if (!TryGetValueOfOption(context, option1, out var value1))
-        {
-            throw new CommandException($"{option1.Name} missing from context");
-        }
-        if (!TryGetValueOfOption(context, option2, out var value2))
-        {
-            throw new CommandException($"{option2.Name} missing from context");
-        }
+        var key = GetValueOfRequiredOption(context, keyOption);
+        var value1 = GetValueOfRequiredOption(context, option1);
+        var value2 = GetValueOfRequiredOption(context, option2);
 
         addAction(key, value1, value2);
+    }
+    
+    public static void AddHandler<T>(InvocationContext context,
+        Action<T> addAction, Option<T> option)
+    {
+        addAction(GetValueOfRequiredOption(context, option));
     }
     
     public static void UpdateHandler<TKey, TValue, T>(InvocationContext context, IConsole console,
@@ -33,7 +32,7 @@ public static class BaseBuilder
         Option<T> option)
         where TValue : IListable
     {
-        var key = GetKey(context, keyOption);
+        var key = GetValueOfRequiredOption(context, keyOption);
 
         if (!TryGet(getter, key, out var keyValue))
         {
@@ -61,8 +60,8 @@ public static class BaseBuilder
         Option<TKey2> keyOption2)
         where TValue1 : IListable where TValue2 : IListable
     {
-        var key1 = GetKey(context, keyOption1);
-        var key2 = GetKey(context, keyOption2);
+        var key1 = GetValueOfRequiredOption(context, keyOption1);
+        var key2 = GetValueOfRequiredOption(context, keyOption2);
         
         if (!TryGet(getter1, key1, out var keyValue1))
         {
@@ -91,7 +90,7 @@ public static class BaseBuilder
         Option<TKey2> keyOption2)
         where TValue1 : IListable where TValue2 : IListable
     {
-        var key1 = GetKey(context, keyOption1);
+        var key1 = GetValueOfRequiredOption(context, keyOption1);
 
         if (!TryGet(getter1, key1, out var keyValue1))
         {
@@ -120,7 +119,7 @@ public static class BaseBuilder
         IGetter<TValue, TKey> getter, Option<TKey> keyOption)
         where TValue : IListable
     {
-        var key = GetKey(context, keyOption);
+        var key = GetValueOfRequiredOption(context, keyOption);
 
         if (!TryGet(getter, key, out _))
         {
@@ -140,7 +139,7 @@ public static class BaseBuilder
     public static void ShowHandler<TValue, TKey>(InvocationContext context, IConsole console, IGetter<TValue, TKey> getter, Option<TKey> keyOption)
         where TValue : IListable
     {
-        var key = GetKey(context, keyOption);
+        var key = GetValueOfRequiredOption(context, keyOption);
 
         if (!TryGet(getter, key, out var keyValue))
         {
@@ -150,9 +149,9 @@ public static class BaseBuilder
         
         console.WriteLine(keyValue.ToListing());
     }
-    
 
-    public static TKey GetKey<TKey>(InvocationContext context, Option<TKey> keyOption)
+
+    private static TKey GetValueOfRequiredOption<TKey>(InvocationContext context, Option<TKey> keyOption)
     {
         if (TryGetValueOfOption(context, keyOption, out var key))
         {
@@ -162,13 +161,13 @@ public static class BaseBuilder
         throw new CommandException($"{keyOption.Name} missing from context");
     }
 
-    public static bool TryGetValueOfOption<T>(InvocationContext context, Option<T> option, out T? value)
+    private static bool TryGetValueOfOption<T>(InvocationContext context, Option<T> option, out T? value)
     {
         value = context.ParseResult.GetValueForOption(option);
         return context.ParseResult.HasOption(option);
     }
 
-    public static bool TryGet<TValue, TKey>(IGetter<TValue, TKey> getter, TKey key, out TValue? value)
+    private static bool TryGet<TValue, TKey>(IGetter<TValue, TKey> getter, TKey key, out TValue? value)
         where TValue : IListable
     {
         value = getter.Get(key);
