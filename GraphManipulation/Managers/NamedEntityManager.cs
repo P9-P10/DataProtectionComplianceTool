@@ -6,7 +6,7 @@ namespace GraphManipulation.Managers;
 
 public class NamedEntityManager<T> : IGetter<T, string>, IDeleter<string>, INameUpdater where T : INamedEntity, IListable
 {
-    private IMapper<T> _mapper;
+    protected IMapper<T> _mapper;
 
     public NamedEntityManager(IMapper<T> mapper)
     {
