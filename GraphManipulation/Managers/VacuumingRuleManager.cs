@@ -37,7 +37,7 @@ public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumin
 
     public void UpdateDescription(string key, string description)
     {
-        VacuumingRule? rule = base.Get(description);
+        VacuumingRule? rule = base.Get(key);
         if (rule == null) return;
         rule.Description = description;
         _vacuumingRule.Update(rule);
