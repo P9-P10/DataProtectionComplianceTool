@@ -15,32 +15,45 @@ namespace Test.CLI;
 
 public class PersonalDataCommandTest : CommandTest
 {
-    private static Command BuildCli(out Mock<IPersonalDataManager> managerMock, out IConsole console)
+    private static Command BuildCli(out Mock<IPersonalDataManager> personalDataManagerMock, out Mock<IPurposesManager> purposesManagerMock, out IConsole console)
     {
         console = new TestConsole();
-        managerMock = new Mock<IPersonalDataManager>();
+        personalDataManagerMock = new Mock<IPersonalDataManager>();
 
-        managerMock
-            .Setup(manager =>
-                manager.Get(
-                    It.Is<TableColumnPair>(pair => pair.TableName == TableName && pair.ColumnName == ColumnName)))
+        personalDataManagerMock
+            .Setup(manager => 
+                manager.Get(It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair))))
             .Returns(new PersonalDataColumn
                 { 
                     Description = Description, 
-                    TableColumnPair = new TableColumnPair(TableName, ColumnName), 
+                    TableColumnPair = TableColumnPair, 
                     Purposes = new List<Purpose>(),
                     JoinCondition = JoinCondition
                 });
 
-        return PersonalDataCommandBuilder.Build(console, managerMock.Object);
+        purposesManagerMock = new Mock<IPurposesManager>();
+
+        purposesManagerMock
+            .Setup(manager => manager.Get(It.Is<string>(s => s == Purpose1Name)))
+            .Returns(Purpose1);
+        
+        purposesManagerMock
+            .Setup(manager => manager.Get(It.Is<string>(s => s == Purpose2Name)))
+            .Returns(Purpose2);
+
+        return PersonalDataCommandBuilder.Build(console, personalDataManagerMock.Object, purposesManagerMock.Object);
     }
 
+    private static readonly TableColumnPair TableColumnPair = new(TableName, ColumnName);
+    private static readonly IPurpose Purpose1 = new Purpose { Name = Purpose1Name };
+    private static readonly IPurpose Purpose2 = new Purpose { Name = Purpose2Name };
+    
     private const string TableName = "tableName";
     private const string ColumnName = "columnName";
     private const string JoinCondition = "tableName.id = columnName.id";
     private const string Description = "This is a description";
-    private const string Purpose1 = "purpose1";
-    private const string Purpose2 = "purpose2";
+    private const string Purpose1Name = "purpose1";
+    private const string Purpose2Name = "purpose2";
 
     public class Add
     {
@@ -50,14 +63,13 @@ public class PersonalDataCommandTest : CommandTest
         public void Parses()
         {
             VerifyCommand(
-                BuildCli(out _, out _),
+                BuildCli(out _, out _, out _),
                 $"{CommandName} " +
-                $"--table {TableName} " +
-                $"--column {ColumnName} " +
+                $"--table-column {TableName} {ColumnName} " +
                 $"--join-condition \"{JoinCondition}\" " +
                 $"--description \"{Description}\" " +
-                $"--purpose {Purpose1} " +
-                $"--purpose {Purpose2} "
+                $"--purpose {Purpose1Name} " +
+                $"--purpose {Purpose2Name} "
             );
         }
 
@@ -65,14 +77,13 @@ public class PersonalDataCommandTest : CommandTest
         public void AliasParses()
         {
             VerifyCommand(
-                BuildCli(out _, out _),
+                BuildCli(out _, out _, out _),
                 $"{CommandName} " +
-                $"-t {TableName} " +
-                $"-c {ColumnName} " +
+                $"-tc {TableName} {ColumnName} " +
                 $"-jc \"{JoinCondition}\" " +
                 $"-d \"{Description}\" " +
-                $"-p {Purpose1} " +
-                $"-p {Purpose2} "
+                $"-p {Purpose1Name} " +
+                $"-p {Purpose2Name} "
             );
         }
 
@@ -80,13 +91,12 @@ public class PersonalDataCommandTest : CommandTest
         public void WithOnePurposeParses()
         {
             VerifyCommand(
-                BuildCli(out _, out _),
+                BuildCli(out _, out _, out _),
                 $"{CommandName} " +
-                $"--table {TableName} " +
-                $"--column {ColumnName} " +
+                $"--table-column {TableName} {ColumnName} " +
                 $"--join-condition \"{JoinCondition}\" " +
                 $"--description \"{Description}\" " +
-                $"--purpose {Purpose1} "
+                $"--purpose {Purpose1Name} "
             );
         }
 
@@ -94,12 +104,25 @@ public class PersonalDataCommandTest : CommandTest
         public void NoPurposeFails()
         {
             VerifyCommand(
-                BuildCli(out _, out _),
+                BuildCli(out _, out _, out _),
                 $"{CommandName} " +
-                $"--table {TableName} " +
-                $"--column {ColumnName} " +
+                $"--table-column {TableName} {ColumnName} " +
                 $"--join-condition \"{JoinCondition}\" " +
                 $"--description \"{Description}\" ",
+                false
+            );
+        }
+        
+        [Fact]
+        public void NoJoinConditionFails()
+        {
+            VerifyCommand(
+                BuildCli(out _, out _, out _),
+                $"{CommandName} " +
+                $"--table-column {TableName} {ColumnName} " +
+                $"--description \"{Description}\" " +
+                $"--purpose {Purpose1Name} " +
+                $"--purpose {Purpose2Name} ",
                 false
             );
         }
@@ -108,39 +131,37 @@ public class PersonalDataCommandTest : CommandTest
         public void WithoutDescriptionParses()
         {
             VerifyCommand(
-                BuildCli(out _, out _),
+                BuildCli(out _, out _, out _),
                 $"{CommandName} " +
-                $"--table {TableName} " +
-                $"--column {ColumnName} " +
+                $"--table-column {TableName} {ColumnName} " +
                 $"--join-condition \"{JoinCondition}\" " +
-                $"--purpose {Purpose1} " +
-                $"--purpose {Purpose2} "
+                $"--purpose {Purpose1Name} " +
+                $"--purpose {Purpose2Name} "
             );
         }
 
         [Fact]
         public void CallsManagerWithCorrectArguments()
         {
-            BuildCli(out var managerMock, out _)
+            BuildCli(out var managerMock, out _, out _)
                 .Invoke($"{CommandName} " +
-                        $"--table {TableName} " +
-                        $"--column {ColumnName} " +
+                        $"--table-column {TableName} {ColumnName} " +
                         $"--join-condition \"{JoinCondition}\" " +
                         $"--description \"{Description}\" " +
-                        $"--purpose {Purpose1} " +
-                        $"--purpose {Purpose2} "
+                        $"--purpose {Purpose1Name} " +
+                        $"--purpose {Purpose2Name} "
                 );
 
             managerMock.Verify(manager => manager.AddPersonalData(
-                It.Is<TableColumnPair>(pair => pair.ColumnName == ColumnName && pair.TableName == TableName),
+                It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair)),
                 It.Is<string>(s => s == JoinCondition),
                 It.Is<string>(s => s == Description)));
             managerMock.Verify(manager => manager.AddPurpose(
-                It.Is<TableColumnPair>(pair => pair.ColumnName == ColumnName && pair.TableName == TableName),
-                It.Is<string>(s => s == Purpose1)));
+                It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair)),
+                It.Is<string>(s => s == Purpose1Name)));
             managerMock.Verify(manager => manager.AddPurpose(
-                It.Is<TableColumnPair>(pair => pair.ColumnName == ColumnName && pair.TableName == TableName),
-                It.Is<string>(s => s == Purpose2)));
+                It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair)),
+                It.Is<string>(s => s == Purpose2Name)));
         }
     }
 
@@ -151,7 +172,7 @@ public class PersonalDataCommandTest : CommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(out _, out _),
+            VerifyCommand(BuildCli(out _, out _, out _),
                 $"{CommandName} " +
                 $"--table {TableName} " +
                 $"--column {ColumnName} " +
@@ -162,7 +183,7 @@ public class PersonalDataCommandTest : CommandTest
         [Fact]
         public void CallsManagerWithCorrectArguments()
         {
-            BuildCli(out var managerMock, out _)
+            BuildCli(out var managerMock, out _, out _)
                 .Invoke($"{CommandName} " +
                         $"--table {TableName} " +
                         $"--column {ColumnName} " +
@@ -181,7 +202,7 @@ public class PersonalDataCommandTest : CommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(out _, out _),
+            VerifyCommand(BuildCli(out _, out _, out _),
                 $"{CommandName} " +
                 $"--table {TableName} " +
                 $"--column {ColumnName} "
@@ -191,7 +212,7 @@ public class PersonalDataCommandTest : CommandTest
         [Fact]
         public void CallsManagerWithCorrectArguments()
         {
-            BuildCli(out var managerMock, out _)
+            BuildCli(out var managerMock, out _, out _)
                 .Invoke($"{CommandName} " +
                         $"--table {TableName} " +
                         $"--column {ColumnName} "
@@ -209,7 +230,7 @@ public class PersonalDataCommandTest : CommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(out _, out _), $"{CommandName}");
+            VerifyCommand(BuildCli(out _, out _, out _), $"{CommandName}");
         }
     }
 
@@ -220,13 +241,13 @@ public class PersonalDataCommandTest : CommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(out _, out _), $"{CommandName} --table {TableName} --column {ColumnName}");
+            VerifyCommand(BuildCli(out _, out _, out _), $"{CommandName} --table {TableName} --column {ColumnName}");
         }
 
         [Fact]
         public void CallsManagerWithCorrectArguments()
         {
-            BuildCli(out var managerMock, out _)
+            BuildCli(out var managerMock, out _, out _)
                 .Invoke($"{CommandName} --table {TableName} --column {ColumnName}");
             
             managerMock.Verify(manager => manager.Get(
@@ -236,7 +257,7 @@ public class PersonalDataCommandTest : CommandTest
         [Fact]
         public void PrintsToConsole()
         {
-            BuildCli(out _, out var console)
+            BuildCli(out _, out _, out var console)
                 .Invoke($"{CommandName} --table {TableName} --column {ColumnName}");
             
             console.Out.ToString().Should().StartWith($"{TableName}, {ColumnName}, {JoinCondition}, {Description}");
@@ -250,13 +271,13 @@ public class PersonalDataCommandTest : CommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(out _, out _), $"{CommandName}");
+            VerifyCommand(BuildCli(out _, out _, out _), $"{CommandName}");
         }
 
         [Fact]
         public void CallsManagerWithCorrectArguments()
         {
-            BuildCli(out var managerMock, out _)
+            BuildCli(out var managerMock, out _, out _)
                 .Invoke($"{CommandName}");
         }
     }
@@ -268,13 +289,13 @@ public class PersonalDataCommandTest : CommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(out _, out _), $"{CommandName}");
+            VerifyCommand(BuildCli(out _, out _, out _), $"{CommandName}");
         }
 
         [Fact]
         public void CallsManagerWithCorrectArguments()
         {
-            BuildCli(out var managerMock, out _)
+            BuildCli(out var managerMock, out _, out _)
                 .Invoke($"{CommandName}");
         }
     }
@@ -286,13 +307,13 @@ public class PersonalDataCommandTest : CommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(out _, out _), $"{CommandName}");
+            VerifyCommand(BuildCli(out _, out _, out _), $"{CommandName}");
         }
 
         [Fact]
         public void CallsManagerWithCorrectArguments()
         {
-            BuildCli(out var managerMock, out _)
+            BuildCli(out var managerMock, out _, out _)
                 .Invoke($"{CommandName}");
         }
     }
@@ -304,13 +325,13 @@ public class PersonalDataCommandTest : CommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(out _, out _), $"{CommandName}");
+            VerifyCommand(BuildCli(out _, out _, out _), $"{CommandName}");
         }
 
         [Fact]
         public void CallsManagerWithCorrectArguments()
         {
-            BuildCli(out var managerMock, out _)
+            BuildCli(out var managerMock, out _, out _)
                 .Invoke($"{CommandName}");
         }
     }

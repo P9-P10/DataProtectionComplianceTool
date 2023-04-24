@@ -44,9 +44,9 @@ public static class PurposesCommandBuilder
                     BuildDeleteConditionOption()
                         .WithDescription("The delete condition that the purpose receives"))
                 .WithHandler(new CommandHandler()
-                    .WithHandle(context => BaseBuilder.AddHandler(context,
+                    .WithHandle(context => BaseBuilder.AddHandler(context, console,
                         purposesManager.Add, nameOption, legallyRequiredOption, descriptionOption))
-                    .WithHandle(context => BaseBuilder.UpdateHandlerKey(context, console, 
+                    .WithHandle(context => BaseBuilder.UpdateHandlerWithKey(context, console, 
                         purposesManager.SetDeleteCondition,
                         purposesManager,
                         deleteConditionsManager,
@@ -90,7 +90,7 @@ public static class PurposesCommandBuilder
                     p => p.GetLegallyRequired(),
                     nameOption,
                     legallyRequiredOption))
-                .WithHandle(context => BaseBuilder.UpdateHandlerKey(context, console,
+                .WithHandle(context => BaseBuilder.UpdateHandlerWithKey(context, console,
                     purposesManager.SetDeleteCondition,
                     purposesManager,
                     deleteConditionsManager,

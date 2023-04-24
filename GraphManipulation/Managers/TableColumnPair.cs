@@ -16,6 +16,16 @@ public class TableColumnPair : IListable
 
     public string ToListing()
     {
-        return string.Join(", ", TableName, ColumnName);
+        return "(" + string.Join(", ", TableName, ColumnName) + ")";
+    }
+
+    public override string ToString()
+    {
+        return ToListing();
+    }
+
+    public bool Equals(TableColumnPair other)
+    {
+        return TableName == other.TableName && ColumnName == other.ColumnName;
     }
 }

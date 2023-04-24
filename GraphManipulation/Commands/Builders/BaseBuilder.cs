@@ -11,7 +11,7 @@ namespace GraphManipulation.Commands.Builders;
 
 public static class BaseBuilder
 {
-    public static void AddHandler<TKey, T1, T2>(InvocationContext context,
+    public static void AddHandler<TKey, T1, T2>(InvocationContext context, IConsole console,
         Action<TKey, T1, T2> addAction, Option<TKey> keyOption, Option<T1> option1, Option<T2> option2)
     {
         var key = GetValueOfRequiredOption(context, keyOption);
@@ -19,12 +19,17 @@ public static class BaseBuilder
         var value2 = GetValueOfRequiredOption(context, option2);
 
         addAction(key, value1, value2);
+        
+        console.WriteLine($"{key} successfully added");
     }
     
-    public static void AddHandler<T>(InvocationContext context,
+    public static void AddHandler<T>(InvocationContext context, IConsole console,
         Action<T> addAction, Option<T> option)
     {
-        addAction(GetValueOfRequiredOption(context, option));
+        var key = GetValueOfRequiredOption(context, option);
+        addAction(key);
+        
+        console.WriteLine($"{key} successfully added");
     }
     
     public static void UpdateHandler<TKey, TValue, T>(InvocationContext context, IConsole console,
@@ -45,10 +50,13 @@ public static class BaseBuilder
             return;
         }
 
-        if (!getOld(keyValue).Equals(optionValue))
+        if (getOld(keyValue).Equals(optionValue))
         {
-            updateAction(key, optionValue);
+            return;
         }
+
+        updateAction(key, optionValue);
+        console.WriteLine($"{key} successfully updated with {optionValue}");
     }
 
     public static void UpdateHandlerKeyRequired<TKey1, TValue1, TKey2, TValue2>(InvocationContext context, IConsole console,
@@ -75,13 +83,16 @@ public static class BaseBuilder
             return;
         }
 
-        if (!getOld(keyValue1).Equals(key2))
+        if (getOld(keyValue1).Equals(key2))
         {
-            updateAction(key1, key2);
+            return;
         }
+
+        updateAction(key1, key2);
+        console.WriteLine($"{key1} successfully updated with {key2}");
     }
     
-    public static void UpdateHandlerKey<TKey1, TValue1, TKey2, TValue2>(InvocationContext context, IConsole console,
+    public static void UpdateHandlerWithKey<TKey1, TValue1, TKey2, TValue2>(InvocationContext context, IConsole console,
         Action<TKey1, TKey2> updateAction,
         IGetter<TValue1, TKey1> getter1,
         IGetter<TValue2, TKey2> getter2,
@@ -109,9 +120,59 @@ public static class BaseBuilder
             return;
         }
 
-        if (!getOld(keyValue1).Equals(key2))
+        if (getOld(keyValue1).Equals(key2))
         {
+            return;
+        }
+
+        updateAction(key1, key2);
+        console.WriteLine($"{key1} successfully updated with {key2}");
+    }
+
+    public static void UpdateHandlerWithKeyList<TKey1, TValue1, TKey2, TValue2>(InvocationContext context, IConsole console,
+        Action<TKey1, TKey2> updateAction,
+        IGetter<TValue1, TKey1> getter1,
+        IGetter<TValue2, TKey2> getter2,
+        Func<TValue1, IEnumerable<TKey2>> getOld,
+        Option<TKey1> keyOption1,
+        Option<IEnumerable<TKey2>> keyOption2)
+        where TValue1 : IListable where TValue2 : IListable
+    {
+        var key1 = GetValueOfRequiredOption(context, keyOption1);
+        
+        if (!TryGet(getter1, key1, out var keyValue1))
+        {
+            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key1));
+            return;
+        }
+        
+        if (!TryGetValueOfOption(context, keyOption2, out var key2List))
+        {
+            return;
+        }
+
+        var key2s = key2List as TKey2[] ?? key2List.ToArray();
+        
+        foreach (var key2 in key2s)
+        {
+            if (TryGet(getter2, key2, out _))
+            {
+                continue;
+            }
+
+            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key2));
+            return;
+        }
+
+        foreach (var key2 in key2s)
+        {
+            if (getOld(keyValue1).Contains(key2))
+            {
+                continue;
+            }
+
             updateAction(key1, key2);
+            console.WriteLine($"{key1} successfully updated with {key2}");
         }
     }
 
@@ -128,6 +189,7 @@ public static class BaseBuilder
         }
 
         deleteAction(key);
+        console.WriteLine($"{key} successfully deleted");
     }
 
     public static void ListHandler<TValue, _>(IConsole console, IGetter<TValue, _> getter)

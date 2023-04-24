@@ -12,13 +12,13 @@ public static class IndividualsCommandBuilder
         return CommandBuilder.CreateCommand(CommandNamer.IndividualsName)
             .WithAlias(CommandNamer.IndividualsAlias)
             .WithSubCommands(
-                SetSource(individualsManager),
+                SetSource(console, individualsManager),
                 ListIndividuals(console, individualsManager),
                 ShowIndividual(console, individualsManager)
             );
     }
 
-    private static Command SetSource(IIndividualsManager individualsManager)
+    private static Command SetSource(IConsole console, IIndividualsManager individualsManager)
     {
         return CommandBuilder
             .BuildSetCommand("source")
@@ -29,7 +29,7 @@ public static class IndividualsCommandBuilder
                     .WithDescription("The table and column in which the individuals can be found"))
             .WithHandler(new CommandHandler()
                 .WithHandle(context =>
-                    BaseBuilder.AddHandler(context, individualsManager.SetIndividualsSource, pairOption)));
+                    BaseBuilder.AddHandler(context, console, individualsManager.SetIndividualsSource, pairOption)));
     }
 
     private static Command ListIndividuals(IConsole console, IIndividualsManager individualsManager)

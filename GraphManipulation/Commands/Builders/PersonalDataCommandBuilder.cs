@@ -2,17 +2,18 @@ using System.CommandLine;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Managers;
 using GraphManipulation.Managers.Interfaces;
+using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Commands.Builders;
 
 public static class PersonalDataCommandBuilder
 {
-    public static Command Build(IConsole console, IPersonalDataManager personalDataManager)
+    public static Command Build(IConsole console, IPersonalDataManager personalDataManager, IPurposesManager purposesManager)
     {
         return CommandBuilder.CreateCommand(CommandNamer.PersonalDataName)
             .WithAlias(CommandNamer.PersonalDataAlias)
             .WithSubCommands(
-                AddPersonalData(personalDataManager),
+                AddPersonalData(console, personalDataManager, purposesManager),
                 UpdatePersonalData(console, personalDataManager),
                 DeletePersonalData(console, personalDataManager),
                 ListPersonalData(console, personalDataManager),
@@ -20,51 +21,51 @@ public static class PersonalDataCommandBuilder
             );
     }
 
-    private static Command AddPersonalData(IPersonalDataManager personalDataManager)
+    private static Command AddPersonalData(IConsole console, IPersonalDataManager personalDataManager, IPurposesManager purposesManager)
     {
-        var tableOption = BuildTableOption();
-        var columnOption = BuildColumnOption();
-
-        var joinConditionOption = OptionBuilder
-            .CreateOption<string>("--join-condition")
-            .WithAlias("-jc")
-            .WithDescription("The condition under which the given table can be joined with the individuals table")
-            .WithIsRequired(true);
-
-        var descriptionOption = OptionBuilder
-            .CreateDescriptionOption<string>()
-            .WithDescription("Description of the personal data")
-            .WithGetDefaultValue(() => "");
-
-        var purposeOption = OptionBuilder
-            .CreateOption<IEnumerable<string>>("--purpose")
-            .WithAlias("-p")
-            .WithDescription("The purpose under which the personal data is stored")
-            .WithIsRequired(true)
-            .WithAllowMultipleArguments(true)
-            .WithArity(ArgumentArity.OneOrMore);
-
-        var command = CommandBuilder
+        return CommandBuilder
             .BuildAddCommand()
-            .WithDescription("Adds the personal data found in the given column to the data managed by the system")
-            .WithOptions(
-                tableOption,
-                columnOption,
-                joinConditionOption,
-                descriptionOption,
-                purposeOption
+            .WithDescription(
+                "Adds the personal data found in the given table and column to the data managed by the system")
+            .WithOption(out var pairOption,
+                OptionBuilder
+                    .CreateTableColumnPairOption()
+                    .WithDescription("The table and column in which the personal data can be found"))
+            .WithOption(out var joinConditionOption,
+                OptionBuilder
+                    .CreateOption<string>("--join-condition")
+                    .WithAlias("-jc")
+                    .WithDescription(
+                        "The condition under which the given table can be joined with the individuals table")
+                    .WithIsRequired(true))
+            .WithOption(out var descriptionOption,
+                OptionBuilder
+                    .CreateDescriptionOption<string>()
+                    .WithDescription("Description of the personal data")
+                    .WithGetDefaultValue(() => ""))
+            .WithOption(out var purposeOption,
+                OptionBuilder
+                    .CreateOption<IEnumerable<string>>("--purpose")
+                    .WithAlias("-p")
+                    .WithDescription("The purpose(s) under which the personal data is stored")
+                    .WithIsRequired(true)
+                    .WithAllowMultipleArguments(true)
+                    .WithArity(ArgumentArity.OneOrMore))
+            .WithHandler(new CommandHandler()
+                .WithHandle(context => BaseBuilder.AddHandler(context, console,
+                    personalDataManager.AddPersonalData,
+                    pairOption,
+                    joinConditionOption,
+                    descriptionOption))
+                .WithHandle(context => BaseBuilder.UpdateHandlerWithKeyList(context, console,
+                    personalDataManager.AddPurpose, 
+                    personalDataManager, 
+                    purposesManager, 
+                    column => column.GetPurposes().Select(p => p.GetName()),
+                    pairOption, 
+                    purposeOption
+                ))
             );
-
-        command.SetHandler((table, column, joinCondition, description, purposes) =>
-        {
-            // TODO: Der skal lige tjekkes om de purposes der er givet faktisk findes
-            var pair = new TableColumnPair(table, column);
-            personalDataManager.AddPersonalData(pair, joinCondition, description);
-            
-            purposes.ToList().ForEach(purpose => personalDataManager.AddPurpose(pair, purpose));
-        }, tableOption, columnOption, joinConditionOption, descriptionOption, purposeOption);
-
-        return command;
     }
 
     private static Command UpdatePersonalData(IConsole console, IPersonalDataManager personalDataManager)
