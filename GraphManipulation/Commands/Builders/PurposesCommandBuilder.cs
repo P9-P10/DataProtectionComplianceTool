@@ -3,168 +3,141 @@ using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Managers.Interfaces;
+using GraphManipulation.Models;
 using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Commands.Builders;
 
 public static class PurposesCommandBuilder
 {
-    // TODO: DeleteCondition skal bare være en del af Add og Update, og så drop den specifikke command
-
-    // TODO: Alle Add commands skal også tjekke om det der indsættes findes i forvejen
-    public static Command Build(IConsole console, IPurposesManager purposesManager)
+    public static Command Build(IConsole console, IPurposesManager purposesManager, IDeleteConditionsManager deleteConditionsManager)
     {
         return CommandBuilder.CreateCommand(CommandNamer.PurposesName)
             .WithAlias(CommandNamer.PurposesAlias)
             .WithSubCommands(
-                AddPurpose(purposesManager),
-                UpdatePurpose(console, purposesManager),
+                AddPurpose(console, purposesManager, deleteConditionsManager),
+                UpdatePurpose(console, purposesManager, deleteConditionsManager),
                 DeletePurpose(console, purposesManager),
                 ListPurposes(console, purposesManager),
-                ShowPurpose(console, purposesManager),
-                SetDeleteCondition(console, purposesManager)
+                ShowPurpose(console, purposesManager)
             );
     }
 
-    private static Command AddPurpose(IPurposesManager purposesManager)
+    private static Command AddPurpose(IConsole console, IPurposesManager purposesManager, IDeleteConditionsManager deleteConditionsManager)
     {
-        var nameOption = BuildNameOption()
-            .WithIsRequired(true);
-
-        var descriptionOption = OptionBuilder
-            .CreateDescriptionOption<string>()
-            .WithDescription("The description of the purpose")
-            .WithGetDefaultValue(() => "");
-
-        var legallyRequiredOption = BuildLegallyRequiredOption<bool>()
-            .WithDescription("Whether the purpose falls under any legal obligations")
-            .WithGetDefaultValue(() => false);
-
-        var command = CommandBuilder
-            .BuildAddCommand()
-            .WithDescription("Adds a purpose to the system")
-            .WithOptions(nameOption, descriptionOption, legallyRequiredOption);
-
-        command.SetHandler(purposesManager.Add, nameOption, legallyRequiredOption, descriptionOption);
-
-        return command;
+        return CommandBuilder
+                .BuildAddCommand()
+                .WithDescription("Adds a purpose to the system")
+                .WithOption(out var nameOption,
+                    BuildNameOption()
+                        .WithIsRequired(true))
+                .WithOption(out var descriptionOption,
+                    OptionBuilder
+                        .CreateDescriptionOption<string>()
+                        .WithDescription("The description of the purpose")
+                        .WithGetDefaultValue(() => ""))
+                .WithOption(out var legallyRequiredOption,
+                    BuildLegallyRequiredOption<bool>()
+                        .WithDescription("Whether the purpose falls under any legal obligations")
+                        .WithGetDefaultValue(() => false))
+                .WithOption(out var deleteConditionOption,
+                    BuildDeleteConditionOption()
+                        .WithDescription("The delete condition that the purpose receives")
+                        .WithGetDefaultValue(() => ""))
+                .WithHandler(new CommandHandler()
+                    .WithHandle(context => BaseBuilder.AddHandler(context,
+                        purposesManager.Add, nameOption, legallyRequiredOption, descriptionOption))
+                    .WithHandle(context => BaseBuilder.UpdateHandlerKeyRequired(context, console, 
+                        purposesManager.SetDeleteCondition,
+                        purposesManager,
+                        deleteConditionsManager,
+                        purpose => purpose.GetDeleteCondition(),
+                        nameOption, deleteConditionOption))
+                );
     }
 
-    private static Command UpdatePurpose(IConsole console, IPurposesManager purposesManager)
+    private static Command UpdatePurpose(IConsole console, IPurposesManager purposesManager, IDeleteConditionsManager deleteConditionsManager)
     {
-        var nameOption = BuildNameOption()
-            .WithIsRequired(true);
-
-        var newNameOption = OptionBuilder
-            .CreateNewNameOption<string>()
-            .WithDescription("The new name of the purpose");
-
-        var descriptionOption = OptionBuilder
-            .CreateDescriptionOption<string>()
-            .WithDescription("The new description of the purpose");
-
-        var legallyRequiredOption = BuildLegallyRequiredOption<bool>()
-            .WithDescription("The new value for if the purpose falls under any legal obligations");
-
         return CommandBuilder
             .BuildUpdateCommand()
             .WithDescription("Updates the purpose of the given name with the given values")
-            .WithOptions(nameOption, newNameOption, descriptionOption, legallyRequiredOption)
-            .WithHandler(BaseBuilder.BuildHandlerWithKey(console, purposesManager, nameOption, "purpose",
-                (context, purpose) =>
-                {
-                    BaseBuilder.CompareAndRun(
-                        context,
-                        purpose.GetDescription(),
-                        descriptionOption,
-                        newDescription => purposesManager.UpdateDescription(purpose.GetName(), newDescription)
-                    );
-                },
-                (context, purpose) =>
-                {
-                    BaseBuilder.CompareAndRun(
-                        context,
-                        purpose.GetLegallyRequired(),
-                        legallyRequiredOption,
-                        newLegallyRequired => purposesManager.UpdateLegallyRequired(purpose.GetName(), newLegallyRequired)
-                    );
-                },
-                (context, purpose) =>
-                {
-                    BaseBuilder.CompareAndRun(
-                        context,
-                        purpose.GetName(),
-                        newNameOption,
-                        newName => purposesManager.UpdateName(purpose.GetName(), newName)
-                    );
-                })
+            .WithOption(out var nameOption,
+                BuildNameOption()
+                    .WithIsRequired(true))
+            .WithOption(out var newNameOption,
+                OptionBuilder
+                    .CreateNewNameOption<string>()
+                    .WithDescription("The new name of the purpose"))
+            .WithOption(out var descriptionOption,
+                OptionBuilder
+                    .CreateDescriptionOption<string>()
+                    .WithDescription("The new description of the purpose"))
+            .WithOption(out var legallyRequiredOption,
+                BuildLegallyRequiredOption<bool>()
+                    .WithDescription("The new value for if the purpose falls under any legal obligations"))
+            .WithOption(out var deleteConditionOption,
+                BuildDeleteConditionOption()
+                    .WithDescription("The new delete condition that the purpose receives"))
+            .WithHandler(new CommandHandler()
+                .WithHandle(context => BaseBuilder.UpdateHandler(context, console,
+                    purposesManager.UpdateDescription,
+                    purposesManager,
+                    p => p.GetDescription(),
+                    nameOption,
+                    descriptionOption))
+                .WithHandle(context => BaseBuilder.UpdateHandler(context, console,
+                    purposesManager.UpdateLegallyRequired,
+                    purposesManager,
+                    p => p.GetLegallyRequired(),
+                    nameOption,
+                    legallyRequiredOption))
+                .WithHandle(context => BaseBuilder.UpdateHandlerKey(context, console,
+                    purposesManager.SetDeleteCondition,
+                    purposesManager,
+                    deleteConditionsManager,
+                    p => p.GetDeleteCondition(),
+                    nameOption, 
+                    deleteConditionOption))
+                .WithHandle(context => BaseBuilder.UpdateHandler(context, console,
+                    purposesManager.UpdateName,
+                    purposesManager,
+                    p => p.GetName(),
+                    nameOption,
+                    newNameOption))
             );
     }
 
     private static Command DeletePurpose(IConsole console, IPurposesManager purposesManager)
     {
-        var nameOption = BuildNameOption()
-            .WithIsRequired(true);
-
-        var command = CommandBuilder
-            .BuildDeleteCommand<IPurposesManager, IPurpose, string>(console, purposesManager, nameOption, "purpose")
+        return CommandBuilder
+            .BuildDeleteCommand()
             .WithDescription("Deletes the given purpose from the system")
-            .WithOptions(nameOption);
-
-        return command;
+            .WithOption(
+                out var nameOption,
+                BuildNameOption().WithIsRequired(true)
+            )
+            .WithHandler(new CommandHandler()
+                .WithHandle(context =>
+                    BaseBuilder.DeleteHandler(context, console, purposesManager.Delete, purposesManager, nameOption)));
     }
 
     private static Command ListPurposes(IConsole console, IPurposesManager purposesManager)
     {
-        return CommandBuilder.BuildListCommand(console, purposesManager)
-            .WithDescription("Lists the purposes currently in the system");
+        return CommandBuilder
+            .BuildListCommand()
+            .WithDescription("Lists the purposes currently in the system")
+            .WithHandler(new CommandHandler()
+                .WithHandle(_ => BaseBuilder.ListHandler(console, purposesManager)));
     }
 
     private static Command ShowPurpose(IConsole console, IPurposesManager purposesManager)
     {
-        var nameOption = BuildNameOption()
-            .WithIsRequired(true);
-
         return CommandBuilder
-            .BuildShowCommand(console, purposesManager, nameOption, "purpose")
+            .BuildShowCommand()
             .WithDescription("Shows details about the given purpose")
-            .WithOptions(nameOption);
-    }
-
-    private static Command SetDeleteCondition(IConsole console, IPurposesManager purposesManager)
-    {
-        var purposeNameOption = OptionBuilder
-            .CreateOption<string>("--purpose-name")
-            .WithAlias("-pn")
-            .WithDescription("The purpose that receives a delete condition")
-            .WithIsRequired(true);
-
-        var deleteConditionOption = OptionBuilder
-            .CreateOption<string>("--delete-condition-name")
-            .WithAlias("-dcn")
-            .WithDescription("The delete condition that the purpose receives")
-            .WithIsRequired(true);
-
-        var command = CommandBuilder
-            .BuildSetCommand("delete-condition")
-            .WithDescription("Sets the delete condition of the given purpose")
-            .WithOptions(purposeNameOption, deleteConditionOption);
-
-        command.SetHandler((purposeName, deleteCondition) =>
-        {
-            var purpose = purposesManager.Get(purposeName);
-
-            if (purpose is null)
-            {
-                console.WriteLine(CommandBuilder.BuildFailureToFindMessage("purpose", purposeName));
-                return;
-            }
-
-            // TODO: Det skal også tjekkes om den givne delete condition findes
-            purposesManager.SetDeleteCondition(purposeName, deleteCondition);
-        }, purposeNameOption, deleteConditionOption);
-
-        return command;
+            .WithOption(out var nameOption, BuildNameOption().WithIsRequired(true))
+            .WithHandler(new CommandHandler()
+                .WithHandle(context => BaseBuilder.ShowHandler(context, console, purposesManager, nameOption)));
     }
 
     private static Option<string> BuildNameOption()
@@ -179,5 +152,12 @@ public static class PurposesCommandBuilder
         return OptionBuilder
             .CreateOption<T>("--legally-required")
             .WithAlias("-lr");
+    }
+
+    private static Option<string> BuildDeleteConditionOption()
+    {
+        return OptionBuilder
+            .CreateOption<string>("--delete-condition-name")
+            .WithAlias("-dcn");
     }
 }

@@ -26,7 +26,7 @@ public static class CommandLineInterfaceBuilder
             .WithSubCommands(
                 IndividualsCommandBuilder.Build(console, individualsManager),
                 PersonalDataCommandBuilder.Build(console, personalDataManager),
-                PurposesCommandBuilder.Build(console, purposesManager),
+                PurposesCommandBuilder.Build(console, purposesManager, deleteConditionsManager),
                 OriginsCommandBuilder.Build(console, originsManager),
                 VacuumingRulesCommandBuilder.Build(console, vacuumingRulesManager),
                 DeleteConditionsCommandBuilder.Build(console, deleteConditionsManager),

@@ -29,6 +29,13 @@ public static class CommandBuilder
         return command;
     }
 
+    public static Command WithOption<T>(this Command command, out Option<T> outputOption, Option<T> inputOption)
+    {
+        command.AddOption(inputOption);
+        outputOption = inputOption;
+        return command;
+    }
+
     public static Command WithArguments(this Command command, params Argument[] arguments)
     {
         foreach (var argument in arguments)

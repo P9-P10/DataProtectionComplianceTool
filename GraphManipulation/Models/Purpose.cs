@@ -19,7 +19,7 @@ public class Purpose : DomainEntity, IPurpose
             LegallyRequired,
             "[ " + (DeleteCondition is null ? "" : DeleteCondition.ToListing()) + " ]",
             "[ " + string.Join(", ", Columns.Select(c => c.ToListing())) + " ]",
-            "[ " + string.Join(", ",  Rules.Select(r => r.ToListing())) + " ]"
+            "[ " + string.Join(", ", Rules.Select(r => r.ToListing())) + " ]"
         );
     }
 
@@ -38,9 +38,9 @@ public class Purpose : DomainEntity, IPurpose
         return LegallyRequired;
     }
 
-    public IDeleteCondition? GetDeleteCondition()
+    public string GetDeleteCondition()
     {
-        return DeleteCondition;
+        return (DeleteCondition ?? new DeleteCondition { Name = "" }).GetName();
     }
 
 

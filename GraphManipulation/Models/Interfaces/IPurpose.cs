@@ -6,5 +6,5 @@ namespace GraphManipulation.Models.Interfaces;
 public interface IPurpose : INamedEntity, IDescribedEntity, IListable
 {
     public bool GetLegallyRequired();
-    public IDeleteCondition? GetDeleteCondition();
+    public string GetDeleteCondition();
 }
