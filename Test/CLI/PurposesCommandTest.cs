@@ -76,7 +76,7 @@ public class PurposesCommandTest : CommandTest
     public class Add
     {
         private const string CommandName = "add";
-
+        
         [Fact]
         public void Parses()
         {
@@ -86,6 +86,15 @@ public class PurposesCommandTest : CommandTest
                 $"--description \"{Description}\" " +
                 $"--legally-required {LegallyRequired} " +
                 $"--delete-condition-name {DeleteCondition.GetName()} "
+            );
+        }
+        
+        [Fact]
+        public void BaseParses()
+        {
+            VerifyCommand(BuildCli(out _, out _, out _),
+                $"{CommandName} " +
+                $"--name {PurposeName} "
             );
         }
 
@@ -120,7 +129,26 @@ public class PurposesCommandTest : CommandTest
                 It.Is<string>(s => s == PurposeWithoutDeleteConditionName),
                 It.Is<string>(s => s == DeleteCondition.GetName())));
         }
+        
+        [Fact]
+        public void BaseCallsManagerWithCorrectArguments()
+        {
+            BuildCli(out var purposeManagerMock, out _, out _)
+                .Invoke($"{CommandName} " +
+                        $"-n {PurposeWithoutDeleteConditionName} ");
+
+            purposeManagerMock.Verify(manager => manager.Add(
+                It.Is<string>(s => s == PurposeWithoutDeleteConditionName),
+                It.Is<bool>(s => s == false),
+                It.Is<string>(s => s == "")));
+            
+            purposeManagerMock.Verify(manager => manager.SetDeleteCondition(
+                It.Is<string>(s => s == PurposeWithoutDeleteConditionName),
+                It.IsAny<string>()), Times.Never);
+        }
     }
+    
+    
 
     public class Update
     {

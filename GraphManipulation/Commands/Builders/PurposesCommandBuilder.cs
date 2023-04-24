@@ -42,12 +42,11 @@ public static class PurposesCommandBuilder
                         .WithGetDefaultValue(() => false))
                 .WithOption(out var deleteConditionOption,
                     BuildDeleteConditionOption()
-                        .WithDescription("The delete condition that the purpose receives")
-                        .WithGetDefaultValue(() => ""))
+                        .WithDescription("The delete condition that the purpose receives"))
                 .WithHandler(new CommandHandler()
                     .WithHandle(context => BaseBuilder.AddHandler(context,
                         purposesManager.Add, nameOption, legallyRequiredOption, descriptionOption))
-                    .WithHandle(context => BaseBuilder.UpdateHandlerKeyRequired(context, console, 
+                    .WithHandle(context => BaseBuilder.UpdateHandlerKey(context, console, 
                         purposesManager.SetDeleteCondition,
                         purposesManager,
                         deleteConditionsManager,
@@ -114,8 +113,7 @@ public static class PurposesCommandBuilder
             .WithDescription("Deletes the given purpose from the system")
             .WithOption(
                 out var nameOption,
-                BuildNameOption().WithIsRequired(true)
-            )
+                BuildNameOption().WithIsRequired(true))
             .WithHandler(new CommandHandler()
                 .WithHandle(context =>
                     BaseBuilder.DeleteHandler(context, console, purposesManager.Delete, purposesManager, nameOption)));
