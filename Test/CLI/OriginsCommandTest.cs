@@ -122,14 +122,19 @@ public class OriginsCommandTest : CommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(out _, out _), $"{CommandName}");
+            VerifyCommand(BuildCli(out _, out _), 
+                $"{CommandName} " +
+                $"--name {Name}");
         }
         
         [Fact]
         public void CallsManagerWithCorrectArguments()
         {
             BuildCli(out var managerMock, out _)
-                .Invoke($"{CommandName}");
+                .Invoke($"{CommandName} " +
+                        $"--name {Name}");
+            
+            managerMock.Verify(manager => manager.Delete(It.Is<string>(s => s == Name)));
         }
     }
     
@@ -148,6 +153,8 @@ public class OriginsCommandTest : CommandTest
         {
             BuildCli(out var managerMock, out _)
                 .Invoke($"{CommandName}");
+            
+            managerMock.Verify(manager => manager.GetAll());
         }
     }
     
@@ -158,14 +165,16 @@ public class OriginsCommandTest : CommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(out _, out _), $"{CommandName}");
+            VerifyCommand(BuildCli(out _, out _), $"{CommandName} --name {Name}");
         }
         
         [Fact]
         public void CallsManagerWithCorrectArguments()
         {
             BuildCli(out var managerMock, out _)
-                .Invoke($"{CommandName}");
+                .Invoke($"{CommandName} --name {Name}");
+            
+            managerMock.Verify(manager => manager.Get(It.Is<string>(s => s == Name)));
         }
     }
 }

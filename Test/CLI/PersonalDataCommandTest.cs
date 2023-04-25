@@ -296,6 +296,15 @@ public class PersonalDataCommandTest : CommandTest
         {
             VerifyCommand(BuildCli(out _, out _, out _), $"{CommandName}");
         }
+        
+        [Fact]
+        public void CallsManagerWithCorrectArguments()
+        {
+            BuildCli(out var managerMock, out _, out _)
+                .Invoke($"{CommandName}");
+            
+            managerMock.Verify(manager => manager.GetAll());
+        }
     }
 
     public class Show

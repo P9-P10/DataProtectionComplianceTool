@@ -65,17 +65,29 @@ public static class OriginsCommandBuilder
 
     private static Command Delete(IConsole console, IOriginsManager originsManager)
     {
-        return CommandBuilder.BuildDeleteCommand();
+        return CommandBuilder
+            .BuildDeleteCommand()
+            .WithDescription("Deletes the given origin from the system")
+            .WithOption(out var nameOption, BuildNameOption())
+            .WithHandler(context => Handlers.DeleteHandler(context, console, 
+                originsManager.Delete, originsManager, nameOption));
     }
 
     private static Command List(IConsole console, IOriginsManager originsManager)
     {
-        return CommandBuilder.BuildListCommand();
+        return CommandBuilder
+            .BuildListCommand()
+            .WithDescription("Lists the origins currently in the system")
+            .WithHandler(() => Handlers.ListHandler(console, originsManager));
     }
 
     private static Command Show(IConsole console, IOriginsManager originsManager)
     {
-        return CommandBuilder.BuildShowCommand();
+        return CommandBuilder
+            .BuildShowCommand()
+            .WithDescription("Shows the origin with the given name")
+            .WithOption(out var nameOption, BuildNameOption())
+            .WithHandler(context => Handlers.ShowHandler(context, console, originsManager, nameOption));
     }
 
     private static Option<string> BuildNameOption()
