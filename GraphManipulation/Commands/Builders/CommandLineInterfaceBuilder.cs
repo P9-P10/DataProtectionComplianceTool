@@ -29,7 +29,7 @@ public static class CommandLineInterfaceBuilder
                     originsManager, individualsManager),
                 PurposesCommandBuilder.Build(console, purposesManager, deleteConditionsManager),
                 OriginsCommandBuilder.Build(console, originsManager),
-                VacuumingRulesCommandBuilder.Build(console, vacuumingRulesManager),
+                VacuumingRulesCommandBuilder.Build(console, vacuumingRulesManager, purposesManager),
                 DeleteConditionsCommandBuilder.Build(console, deleteConditionsManager),
                 ProcessingsCommandBuilder.Build(console, processingsManager),
                 LoggingCommandBuilder.Build(console, logger),

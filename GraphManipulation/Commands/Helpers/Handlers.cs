@@ -8,6 +8,39 @@ namespace GraphManipulation.Commands.Helpers;
 
 public static class Handlers
 {
+    public static void AddHandlerKey<TKey1, TValue1, TKey2, TValue2, T3>(InvocationContext context, IConsole console,
+        Action<TKey1, TKey2, T3> addAction,
+        IGetter<TValue1, TKey1> getter1,
+        IGetter<TValue2, TKey2> getter2,
+        Option<TKey1> keyOption1,
+        Option<TKey2> keyOption2,
+        Option<T3> option)
+        where TValue1 : IListable where TValue2 : IListable
+    {
+        var key1 = GetValueOfRequiredOption(context, keyOption1);
+        var key2 = GetValueOfRequiredOption(context, keyOption2);
+        
+        if (TryGet(getter1, key1, out _))
+        {
+            console.WriteLine(CommandBuilder.BuildAlreadyExistsMessage("entity", key1));
+            return;
+        }
+
+        if (!TryGet(getter2, key2, out _))
+        {
+            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key2));
+            return;
+        }
+        
+        if (!TryGetValueOfOption(context, option, out var optionValue))
+        {
+            return;
+        }
+
+        addAction(key1, key2, optionValue);
+        console.WriteLine($"{key1} successfully added");
+    }
+    
     public static void AddHandler<TKey, TValue>(InvocationContext context, IConsole console,
         Action<TKey> addAction,
         IGetter<TValue, TKey> getter,
