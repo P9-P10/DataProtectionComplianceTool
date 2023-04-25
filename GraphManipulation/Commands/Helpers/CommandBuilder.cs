@@ -177,6 +177,11 @@ public static class CommandBuilder
     {
         return $"Could not find {failureSubject} using \"{key}\"";
     }
+
+    public static string BuildAlreadyExistsMessage<TKey>(string failureSubject, TKey key)
+    {
+        return $"Found an existing {failureSubject} using \"{key}\", aborting";
+    }
 }
 
 public class CommandException : Exception

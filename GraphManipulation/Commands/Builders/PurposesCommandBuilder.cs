@@ -43,7 +43,7 @@ public static class PurposesCommandBuilder
                     .WithDescription("The delete condition that the purpose receives"))
             .WithHandler(new CommandHandler()
                 .WithHandle(context => Handlers.AddHandler(context, console,
-                    purposesManager.Add, nameOption, legallyRequiredOption, descriptionOption))
+                    purposesManager.Add, purposesManager, nameOption, legallyRequiredOption, descriptionOption))
                 .WithHandle(context => Handlers.UpdateHandlerWithKey(context, console,
                     purposesManager.SetDeleteCondition,
                     purposesManager,

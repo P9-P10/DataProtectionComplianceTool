@@ -49,6 +49,16 @@ public class PersonalDataCommandTest : CommandTest
             });
 
         personalDataManagerMock
+            .SetupSequence(manager =>
+                manager.Get(It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair3))))
+            .Returns(() => null)
+            .Returns(new PersonalDataColumn
+            {
+                TableColumnPair = TableColumnPair3,
+                Purposes = new List<Purpose>()
+            });
+
+        personalDataManagerMock
             .Setup(manager => manager.GetOriginOf(
                 It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair1)),
                 It.Is<int>(i => i == IndividualId)))
@@ -88,6 +98,7 @@ public class PersonalDataCommandTest : CommandTest
 
     private static readonly TableColumnPair TableColumnPair1 = new(TableName1, ColumnName1);
     private static readonly TableColumnPair TableColumnPair2 = new(TableName2, ColumnName2);
+    private static readonly TableColumnPair TableColumnPair3 = new(TableName3, ColumnName3);
     private static readonly IPurpose Purpose1 = new Purpose { Name = Purpose1Name };
     private static readonly IPurpose Purpose2 = new Purpose { Name = Purpose2Name };
 
@@ -100,12 +111,15 @@ public class PersonalDataCommandTest : CommandTest
 
     private const string TableName1 = "tableName";
     private const string ColumnName1 = "columnName";
+    private const string TableName2 = "otherTable";
+    private const string ColumnName2 = "otherColumn";
+    private const string TableName3 = "yetAnotherTable";
+    private const string ColumnName3 = "yetAnotherColumn";
     private const string JoinCondition = "tableName.id = columnName.id";
     private const string Description = "This is a description";
     private const string Purpose1Name = "purpose1";
     private const string Purpose2Name = "purpose2";
-    private const string TableName2 = "otherTable";
-    private const string ColumnName2 = "otherColumn";
+    
     private const int IndividualId = 12;
     private const string OriginName = "originName";
 
@@ -199,7 +213,7 @@ public class PersonalDataCommandTest : CommandTest
         {
             BuildCli(out var managerMock, out _, out _)
                 .Invoke($"{CommandName} " +
-                        $"--table-column {TableName1} {ColumnName1} " +
+                        $"--table-column {TableName3} {ColumnName3} " +
                         $"--join-condition \"{JoinCondition}\" " +
                         $"--description \"{Description}\" " +
                         $"--purpose {Purpose1Name} " +
@@ -207,14 +221,14 @@ public class PersonalDataCommandTest : CommandTest
                 );
 
             managerMock.Verify(manager => manager.AddPersonalData(
-                It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair1)),
+                It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair3)),
                 It.Is<string>(s => s == JoinCondition),
                 It.Is<string>(s => s == Description)));
             managerMock.Verify(manager => manager.AddPurpose(
-                It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair1)),
+                It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair3)),
                 It.Is<string>(s => s == Purpose1Name)));
             managerMock.Verify(manager => manager.AddPurpose(
-                It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair1)),
+                It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair3)),
                 It.Is<string>(s => s == Purpose2Name)));
         }
     }

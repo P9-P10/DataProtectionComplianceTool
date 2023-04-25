@@ -50,6 +50,7 @@ public static class PersonalDataCommandBuilder
             {
                 Handlers.AddHandler(context, console,
                     personalDataManager.AddPersonalData,
+                    personalDataManager,
                     pairOption,
                     joinConditionOption,
                     descriptionOption);

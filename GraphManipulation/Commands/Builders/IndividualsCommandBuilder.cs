@@ -27,7 +27,7 @@ public static class IndividualsCommandBuilder
                     .CreateTableColumnPairOption()
                     .WithDescription("The table and column in which the individuals can be found"))
             .WithHandler(context =>
-                Handlers.AddHandler(context, console, individualsManager.SetIndividualsSource, pairOption));
+                Handlers.SetHandler(context, console, individualsManager.SetIndividualsSource, pairOption));
     }
 
     private static Command ListIndividuals(IConsole console, IIndividualsManager individualsManager)

@@ -8,10 +8,62 @@ namespace GraphManipulation.Commands.Helpers;
 
 public static class Handlers
 {
-    public static void AddHandler<TKey, T1, T2>(InvocationContext context, IConsole console,
-        Action<TKey, T1, T2> addAction, Option<TKey> keyOption, Option<T1> option1, Option<T2> option2)
+    public static void AddHandler<TKey, TValue>(InvocationContext context, IConsole console,
+        Action<TKey> addAction,
+        IGetter<TValue, TKey> getter,
+        Option<TKey> keyOption)
+        where TValue : IListable
     {
         var key = GetValueOfRequiredOption(context, keyOption);
+
+        if (TryGet(getter, key, out _))
+        {
+            console.WriteLine(CommandBuilder.BuildAlreadyExistsMessage("entity", key));
+            return;
+        }
+        
+        addAction(key);
+
+        console.WriteLine($"{key} successfully added");
+    }
+
+    public static void AddHandler<TKey, TValue, T1>(InvocationContext context, IConsole console,
+        Action<TKey, T1> addAction,
+        IGetter<TValue, TKey> getter,
+        Option<TKey> keyOption, 
+        Option<T1> option1)
+        where TValue : IListable
+    {
+        var key = GetValueOfRequiredOption(context, keyOption);
+        
+        if (TryGet(getter, key, out _))
+        {
+            console.WriteLine(CommandBuilder.BuildAlreadyExistsMessage("entity", key));
+            return;
+        }
+        
+        var value1 = GetValueOfRequiredOption(context, option1);
+        addAction(key, value1);
+
+        console.WriteLine($"{key} successfully added");
+    }
+
+    public static void AddHandler<TKey, TValue, T1, T2>(InvocationContext context, IConsole console,
+        Action<TKey, T1, T2> addAction, 
+        IGetter<TValue, TKey> getter,
+        Option<TKey> keyOption, 
+        Option<T1> option1, 
+        Option<T2> option2)
+        where TValue : IListable
+    {
+        var key = GetValueOfRequiredOption(context, keyOption);
+        
+        if (TryGet(getter, key, out _))
+        {
+            console.WriteLine(CommandBuilder.BuildAlreadyExistsMessage("entity", key));
+            return;
+        }
+        
         var value1 = GetValueOfRequiredOption(context, option1);
         var value2 = GetValueOfRequiredOption(context, option2);
 
@@ -20,13 +72,13 @@ public static class Handlers
         console.WriteLine($"{key} successfully added");
     }
 
-    public static void AddHandler<T>(InvocationContext context, IConsole console,
-        Action<T> addAction, Option<T> option)
+    public static void SetHandler<TKey>(InvocationContext context, IConsole console,
+        Action<TKey> setAction,
+        Option<TKey> keyOption)
     {
-        var key = GetValueOfRequiredOption(context, option);
-        addAction(key);
-
-        console.WriteLine($"{key} successfully added");
+        var key = GetValueOfRequiredOption(context, keyOption);
+        setAction(key);
+        console.WriteLine($"{key} successfully set");
     }
 
     public static void SetHandlerKey<TKey1, TValue1, TKey2, TValue2, TKey3, TValue3>(InvocationContext context,

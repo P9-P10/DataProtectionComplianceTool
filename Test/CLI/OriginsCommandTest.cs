@@ -16,12 +16,18 @@ public class OriginsCommandTest : CommandTest
     {
         console = new TestConsole();
         managerMock = new Mock<IOriginsManager>();
+
+        managerMock
+            .Setup(manager => manager.Get(It.Is<string>(s => s == Name)))
+            .Returns(Origin);
         
         return OriginsCommandBuilder.Build(console, managerMock.Object);
     }
 
     private const string Name = "originName";
+    private const string NewName = "newOriginName";
     private const string Description = "This is a description";
+    private const string NewDescription = "This is a new description";
 
     private static readonly IOrigin Origin = new Origin()
     {
@@ -39,8 +45,17 @@ public class OriginsCommandTest : CommandTest
         {
             VerifyCommand(BuildCli(out _, out _), 
                 $"{CommandName} " +
-                $"--name {Name} " +
+                $"--name {NewName} " +
                 $"--description \"{Description}\"");
+        }
+        
+        [Fact]
+        public void AliasParses()
+        {
+            VerifyCommand(BuildCli(out _, out _), 
+                $"{CommandName} " +
+                $"-n {NewName} " +
+                $"-d \"{Description}\"");
         }
         
         [Fact]
@@ -48,11 +63,11 @@ public class OriginsCommandTest : CommandTest
         {
             BuildCli(out var managerMock, out _)
                 .Invoke($"{CommandName} " +
-                        $"--name {Name} " +
+                        $"--name {NewName} " +
                         $"--description \"{Description}\"");
             
             managerMock.Verify(manager => manager.Add(
-                It.Is<string>(s => s == Name),
+                It.Is<string>(s => s == NewName),
                 It.Is<string>(s => s == Description)));
         }
     }
@@ -64,14 +79,39 @@ public class OriginsCommandTest : CommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(out _, out _), $"{CommandName}");
+            VerifyCommand(BuildCli(out _, out _), 
+                $"{CommandName} " +
+                $"--name {Name} " +
+                $"--new-name {NewName} " +
+                $"--description \"{NewDescription}\" ");
+        }
+        
+        [Fact]
+        public void AliasParses()
+        {
+            VerifyCommand(BuildCli(out _, out _), 
+                $"{CommandName} " +
+                $"-n {Name} " +
+                $"-nn {NewName} " +
+                $"-d \"{NewDescription}\" ");
         }
         
         [Fact]
         public void CallsManagerWithCorrectArguments()
         {
             BuildCli(out var managerMock, out _)
-                .Invoke($"{CommandName}");
+                .Invoke($"{CommandName} " +
+                        $"--name {Name} " +
+                        $"--new-name {NewName} " +
+                        $"--description \"{NewDescription}\" ");
+            
+            managerMock.Verify(manager => manager.UpdateName(
+                It.Is<string>(s => s == Name),
+                It.Is<string>(s => s == NewName)));
+            managerMock.Verify(manager => manager.UpdateDescription(
+                It.Is<string>(s => s == Name),
+                It.Is<string>(s => s == NewDescription)));
+            
         }
     }
     

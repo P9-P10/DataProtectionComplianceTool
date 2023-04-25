@@ -31,7 +31,8 @@ public class PurposesCommandTest : CommandTest
             });
         
         purposeManagerMock
-            .Setup(manager => manager.Get(It.Is<string>(s => s == PurposeWithoutDeleteConditionName)))
+            .SetupSequence(manager => manager.Get(It.Is<string>(s => s == PurposeWithoutDeleteConditionName)))
+            .Returns(() => null)
             .Returns(new Purpose
             {
                 Name = PurposeName,
