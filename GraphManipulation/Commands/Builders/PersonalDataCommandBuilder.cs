@@ -166,16 +166,17 @@ public static class PersonalDataCommandBuilder
                     .WithAlias("-o")
                     .WithDescription("The origin from which the personal data was retrieved")
                     .WithIsRequired(true))
-            .WithHandler(context =>
-            {
-                Handlers.SetHandlerKey(context, console,
-                    personalDataManager.SetOriginOf,
-                    personalDataManager,
-                    individualsManager,
-                    originsManager,
-                    (pair, id) => (personalDataManager.GetOriginOf(pair, id) ?? new Origin {Name = ""}).GetName(),
-                    pairOption, individualOption, originOption);
-            });
+            .WithHandler(context => Handlers.SetHandlerKey(context, console,
+                personalDataManager.SetOriginOf,
+                personalDataManager,
+                individualsManager,
+                originsManager,
+                (pair, id) =>
+                {
+                    var origin = personalDataManager.GetOriginOf(pair, id);
+                    return origin is null ? "" : origin.GetName();
+                },
+                pairOption, individualOption, originOption));
     }
     
     private static Command ShowOriginOf(IConsole console, IPersonalDataManager personalDataManager, IIndividualsManager individualsManager)
@@ -192,7 +193,8 @@ public static class PersonalDataCommandBuilder
             .WithHandler(context => Handlers.ShowHandler(context, console, 
                 personalDataManager, 
                 individualsManager,
-                (pair, id) => personalDataManager.GetOriginOf(pair, id) ?? throw new CommandException($"Could not find origin of {pair} and {id}"),
+                (pair, id) => personalDataManager.GetOriginOf(pair, id) 
+                              ?? throw new CommandException($"Could not find origin of {pair} and {id}"),
                 pairOption,
                 individualOption));
     }
