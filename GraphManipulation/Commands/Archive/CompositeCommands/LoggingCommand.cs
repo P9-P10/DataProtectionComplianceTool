@@ -1,6 +1,6 @@
 using System.CommandLine;
-using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Commands.BaseCommands;
+using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
 
@@ -22,7 +22,7 @@ public class LoggingCommand : AliasedCommand
             var dateTimesOption = CreateDateTimeOption();
             var logTypesOption = CreateLogTypesOption();
             var logFormatsOption = CreateLogFormatOptions();
-            
+
             AddOption(numbersOption);
             AddOption(dateTimesOption);
             AddOption(logTypesOption);
@@ -51,8 +51,8 @@ public class LoggingCommand : AliasedCommand
         private Option<IEnumerable<int>> CreateNumbersOption()
         {
             var exactlyTwo = new ArgumentArity(2, 2);
-            
-            return OptionBuilder.CreateOption<IEnumerable<int>>(name: "--numbers")
+
+            return OptionBuilder.CreateOption<IEnumerable<int>>("--numbers")
                 .WithAlias("-n")
                 .WithDescription("Limits results to the specified numbers range (inclusive).\n" +
                                  "Must provide two numbers as range (e.g. -n 3 6), first minimum then maximum")
@@ -64,7 +64,7 @@ public class LoggingCommand : AliasedCommand
         private Option<IEnumerable<DateTime>> CreateDateTimeOption()
         {
             var exactlyTwo = new ArgumentArity(2, 2);
-            return OptionBuilder.CreateOption<IEnumerable<DateTime>>(name: "--date-times")
+            return OptionBuilder.CreateOption<IEnumerable<DateTime>>("--date-times")
                 .WithAlias("-d")
                 .WithDescription("Limits results to the specified time range (inclusive).\n" +
                                  "Must provide two dates as range (e.g. -d 2000/04/28T12:34:56 3000/06/16T09:38:12), first minimum then maximum")

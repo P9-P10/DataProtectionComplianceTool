@@ -23,7 +23,7 @@ public static class OptionBuilder
         option.SetDefaultValueFactory(getDefaultValue);
         return option;
     }
-    
+
     public static Option<T> WithArity<T>(this Option<T> option, ArgumentArity arity)
     {
         option.Arity = arity;
@@ -41,7 +41,7 @@ public static class OptionBuilder
         option.IsRequired = value;
         return option;
     }
-    
+
     public static Option<T> WithDescription<T>(this Option<T> option, string description)
     {
         option.Description = description;
@@ -67,7 +67,7 @@ public static class OptionBuilder
     {
         return CreateOption<string>("--table").WithAlias("-t");
     }
-    
+
     public static Option<string> CreateColumnOption()
     {
         return CreateOption<string>("--column").WithAlias("-c");
@@ -76,8 +76,8 @@ public static class OptionBuilder
     public static Option<TableColumnPair> CreateTableColumnPairOption()
     {
         return new Option<TableColumnPair>(
-                name: "--table-column",
-                parseArgument: result =>
+                "--table-column",
+                result =>
                 {
                     if (result.Tokens.Count == 2)
                     {
@@ -105,7 +105,7 @@ public static class OptionBuilder
 
     public static Option<T> BuildOption<T>(string name, string description, string alias)
     {
-        var option = new Option<T>(name: name, description: description);
+        var option = new Option<T>(name, description);
         option.AddAlias(alias);
         return option;
     }
@@ -131,7 +131,7 @@ public static class OptionBuilder
             // Ignore here, is dealt with somewhere else
         }
     }
-    
+
     // https://github.com/dorssel/usbipd-win/blob/2f7cbb732889ed00617e85f2f0b22239e8533960/Usbipd/Program.cs#L86-L94
     public static void ValidateOneOf(CommandResult commandResult, params Option[] options)
     {

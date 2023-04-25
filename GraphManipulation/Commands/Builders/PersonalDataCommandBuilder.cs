@@ -2,8 +2,6 @@ using System.CommandLine;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Managers;
 using GraphManipulation.Managers.Interfaces;
-using GraphManipulation.Models;
-using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Commands.Builders;
 
@@ -77,7 +75,7 @@ public static class PersonalDataCommandBuilder
                 OptionBuilder
                     .CreateDescriptionOption<string>()
                     .WithDescription("Description of the personal data"))
-            .WithHandler(context => 
+            .WithHandler(context =>
                 Handlers.UpdateHandler(context, console,
                     personalDataManager.UpdateDescription,
                     personalDataManager,
@@ -178,8 +176,9 @@ public static class PersonalDataCommandBuilder
                 },
                 pairOption, individualOption, originOption));
     }
-    
-    private static Command ShowOriginOf(IConsole console, IPersonalDataManager personalDataManager, IIndividualsManager individualsManager)
+
+    private static Command ShowOriginOf(IConsole console, IPersonalDataManager personalDataManager,
+        IIndividualsManager individualsManager)
     {
         return CommandBuilder
             .BuildShowCommand("origin")
@@ -190,10 +189,10 @@ public static class PersonalDataCommandBuilder
                     .CreateIdOption()
                     .WithDescription("The id of the individual")
                     .WithIsRequired(true))
-            .WithHandler(context => Handlers.ShowHandler(context, console, 
-                personalDataManager, 
+            .WithHandler(context => Handlers.ShowHandler(context, console,
+                personalDataManager,
                 individualsManager,
-                (pair, id) => personalDataManager.GetOriginOf(pair, id) 
+                (pair, id) => personalDataManager.GetOriginOf(pair, id)
                               ?? throw new CommandException($"Could not find origin of {pair} and {id}"),
                 pairOption,
                 individualOption));

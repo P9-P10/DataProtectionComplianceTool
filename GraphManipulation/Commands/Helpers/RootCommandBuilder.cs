@@ -12,9 +12,7 @@ public static class RootCommandBuilder
     public static RootCommand WithCommands(this RootCommand rootCommand, params Command[] commands)
     {
         foreach (var subCommand in commands)
-        {
             rootCommand.AddCommand(subCommand);
-        }
 
         return rootCommand;
     }

@@ -25,7 +25,7 @@ public static class CommandLineInterfaceBuilder
             .WithDescription("This is a description of the root command")
             .WithSubCommands(
                 IndividualsCommandBuilder.Build(console, individualsManager),
-                PersonalDataCommandBuilder.Build(console, personalDataManager, purposesManager, 
+                PersonalDataCommandBuilder.Build(console, personalDataManager, purposesManager,
                     originsManager, individualsManager),
                 PurposesCommandBuilder.Build(console, purposesManager, deleteConditionsManager),
                 OriginsCommandBuilder.Build(console, originsManager),

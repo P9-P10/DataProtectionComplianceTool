@@ -1,8 +1,6 @@
 using System.CommandLine;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Managers.Interfaces;
-using GraphManipulation.Models.Interfaces;
-using Lucene.Net.Queries.Mlt;
 
 namespace GraphManipulation.Commands.Builders;
 

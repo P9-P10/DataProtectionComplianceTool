@@ -43,7 +43,7 @@ public static class IndividualsCommandBuilder
         return CommandBuilder
             .BuildShowCommand()
             .WithDescription("Shows information pertaining to the individual with the given id")
-            .WithOption(out var idOption, 
+            .WithOption(out var idOption,
                 OptionBuilder
                     .CreateIdOption()
                     .WithDescription("The id of the individual to be shown")

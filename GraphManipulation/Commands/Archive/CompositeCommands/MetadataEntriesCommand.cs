@@ -1,20 +1,47 @@
 using System.CommandLine;
 using System.CommandLine.Parsing;
-using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Commands.BaseCommands;
+using GraphManipulation.Commands.Helpers;
 using GraphManipulation.MetadataManagement;
 
 namespace GraphManipulation.Commands.CompositeCommands;
 
 public sealed class MetadataEntriesCommand : AliasedCommand
 {
-    public MetadataEntriesCommand(IMetadataManager metadataManager, string? description = null) 
+    public MetadataEntriesCommand(IMetadataManager metadataManager, string? description = null)
         : base("metadata-entries", "me", description)
     {
         AddCommand(new AddMetadataEntryCommand(metadataManager));
         AddCommand(new UpdateMetadataEntryCommand(metadataManager));
         AddCommand(new DeleteMetadataEntryCommand(metadataManager));
         AddCommand(new ShowMetadataEntryCommand(metadataManager));
+    }
+
+    private static Option<string?> BuildPurposeOption()
+    {
+        return OptionBuilder.BuildOption<string?>(
+            "--purpose",
+            "The purpose under which the personal data is stored",
+            "-p"
+        );
+    }
+
+    private static Option<string?> BuildOriginOption()
+    {
+        return OptionBuilder.BuildOption<string?>(
+            "--origin",
+            "The origin of the personal data, the place it is collected from",
+            "-o"
+        );
+    }
+
+    private static Option<bool?> BuildLegallyRequiredOption()
+    {
+        return OptionBuilder.BuildOption<bool?>(
+            "--legally-required",
+            "Whether or not the data is legally required to be stored",
+            "-l"
+        );
     }
 
     private sealed class AddMetadataEntryCommand : AddCommand
@@ -46,7 +73,8 @@ public sealed class MetadataEntriesCommand : AliasedCommand
 
     private sealed class UpdateMetadataEntryCommand : UpdateCommand
     {
-        public UpdateMetadataEntryCommand(IMetadataManager metadataManager, string? description = null) : base(description)
+        public UpdateMetadataEntryCommand(IMetadataManager metadataManager, string? description = null) : base(
+            description)
         {
             var metadataIdArgument = ArgumentBuilder.BuildIntArgument("metadata id");
 
@@ -96,11 +124,11 @@ public sealed class MetadataEntriesCommand : AliasedCommand
             var allOption = OptionBuilder.CreateAllOption("Shows all metadata entries");
 
             var missingDataOption = OptionBuilder.BuildOption<bool>(
-                "--missing-data", 
-                "Shows the metadata entries that have missing fields", 
+                "--missing-data",
+                "Shows the metadata entries that have missing fields",
                 "-m"
             );
-            
+
             AddOption(idOption);
             AddOption(allOption);
             AddOption(missingDataOption);
@@ -129,32 +157,5 @@ public sealed class MetadataEntriesCommand : AliasedCommand
 
             Description += OptionBuilder.OneOfRequiredText(idOption, allOption, missingDataOption);
         }
-    }
-
-    private static Option<string?> BuildPurposeOption()
-    {
-        return OptionBuilder.BuildOption<string?>(
-            "--purpose",
-            "The purpose under which the personal data is stored",
-            "-p"
-        );
-    }
-
-    private static Option<string?> BuildOriginOption()
-    {
-        return OptionBuilder.BuildOption<string?>(
-            "--origin",
-            "The origin of the personal data, the place it is collected from",
-            "-o"
-        );
-    }
-
-    private static Option<bool?> BuildLegallyRequiredOption()
-    {
-        return OptionBuilder.BuildOption<bool?>(
-            "--legally-required",
-            "Whether or not the data is legally required to be stored",
-            "-l"
-        );
     }
 }

@@ -24,13 +24,13 @@ public static class DeleteConditionsCommandBuilder
     {
         var nameOption = BuildNameOption()
             .WithIsRequired(true);
-        
+
         var descriptionOption = OptionBuilder
             .CreateDescriptionOption<string>()
             .WithDescription("The description of the delete condition")
             .WithGetDefaultValue(() => "");
 
-        var conditionOption = BuildConditionOption<string>() 
+        var conditionOption = BuildConditionOption<string>()
             .WithDescription("The delete condition itself")
             .WithIsRequired(true);
 
@@ -38,7 +38,7 @@ public static class DeleteConditionsCommandBuilder
             .BuildAddCommand()
             .WithDescription("Adds a delete condition to the system")
             .WithOptions(nameOption, conditionOption, descriptionOption);
-        
+
         command.SetHandler(deleteConditionsManager.Add, nameOption, descriptionOption, conditionOption);
 
         return command;
@@ -74,7 +74,7 @@ public static class DeleteConditionsCommandBuilder
                 console.WriteLine(CommandBuilder.BuildFailureToFindMessage("delete condition", name));
                 return;
             }
-            
+
             if (description is not null && old.GetDescription() != description)
             {
                 deleteConditionsManager.UpdateDescription(name, description);
@@ -89,9 +89,8 @@ public static class DeleteConditionsCommandBuilder
             {
                 deleteConditionsManager.UpdateName(name, newName);
             }
-            
         }, nameOption, newNameOption, conditionOption, descriptionOption);
-        
+
         return command;
     }
 
@@ -99,9 +98,10 @@ public static class DeleteConditionsCommandBuilder
     {
         var nameOption = BuildNameOption()
             .WithIsRequired(true);
-        
+
         var command = CommandBuilder
-            .BuildDeleteCommand<IDeleteConditionsManager, IDeleteCondition, string>(console, deleteConditionsManager, nameOption, "delete condition")
+            .BuildDeleteCommand<IDeleteConditionsManager, IDeleteCondition, string>(console, deleteConditionsManager,
+                nameOption, "delete condition")
             .WithDescription("Deletes the given delete condition from the system")
             .WithOptions(nameOption);
 
@@ -124,14 +124,14 @@ public static class DeleteConditionsCommandBuilder
             .WithDescription("Shows details about the given delete condition")
             .WithOptions(nameOption);
     }
-    
+
     private static Option<string> BuildNameOption()
     {
         return OptionBuilder
             .CreateNameOption()
             .WithDescription("The name of the delete condition");
     }
-    
+
     private static Option<T> BuildConditionOption<T>()
     {
         return OptionBuilder

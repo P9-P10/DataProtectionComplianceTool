@@ -15,6 +15,13 @@ public static class ArgumentBuilder
         return argument;
     }
 
-    public static Argument<string> BuildStringArgument(string name = "value") => new(name);
-    public static Argument<int> BuildIntArgument(string name = "value") => new(name);
+    public static Argument<string> BuildStringArgument(string name = "value")
+    {
+        return new Argument<string>(name);
+    }
+
+    public static Argument<int> BuildIntArgument(string name = "value")
+    {
+        return new Argument<int>(name);
+    }
 }

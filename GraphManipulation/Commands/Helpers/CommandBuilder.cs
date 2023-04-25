@@ -22,9 +22,7 @@ public static class CommandBuilder
     public static Command WithOptions(this Command command, params Option[] options)
     {
         foreach (var option in options)
-        {
             command.AddOption(option);
-        }
 
         return command;
     }
@@ -39,9 +37,7 @@ public static class CommandBuilder
     public static Command WithArguments(this Command command, params Argument[] arguments)
     {
         foreach (var argument in arguments)
-        {
             command.AddArgument(argument);
-        }
 
         return command;
     }
@@ -79,9 +75,7 @@ public static class CommandBuilder
     public static Command WithSubCommands(this Command command, params Command[] subCommands)
     {
         foreach (var subCommand in subCommands)
-        {
             command.AddCommand(subCommand);
-        }
 
         return command;
     }
@@ -157,7 +151,7 @@ public static class CommandBuilder
     }
 
     public static Command BuildDeleteCommand<TManager, TResult, TKey>(IConsole console, TManager manager,
-        Option<TKey> keyOption, string failureSubject, string subject = "") 
+        Option<TKey> keyOption, string failureSubject, string subject = "")
         where TResult : IListable
         where TManager : IGetter<TResult, TKey>, IDeleter<TKey>
     {
@@ -172,7 +166,7 @@ public static class CommandBuilder
                 console.WriteLine(BuildFailureToFindMessage(failureSubject, key));
                 return;
             }
-            
+
             manager.Delete(key);
         }, keyOption);
 
@@ -189,6 +183,5 @@ public class CommandException : Exception
 {
     public CommandException(string message) : base(message)
     {
-        
     }
 }

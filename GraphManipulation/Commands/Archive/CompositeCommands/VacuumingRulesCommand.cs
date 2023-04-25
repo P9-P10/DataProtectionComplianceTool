@@ -1,7 +1,7 @@
 using System.CommandLine;
 using System.CommandLine.Parsing;
-using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Commands.BaseCommands;
+using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Models;
 using GraphManipulation.Vacuuming;
 
@@ -67,7 +67,8 @@ public class VacuumingRulesCommand : AliasedCommand
     {
         public ShowVacuumingRuleCommand(IVacuumer vacuumer, string? description = null) : base(description)
         {
-            var idOption = OptionBuilder.CreateIdOption().WithDescription("The id of the vacuuming rule that should be shown");
+            var idOption = OptionBuilder.CreateIdOption()
+                .WithDescription("The id of the vacuuming rule that should be shown");
             var allOption = OptionBuilder.CreateAllOption("Shows all vacuuming rules");
 
             AddOption(idOption);
@@ -97,7 +98,8 @@ public class VacuumingRulesCommand : AliasedCommand
         public ExecuteVacuumingRuleCommand(IVacuumer vacuumer, string? description = null)
             : base("execute", "e", description)
         {
-            var idOption = OptionBuilder.CreateIdOption().WithDescription("The id of the vacuuming rule that should be executed");
+            var idOption = OptionBuilder.CreateIdOption()
+                .WithDescription("The id of the vacuuming rule that should be executed");
             var allOption = OptionBuilder.CreateAllOption("Executes all vacuuming rules");
 
             AddOption(idOption);

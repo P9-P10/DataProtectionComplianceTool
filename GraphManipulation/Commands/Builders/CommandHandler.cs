@@ -19,10 +19,8 @@ public class CommandHandler : ICommandHandler
         }
 
         foreach (var handle in _handles)
-        {
             handle(context);
-        }
-        
+
         return context.ExitCode;
     }
 
@@ -50,6 +48,5 @@ public class CommandHandlerException : Exception
 {
     public CommandHandlerException(string message) : base(message)
     {
-        
     }
 }

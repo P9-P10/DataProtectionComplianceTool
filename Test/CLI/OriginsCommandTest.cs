@@ -1,7 +1,10 @@
+using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.IO;
 using GraphManipulation.Commands.Builders;
 using GraphManipulation.Managers.Interfaces;
+using GraphManipulation.Models;
+using GraphManipulation.Models.Interfaces;
 using Moq;
 using Xunit;
 
@@ -19,6 +22,13 @@ public class OriginsCommandTest : CommandTest
 
     private const string Name = "originName";
     private const string Description = "This is a description";
+
+    private static readonly IOrigin Origin = new Origin()
+    {
+        Name = Name,
+        Description = Description,
+        PersonalDataColumns = new List<PersonalDataColumn>()
+    };
 
     public class Add
     {
@@ -41,7 +51,9 @@ public class OriginsCommandTest : CommandTest
                         $"--name {Name} " +
                         $"--description \"{Description}\"");
             
-            // managerMock.Verify();
+            managerMock.Verify(manager => manager.Add(
+                It.Is<string>(s => s == Name),
+                It.Is<string>(s => s == Description)));
         }
     }
     

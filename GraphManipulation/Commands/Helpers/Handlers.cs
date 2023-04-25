@@ -16,16 +16,16 @@ public static class Handlers
         var value2 = GetValueOfRequiredOption(context, option2);
 
         addAction(key, value1, value2);
-        
+
         console.WriteLine($"{key} successfully added");
     }
-    
+
     public static void AddHandler<T>(InvocationContext context, IConsole console,
         Action<T> addAction, Option<T> option)
     {
         var key = GetValueOfRequiredOption(context, option);
         addAction(key);
-        
+
         console.WriteLine($"{key} successfully added");
     }
 
@@ -34,7 +34,7 @@ public static class Handlers
         Action<TKey1, TKey2, TKey3> setAction,
         IGetter<TValue1, TKey1> getter1,
         IGetter<TValue2, TKey2> getter2,
-        IGetter<TValue3, TKey3> getter3, 
+        IGetter<TValue3, TKey3> getter3,
         Func<TKey1, TKey2, TKey3> getCurrent,
         Option<TKey1> keyOption1,
         Option<TKey2> keyOption2,
@@ -44,19 +44,19 @@ public static class Handlers
         var key1 = GetValueOfRequiredOption(context, keyOption1);
         var key2 = GetValueOfRequiredOption(context, keyOption2);
         var key3 = GetValueOfRequiredOption(context, keyOption3);
-        
+
         if (!TryGet(getter1, key1, out _))
         {
             console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key1));
             return;
         }
-        
+
         if (!TryGet(getter2, key2, out _))
         {
             console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key2));
             return;
         }
-        
+
         if (!TryGet(getter3, key3, out _))
         {
             console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key3));
@@ -71,7 +71,7 @@ public static class Handlers
         setAction(key1, key2, key3);
         console.WriteLine($"Successfully completed set operation using {key1}, {key2}, {key3}");
     }
-    
+
     public static void UpdateHandler<TKey, TValue, T>(InvocationContext context, IConsole console,
         Action<TKey, T> updateAction, IGetter<TValue, TKey> getter, Func<TValue, T> getOld, Option<TKey> keyOption,
         Option<T> option)
@@ -99,7 +99,8 @@ public static class Handlers
         console.WriteLine($"{key} successfully updated with {optionValue}");
     }
 
-    public static void UpdateHandlerKeyRequired<TKey1, TValue1, TKey2, TValue2>(InvocationContext context, IConsole console,
+    public static void UpdateHandlerKeyRequired<TKey1, TValue1, TKey2, TValue2>(InvocationContext context,
+        IConsole console,
         Action<TKey1, TKey2> updateAction,
         IGetter<TValue1, TKey1> getter1,
         IGetter<TValue2, TKey2> getter2,
@@ -110,13 +111,13 @@ public static class Handlers
     {
         var key1 = GetValueOfRequiredOption(context, keyOption1);
         var key2 = GetValueOfRequiredOption(context, keyOption2);
-        
+
         if (!TryGet(getter1, key1, out var keyValue1))
         {
             console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key1));
             return;
         }
-        
+
         if (!TryGet(getter2, key2, out _))
         {
             console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key2));
@@ -131,7 +132,7 @@ public static class Handlers
         updateAction(key1, key2);
         console.WriteLine($"{key1} successfully updated with {key2}");
     }
-    
+
     public static void UpdateHandlerWithKey<TKey1, TValue1, TKey2, TValue2>(InvocationContext context, IConsole console,
         Action<TKey1, TKey2> updateAction,
         IGetter<TValue1, TKey1> getter1,
@@ -169,7 +170,8 @@ public static class Handlers
         console.WriteLine($"{key1} successfully updated with {key2}");
     }
 
-    public static void UpdateHandlerWithKeyList<TKey1, TValue1, TKey2, TValue2>(InvocationContext context, IConsole console,
+    public static void UpdateHandlerWithKeyList<TKey1, TValue1, TKey2, TValue2>(InvocationContext context,
+        IConsole console,
         Action<TKey1, TKey2> updateAction,
         IGetter<TValue1, TKey1> getter1,
         IGetter<TValue2, TKey2> getter2,
@@ -179,20 +181,19 @@ public static class Handlers
         where TValue1 : IListable where TValue2 : IListable
     {
         var key1 = GetValueOfRequiredOption(context, keyOption1);
-        
+
         if (!TryGet(getter1, key1, out var keyValue1))
         {
             console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key1));
             return;
         }
-        
+
         if (!TryGetValueOfOption(context, keyOption2, out var key2List))
         {
             return;
         }
 
         foreach (var key2 in key2List)
-        {
             if (TryGet(getter2, key2, out _))
             {
                 if (getOld(keyValue1).Contains(key2))
@@ -207,7 +208,6 @@ public static class Handlers
             {
                 console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key2));
             }
-        }
     }
 
     public static void RemoveHandlerKeyList<TKey1, TValue1, TKey2>(InvocationContext context, IConsole console,
@@ -219,18 +219,18 @@ public static class Handlers
         where TValue1 : IListable
     {
         var key1 = GetValueOfRequiredOption(context, keyOption1);
-        
+
         if (!TryGet(getter, key1, out var keyValue1))
         {
             console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key1));
             return;
         }
-        
+
         if (!TryGetValueOfOption(context, keyOption2, out var key2List))
         {
             return;
         }
-        
+
         foreach (var key2 in key2List)
         {
             if (!getCurrent(keyValue1).Contains(key2))
@@ -244,7 +244,8 @@ public static class Handlers
         }
     }
 
-    public static void DeleteHandler<TValue, TKey>(InvocationContext context, IConsole console, Action<TKey> deleteAction,
+    public static void DeleteHandler<TValue, TKey>(InvocationContext context, IConsole console,
+        Action<TKey> deleteAction,
         IGetter<TValue, TKey> getter, Option<TKey> keyOption)
         where TValue : IListable
     {
@@ -259,8 +260,7 @@ public static class Handlers
         deleteAction(key);
         console.WriteLine($"{key} successfully deleted");
     }
-    
-    
+
 
     public static void ListHandler<TValue, _>(IConsole console, IGetter<TValue, _> getter)
         where TValue : IListable
@@ -268,8 +268,8 @@ public static class Handlers
         getter.GetAll().ToList().ForEach(e => console.WriteLine(e.ToListing()));
     }
 
-    public static void ShowHandler<TValue, TKey>(InvocationContext context, IConsole console, 
-        IGetter<TValue, TKey> getter, 
+    public static void ShowHandler<TValue, TKey>(InvocationContext context, IConsole console,
+        IGetter<TValue, TKey> getter,
         Option<TKey> keyOption)
         where TValue : IListable
     {
@@ -280,12 +280,12 @@ public static class Handlers
             console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key));
             return;
         }
-        
+
         console.WriteLine(keyValue.ToListing());
     }
-    
-    public static void ShowHandler<TValue1, TKey1, TValue2, TKey2, TValue3>(InvocationContext context, IConsole console, 
-        IGetter<TValue1, TKey1> getter1, 
+
+    public static void ShowHandler<TValue1, TKey1, TValue2, TKey2, TValue3>(InvocationContext context, IConsole console,
+        IGetter<TValue1, TKey1> getter1,
         IGetter<TValue2, TKey2> getter2,
         Func<TKey1, TKey2, TValue3> getCurrent,
         Option<TKey1> keyOption1,
@@ -300,13 +300,13 @@ public static class Handlers
             console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key1));
             return;
         }
-        
+
         if (!TryGet(getter2, key2, out _))
         {
             console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key2));
             return;
         }
-        
+
         console.WriteLine(getCurrent(key1, key2).ToListing());
     }
 
