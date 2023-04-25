@@ -2,6 +2,7 @@ using System.CommandLine;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Managers;
 using GraphManipulation.Managers.Interfaces;
+using GraphManipulation.Models;
 using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Commands.Builders;
@@ -9,7 +10,7 @@ namespace GraphManipulation.Commands.Builders;
 public static class PersonalDataCommandBuilder
 {
     public static Command Build(IConsole console, IPersonalDataManager personalDataManager,
-        IPurposesManager purposesManager)
+        IPurposesManager purposesManager, IOriginsManager originsManager, IIndividualsManager individualsManager)
     {
         return CommandBuilder.CreateCommand(CommandNamer.PersonalDataName)
             .WithAlias(CommandNamer.PersonalDataAlias)
@@ -20,7 +21,9 @@ public static class PersonalDataCommandBuilder
                 ListPersonalData(console, personalDataManager),
                 ShowPersonalData(console, personalDataManager),
                 AddPurpose(console, personalDataManager, purposesManager),
-                RemovePurpose(console, personalDataManager)
+                RemovePurpose(console, personalDataManager),
+                SetOriginOf(console, personalDataManager, originsManager, individualsManager),
+                ShowOriginOf(console, personalDataManager, individualsManager)
             );
     }
 
@@ -143,6 +146,55 @@ public static class PersonalDataCommandBuilder
                 column => column.GetPurposes().Select(p => p.GetName()),
                 pairOption,
                 purposeOption));
+    }
+
+    private static Command SetOriginOf(IConsole console, IPersonalDataManager personalDataManager,
+        IOriginsManager originsManager, IIndividualsManager individualsManager)
+    {
+        return CommandBuilder
+            .BuildSetCommand("origin")
+            .WithDescription("Sets the origin for the given personal data for the given individual to the given origin")
+            .WithOption(out var pairOption, BuildPairOption())
+            .WithOption(out var individualOption,
+                OptionBuilder
+                    .CreateIdOption()
+                    .WithDescription("The id of the individual")
+                    .WithIsRequired(true))
+            .WithOption(out var originOption,
+                OptionBuilder
+                    .CreateOption<string>("--origin")
+                    .WithAlias("-o")
+                    .WithDescription("The origin from which the personal data was retrieved")
+                    .WithIsRequired(true))
+            .WithHandler(context =>
+            {
+                Handlers.SetHandlerKey(context, console,
+                    personalDataManager.SetOriginOf,
+                    personalDataManager,
+                    individualsManager,
+                    originsManager,
+                    (pair, id) => (personalDataManager.GetOriginOf(pair, id) ?? new Origin {Name = ""}).GetName(),
+                    pairOption, individualOption, originOption);
+            });
+    }
+    
+    private static Command ShowOriginOf(IConsole console, IPersonalDataManager personalDataManager, IIndividualsManager individualsManager)
+    {
+        return CommandBuilder
+            .BuildShowCommand("origin")
+            .WithDescription("Shows the origin of the given individual's personal data")
+            .WithOption(out var pairOption, BuildPairOption())
+            .WithOption(out var individualOption,
+                OptionBuilder
+                    .CreateIdOption()
+                    .WithDescription("The id of the individual")
+                    .WithIsRequired(true))
+            .WithHandler(context => Handlers.ShowHandler(context, console, 
+                personalDataManager, 
+                individualsManager,
+                (pair, id) => personalDataManager.GetOriginOf(pair, id) ?? throw new CommandException($"Could not find origin of {pair} and {id}"),
+                pairOption,
+                individualOption));
     }
 
     private static Option<TableColumnPair> BuildPairOption()

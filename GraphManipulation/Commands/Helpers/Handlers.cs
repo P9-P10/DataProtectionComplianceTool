@@ -28,6 +28,49 @@ public static class Handlers
         
         console.WriteLine($"{key} successfully added");
     }
+
+    public static void SetHandlerKey<TKey1, TValue1, TKey2, TValue2, TKey3, TValue3>(InvocationContext context,
+        IConsole console,
+        Action<TKey1, TKey2, TKey3> setAction,
+        IGetter<TValue1, TKey1> getter1,
+        IGetter<TValue2, TKey2> getter2,
+        IGetter<TValue3, TKey3> getter3, 
+        Func<TKey1, TKey2, TKey3> getCurrent,
+        Option<TKey1> keyOption1,
+        Option<TKey2> keyOption2,
+        Option<TKey3> keyOption3)
+        where TValue1 : IListable where TValue2 : IListable where TValue3 : IListable
+    {
+        var key1 = GetValueOfRequiredOption(context, keyOption1);
+        var key2 = GetValueOfRequiredOption(context, keyOption2);
+        var key3 = GetValueOfRequiredOption(context, keyOption3);
+        
+        if (!TryGet(getter1, key1, out _))
+        {
+            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key1));
+            return;
+        }
+        
+        if (!TryGet(getter2, key2, out _))
+        {
+            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key2));
+            return;
+        }
+        
+        if (!TryGet(getter3, key3, out _))
+        {
+            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key3));
+            return;
+        }
+
+        if (getCurrent(key1, key2).Equals(key3))
+        {
+            return;
+        }
+
+        setAction(key1, key2, key3);
+        console.WriteLine($"Successfully completed set operation using {key1}, {key2}, {key3}");
+    }
     
     public static void UpdateHandler<TKey, TValue, T>(InvocationContext context, IConsole console,
         Action<TKey, T> updateAction, IGetter<TValue, TKey> getter, Func<TValue, T> getOld, Option<TKey> keyOption,
@@ -225,7 +268,9 @@ public static class Handlers
         getter.GetAll().ToList().ForEach(e => console.WriteLine(e.ToListing()));
     }
 
-    public static void ShowHandler<TValue, TKey>(InvocationContext context, IConsole console, IGetter<TValue, TKey> getter, Option<TKey> keyOption)
+    public static void ShowHandler<TValue, TKey>(InvocationContext context, IConsole console, 
+        IGetter<TValue, TKey> getter, 
+        Option<TKey> keyOption)
         where TValue : IListable
     {
         var key = GetValueOfRequiredOption(context, keyOption);
@@ -237,6 +282,32 @@ public static class Handlers
         }
         
         console.WriteLine(keyValue.ToListing());
+    }
+    
+    public static void ShowHandler<TValue1, TKey1, TValue2, TKey2, TValue3>(InvocationContext context, IConsole console, 
+        IGetter<TValue1, TKey1> getter1, 
+        IGetter<TValue2, TKey2> getter2,
+        Func<TKey1, TKey2, TValue3> getCurrent,
+        Option<TKey1> keyOption1,
+        Option<TKey2> keyOption2)
+        where TValue1 : IListable where TValue2 : IListable where TValue3 : IListable
+    {
+        var key1 = GetValueOfRequiredOption(context, keyOption1);
+        var key2 = GetValueOfRequiredOption(context, keyOption2);
+
+        if (!TryGet(getter1, key1, out _))
+        {
+            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key1));
+            return;
+        }
+        
+        if (!TryGet(getter2, key2, out _))
+        {
+            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key2));
+            return;
+        }
+        
+        console.WriteLine(getCurrent(key1, key2).ToListing());
     }
 
 

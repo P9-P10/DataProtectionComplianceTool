@@ -10,9 +10,9 @@ public static class CommandLineInterfaceBuilder
 {
     public static Command Build(
         IConsole console,
-        IIndividualsManager individualsManager, 
+        IIndividualsManager individualsManager,
         IPersonalDataManager personalDataManager,
-        IPurposesManager purposesManager, 
+        IPurposesManager purposesManager,
         IOriginsManager originsManager,
         IVacuumingRulesManager vacuumingRulesManager,
         IDeleteConditionsManager deleteConditionsManager,
@@ -25,7 +25,8 @@ public static class CommandLineInterfaceBuilder
             .WithDescription("This is a description of the root command")
             .WithSubCommands(
                 IndividualsCommandBuilder.Build(console, individualsManager),
-                PersonalDataCommandBuilder.Build(console, personalDataManager, purposesManager),
+                PersonalDataCommandBuilder.Build(console, personalDataManager, purposesManager, 
+                    originsManager, individualsManager),
                 PurposesCommandBuilder.Build(console, purposesManager, deleteConditionsManager),
                 OriginsCommandBuilder.Build(console, originsManager),
                 VacuumingRulesCommandBuilder.Build(console, vacuumingRulesManager),
@@ -36,6 +37,3 @@ public static class CommandLineInterfaceBuilder
             );
     }
 }
-
-
-

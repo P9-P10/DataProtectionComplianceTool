@@ -88,6 +88,7 @@ public static class OptionBuilder
                     return new TableColumnPair("", "");
                 })
             .WithAlias("-tc")
+            .WithIsRequired(true)
             .WithArity(new ArgumentArity(2, 2))
             .WithAllowMultipleArguments(true);
     }

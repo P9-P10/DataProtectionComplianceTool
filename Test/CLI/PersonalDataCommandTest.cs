@@ -18,6 +18,13 @@ public class PersonalDataCommandTest : CommandTest
     private static Command BuildCli(out Mock<IPersonalDataManager> personalDataManagerMock,
         out Mock<IPurposesManager> purposesManagerMock, out IConsole console)
     {
+        return BuildCli(out personalDataManagerMock, out purposesManagerMock, out _, out _, out console);
+    }
+
+    private static Command BuildCli(out Mock<IPersonalDataManager> personalDataManagerMock,
+        out Mock<IPurposesManager> purposesManagerMock, out Mock<IOriginsManager> originsManagerMock,
+        out Mock<IIndividualsManager> individualsManagerMock, out IConsole console)
+    {
         console = new TestConsole();
         personalDataManagerMock = new Mock<IPersonalDataManager>();
 
@@ -41,6 +48,18 @@ public class PersonalDataCommandTest : CommandTest
                 Purposes = new List<Purpose> { new() { Name = Purpose1Name }, new() { Name = Purpose2Name } }
             });
 
+        personalDataManagerMock
+            .Setup(manager => manager.GetOriginOf(
+                It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair1)),
+                It.Is<int>(i => i == IndividualId)))
+            .Returns(new Origin { Name = OriginName + "Other" });
+        
+        personalDataManagerMock
+            .Setup(manager => manager.GetOriginOf(
+                It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair2)),
+                It.Is<int>(i => i == IndividualId)))
+            .Returns(Origin);
+
         purposesManagerMock = new Mock<IPurposesManager>();
 
         purposesManagerMock
@@ -51,7 +70,20 @@ public class PersonalDataCommandTest : CommandTest
             .Setup(manager => manager.Get(It.Is<string>(s => s == Purpose2Name)))
             .Returns(Purpose2);
 
-        return PersonalDataCommandBuilder.Build(console, personalDataManagerMock.Object, purposesManagerMock.Object);
+        originsManagerMock = new Mock<IOriginsManager>();
+
+        originsManagerMock
+            .Setup(manager => manager.Get(It.Is<string>(s => s == OriginName)))
+            .Returns(Origin);
+
+        individualsManagerMock = new Mock<IIndividualsManager>();
+
+        individualsManagerMock
+            .Setup(manager => manager.Get(It.Is<int>(i => i == IndividualId)))
+            .Returns(new Individual { Id = IndividualId });
+
+        return PersonalDataCommandBuilder.Build(console, personalDataManagerMock.Object, purposesManagerMock.Object,
+            originsManagerMock.Object, individualsManagerMock.Object);
     }
 
     private static readonly TableColumnPair TableColumnPair1 = new(TableName1, ColumnName1);
@@ -59,8 +91,11 @@ public class PersonalDataCommandTest : CommandTest
     private static readonly IPurpose Purpose1 = new Purpose { Name = Purpose1Name };
     private static readonly IPurpose Purpose2 = new Purpose { Name = Purpose2Name };
 
-    private static readonly PersonalDataColumn PersonalDataColumn = new PersonalDataColumn
+    private static readonly IOrigin Origin = new Origin
     {
+        Name = OriginName,
+        Description = "Origin description",
+        PersonalDataColumns = new List<PersonalDataColumn>()
     };
 
     private const string TableName1 = "tableName";
@@ -71,6 +106,8 @@ public class PersonalDataCommandTest : CommandTest
     private const string Purpose2Name = "purpose2";
     private const string TableName2 = "otherTable";
     private const string ColumnName2 = "otherColumn";
+    private const int IndividualId = 12;
+    private const string OriginName = "originName";
 
     public class Add
     {
@@ -367,14 +404,39 @@ public class PersonalDataCommandTest : CommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(out _, out _, out _), $"{CommandName}");
+            VerifyCommand(BuildCli(out _, out _, out _),
+                $"{CommandName} " +
+                $"--table-column {TableName1} {ColumnName1} " +
+                $"--id {IndividualId} " +
+                $"--origin {OriginName}"
+            );
+        }
+
+        [Fact]
+        public void AliasParses()
+        {
+            VerifyCommand(BuildCli(out _, out _, out _),
+                $"{CommandName} " +
+                $"-tc {TableName1} {ColumnName1} " +
+                $"-i {IndividualId} " +
+                $"-o {OriginName}"
+            );
         }
 
         [Fact]
         public void CallsManagerWithCorrectArguments()
         {
             BuildCli(out var managerMock, out _, out _)
-                .Invoke($"{CommandName}");
+                .Invoke($"{CommandName} " +
+                        $"--table-column {TableName1} {ColumnName1} " +
+                        $"--id {IndividualId} " +
+                        $"--origin {OriginName}"
+                );
+            
+            managerMock.Verify(manager => manager.SetOriginOf(
+                It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair1)),
+                It.Is<int>(i => i == IndividualId),
+                It.Is<string>(s => s == OriginName)));
         }
     }
 
@@ -385,14 +447,34 @@ public class PersonalDataCommandTest : CommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(out _, out _, out _), $"{CommandName}");
+            VerifyCommand(BuildCli(out _, out _, out _), 
+                $"{CommandName} " +
+                $"--table-column {TableName2} {ColumnName2} " +
+                $"--id {IndividualId} ");
         }
 
         [Fact]
         public void CallsManagerWithCorrectArguments()
         {
             BuildCli(out var managerMock, out _, out _)
-                .Invoke($"{CommandName}");
+                .Invoke($"{CommandName} " +
+                        $"--table-column {TableName2} {ColumnName2} " +
+                        $"--id {IndividualId} ");
+            
+            managerMock.Verify(manager => manager.GetOriginOf(
+                It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair2)),
+                It.Is<int>(i => i == IndividualId)));
+        }
+        
+        [Fact]
+        public void PrintsToConsole()
+        {
+            BuildCli(out _, out _, out var console)
+                .Invoke($"{CommandName} " +
+                        $"--table-column {TableName2} {ColumnName2} " +
+                        $"--id {IndividualId} ");
+
+            console.Out.ToString().Should().Be(Origin.ToListing() + "\n");
         }
     }
 }
