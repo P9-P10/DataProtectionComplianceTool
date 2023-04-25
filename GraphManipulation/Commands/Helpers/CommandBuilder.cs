@@ -107,6 +107,11 @@ public static class CommandBuilder
         return BuildCommandWithNameAliasSubject("delete", "d", subject);
     }
 
+    public static Command BuildRemoveCommand(string subject = "")
+    {
+        return BuildCommandWithNameAliasSubject("remove", "r", subject);
+    }
+
     public static Command BuildListCommand(string subject = "")
     {
         return BuildCommandWithNameAliasSubject("list", "ls", subject);

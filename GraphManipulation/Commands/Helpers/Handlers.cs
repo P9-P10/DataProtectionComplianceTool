@@ -1,15 +1,12 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
-using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Managers.Interfaces.Base;
 using GraphManipulation.Models.Interfaces.Base;
-using VDS.Common.Tries;
-using VDS.RDF.Parsing.Tokens;
 
-namespace GraphManipulation.Commands.Builders;
+namespace GraphManipulation.Commands.Helpers;
 
-public static class BaseBuilder
+public static class Handlers
 {
     public static void AddHandler<TKey, T1, T2>(InvocationContext context, IConsole console,
         Action<TKey, T1, T2> addAction, Option<TKey> keyOption, Option<T1> option1, Option<T2> option2)
@@ -151,28 +148,56 @@ public static class BaseBuilder
             return;
         }
 
-        var key2s = key2List as TKey2[] ?? key2List.ToArray();
-        
-        foreach (var key2 in key2s)
+        foreach (var key2 in key2List)
         {
             if (TryGet(getter2, key2, out _))
             {
-                continue;
-            }
+                if (getOld(keyValue1).Contains(key2))
+                {
+                    continue;
+                }
 
-            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key2));
+                updateAction(key1, key2);
+                console.WriteLine($"{key1} successfully updated with {key2}");
+            }
+            else
+            {
+                console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key2));
+            }
+        }
+    }
+
+    public static void RemoveHandlerKeyList<TKey1, TValue1, TKey2>(InvocationContext context, IConsole console,
+        Action<TKey1, TKey2> removeAction,
+        IGetter<TValue1, TKey1> getter,
+        Func<TValue1, IEnumerable<TKey2>> getCurrent,
+        Option<TKey1> keyOption1,
+        Option<IEnumerable<TKey2>> keyOption2)
+        where TValue1 : IListable
+    {
+        var key1 = GetValueOfRequiredOption(context, keyOption1);
+        
+        if (!TryGet(getter, key1, out var keyValue1))
+        {
+            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key1));
             return;
         }
-
-        foreach (var key2 in key2s)
+        
+        if (!TryGetValueOfOption(context, keyOption2, out var key2List))
         {
-            if (getOld(keyValue1).Contains(key2))
+            return;
+        }
+        
+        foreach (var key2 in key2List)
+        {
+            if (!getCurrent(keyValue1).Contains(key2))
             {
+                console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key2));
                 continue;
             }
 
-            updateAction(key1, key2);
-            console.WriteLine($"{key1} successfully updated with {key2}");
+            removeAction(key1, key2);
+            console.WriteLine($"{key2} successfully removed from {key1}");
         }
     }
 
@@ -191,6 +216,8 @@ public static class BaseBuilder
         deleteAction(key);
         console.WriteLine($"{key} successfully deleted");
     }
+    
+    
 
     public static void ListHandler<TValue, _>(IConsole console, IGetter<TValue, _> getter)
         where TValue : IListable

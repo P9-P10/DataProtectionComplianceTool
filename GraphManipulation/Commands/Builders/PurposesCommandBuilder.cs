@@ -44,9 +44,9 @@ public static class PurposesCommandBuilder
                     BuildDeleteConditionOption()
                         .WithDescription("The delete condition that the purpose receives"))
                 .WithHandler(new CommandHandler()
-                    .WithHandle(context => BaseBuilder.AddHandler(context, console,
+                    .WithHandle(context => Handlers.AddHandler(context, console,
                         purposesManager.Add, nameOption, legallyRequiredOption, descriptionOption))
-                    .WithHandle(context => BaseBuilder.UpdateHandlerWithKey(context, console, 
+                    .WithHandle(context => Handlers.UpdateHandlerWithKey(context, console, 
                         purposesManager.SetDeleteCondition,
                         purposesManager,
                         deleteConditionsManager,
@@ -78,26 +78,26 @@ public static class PurposesCommandBuilder
                 BuildDeleteConditionOption()
                     .WithDescription("The new delete condition that the purpose receives"))
             .WithHandler(new CommandHandler()
-                .WithHandle(context => BaseBuilder.UpdateHandler(context, console,
+                .WithHandle(context => Handlers.UpdateHandler(context, console,
                     purposesManager.UpdateDescription,
                     purposesManager,
                     p => p.GetDescription(),
                     nameOption,
                     descriptionOption))
-                .WithHandle(context => BaseBuilder.UpdateHandler(context, console,
+                .WithHandle(context => Handlers.UpdateHandler(context, console,
                     purposesManager.UpdateLegallyRequired,
                     purposesManager,
                     p => p.GetLegallyRequired(),
                     nameOption,
                     legallyRequiredOption))
-                .WithHandle(context => BaseBuilder.UpdateHandlerWithKey(context, console,
+                .WithHandle(context => Handlers.UpdateHandlerWithKey(context, console,
                     purposesManager.SetDeleteCondition,
                     purposesManager,
                     deleteConditionsManager,
                     p => p.GetDeleteCondition(),
                     nameOption, 
                     deleteConditionOption))
-                .WithHandle(context => BaseBuilder.UpdateHandler(context, console,
+                .WithHandle(context => Handlers.UpdateHandler(context, console,
                     purposesManager.UpdateName,
                     purposesManager,
                     p => p.GetName(),
@@ -116,7 +116,7 @@ public static class PurposesCommandBuilder
                 BuildNameOption().WithIsRequired(true))
             .WithHandler(new CommandHandler()
                 .WithHandle(context =>
-                    BaseBuilder.DeleteHandler(context, console, purposesManager.Delete, purposesManager, nameOption)));
+                    Handlers.DeleteHandler(context, console, purposesManager.Delete, purposesManager, nameOption)));
     }
 
     private static Command ListPurposes(IConsole console, IPurposesManager purposesManager)
@@ -125,7 +125,7 @@ public static class PurposesCommandBuilder
             .BuildListCommand()
             .WithDescription("Lists the purposes currently in the system")
             .WithHandler(new CommandHandler()
-                .WithHandle(_ => BaseBuilder.ListHandler(console, purposesManager)));
+                .WithHandle(_ => Handlers.ListHandler(console, purposesManager)));
     }
 
     private static Command ShowPurpose(IConsole console, IPurposesManager purposesManager)
@@ -135,7 +135,7 @@ public static class PurposesCommandBuilder
             .WithDescription("Shows details about the given purpose")
             .WithOption(out var nameOption, BuildNameOption().WithIsRequired(true))
             .WithHandler(new CommandHandler()
-                .WithHandle(context => BaseBuilder.ShowHandler(context, console, purposesManager, nameOption)));
+                .WithHandle(context => Handlers.ShowHandler(context, console, purposesManager, nameOption)));
     }
 
     private static Option<string> BuildNameOption()

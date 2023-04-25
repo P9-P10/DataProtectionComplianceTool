@@ -1,6 +1,5 @@
 using System.CommandLine;
 using GraphManipulation.Commands.Helpers;
-using GraphManipulation.Managers;
 using GraphManipulation.Managers.Interfaces;
 
 namespace GraphManipulation.Commands.Builders;
@@ -27,9 +26,8 @@ public static class IndividualsCommandBuilder
                 OptionBuilder
                     .CreateTableColumnPairOption()
                     .WithDescription("The table and column in which the individuals can be found"))
-            .WithHandler(new CommandHandler()
-                .WithHandle(context =>
-                    BaseBuilder.AddHandler(context, console, individualsManager.SetIndividualsSource, pairOption)));
+            .WithHandler(context =>
+                Handlers.AddHandler(context, console, individualsManager.SetIndividualsSource, pairOption));
     }
 
     private static Command ListIndividuals(IConsole console, IIndividualsManager individualsManager)
@@ -37,8 +35,7 @@ public static class IndividualsCommandBuilder
         return CommandBuilder
             .BuildListCommand()
             .WithDescription("Lists all individuals currently in the system")
-            .WithHandler(new CommandHandler()
-                .WithHandle(_ => BaseBuilder.ListHandler(console, individualsManager)));
+            .WithHandler(() => Handlers.ListHandler(console, individualsManager));
     }
 
     private static Command ShowIndividual(IConsole console, IIndividualsManager individualsManager)
@@ -51,7 +48,6 @@ public static class IndividualsCommandBuilder
                     .CreateIdOption()
                     .WithDescription("The id of the individual to be shown")
                     .WithIsRequired(true))
-            .WithHandler(new CommandHandler()
-                .WithHandle(context => BaseBuilder.ShowHandler(context, console, individualsManager, idOption)));
+            .WithHandler(context => Handlers.ShowHandler(context, console, individualsManager, idOption));
     }
 }
