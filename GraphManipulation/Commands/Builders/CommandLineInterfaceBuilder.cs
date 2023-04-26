@@ -31,7 +31,7 @@ public static class CommandLineInterfaceBuilder
                 OriginsCommandBuilder.Build(console, originsManager),
                 VacuumingRulesCommandBuilder.Build(console, vacuumingRulesManager, purposesManager),
                 DeleteConditionsCommandBuilder.Build(console, deleteConditionsManager),
-                ProcessingsCommandBuilder.Build(console, processingsManager),
+                ProcessingsCommandBuilder.Build(console, processingsManager, personalDataManager, purposesManager),
                 LoggingCommandBuilder.Build(console, logger),
                 ConfigurationCommandBuilder.Build(console, configManager)
             );

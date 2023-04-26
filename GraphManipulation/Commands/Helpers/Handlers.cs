@@ -40,6 +40,47 @@ public static class Handlers
         console.WriteLine($"{key1} successfully added");
     }
     
+    public static void AddHandlerKey<TKey1, TValue1, TKey2, TValue2, TKey3, TValue3, T4>(InvocationContext context, IConsole console,
+        Action<TKey1, TKey2, TKey3, T4> addAction,
+        IGetter<TValue1, TKey1> getter1,
+        IGetter<TValue2, TKey2> getter2,
+        IGetter<TValue3, TKey3> getter3,
+        Option<TKey1> keyOption1,
+        Option<TKey2> keyOption2,
+        Option<TKey3> keyOption3,
+        Option<T4> option)
+    {
+        var key1 = GetValueOfRequiredOption(context, keyOption1);
+        var key2 = GetValueOfRequiredOption(context, keyOption2);
+        var key3 = GetValueOfRequiredOption(context, keyOption3);
+        
+        if (TryGet(getter1, key1, out _))
+        {
+            console.WriteLine(CommandBuilder.BuildAlreadyExistsMessage("entity", key1));
+            return;
+        }
+
+        if (!TryGet(getter2, key2, out _))
+        {
+            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key2));
+            return;
+        }
+        
+        if (!TryGet(getter3, key3, out _))
+        {
+            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key3));
+            return;
+        }
+        
+        if (!TryGetValueOfOption(context, option, out var optionValue))
+        {
+            return;
+        }
+
+        addAction(key1, key2, key3, optionValue);
+        console.WriteLine($"{key1} successfully added");
+    }
+    
     public static void AddHandler<TKey, TValue>(InvocationContext context, IConsole console,
         Action<TKey> addAction,
         IGetter<TValue, TKey> getter,
@@ -211,6 +252,7 @@ public static class Handlers
         console.WriteLine($"{key1} successfully updated with {key2}");
     }
 
+    // TODO: Et eller andet sted bør det nok tjekkes om det nye navn f.eks. et purpose får findes i systemet i forvejen
     public static void UpdateHandlerWithKey<TKey1, TValue1, TKey2, TValue2>(InvocationContext context, IConsole console,
         Action<TKey1, TKey2> updateAction,
         IGetter<TValue1, TKey1> getter1,
