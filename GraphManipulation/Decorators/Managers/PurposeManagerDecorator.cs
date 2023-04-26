@@ -5,7 +5,7 @@ using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Decorators.Managers;
 
-public class PurposeManagerDecorator : LoggingDecorator ,IPurposesManager
+public class PurposeManagerDecorator : LoggingDecorator, IPurposesManager
 {
     private readonly IPurposesManager _manager;
 
