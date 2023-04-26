@@ -2,18 +2,14 @@
 
 using System.CommandLine;
 using System.CommandLine.IO;
-using System.Data.SQLite;
 using System.Text;
 using GraphManipulation.Commands.Builders;
 using GraphManipulation.DataAccess;
 using GraphManipulation.DataAccess.Mappers;
-using GraphManipulation.Decorators;
 using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
 using GraphManipulation.Managers;
-using GraphManipulation.MetadataManagement;
 using GraphManipulation.Models;
-using GraphManipulation.Vacuuming;
 using Sharprompt;
 using Symbol = Sharprompt.Symbol;
 
@@ -32,13 +28,16 @@ public static class Program
 
         var configFilePath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
         var configManager = new ConfigManager(configFilePath);
-        var logger = new PlaintextLogger(configManager);
-        var console = new SystemConsole();
 
         if (!ConfigSetup(configManager, configFilePath))
         {
             return;
         }
+
+        Console.WriteLine($"Using config found at {configFilePath}");
+
+        var logger = new PlaintextLogger(configManager);
+        var console = new SystemConsole();
 
         var context = new GdprMetadataContext(configManager.GetValue("DatabaseConnectionString"));
 
@@ -50,7 +49,7 @@ public static class Program
         var deleteConditionMapper = new Mapper<DeleteCondition>(context);
         var processingMapper = new Mapper<Processing>(context);
         var personalDataMapper = new Mapper<PersonalData>(context);
-        
+
         var individualsManager = new IndividualsManager(individualMapper);
         var personalDataManager = new PersonalDataManager(personalDataColumnMapper, purposeMapper, originMapper,
             personalDataMapper, individualMapper);
@@ -112,7 +111,9 @@ public static class Program
         }
         catch (KeyNotFoundException)
         {
-            Console.WriteLine($"Please make sure that the config file located at {configFilePath} is correctly set up");
+            Console.WriteLine(
+                $"Please make sure that the config file located at {configFilePath} is correctly set up, " +
+                $"keys seem to be missing");
             return false;
         }
 
