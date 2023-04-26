@@ -7,7 +7,8 @@ namespace GraphManipulation.Commands.Builders;
 
 public static class VacuumingRulesCommandBuilder
 {
-    public static Command Build(IConsole console, IVacuumingRulesManager vacuumingRulesManager, IPurposesManager purposesManager)
+    public static Command Build(IConsole console, IVacuumingRulesManager vacuumingRulesManager,
+        IPurposesManager purposesManager)
     {
         return CommandBuilder.CreateCommand(CommandNamer.VacuumingRulesName)
             .WithAlias(CommandNamer.VacuumingRulesAlias)
@@ -20,14 +21,15 @@ public static class VacuumingRulesCommandBuilder
             );
     }
 
-    private static Command Add(IConsole console, IVacuumingRulesManager vacuumingRulesManager, IPurposesManager purposesManager)
+    private static Command Add(IConsole console, IVacuumingRulesManager vacuumingRulesManager,
+        IPurposesManager purposesManager)
     {
         return CommandBuilder
             .BuildAddCommand()
             .WithDescription("Adds a vacuuming rule to the system")
             .WithOption(out var nameOption, BuildNameOption())
             .WithOption(out var intervalOption, BuildIntervalOption().WithIsRequired(true))
-            .WithOption(out var purposeOption, 
+            .WithOption(out var purposeOption,
                 OptionBuilder
                     .CreateOption<string>("--purpose")
                     .WithAlias("-p")
@@ -40,44 +42,93 @@ public static class VacuumingRulesCommandBuilder
                     .WithGetDefaultValue(() => ""))
             .WithHandler(context =>
             {
-                Handlers.AddHandlerKey(context, console, 
-                    (name, purpose, interval) => vacuumingRulesManager.AddVacuumingRule(name, interval, purpose),
+                Handlers.AddHandlerKey(context, console,
+                    (name, purpose, interval) => 
+                        vacuumingRulesManager.AddVacuumingRule(name, interval, purpose),
                     vacuumingRulesManager,
                     purposesManager,
                     nameOption,
                     purposeOption,
                     intervalOption);
-                
+
                 Handlers.UpdateHandler(context, console,
                     vacuumingRulesManager.UpdateDescription,
                     vacuumingRulesManager,
                     rule => rule.GetDescription(),
                     nameOption,
                     descriptionOption);
-            })
-            ;
+            });
     }
-    
+
     private static Command Update(IConsole console, IVacuumingRulesManager vacuumingRulesManager)
     {
-        return CommandBuilder.BuildUpdateCommand();
+        return CommandBuilder
+            .BuildUpdateCommand()
+            .WithDescription("Updates the given vacuuming rule with the given values")
+            .WithOption(out var nameOption, BuildNameOption())
+            .WithOption(out var newNameOption,
+                OptionBuilder
+                    .CreateNewNameOption<string>()
+                    .WithDescription("The new name of the vacuuming rule"))
+            .WithOption(out var intervalOption, BuildIntervalOption())
+            .WithOption(out var descriptionOption,
+                OptionBuilder
+                    .CreateDescriptionOption<string>()
+                    .WithDescription("The description of the vacuuming rule"))
+            .WithHandler(context =>
+            {
+                Handlers.UpdateHandler(context, console,
+                    vacuumingRulesManager.UpdateDescription,
+                    vacuumingRulesManager,
+                    rule => rule.GetDescription(),
+                    nameOption,
+                    descriptionOption);
+
+                Handlers.UpdateHandler(context, console,
+                    vacuumingRulesManager.UpdateInterval,
+                    vacuumingRulesManager,
+                    rule => rule.GetInterval(),
+                    nameOption,
+                    intervalOption);
+
+                Handlers.UpdateHandler(context, console,
+                    vacuumingRulesManager.UpdateName,
+                    vacuumingRulesManager,
+                    rule => rule.GetName(),
+                    nameOption,
+                    newNameOption);
+            });
     }
-    
+
     private static Command Delete(IConsole console, IVacuumingRulesManager vacuumingRulesManager)
     {
-        return CommandBuilder.BuildDeleteCommand();
+        return CommandBuilder
+            .BuildDeleteCommand()
+            .WithDescription("Deletes the given vacuuming rule from the system")
+            .WithOption(out var nameOption, BuildNameOption())
+            .WithHandler(context => Handlers.DeleteHandler(context, console, 
+                vacuumingRulesManager.Delete,
+                vacuumingRulesManager,
+                nameOption));
     }
-    
+
     private static Command List(IConsole console, IVacuumingRulesManager vacuumingRulesManager)
     {
-        return CommandBuilder.BuildListCommand();
+        return CommandBuilder
+            .BuildListCommand()
+            .WithDescription("Lists the vacuuming rules currently in the system")
+            .WithHandler(() => Handlers.ListHandler(console, vacuumingRulesManager));
     }
-    
+
     private static Command Show(IConsole console, IVacuumingRulesManager vacuumingRulesManager)
     {
-        return CommandBuilder.BuildShowCommand();
+        return CommandBuilder
+            .BuildShowCommand()
+            .WithDescription("Shows information about the given vacuuming rule")
+            .WithOption(out var nameOption, BuildNameOption())
+            .WithHandler(context => Handlers.ShowHandler(context, console, vacuumingRulesManager, nameOption));
     }
-    
+
     private static Option<string> BuildNameOption()
     {
         return OptionBuilder
