@@ -44,7 +44,7 @@ public static class PersonalDataCommandBuilder
                 OptionBuilder
                     .CreateDescriptionOption<string>()
                     .WithDescription("Description of the personal data")
-                    .WithGetDefaultValue(() => ""))
+                    .WithDefaultValue(string.Empty))
             .WithOption(out var purposeOption, BuildPurposeListOption())
             .WithHandler(context =>
             {

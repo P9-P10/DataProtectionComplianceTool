@@ -24,6 +24,12 @@ public static class OptionBuilder
         return option;
     }
 
+    public static Option<T> WithDefaultValue<T>(this Option<T> option, T defaultValue)
+    {
+        option.SetDefaultValue(defaultValue);
+        return option;
+    }
+
     public static Option<T> WithArity<T>(this Option<T> option, ArgumentArity arity)
     {
         option.Arity = arity;
