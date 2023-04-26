@@ -1,5 +1,5 @@
 using System.CommandLine;
-using GraphManipulation.Commands.BaseBuilders;
+using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
 using GraphManipulation.Managers.Interfaces;
@@ -8,11 +8,11 @@ namespace GraphManipulation.Commands.Builders;
 
 public static class CommandLineInterfaceBuilder
 {
-    public static RootCommand Build(
+    public static Command Build(
         IConsole console,
-        IIndividualsManager individualsManager, 
+        IIndividualsManager individualsManager,
         IPersonalDataManager personalDataManager,
-        IPurposesManager purposesManager, 
+        IPurposesManager purposesManager,
         IOriginsManager originsManager,
         IVacuumingRulesManager vacuumingRulesManager,
         IDeleteConditionsManager deleteConditionsManager,
@@ -20,18 +20,20 @@ public static class CommandLineInterfaceBuilder
         ILogger logger,
         IConfigManager configManager)
     {
-        return RootCommandBuilder.CreateRootCommand("This is a description of the command")
-            .WithCommand(IndividualsCommandBuilder.Build(console, individualsManager))
-            .WithCommand(PersonalDataCommandBuilder.Build(console, personalDataManager))
-            .WithCommand(PurposesCommandBuilder.Build(console, purposesManager))
-            .WithCommand(OriginsCommandBuilder.Build(console, originsManager))
-            .WithCommand(VacuumingRulesCommandBuilder.Build(console, vacuumingRulesManager))
-            .WithCommand(DeleteConditionsCommandBuilder.Build(console, deleteConditionsManager))
-            .WithCommand(ProcessingsCommandBuilder.Build(console, processingsManager))
-            .WithCommand(LoggingCommandBuilder.Build(console, logger))
-            .WithCommand(ConfigurationCommandBuilder.Build(console, configManager));
+        return CommandBuilder.CreateCommand(CommandNamer.RootCommandName)
+            .WithAlias(CommandNamer.RootCommandAlias)
+            .WithDescription("This is a description of the root command")
+            .WithSubCommands(
+                IndividualsCommandBuilder.Build(console, individualsManager),
+                PersonalDataCommandBuilder.Build(console, personalDataManager, purposesManager,
+                    originsManager, individualsManager),
+                PurposesCommandBuilder.Build(console, purposesManager, deleteConditionsManager),
+                OriginsCommandBuilder.Build(console, originsManager),
+                VacuumingRulesCommandBuilder.Build(console, vacuumingRulesManager, purposesManager),
+                DeleteConditionsCommandBuilder.Build(console, deleteConditionsManager),
+                ProcessingsCommandBuilder.Build(console, processingsManager, personalDataManager, purposesManager),
+                LoggingCommandBuilder.Build(console, logger),
+                ConfigurationCommandBuilder.Build(console, configManager)
+            );
     }
 }
-
-
-

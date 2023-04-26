@@ -1,4 +1,5 @@
-﻿using GraphManipulation.Managers.Interfaces.Base;
+﻿using GraphManipulation.Managers;
+using GraphManipulation.Managers.Interfaces.Base;
 using GraphManipulation.Models.Interfaces;
 using GraphManipulation.Models.Interfaces.Base;
 
@@ -12,7 +13,7 @@ public class Processing : DomainEntity, IProcessing
     public PersonalDataColumn PersonalDataColumn { get; set; }
     public string ToListing()
     {
-        return string.Join(", ", Name, Purpose.ToListing(), PersonalDataColumn.ToListing());
+        return string.Join(", ", Name, Description, Purpose.ToListing(), PersonalDataColumn.TableColumnPair.ToListing());
     }
 
     public string GetName()
@@ -33,5 +34,10 @@ public class Processing : DomainEntity, IProcessing
     public IPersonalDataColumn GetPersonalDataColumn()
     {
         return PersonalDataColumn;
+    }
+
+    public TableColumnPair GetPersonalDataTableColumnPair()
+    {
+        return PersonalDataColumn.TableColumnPair;
     }
 }

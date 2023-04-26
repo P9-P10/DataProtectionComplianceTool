@@ -1,6 +1,6 @@
 using System.CommandLine;
 
-namespace GraphManipulation.Commands.BaseBuilders;
+namespace GraphManipulation.Commands.Helpers;
 
 public static class ArgumentBuilder
 {
@@ -14,7 +14,4 @@ public static class ArgumentBuilder
         argument.Description = description;
         return argument;
     }
-
-    public static Argument<string> BuildStringArgument(string name = "value") => new(name);
-    public static Argument<int> BuildIntArgument(string name = "value") => new(name);
 }

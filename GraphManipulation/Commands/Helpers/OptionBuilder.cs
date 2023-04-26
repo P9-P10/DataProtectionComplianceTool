@@ -1,8 +1,9 @@
 using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.Diagnostics;
+using GraphManipulation.Managers;
 
-namespace GraphManipulation.Commands.BaseBuilders;
+namespace GraphManipulation.Commands.Helpers;
 
 public static class OptionBuilder
 {
@@ -22,7 +23,13 @@ public static class OptionBuilder
         option.SetDefaultValueFactory(getDefaultValue);
         return option;
     }
-    
+
+    public static Option<T> WithDefaultValue<T>(this Option<T> option, T defaultValue)
+    {
+        option.SetDefaultValue(defaultValue);
+        return option;
+    }
+
     public static Option<T> WithArity<T>(this Option<T> option, ArgumentArity arity)
     {
         option.Arity = arity;
@@ -40,28 +47,51 @@ public static class OptionBuilder
         option.IsRequired = value;
         return option;
     }
-    
+
     public static Option<T> WithDescription<T>(this Option<T> option, string description)
     {
         option.Description = description;
         return option;
     }
 
-    public static Option<int> CreateIdOption(string description)
+    public static Option<int> CreateIdOption()
     {
-        return CreateOption<int>("--id").WithAlias("-i").WithDescription(description);
+        return CreateOption<int>("--id").WithAlias("-i");
     }
 
-    public static Option<bool> CreateAllOption(string description)
+    public static Option<string> CreateDescriptionOption()
     {
-        return CreateOption<bool>("--all").WithAlias("-a").WithDescription(description);
+        return CreateOption<string>("--description").WithAlias("-d");
     }
 
-    public static Option<T> BuildOption<T>(string name, string description, string alias)
+    public static Option<TableColumnPair> CreateTableColumnPairOption()
     {
-        var option = new Option<T>(name: name, description: description);
-        option.AddAlias(alias);
-        return option;
+        return new Option<TableColumnPair>(
+                "--table-column",
+                result =>
+                {
+                    if (result.Tokens.Count == 2)
+                    {
+                        return new TableColumnPair(result.Tokens[0].Value, result.Tokens[1].Value);
+                    }
+
+                    result.ErrorMessage = "--table-column requires two arguments";
+                    return new TableColumnPair("", "");
+                })
+            .WithAlias("-tc")
+            .WithIsRequired(true)
+            .WithArity(new ArgumentArity(2, 2))
+            .WithAllowMultipleArguments(true);
+    }
+
+    public static Option<string> CreateNameOption()
+    {
+        return CreateOption<string>("--name").WithAlias("-n");
+    }
+
+    public static Option<string> CreateNewNameOption()
+    {
+        return CreateOption<string>("--new-name").WithAlias("-nn");
     }
 
     public static void ValidateOrder<T>(CommandResult commandResult, Option<IEnumerable<T>> option)
@@ -85,7 +115,7 @@ public static class OptionBuilder
             // Ignore here, is dealt with somewhere else
         }
     }
-    
+
     // https://github.com/dorssel/usbipd-win/blob/2f7cbb732889ed00617e85f2f0b22239e8533960/Usbipd/Program.cs#L86-L94
     public static void ValidateOneOf(CommandResult commandResult, params Option[] options)
     {

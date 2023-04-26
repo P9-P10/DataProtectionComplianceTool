@@ -76,7 +76,7 @@ public class PersonalDataManager : IPersonalDataManager
         _individualMapper.Update(individual);
     }
 
-    public IOrigin GetOriginOf(TableColumnPair tableColumnPair, int individualsId)
+    public IOrigin? GetOriginOf(TableColumnPair tableColumnPair, int individualsId)
     {
         var individual = _individualMapper.FindSingle(individual => individual.Id == individualsId);
         var personData = individual.PersonalData.FirstOrDefault(data => data.Column.TableColumnPair == tableColumnPair);

@@ -15,4 +15,9 @@ public class TimeRange
     {
         return dateTime >= Start && dateTime <= End;
     }
+
+    public bool Equals(TimeRange other)
+    {
+        return other.Start == Start && other.End == End;
+    }
 }

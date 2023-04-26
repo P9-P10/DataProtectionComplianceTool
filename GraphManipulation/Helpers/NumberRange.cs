@@ -15,4 +15,9 @@ public class NumberRange
     {
         return number >= Start && number <= End;
     }
+
+    public bool Equals(NumberRange other)
+    {
+        return other.Start == Start && other.End == End;
+    }
 }

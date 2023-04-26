@@ -15,5 +15,5 @@ public interface IPersonalDataManager :
     public void RemovePurpose(TableColumnPair tableColumnPair, string purposeName);
 
     public void SetOriginOf(TableColumnPair tableColumnPair, int individualsId, string originName);
-    public IOrigin GetOriginOf(TableColumnPair tableColumnPair, int individualsId);
+    public IOrigin? GetOriginOf(TableColumnPair tableColumnPair, int individualsId);
 }

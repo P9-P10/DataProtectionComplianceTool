@@ -16,8 +16,8 @@ public class PersonalDataColumn : DomainEntity, IPersonalDataColumn
 
     public string ToListing()
     {
-        return string.Join(", ", TableColumnPair.ToListing(), Description,
-            "[ " + Purposes.Select(p => p.ToListing()) + " ]");
+        return string.Join(", ", TableColumnPair.ToListing(), JoinCondition, Description,
+            "[ " + string.Join(", ", Purposes.Select(p => p.ToListing())) + " ]");
     }
 
     public string GetDescription()
@@ -33,5 +33,10 @@ public class PersonalDataColumn : DomainEntity, IPersonalDataColumn
     public IEnumerable<IPurpose> GetPurposes()
     {
         return Purposes;
+    }
+
+    public string GetJoinCondition()
+    {
+        return JoinCondition;
     }
 }
