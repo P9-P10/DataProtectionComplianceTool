@@ -15,7 +15,6 @@ public static class Handlers
         Option<TKey1> keyOption1,
         Option<TKey2> keyOption2,
         Option<T3> option)
-        where TValue1 : IListable where TValue2 : IListable
     {
         var key1 = GetValueOfRequiredOption(context, keyOption1);
         var key2 = GetValueOfRequiredOption(context, keyOption2);
@@ -45,7 +44,6 @@ public static class Handlers
         Action<TKey> addAction,
         IGetter<TValue, TKey> getter,
         Option<TKey> keyOption)
-        where TValue : IListable
     {
         var key = GetValueOfRequiredOption(context, keyOption);
 
@@ -65,7 +63,6 @@ public static class Handlers
         IGetter<TValue, TKey> getter,
         Option<TKey> keyOption, 
         Option<T1> option1)
-        where TValue : IListable
     {
         var key = GetValueOfRequiredOption(context, keyOption);
         
@@ -87,7 +84,6 @@ public static class Handlers
         Option<TKey> keyOption, 
         Option<T1> option1, 
         Option<T2> option2)
-        where TValue : IListable
     {
         var key = GetValueOfRequiredOption(context, keyOption);
         
@@ -124,7 +120,6 @@ public static class Handlers
         Option<TKey1> keyOption1,
         Option<TKey2> keyOption2,
         Option<TKey3> keyOption3)
-        where TValue1 : IListable where TValue2 : IListable where TValue3 : IListable
     {
         var key1 = GetValueOfRequiredOption(context, keyOption1);
         var key2 = GetValueOfRequiredOption(context, keyOption2);
@@ -160,7 +155,6 @@ public static class Handlers
     public static void UpdateHandler<TKey, TValue, T>(InvocationContext context, IConsole console,
         Action<TKey, T> updateAction, IGetter<TValue, TKey> getter, Func<TValue, T> getOld, Option<TKey> keyOption,
         Option<T> option)
-        where TValue : IListable
     {
         var key = GetValueOfRequiredOption(context, keyOption);
 
@@ -192,7 +186,6 @@ public static class Handlers
         Func<TValue1, TKey2> getOld,
         Option<TKey1> keyOption1,
         Option<TKey2> keyOption2)
-        where TValue1 : IListable where TValue2 : IListable
     {
         var key1 = GetValueOfRequiredOption(context, keyOption1);
         var key2 = GetValueOfRequiredOption(context, keyOption2);
@@ -225,7 +218,6 @@ public static class Handlers
         Func<TValue1, TKey2> getOld,
         Option<TKey1> keyOption1,
         Option<TKey2> keyOption2)
-        where TValue1 : IListable where TValue2 : IListable
     {
         var key1 = GetValueOfRequiredOption(context, keyOption1);
 
@@ -263,7 +255,6 @@ public static class Handlers
         Func<TValue1, IEnumerable<TKey2>> getOld,
         Option<TKey1> keyOption1,
         Option<IEnumerable<TKey2>> keyOption2)
-        where TValue1 : IListable where TValue2 : IListable
     {
         var key1 = GetValueOfRequiredOption(context, keyOption1);
 
@@ -301,7 +292,6 @@ public static class Handlers
         Func<TValue1, IEnumerable<TKey2>> getCurrent,
         Option<TKey1> keyOption1,
         Option<IEnumerable<TKey2>> keyOption2)
-        where TValue1 : IListable
     {
         var key1 = GetValueOfRequiredOption(context, keyOption1);
 
@@ -332,7 +322,6 @@ public static class Handlers
     public static void DeleteHandler<TValue, TKey>(InvocationContext context, IConsole console,
         Action<TKey> deleteAction,
         IGetter<TValue, TKey> getter, Option<TKey> keyOption)
-        where TValue : IListable
     {
         var key = GetValueOfRequiredOption(context, keyOption);
 
@@ -413,7 +402,6 @@ public static class Handlers
     }
 
     private static bool TryGet<TValue, TKey>(IGetter<TValue, TKey> getter, TKey key, out TValue? value)
-        where TValue : IListable
     {
         value = getter.Get(key);
         return value is not null;
