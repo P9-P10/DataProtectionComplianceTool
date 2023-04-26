@@ -1,5 +1,4 @@
 using System.CommandLine;
-using System.Data.Entity.Infrastructure.Design;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Managers.Interfaces;
 
@@ -37,13 +36,13 @@ public static class VacuumingRulesCommandBuilder
                     .WithIsRequired(true))
             .WithOption(out var descriptionOption,
                 OptionBuilder
-                    .CreateDescriptionOption<string>()
+                    .CreateDescriptionOption()
                     .WithDescription("The description of the vacuuming rule")
                     .WithGetDefaultValue(() => ""))
             .WithHandler(context =>
             {
                 Handlers.AddHandlerKey(context, console,
-                    (name, purpose, interval) => 
+                    (name, purpose, interval) =>
                         vacuumingRulesManager.AddVacuumingRule(name, interval, purpose),
                     vacuumingRulesManager,
                     purposesManager,
@@ -68,12 +67,12 @@ public static class VacuumingRulesCommandBuilder
             .WithOption(out var nameOption, BuildNameOption())
             .WithOption(out var newNameOption,
                 OptionBuilder
-                    .CreateNewNameOption<string>()
+                    .CreateNewNameOption()
                     .WithDescription("The new name of the vacuuming rule"))
             .WithOption(out var intervalOption, BuildIntervalOption())
             .WithOption(out var descriptionOption,
                 OptionBuilder
-                    .CreateDescriptionOption<string>()
+                    .CreateDescriptionOption()
                     .WithDescription("The description of the vacuuming rule"))
             .WithHandler(context =>
             {
@@ -106,7 +105,7 @@ public static class VacuumingRulesCommandBuilder
             .BuildDeleteCommand()
             .WithDescription("Deletes the given vacuuming rule from the system")
             .WithOption(out var nameOption, BuildNameOption())
-            .WithHandler(context => Handlers.DeleteHandler(context, console, 
+            .WithHandler(context => Handlers.DeleteHandler(context, console,
                 vacuumingRulesManager.Delete,
                 vacuumingRulesManager,
                 nameOption));

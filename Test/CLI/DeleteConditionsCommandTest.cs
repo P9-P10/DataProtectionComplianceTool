@@ -17,18 +17,19 @@ public class DeleteConditionsCommandTest : CommandTest
         managerMock = new Mock<IDeleteConditionsManager>();
 
         managerMock
-            .Setup(manager => manager.Get(It.Is<string>(s => s == Name)))
+            .Setup(manager => manager.Get(It.Is<string>(s => s == DeleteConditionName)))
             .Returns(new DeleteCondition
             {
                 Condition = Condition,
                 Description = Description,
-                Name = Name
+                Name = DeleteConditionName
             });
         
         return DeleteConditionsCommandBuilder.Build(console, managerMock.Object);
     }
 
-    private const string Name = "deleteConditionName";
+    private const string DeleteConditionName = "deleteConditionName";
+    private const string NewDeleteConditionName = "newDeleteConditionName";
     private const string Description = "This is a description";
     private const string Condition = "This is a condition";
 
@@ -41,7 +42,7 @@ public class DeleteConditionsCommandTest : CommandTest
         {
             VerifyCommand(BuildCli(out _, out _), 
                 $"{CommandName} " +
-                $"--name {Name} " +
+                $"--name {DeleteConditionName} " +
                 $"--description \"{Description}\" " +
                 $"--condition \"{Condition}\" ");
         }
@@ -51,12 +52,12 @@ public class DeleteConditionsCommandTest : CommandTest
         {
             BuildCli(out var managerMock, out _)
                 .Invoke($"{CommandName} " +
-                        $"--name {Name} " +
+                        $"--name {NewDeleteConditionName} " +
                         $"--description \"{Description}\" " +
                         $"--condition \"{Condition}\" ");
             
             managerMock.Verify(manager => manager.Add(
-                It.Is<string>(s => s == Name),
+                It.Is<string>(s => s == NewDeleteConditionName),
                 It.Is<string>(s => s == Description),
                 It.Is<string>(s => s == Condition)));
         }
@@ -71,8 +72,8 @@ public class DeleteConditionsCommandTest : CommandTest
         {
             VerifyCommand(BuildCli(out _, out _), 
                 $"{CommandName} " +
-                $"--name {Name} " +
-                $"--new-name {Name + "NEW"} " +
+                $"--name {DeleteConditionName} " +
+                $"--new-name {DeleteConditionName + "NEW"} " +
                 $"--description \"{Description + "NEW"}\" " +
                 $"--condition \"{Condition + "NEW"}\" ");
         }
@@ -82,19 +83,19 @@ public class DeleteConditionsCommandTest : CommandTest
         {
             BuildCli(out var managerMock, out _)
                 .Invoke($"{CommandName} " +
-                        $"--name {Name} " +
-                        $"--new-name {Name + "NEW"} " +
+                        $"--name {DeleteConditionName} " +
+                        $"--new-name {DeleteConditionName + "NEW"} " +
                         $"--description \"{Description + "NEW"}\" " +
                         $"--condition \"{Condition + "NEW"}\" ");
             
             managerMock.Verify(manager => manager.UpdateName(
-                It.Is<string>(s => s == Name),
-                It.Is<string>(s => s == Name + "NEW")));
+                It.Is<string>(s => s == DeleteConditionName),
+                It.Is<string>(s => s == DeleteConditionName + "NEW")));
             managerMock.Verify(manager => manager.UpdateDescription(
-                It.Is<string>(s => s == Name),
+                It.Is<string>(s => s == DeleteConditionName),
                 It.Is<string>(s => s == Description + "NEW")));
             managerMock.Verify(manager => manager.UpdateCondition(
-                It.Is<string>(s => s == Name),
+                It.Is<string>(s => s == DeleteConditionName),
                 It.Is<string>(s => s == Condition + "NEW")));
         }
     }
@@ -106,16 +107,16 @@ public class DeleteConditionsCommandTest : CommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(out _, out _), $"{CommandName} --name {Name}");
+            VerifyCommand(BuildCli(out _, out _), $"{CommandName} --name {DeleteConditionName}");
         }
         
         [Fact]
         public void CallsManagerWithCorrectArguments()
         {
             BuildCli(out var managerMock, out _)
-                .Invoke($"{CommandName} --name {Name}");
+                .Invoke($"{CommandName} --name {DeleteConditionName}");
             
-            managerMock.Verify(manager => manager.Delete(It.Is<string>(s => s == Name)));
+            managerMock.Verify(manager => manager.Delete(It.Is<string>(s => s == DeleteConditionName)));
         }
     }
     
@@ -146,26 +147,26 @@ public class DeleteConditionsCommandTest : CommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(out _, out _), $"{CommandName} --name {Name}");
+            VerifyCommand(BuildCli(out _, out _), $"{CommandName} --name {DeleteConditionName}");
         }
         
         [Fact]
         public void CallsManagerWithCorrectArguments()
         {
             BuildCli(out var managerMock, out _)
-                .Invoke($"{CommandName} --name {Name}");
+                .Invoke($"{CommandName} --name {DeleteConditionName}");
             
-            managerMock.Verify(manager => manager.Get(It.Is<string>(s => s == Name)));
+            managerMock.Verify(manager => manager.Get(It.Is<string>(s => s == DeleteConditionName)));
         }
         
         [Fact]
         public void PrintsToConsole()
         {
             BuildCli(out _, out var console)
-                .Invoke($"{CommandName} --name {Name}");
+                .Invoke($"{CommandName} --name {DeleteConditionName}");
 
             console.Out.ToString().Should()
-                .StartWith($"{Name}, {Description}, {Condition}");
+                .StartWith($"{DeleteConditionName}, {Description}, {Condition}");
         }
     }
 }

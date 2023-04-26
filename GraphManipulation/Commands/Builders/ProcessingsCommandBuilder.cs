@@ -6,7 +6,8 @@ namespace GraphManipulation.Commands.Builders;
 
 public static class ProcessingsCommandBuilder
 {
-    public static Command Build(IConsole console, IProcessingsManager processingsManager, IPersonalDataManager personalDataManager, IPurposesManager purposesManager)
+    public static Command Build(IConsole console, IProcessingsManager processingsManager,
+        IPersonalDataManager personalDataManager, IPurposesManager purposesManager)
     {
         return CommandBuilder.CreateCommand(CommandNamer.ProcessingsName)
             .WithAlias(CommandNamer.ProcessingsAlias)
@@ -16,10 +17,11 @@ public static class ProcessingsCommandBuilder
                 Delete(console, processingsManager),
                 List(console, processingsManager),
                 Show(console, processingsManager)
-                );
+            );
     }
 
-    private static Command Add(IConsole console, IProcessingsManager processingsManager, IPersonalDataManager personalDataManager, IPurposesManager purposesManager)
+    private static Command Add(IConsole console, IProcessingsManager processingsManager,
+        IPersonalDataManager personalDataManager, IPurposesManager purposesManager)
     {
         return CommandBuilder
             .BuildAddCommand()
@@ -27,7 +29,7 @@ public static class ProcessingsCommandBuilder
             .WithOption(out var nameOption, BuildNameOption())
             .WithOption(out var descriptionOption,
                 OptionBuilder
-                    .CreateDescriptionOption<string>()
+                    .CreateDescriptionOption()
                     .WithDescription("The description of the processing")
                     .WithGetDefaultValue(() => ""))
             .WithOption(out var pairOption,
@@ -51,20 +53,20 @@ public static class ProcessingsCommandBuilder
                 purposeOption,
                 descriptionOption));
     }
-    
+
     private static Command Update(IConsole console, IProcessingsManager processingsManager)
     {
         return CommandBuilder
             .BuildUpdateCommand()
             .WithDescription("Updates the given processing with the given values")
             .WithOption(out var nameOption, BuildNameOption())
-            .WithOption(out var newNameOption, 
+            .WithOption(out var newNameOption,
                 OptionBuilder
-                    .CreateNewNameOption<string>()
+                    .CreateNewNameOption()
                     .WithDescription("The new name of the processing"))
             .WithOption(out var descriptionOption,
                 OptionBuilder
-                    .CreateDescriptionOption<string>()
+                    .CreateDescriptionOption()
                     .WithDescription("The new description of the processing"))
             .WithHandler(context =>
             {
@@ -74,16 +76,16 @@ public static class ProcessingsCommandBuilder
                     p => p.GetDescription(),
                     nameOption,
                     descriptionOption);
-                
+
                 Handlers.UpdateHandler(context, console,
                     processingsManager.UpdateName,
                     processingsManager,
                     p => p.GetName(),
-                    nameOption, 
+                    nameOption,
                     newNameOption);
             });
     }
-    
+
     private static Command Delete(IConsole console, IProcessingsManager processingsManager)
     {
         return CommandBuilder
@@ -95,7 +97,7 @@ public static class ProcessingsCommandBuilder
                 processingsManager,
                 nameOption));
     }
-    
+
     private static Command List(IConsole console, IProcessingsManager processingsManager)
     {
         return CommandBuilder
@@ -103,7 +105,7 @@ public static class ProcessingsCommandBuilder
             .WithDescription("Lists the processings currently in the system")
             .WithHandler(() => Handlers.ListHandler(console, processingsManager));
     }
-    
+
     private static Command Show(IConsole console, IProcessingsManager processingsManager)
     {
         return CommandBuilder
@@ -112,7 +114,7 @@ public static class ProcessingsCommandBuilder
             .WithOption(out var nameOption, BuildNameOption())
             .WithHandler(context => Handlers.ShowHandler(context, console, processingsManager, nameOption));
     }
-    
+
     private static Option<string> BuildNameOption()
     {
         return OptionBuilder

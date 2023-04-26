@@ -59,24 +59,9 @@ public static class OptionBuilder
         return CreateOption<int>("--id").WithAlias("-i");
     }
 
-    public static Option<T> CreateDescriptionOption<T>()
+    public static Option<string> CreateDescriptionOption()
     {
-        return CreateOption<T>("--description").WithAlias("-d");
-    }
-
-    public static Option<bool> CreateAllOption(string description)
-    {
-        return CreateOption<bool>("--all").WithAlias("-a").WithDescription(description);
-    }
-
-    public static Option<string> CreateTableOption()
-    {
-        return CreateOption<string>("--table").WithAlias("-t");
-    }
-
-    public static Option<string> CreateColumnOption()
-    {
-        return CreateOption<string>("--column").WithAlias("-c");
+        return CreateOption<string>("--description").WithAlias("-d");
     }
 
     public static Option<TableColumnPair> CreateTableColumnPairOption()
@@ -104,16 +89,9 @@ public static class OptionBuilder
         return CreateOption<string>("--name").WithAlias("-n");
     }
 
-    public static Option<T> CreateNewNameOption<T>()
+    public static Option<string> CreateNewNameOption()
     {
-        return CreateOption<T>("--new-name").WithAlias("-nn");
-    }
-
-    public static Option<T> BuildOption<T>(string name, string description, string alias)
-    {
-        var option = new Option<T>(name, description);
-        option.AddAlias(alias);
-        return option;
+        return CreateOption<string>("--new-name").WithAlias("-nn");
     }
 
     public static void ValidateOrder<T>(CommandResult commandResult, Option<IEnumerable<T>> option)

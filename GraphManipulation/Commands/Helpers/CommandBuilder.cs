@@ -1,8 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
-using GraphManipulation.Managers.Interfaces.Base;
-using GraphManipulation.Models.Interfaces.Base;
 
 namespace GraphManipulation.Commands.Helpers;
 
@@ -19,14 +17,6 @@ public static class CommandBuilder
         return command;
     }
 
-    public static Command WithOptions(this Command command, params Option[] options)
-    {
-        foreach (var option in options)
-            command.AddOption(option);
-
-        return command;
-    }
-
     public static Command WithOption<T>(this Command command, out Option<T> outputOption, Option<T> inputOption)
     {
         command.AddOption(inputOption);
@@ -34,11 +24,11 @@ public static class CommandBuilder
         return command;
     }
 
-    public static Command WithArguments(this Command command, params Argument[] arguments)
+    public static Command WithArgument<T>(this Command command, out Argument<T> outputArgument,
+        Argument<T> inputArgument)
     {
-        foreach (var argument in arguments)
-            command.AddArgument(argument);
-
+        command.AddArgument(inputArgument);
+        outputArgument = inputArgument;
         return command;
     }
 
@@ -57,12 +47,6 @@ public static class CommandBuilder
     public static Command WithHandler(this Command command, Action handle)
     {
         command.SetHandler(handle);
-        return command;
-    }
-
-    public static Command WithHandler(this Command command, ICommandHandler handler)
-    {
-        command.Handler = handler;
         return command;
     }
 
@@ -119,58 +103,6 @@ public static class CommandBuilder
     public static Command BuildShowCommand(string subject = "")
     {
         return BuildCommandWithNameAliasSubject("show", "sh", subject);
-    }
-
-    public static Command BuildListCommand<TResult, TKey>(IConsole console, IGetter<TResult, TKey> getter,
-        string subject = "")
-        where TResult : IListable
-    {
-        return BuildListCommand(subject)
-            .WithHandler(() => getter
-                .GetAll()
-                .ToList()
-                .ForEach(r => console.WriteLine(r.ToListing())
-                ));
-    }
-
-    public static Command BuildShowCommand<TResult, TKey>(IConsole console, IGetter<TResult, TKey> getter,
-        Option<TKey> keyOption, string failureSubject,
-        string subject = "")
-        where TResult : IListable
-    {
-        var command = BuildShowCommand(subject);
-
-        command.SetHandler(key =>
-        {
-            var value = getter.Get(key);
-
-            console.WriteLine(value != null ? value.ToListing() : BuildFailureToFindMessage(failureSubject, key));
-        }, keyOption);
-
-        return command;
-    }
-
-    public static Command BuildDeleteCommand<TManager, TResult, TKey>(IConsole console, TManager manager,
-        Option<TKey> keyOption, string failureSubject, string subject = "")
-        where TResult : IListable
-        where TManager : IGetter<TResult, TKey>, IDeleter<TKey>
-    {
-        var command = BuildDeleteCommand(subject);
-
-        command.SetHandler(key =>
-        {
-            var value = manager.Get(key);
-
-            if (value is null)
-            {
-                console.WriteLine(BuildFailureToFindMessage(failureSubject, key));
-                return;
-            }
-
-            manager.Delete(key);
-        }, keyOption);
-
-        return command;
     }
 
     public static string BuildFailureToFindMessage<TKey>(string failureSubject, TKey key)

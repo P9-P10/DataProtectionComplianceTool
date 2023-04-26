@@ -20,7 +20,8 @@ public static class CommandLineInterfaceBuilder
         ILogger logger,
         IConfigManager configManager)
     {
-        return CommandBuilder.CreateCommand("c")
+        return CommandBuilder.CreateCommand(CommandNamer.RootCommandName)
+            .WithAlias(CommandNamer.RootCommandAlias)
             .WithDescription("This is a description of the root command")
             .WithSubCommands(
                 IndividualsCommandBuilder.Build(console, individualsManager),

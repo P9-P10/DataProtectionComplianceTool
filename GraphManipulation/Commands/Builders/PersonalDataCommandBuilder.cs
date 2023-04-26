@@ -42,7 +42,7 @@ public static class PersonalDataCommandBuilder
                     .WithIsRequired(true))
             .WithOption(out var descriptionOption,
                 OptionBuilder
-                    .CreateDescriptionOption<string>()
+                    .CreateDescriptionOption()
                     .WithDescription("Description of the personal data")
                     .WithDefaultValue(string.Empty))
             .WithOption(out var purposeOption, BuildPurposeListOption())
@@ -74,7 +74,7 @@ public static class PersonalDataCommandBuilder
             .WithOption(out var pairOption, BuildPairOption())
             .WithOption(out var descriptionOption,
                 OptionBuilder
-                    .CreateDescriptionOption<string>()
+                    .CreateDescriptionOption()
                     .WithDescription("Description of the personal data"))
             .WithHandler(context =>
                 Handlers.UpdateHandler(context, console,

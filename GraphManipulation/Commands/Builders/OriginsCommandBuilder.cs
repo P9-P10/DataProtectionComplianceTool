@@ -27,7 +27,7 @@ public static class OriginsCommandBuilder
             .WithOption(out var nameOption, BuildNameOption())
             .WithOption(out var descriptionOption,
                 OptionBuilder
-                    .CreateDescriptionOption<string>()
+                    .CreateDescriptionOption()
                     .WithDescription("The description of the origin")
                     .WithGetDefaultValue(() => ""))
             .WithHandler(context => Handlers.AddHandler(context, console,
@@ -40,24 +40,24 @@ public static class OriginsCommandBuilder
             .BuildUpdateCommand()
             .WithDescription("Updates the given origin with the given values")
             .WithOption(out var nameOption, BuildNameOption())
-            .WithOption(out var newNameOption, 
+            .WithOption(out var newNameOption,
                 OptionBuilder
-                    .CreateNewNameOption<string>()
+                    .CreateNewNameOption()
                     .WithDescription("The new name of the origin"))
             .WithOption(out var descriptionOption,
-                OptionBuilder.CreateDescriptionOption<string>()
+                OptionBuilder.CreateDescriptionOption()
                     .WithDescription("The new description of the origin"))
             .WithHandler(context =>
             {
-                Handlers.UpdateHandler(context, console, 
-                    originsManager.UpdateDescription, 
-                    originsManager, 
+                Handlers.UpdateHandler(context, console,
+                    originsManager.UpdateDescription,
+                    originsManager,
                     origin => origin.GetDescription(),
                     nameOption, descriptionOption);
-                
-                Handlers.UpdateHandler(context, console, 
-                    originsManager.UpdateName, 
-                    originsManager, 
+
+                Handlers.UpdateHandler(context, console,
+                    originsManager.UpdateName,
+                    originsManager,
                     origin => origin.GetName(),
                     nameOption, newNameOption);
             });
@@ -69,7 +69,7 @@ public static class OriginsCommandBuilder
             .BuildDeleteCommand()
             .WithDescription("Deletes the given origin from the system")
             .WithOption(out var nameOption, BuildNameOption())
-            .WithHandler(context => Handlers.DeleteHandler(context, console, 
+            .WithHandler(context => Handlers.DeleteHandler(context, console,
                 originsManager.Delete, originsManager, nameOption));
     }
 

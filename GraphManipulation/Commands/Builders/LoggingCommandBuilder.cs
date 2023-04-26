@@ -7,6 +7,8 @@ namespace GraphManipulation.Commands.Builders;
 
 public static class LoggingCommandBuilder
 {
+    private static ArgumentArity ExactlyTwo => new(2, 2);
+
     public static Command Build(IConsole console, ILogger logger)
     {
         return CommandBuilder.CreateCommand(CommandNamer.LoggingName)
@@ -31,7 +33,7 @@ public static class LoggingCommandBuilder
                 var dateTimes = context.ParseResult.GetValueForOption(dateTimesOption)!.ToList();
                 var logTypes = context.ParseResult.GetValueForOption(logTypesOption)!;
                 var messageFormats = context.ParseResult.GetValueForOption(logFormatsOption)!;
-                
+
                 var constraints = new LogConstraints(
                     new NumberRange(numbers.First(), numbers.Skip(1).First()),
                     new TimeRange(dateTimes.First(), dateTimes.Skip(1).First()),
@@ -41,8 +43,6 @@ public static class LoggingCommandBuilder
                 console.Write(string.Join("\n", result));
             });
     }
-
-    private static ArgumentArity ExactlyTwo => new(2, 2);
 
     private static Option<IEnumerable<int>> CreateNumbersOption()
     {

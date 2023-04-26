@@ -18,7 +18,7 @@ public static class Handlers
     {
         var key1 = GetValueOfRequiredOption(context, keyOption1);
         var key2 = GetValueOfRequiredOption(context, keyOption2);
-        
+
         if (TryGet(getter1, key1, out _))
         {
             console.WriteLine(CommandBuilder.BuildAlreadyExistsMessage("entity", key1));
@@ -30,7 +30,7 @@ public static class Handlers
             console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key2));
             return;
         }
-        
+
         if (!TryGetValueOfOption(context, option, out var optionValue))
         {
             return;
@@ -39,8 +39,9 @@ public static class Handlers
         addAction(key1, key2, optionValue);
         console.WriteLine($"{key1} successfully added");
     }
-    
-    public static void AddHandlerKey<TKey1, TValue1, TKey2, TValue2, TKey3, TValue3, T4>(InvocationContext context, IConsole console,
+
+    public static void AddHandlerKey<TKey1, TValue1, TKey2, TValue2, TKey3, TValue3, T4>(InvocationContext context,
+        IConsole console,
         Action<TKey1, TKey2, TKey3, T4> addAction,
         IGetter<TValue1, TKey1> getter1,
         IGetter<TValue2, TKey2> getter2,
@@ -53,7 +54,7 @@ public static class Handlers
         var key1 = GetValueOfRequiredOption(context, keyOption1);
         var key2 = GetValueOfRequiredOption(context, keyOption2);
         var key3 = GetValueOfRequiredOption(context, keyOption3);
-        
+
         if (TryGet(getter1, key1, out _))
         {
             console.WriteLine(CommandBuilder.BuildAlreadyExistsMessage("entity", key1));
@@ -65,13 +66,13 @@ public static class Handlers
             console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key2));
             return;
         }
-        
+
         if (!TryGet(getter3, key3, out _))
         {
             console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key3));
             return;
         }
-        
+
         if (!TryGetValueOfOption(context, option, out var optionValue))
         {
             return;
@@ -80,7 +81,7 @@ public static class Handlers
         addAction(key1, key2, key3, optionValue);
         console.WriteLine($"{key1} successfully added");
     }
-    
+
     public static void AddHandler<TKey, TValue>(InvocationContext context, IConsole console,
         Action<TKey> addAction,
         IGetter<TValue, TKey> getter,
@@ -93,7 +94,7 @@ public static class Handlers
             console.WriteLine(CommandBuilder.BuildAlreadyExistsMessage("entity", key));
             return;
         }
-        
+
         addAction(key);
 
         console.WriteLine($"{key} successfully added");
@@ -102,17 +103,17 @@ public static class Handlers
     public static void AddHandler<TKey, TValue, T1>(InvocationContext context, IConsole console,
         Action<TKey, T1> addAction,
         IGetter<TValue, TKey> getter,
-        Option<TKey> keyOption, 
+        Option<TKey> keyOption,
         Option<T1> option1)
     {
         var key = GetValueOfRequiredOption(context, keyOption);
-        
+
         if (TryGet(getter, key, out _))
         {
             console.WriteLine(CommandBuilder.BuildAlreadyExistsMessage("entity", key));
             return;
         }
-        
+
         var value1 = GetValueOfRequiredOption(context, option1);
         addAction(key, value1);
 
@@ -120,20 +121,20 @@ public static class Handlers
     }
 
     public static void AddHandler<TKey, TValue, T1, T2>(InvocationContext context, IConsole console,
-        Action<TKey, T1, T2> addAction, 
+        Action<TKey, T1, T2> addAction,
         IGetter<TValue, TKey> getter,
-        Option<TKey> keyOption, 
-        Option<T1> option1, 
+        Option<TKey> keyOption,
+        Option<T1> option1,
         Option<T2> option2)
     {
         var key = GetValueOfRequiredOption(context, keyOption);
-        
+
         if (TryGet(getter, key, out _))
         {
             console.WriteLine(CommandBuilder.BuildAlreadyExistsMessage("entity", key));
             return;
         }
-        
+
         var value1 = GetValueOfRequiredOption(context, option1);
         var value2 = GetValueOfRequiredOption(context, option2);
 

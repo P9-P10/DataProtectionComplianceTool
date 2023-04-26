@@ -46,7 +46,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Commands\Archive\" />
       <Folder Include="SchemaEvolution" />
     </ItemGroup>
 

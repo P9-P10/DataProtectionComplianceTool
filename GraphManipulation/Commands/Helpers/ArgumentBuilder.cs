@@ -14,14 +14,4 @@ public static class ArgumentBuilder
         argument.Description = description;
         return argument;
     }
-
-    public static Argument<string> BuildStringArgument(string name = "value")
-    {
-        return new Argument<string>(name);
-    }
-
-    public static Argument<int> BuildIntArgument(string name = "value")
-    {
-        return new Argument<int>(name);
-    }
 }
