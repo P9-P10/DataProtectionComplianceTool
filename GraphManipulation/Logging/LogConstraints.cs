@@ -28,4 +28,12 @@ public class LogConstraints : ILogConstraints
                           LogMessageFormats.Contains(log.LogMessageFormat))
             .OrderBy(log => log.LogNumber);
     }
+
+    public bool Equals(LogConstraints other)
+    {
+        return other.LogNumbersRange.Equals(LogNumbersRange) &&
+               other.LogTimeRange.Equals(LogTimeRange) &&
+               other.LogTypes.Equals(LogTypes) &&
+               other.LogMessageFormats.Equals(LogMessageFormats);
+    }
 }
