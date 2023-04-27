@@ -13,7 +13,6 @@ public class VacuumingRule : DomainEntity, IVacuumingRule
 
     public DateTime? LastExecution { get; set; }
     
-    // TODO: Jeg tror det giver mere mening at en vacuuming rule kun har ét purpose?
     public IEnumerable<Purpose>? Purposes { get; set; }
 
     public string ToListing()

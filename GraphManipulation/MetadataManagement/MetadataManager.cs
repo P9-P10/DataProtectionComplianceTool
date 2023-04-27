@@ -6,9 +6,6 @@ using GraphManipulation.DataAccess.Entities;
 using Microsoft.Data.Sqlite;
 
 namespace GraphManipulation.MetadataManagement;
-// TODO: Vi skal have en måde at hive alle nuværende rækker i gdpr_metadata ud, så brugeren kan se hvilke entryID'er de har
-
-// TODO: Vi skal have en måde at hive delete conditions ud, så vi kan logge hvilke conditions der er blevet håndhævet
 
 public class MetadataManager : IMetadataManager, IDisposable
 {
