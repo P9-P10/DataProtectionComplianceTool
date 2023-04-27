@@ -9,8 +9,8 @@ public static class ConfigurationCommandBuilder
     public static Command Build(IConsole console, IConfigManager configManager)
     {
         return CommandBuilder.CreateCommand(CommandNamer.ConfigurationName)
-            .WithAlias(CommandNamer.ConfigurationAlias)
-            .WithSubCommands(UpdateConfig());
+            .WithAlias(CommandNamer.ConfigurationAlias);
+            // .WithSubCommands(UpdateConfig());
     }
 
     private static Command UpdateConfig()

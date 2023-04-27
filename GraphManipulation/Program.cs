@@ -6,6 +6,7 @@ using System.Text;
 using GraphManipulation.Commands.Builders;
 using GraphManipulation.DataAccess;
 using GraphManipulation.DataAccess.Mappers;
+using GraphManipulation.Decorators.Managers;
 using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
 using GraphManipulation.Managers;
@@ -14,6 +15,14 @@ using Sharprompt;
 using Symbol = Sharprompt.Symbol;
 
 namespace GraphManipulation;
+
+// TODO: Manglende decorator til IndividualsManager
+
+// TODO: Mangler vi en kommando til at sætte vores database op?
+// TODO: Mangler vi en kommando til at eksekvere vacuuming?
+
+// TODO: Når navnet på en entity ændres, mangler der at blive tjekket om det nye navn eksisterer i forvejen, og derfor ikke kan bruges
+// TODO: En refactor af managers, så hver manager har en Add(TKey key) i stedet for varierende interfaces ville simplificere kommandoer gevaldigt (de andre værdier kan klares med updates efterfølgende)
 
 public static class Program
 {
@@ -59,11 +68,19 @@ public static class Program
         var deleteConditionsManager = new DeleteConditionsManager(deleteConditionMapper);
         var processingsManager = new ProcessingsManager(processingMapper, purposeMapper, personalDataColumnMapper);
 
+        // var decoratedIndividualsManager = new IndividualsManagerDecorator(individualsManager, logger);
+        var decoratedPersonalDataManager = new PersonalDataManagerDecorator(personalDataManager, logger);
+        var decoratedPurposesManager = new PurposeManagerDecorator(purposesManager, logger);
+        var decoratedOriginsManager = new OriginsManagerDecorator(originsManager, logger);
+        var decoratedVacuumingRulesManager = new VacuumingRuleManagerDecorator(vacuumingRulesManager, logger);
+        var decoratedDeleteConditionsManager = new DeleteConditionsManagerDecorator(deleteConditionsManager, logger);
+        var decoratedProcessingsManager = new ProcessingsManagerDecorator(processingsManager, logger);
+
         var cli = CommandLineInterfaceBuilder
             .Build(
-                console, individualsManager, personalDataManager,
-                purposesManager, originsManager, vacuumingRulesManager,
-                deleteConditionsManager, processingsManager, logger, configManager
+                console, individualsManager, decoratedPersonalDataManager,
+                decoratedPurposesManager, decoratedOriginsManager, decoratedVacuumingRulesManager,
+                decoratedDeleteConditionsManager, decoratedProcessingsManager, logger, configManager
             );
 
         Run(cli);
