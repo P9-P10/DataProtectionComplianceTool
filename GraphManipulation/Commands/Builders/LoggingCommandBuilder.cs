@@ -25,45 +25,84 @@ public static class LoggingCommandBuilder
             .WithOption(out var dateTimesOption, CreateDateTimeOption())
             .WithOption(out var logTypesOption, CreateLogTypesOption())
             .WithOption(out var logFormatsOption, CreateLogFormatOptions())
-            .WithValidator(result => OptionBuilder.ValidateOrder(result, numbersOption))
-            .WithValidator(result => OptionBuilder.ValidateOrder(result, dateTimesOption))
+            .WithValidator(result => OptionBuilder.ValidateOrder<NumberRange, int>(result, numbersOption))
+            .WithValidator(result => OptionBuilder.ValidateOrder<TimeRange, DateTime>(result, dateTimesOption))
             .WithHandler(context =>
             {
-                var numbers = context.ParseResult.GetValueForOption(numbersOption)!.ToList();
-                var dateTimes = context.ParseResult.GetValueForOption(dateTimesOption)!.ToList();
+                var numbers = context.ParseResult.GetValueForOption(numbersOption)!;
+                var dateTimes = context.ParseResult.GetValueForOption(dateTimesOption)!;
                 var logTypes = context.ParseResult.GetValueForOption(logTypesOption)!;
                 var messageFormats = context.ParseResult.GetValueForOption(logFormatsOption)!;
 
-                var constraints = new LogConstraints(
-                    new NumberRange(numbers.First(), numbers.Skip(1).First()),
-                    new TimeRange(dateTimes.First(), dateTimes.Skip(1).First()),
-                    logTypes.ToList(), messageFormats.ToList());
+                var constraints = new LogConstraints(numbers, dateTimes, logTypes.ToList(), messageFormats.ToList());
 
                 var result = logger.Read(constraints);
                 console.Write(string.Join("\n", result));
             });
     }
 
-    private static Option<IEnumerable<int>> CreateNumbersOption()
+    private static Option<NumberRange> CreateNumbersOption()
     {
-        return OptionBuilder.CreateOption<IEnumerable<int>>("--numbers")
+        return new Option<NumberRange>(
+                "--numbers",
+                result =>
+                {
+                    if (result.Tokens.Count == 2)
+                    {
+                        var startString = result.Tokens[0].Value;
+                        var endString = result.Tokens[1].Value;
+
+                        if (int.TryParse(startString, out var start) && 
+                            int.TryParse(endString, out var end))
+                        {
+                            return new NumberRange(start, end);
+                        }
+
+                        result.ErrorMessage =
+                            $"--numbers require input to be integers, which \"{startString} {endString}\" is not";
+                    }
+                    
+                    result.ErrorMessage = "--numbers requires two arguments";
+                    return new NumberRange(0, 0);
+                })
             .WithAlias("-n")
             .WithDescription("Limits results to the specified numbers range (inclusive).\n" +
                              "Must provide two numbers as range (e.g. -n 3 6), first minimum then maximum")
             .WithArity(ExactlyTwo)
             .WithAllowMultipleArguments(true)
-            .WithGetDefaultValue(() => new List<int> { int.MinValue, int.MaxValue });
+            .WithGetDefaultValue(() => new NumberRange(int.MinValue, int.MaxValue));
     }
 
-    private static Option<IEnumerable<DateTime>> CreateDateTimeOption()
+    private static Option<TimeRange> CreateDateTimeOption()
     {
-        return OptionBuilder.CreateOption<IEnumerable<DateTime>>("--date-times")
+        return new Option<TimeRange>(
+        "--date-times",
+        result =>
+        {
+            if (result.Tokens.Count == 2)
+            {
+                var startString = result.Tokens[0].Value;
+                var endString = result.Tokens[1].Value;
+
+                if (DateTime.TryParse(startString, out var start) && 
+                    DateTime.TryParse(endString, out var end))
+                {
+                    return new TimeRange(start, end);
+                }
+
+                result.ErrorMessage =
+                    $"--date-times require input to be date times, which \"{startString} {endString}\" is not";
+            }
+                    
+            result.ErrorMessage = "--numbers requires two arguments";
+            return new TimeRange(DateTime.Now, DateTime.Now);
+        })
             .WithAlias("-d")
             .WithDescription("Limits results to the specified time range (inclusive).\n" +
-                             "Must provide two dates as range (e.g. -d 2000/04/28T12:34:56 3000/06/16T09:38:12), first minimum then maximum")
+                             "Must provide two date times as range (e.g. -d 2000/04/28T12:34:56 3000/06/16T09:38:12), first minimum then maximum")
             .WithArity(ExactlyTwo)
             .WithAllowMultipleArguments(true)
-            .WithGetDefaultValue(() => new List<DateTime> { DateTime.MinValue, DateTime.MaxValue });
+            .WithGetDefaultValue(() => new TimeRange(DateTime.MinValue, DateTime.MaxValue));
     }
 
     private static Option<IEnumerable<LogType>> CreateLogTypesOption()

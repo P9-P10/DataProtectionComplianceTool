@@ -1,6 +1,8 @@
+using System.Collections;
+
 namespace GraphManipulation.Helpers;
 
-public class TimeRange
+public class TimeRange : IEnumerable<DateTime>
 {
     public readonly DateTime End;
     public readonly DateTime Start;
@@ -19,5 +21,16 @@ public class TimeRange
     public bool Equals(TimeRange other)
     {
         return other.Start == Start && other.End == End;
+    }
+
+
+    public IEnumerator<DateTime> GetEnumerator()
+    {
+        return new List<DateTime> { Start, End }.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 }

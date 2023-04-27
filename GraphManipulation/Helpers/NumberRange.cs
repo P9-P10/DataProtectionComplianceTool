@@ -1,6 +1,8 @@
+using System.Collections;
+
 namespace GraphManipulation.Helpers;
 
-public class NumberRange
+public class NumberRange : IEnumerable<int>
 {
     public readonly int End;
     public readonly int Start;
@@ -19,5 +21,15 @@ public class NumberRange
     public bool Equals(NumberRange other)
     {
         return other.Start == Start && other.End == End;
+    }
+
+    public IEnumerator<int> GetEnumerator()
+    {
+        return new List<int> { Start, End }.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 }

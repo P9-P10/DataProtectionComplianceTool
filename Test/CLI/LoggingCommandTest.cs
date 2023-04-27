@@ -27,24 +27,6 @@ public class LoggingCommandTest : CommandTest
         return LoggingCommandBuilder.Build(console, loggerMock.Object);
     }
 
-    // public class List
-    // {
-    //     private const string CommandName = "list";
-    //
-    //     [Fact]
-    //     public void Parses()
-    //     {
-    //         VerifyCommand(BuildCli(out _, out _), $"{CommandName}");
-    //     }
-    //
-    //     [Fact]
-    //     public void CallsManagerWithCorrectArguments()
-    //     {
-    //         BuildCli(out var loggerMock, out _)
-    //             .Invoke($"{CommandName}");
-    //     }
-    // }
-
     public class List
     {
         private const string CommandName = "list";
@@ -75,7 +57,7 @@ public class LoggingCommandTest : CommandTest
                 VerifyCommand(BuildCli(out _, out _), $"{CommandName} -n 3", false);
             }
 
-            [Fact(Skip = "This should be fixed, but I don't know how, it might be a problem with the package")]
+            [Fact]
             public void NumbersOptionMoreThanTwoFails()
             {
                 VerifyCommand(BuildCli(out _, out _), $"{CommandName} -n 3 -n 5 -n 9", false);
@@ -122,7 +104,7 @@ public class LoggingCommandTest : CommandTest
                 VerifyCommand(BuildCli(out _, out _), $"{CommandName} -d 2000/04/12T12:34:56", false);
             }
 
-            [Fact(Skip = "This should be fixed, but I don't know how, it might be a problem with the package")]
+            [Fact]
             public void DateTimesOptionMoreThanTwoFails()
             {
                 VerifyCommand(BuildCli(out _, out _), 
