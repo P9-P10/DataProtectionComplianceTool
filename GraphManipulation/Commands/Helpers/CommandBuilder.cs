@@ -104,16 +104,6 @@ public static class CommandBuilder
     {
         return BuildCommandWithNameAliasSubject("show", "sh", subject);
     }
-
-    public static string BuildFailureToFindMessage<TKey>(string failureSubject, TKey key)
-    {
-        return $"Could not find {failureSubject} using \"{key}\"";
-    }
-
-    public static string BuildAlreadyExistsMessage<TKey>(string failureSubject, TKey key)
-    {
-        return $"Found an existing {failureSubject} using \"{key}\", aborting";
-    }
 }
 
 public class CommandException : Exception

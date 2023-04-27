@@ -9,7 +9,7 @@ public class PersonalDataManagerDecorator : LoggingDecorator, IPersonalDataManag
 {
 
     private readonly IPersonalDataManager _manager;
-    public PersonalDataManagerDecorator(IPersonalDataManager manager, ILogger logger) : base(logger, "personaldata")
+    public PersonalDataManagerDecorator(IPersonalDataManager manager, ILogger logger) : base(logger, "personal data")
     {
         _manager = manager;
     }

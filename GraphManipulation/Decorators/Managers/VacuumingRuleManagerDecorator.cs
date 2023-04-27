@@ -7,7 +7,7 @@ namespace GraphManipulation.Decorators.Managers;
 public class VacuumingRuleManagerDecorator : LoggingDecorator, IVacuumingRulesManager
 {
     private readonly IVacuumingRulesManager _manager;
-    public VacuumingRuleManagerDecorator(IVacuumingRulesManager manager, ILogger logger) : base(logger, "vacuumingrule")
+    public VacuumingRuleManagerDecorator(IVacuumingRulesManager manager, ILogger logger) : base(logger, "vacuuming rule")
     {
         _manager = manager;
     }

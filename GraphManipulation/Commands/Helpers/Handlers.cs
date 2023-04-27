@@ -2,6 +2,8 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
 using GraphManipulation.Managers.Interfaces.Base;
+using GraphManipulation.Models;
+using GraphManipulation.Models.Interfaces;
 using GraphManipulation.Models.Interfaces.Base;
 
 namespace GraphManipulation.Commands.Helpers;
@@ -21,13 +23,13 @@ public static class Handlers
 
         if (TryGet(getter1, key1, out _))
         {
-            console.WriteLine(CommandBuilder.BuildAlreadyExistsMessage("entity", key1));
+            console.WriteLine(AlreadyExistsMessage(key1, typeof(TValue1)));
             return;
         }
 
         if (!TryGet(getter2, key2, out _))
         {
-            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key2));
+            console.WriteLine(FailureToFindMessage(key2, typeof(TValue2)));
             return;
         }
 
@@ -37,7 +39,8 @@ public static class Handlers
         }
 
         addAction(key1, key2, optionValue);
-        console.WriteLine($"{key1} successfully added");
+        console.WriteLine(SuccessMessage(key1, typeof(TValue1), Operations.Added, key2.ToString(),
+            optionValue.ToString()));
     }
 
     public static void AddHandlerKey<TKey1, TValue1, TKey2, TValue2, TKey3, TValue3, T4>(InvocationContext context,
@@ -57,19 +60,19 @@ public static class Handlers
 
         if (TryGet(getter1, key1, out _))
         {
-            console.WriteLine(CommandBuilder.BuildAlreadyExistsMessage("entity", key1));
+            console.WriteLine(AlreadyExistsMessage(key1, typeof(TValue1)));
             return;
         }
 
         if (!TryGet(getter2, key2, out _))
         {
-            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key2));
+            console.WriteLine(FailureToFindMessage(key2, typeof(TValue2)));
             return;
         }
 
         if (!TryGet(getter3, key3, out _))
         {
-            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key3));
+            console.WriteLine(FailureToFindMessage(key3, typeof(TValue3)));
             return;
         }
 
@@ -79,7 +82,8 @@ public static class Handlers
         }
 
         addAction(key1, key2, key3, optionValue);
-        console.WriteLine($"{key1} successfully added");
+        console.WriteLine(SuccessMessage(key1, typeof(TValue1), Operations.Added, key2.ToString(), key3.ToString(),
+            optionValue.ToString()));
     }
 
     public static void AddHandler<TKey, TValue>(InvocationContext context, IConsole console,
@@ -91,13 +95,13 @@ public static class Handlers
 
         if (TryGet(getter, key, out _))
         {
-            console.WriteLine(CommandBuilder.BuildAlreadyExistsMessage("entity", key));
+            console.WriteLine(AlreadyExistsMessage(key, typeof(TValue)));
             return;
         }
 
         addAction(key);
 
-        console.WriteLine($"{key} successfully added");
+        console.WriteLine(SuccessMessage(key, typeof(TValue), Operations.Added));
     }
 
     public static void AddHandler<TKey, TValue, T1>(InvocationContext context, IConsole console,
@@ -110,14 +114,14 @@ public static class Handlers
 
         if (TryGet(getter, key, out _))
         {
-            console.WriteLine(CommandBuilder.BuildAlreadyExistsMessage("entity", key));
+            console.WriteLine(AlreadyExistsMessage(key, typeof(TValue)));
             return;
         }
 
         var value1 = GetValueOfRequiredOption(context, option1);
         addAction(key, value1);
 
-        console.WriteLine($"{key} successfully added");
+        console.WriteLine(SuccessMessage(key, typeof(TValue), Operations.Added, value1.ToString()));
     }
 
     public static void AddHandler<TKey, TValue, T1, T2>(InvocationContext context, IConsole console,
@@ -131,7 +135,7 @@ public static class Handlers
 
         if (TryGet(getter, key, out _))
         {
-            console.WriteLine(CommandBuilder.BuildAlreadyExistsMessage("entity", key));
+            console.WriteLine(AlreadyExistsMessage(key, typeof(TValue)));
             return;
         }
 
@@ -140,7 +144,7 @@ public static class Handlers
 
         addAction(key, value1, value2);
 
-        console.WriteLine($"{key} successfully added");
+        console.WriteLine(SuccessMessage(key, typeof(TValue), Operations.Added, value1.ToString(), value2.ToString()));
     }
 
     public static void SetHandler<TKey>(InvocationContext context, IConsole console,
@@ -169,19 +173,19 @@ public static class Handlers
 
         if (!TryGet(getter1, key1, out _))
         {
-            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key1));
+            console.WriteLine(FailureToFindMessage(key1, typeof(TValue1)));
             return;
         }
 
         if (!TryGet(getter2, key2, out _))
         {
-            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key2));
+            console.WriteLine(FailureToFindMessage(key2, typeof(TValue2)));
             return;
         }
 
         if (!TryGet(getter3, key3, out _))
         {
-            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key3));
+            console.WriteLine(FailureToFindMessage(key3, typeof(TValue3)));
             return;
         }
 
@@ -202,7 +206,7 @@ public static class Handlers
 
         if (!TryGet(getter, key, out var keyValue))
         {
-            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key));
+            console.WriteLine(FailureToFindMessage(key, typeof(TValue)));
             return;
         }
 
@@ -217,43 +221,9 @@ public static class Handlers
         }
 
         updateAction(key, optionValue);
-        console.WriteLine($"{key} successfully updated with {optionValue}");
+        console.WriteLine(SuccessMessage(key, typeof(TValue), Operations.Updated, optionValue.ToString()));
     }
 
-    public static void UpdateHandlerKeyRequired<TKey1, TValue1, TKey2, TValue2>(InvocationContext context,
-        IConsole console,
-        Action<TKey1, TKey2> updateAction,
-        IGetter<TValue1, TKey1> getter1,
-        IGetter<TValue2, TKey2> getter2,
-        Func<TValue1, TKey2> getOld,
-        Option<TKey1> keyOption1,
-        Option<TKey2> keyOption2)
-    {
-        var key1 = GetValueOfRequiredOption(context, keyOption1);
-        var key2 = GetValueOfRequiredOption(context, keyOption2);
-
-        if (!TryGet(getter1, key1, out var keyValue1))
-        {
-            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key1));
-            return;
-        }
-
-        if (!TryGet(getter2, key2, out _))
-        {
-            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key2));
-            return;
-        }
-
-        if (getOld(keyValue1).Equals(key2))
-        {
-            return;
-        }
-
-        updateAction(key1, key2);
-        console.WriteLine($"{key1} successfully updated with {key2}");
-    }
-
-    // TODO: Et eller andet sted bør det nok tjekkes om det nye navn f.eks. et purpose får findes i systemet i forvejen
     public static void UpdateHandlerWithKey<TKey1, TValue1, TKey2, TValue2>(InvocationContext context, IConsole console,
         Action<TKey1, TKey2> updateAction,
         IGetter<TValue1, TKey1> getter1,
@@ -266,7 +236,7 @@ public static class Handlers
 
         if (!TryGet(getter1, key1, out var keyValue1))
         {
-            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key1));
+            console.WriteLine(FailureToFindMessage(key1, typeof(TValue1)));
             return;
         }
 
@@ -277,7 +247,7 @@ public static class Handlers
 
         if (!TryGet(getter2, key2!, out _))
         {
-            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key2));
+            console.WriteLine(FailureToFindMessage(key2, typeof(TValue2)));
             return;
         }
 
@@ -287,7 +257,7 @@ public static class Handlers
         }
 
         updateAction(key1, key2);
-        console.WriteLine($"{key1} successfully updated with {key2}");
+        console.WriteLine(SuccessMessage(key1, typeof(TValue1), Operations.Updated, key2.ToString()));
     }
 
     public static void UpdateHandlerWithKeyList<TKey1, TValue1, TKey2, TValue2>(InvocationContext context,
@@ -303,7 +273,7 @@ public static class Handlers
 
         if (!TryGet(getter1, key1, out var keyValue1))
         {
-            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key1));
+            console.WriteLine(FailureToFindMessage(key1, typeof(TValue1)));
             return;
         }
 
@@ -321,11 +291,11 @@ public static class Handlers
                 }
 
                 updateAction(key1, key2);
-                console.WriteLine($"{key1} successfully updated with {key2}");
+                console.WriteLine(SuccessMessage(key1, typeof(TValue1), Operations.Updated, key2.ToString()));
             }
             else
             {
-                console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key2));
+                console.WriteLine(FailureToFindMessage(key2, typeof(TValue2)));
             }
     }
 
@@ -340,7 +310,7 @@ public static class Handlers
 
         if (!TryGet(getter, key1, out var keyValue1))
         {
-            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key1));
+            console.WriteLine(FailureToFindMessage(key1, typeof(TValue1)));
             return;
         }
 
@@ -353,7 +323,7 @@ public static class Handlers
         {
             if (!getCurrent(keyValue1).Contains(key2))
             {
-                console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key2));
+                console.WriteLine(DoesNotContainMessage(key1, key2.ToString()));
                 continue;
             }
 
@@ -370,12 +340,12 @@ public static class Handlers
 
         if (!TryGet(getter, key, out _))
         {
-            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key));
+            console.WriteLine(FailureToFindMessage(key, typeof(TValue)));
             return;
         }
 
         deleteAction(key);
-        console.WriteLine($"{key} successfully deleted");
+        console.WriteLine(SuccessMessage(key, typeof(TValue), Operations.Deleted));
     }
 
 
@@ -394,7 +364,7 @@ public static class Handlers
 
         if (!TryGet(getter, key, out var keyValue))
         {
-            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key));
+            console.WriteLine(FailureToFindMessage(key, typeof(TValue)));
             return;
         }
 
@@ -414,13 +384,13 @@ public static class Handlers
 
         if (!TryGet(getter1, key1, out _))
         {
-            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key1));
+            console.WriteLine(FailureToFindMessage(key1, typeof(TValue1)));
             return;
         }
 
         if (!TryGet(getter2, key2, out _))
         {
-            console.WriteLine(CommandBuilder.BuildFailureToFindMessage("entity", key2));
+            console.WriteLine(FailureToFindMessage(key2, typeof(TValue2)));
             return;
         }
 
@@ -448,5 +418,58 @@ public static class Handlers
     {
         value = getter.Get(key);
         return value is not null;
+    }
+
+    private static string FailureToFindMessage<TKey>(TKey key, Type type)
+    {
+        return $"Could not find {GetEntityType(type)} using {key}";
+    }
+
+    private static string AlreadyExistsMessage<TKey>(TKey key, Type type)
+    {
+        return $"Found an existing {GetEntityType(type)} using {key}";
+    }
+
+    private static string SuccessMessage<TKey>(TKey key, Type type, Operations operation, params string[] parameters)
+    {
+        return SuccessMessage(key, type, OperationToString(operation), parameters);
+    }
+
+    private static string SuccessMessage<TKey>(TKey key, Type type, string operation, params string[] parameters)
+    {
+        return $"Successfully {operation} {key} {GetEntityType(type)}" +
+               (parameters.Length != 0 ? $"with {string.Join(", ", parameters)}" : "");
+    }
+
+    private static string DoesNotContainMessage<TKey>(TKey key, string offender)
+    {
+        return $"{key} does not have {offender}, skipping";
+    }
+
+    private enum Operations
+    {
+        Updated,
+        Deleted,
+        Added,
+        Set,
+        Removed,
+    }
+
+    private static string OperationToString(Operations operation) => operation.ToString().ToLower();
+
+    private static string GetEntityType(Type type)
+    {
+        return type switch
+        {
+            not null when type == typeof(DeleteCondition) => "delete condition",
+            not null when type == typeof(Individual) => "individual",
+            not null when type == typeof(Origin) => "origin",
+            not null when type == typeof(PersonalData) => "personal data",
+            not null when type == typeof(PersonalDataColumn) => "personal data column",
+            not null when type == typeof(Processing) => "processing",
+            not null when type == typeof(Purpose) => "purpose",
+            not null when type == typeof(VacuumingRule) => "vacuuming rule",
+            _ => "entity"
+        };
     }
 }

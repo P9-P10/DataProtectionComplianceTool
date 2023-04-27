@@ -9,7 +9,7 @@ public class DeleteConditionsManagerDecorator : LoggingDecorator, IDeleteConditi
 
     private readonly IDeleteConditionsManager _manager;
     
-    public DeleteConditionsManagerDecorator(IDeleteConditionsManager manager, ILogger logger) : base(logger, "deletecondition")
+    public DeleteConditionsManagerDecorator(IDeleteConditionsManager manager, ILogger logger) : base(logger, "delete condition")
     {
         _manager = manager;
     }
