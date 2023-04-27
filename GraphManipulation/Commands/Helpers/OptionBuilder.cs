@@ -94,25 +94,25 @@ public static class OptionBuilder
         return CreateOption<string>("--new-name").WithAlias("-nn");
     }
 
-    public static void ValidateOrder<TEnumerable, TValue>(CommandResult commandResult, Option<TEnumerable> option) 
+    public static void ValidateOrder<TEnumerable, TValue>(CommandResult commandResult, Option<TEnumerable> option)
         where TEnumerable : IEnumerable<TValue>
     {
         if (commandResult.FindResultFor(option) is null)
         {
             return;
         }
-        
+
         try
         {
             var enumerable = commandResult.GetValueForOption(option);
-            
+
             if (enumerable is null)
             {
                 return;
             }
 
             var list = enumerable.ToList();
-                
+
             if (!list.OrderBy(e => e).SequenceEqual(list))
             {
                 commandResult.ErrorMessage = "Minimum was higher than maximum";

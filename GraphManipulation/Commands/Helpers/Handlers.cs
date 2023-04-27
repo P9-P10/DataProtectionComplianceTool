@@ -3,7 +3,6 @@ using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
 using GraphManipulation.Managers.Interfaces.Base;
 using GraphManipulation.Models;
-using GraphManipulation.Models.Interfaces;
 using GraphManipulation.Models.Interfaces.Base;
 
 namespace GraphManipulation.Commands.Helpers;
@@ -446,16 +445,10 @@ public static class Handlers
         return $"{key} does not have {offender}, skipping";
     }
 
-    private enum Operations
+    private static string OperationToString(Operations operation)
     {
-        Updated,
-        Deleted,
-        Added,
-        Set,
-        Removed,
+        return operation.ToString().ToLower();
     }
-
-    private static string OperationToString(Operations operation) => operation.ToString().ToLower();
 
     private static string GetEntityType(Type type)
     {
@@ -471,5 +464,14 @@ public static class Handlers
             not null when type == typeof(VacuumingRule) => "vacuuming rule",
             _ => "entity"
         };
+    }
+
+    private enum Operations
+    {
+        Updated,
+        Deleted,
+        Added,
+        Set,
+        Removed
     }
 }

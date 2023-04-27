@@ -52,7 +52,7 @@ public static class LoggingCommandBuilder
                         var startString = result.Tokens[0].Value;
                         var endString = result.Tokens[1].Value;
 
-                        if (int.TryParse(startString, out var start) && 
+                        if (int.TryParse(startString, out var start) &&
                             int.TryParse(endString, out var end))
                         {
                             return new NumberRange(start, end);
@@ -61,7 +61,7 @@ public static class LoggingCommandBuilder
                         result.ErrorMessage =
                             $"--numbers require input to be integers, which \"{startString} {endString}\" is not";
                     }
-                    
+
                     result.ErrorMessage = "--numbers requires two arguments";
                     return new NumberRange(0, 0);
                 })
@@ -76,27 +76,27 @@ public static class LoggingCommandBuilder
     private static Option<TimeRange> CreateDateTimeOption()
     {
         return new Option<TimeRange>(
-        "--date-times",
-        result =>
-        {
-            if (result.Tokens.Count == 2)
-            {
-                var startString = result.Tokens[0].Value;
-                var endString = result.Tokens[1].Value;
-
-                if (DateTime.TryParse(startString, out var start) && 
-                    DateTime.TryParse(endString, out var end))
+                "--date-times",
+                result =>
                 {
-                    return new TimeRange(start, end);
-                }
+                    if (result.Tokens.Count == 2)
+                    {
+                        var startString = result.Tokens[0].Value;
+                        var endString = result.Tokens[1].Value;
 
-                result.ErrorMessage =
-                    $"--date-times require input to be date times, which \"{startString} {endString}\" is not";
-            }
-                    
-            result.ErrorMessage = "--numbers requires two arguments";
-            return new TimeRange(DateTime.Now, DateTime.Now);
-        })
+                        if (DateTime.TryParse(startString, out var start) &&
+                            DateTime.TryParse(endString, out var end))
+                        {
+                            return new TimeRange(start, end);
+                        }
+
+                        result.ErrorMessage =
+                            $"--date-times require input to be date times, which \"{startString} {endString}\" is not";
+                    }
+
+                    result.ErrorMessage = "--numbers requires two arguments";
+                    return new TimeRange(DateTime.Now, DateTime.Now);
+                })
             .WithAlias("-d")
             .WithDescription("Limits results to the specified time range (inclusive).\n" +
                              "Must provide two date times as range (e.g. -d 2000/04/28T12:34:56 3000/06/16T09:38:12), first minimum then maximum")
