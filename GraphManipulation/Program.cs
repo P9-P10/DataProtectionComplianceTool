@@ -24,6 +24,8 @@ namespace GraphManipulation;
 // TODO: Når navnet på en entity ændres, mangler der at blive tjekket om det nye navn eksisterer i forvejen, og derfor ikke kan bruges
 // TODO: En refactor af managers, så hver manager har en Add(TKey key) i stedet for varierende interfaces ville simplificere kommandoer gevaldigt (de andre værdier kan klares med updates efterfølgende)
 
+// TODO: Når vi udskriver lister af entities, ville det være brugbart hvis listen havde en header (ala. "Name, Description, ...") så brugeren har nemmere ved at forstå hvad de kigger på
+
 public static class Program
 {
     public static void Main()
