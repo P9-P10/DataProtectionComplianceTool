@@ -2,7 +2,7 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
 
-namespace GraphManipulation.Commands.BaseBuilders;
+namespace GraphManipulation.Commands.Helpers;
 
 public static class CommandBuilder
 {
@@ -17,15 +17,18 @@ public static class CommandBuilder
         return command;
     }
 
-    public static Command WithOption(this Command command, Option option)
+    public static Command WithOption<T>(this Command command, out Option<T> outputOption, Option<T> inputOption)
     {
-        command.AddOption(option);
+        command.AddOption(inputOption);
+        outputOption = inputOption;
         return command;
     }
 
-    public static Command WithArgument(this Command command, Argument argument)
+    public static Command WithArgument<T>(this Command command, out Argument<T> outputArgument,
+        Argument<T> inputArgument)
     {
-        command.AddArgument(argument);
+        command.AddArgument(inputArgument);
+        outputArgument = inputArgument;
         return command;
     }
 
@@ -40,16 +43,24 @@ public static class CommandBuilder
         command.SetHandler(handle);
         return command;
     }
-    
+
+    public static Command WithHandler(this Command command, Action handle)
+    {
+        command.SetHandler(handle);
+        return command;
+    }
+
     public static Command WithDescription(this Command command, string description)
     {
         command.Description = description;
         return command;
     }
 
-    public static Command WithSubCommand(this Command command, Command subCommand)
+    public static Command WithSubCommands(this Command command, params Command[] subCommands)
     {
-        command.AddCommand(subCommand);
+        foreach (var subCommand in subCommands)
+            command.AddCommand(subCommand);
+
         return command;
     }
 
@@ -68,24 +79,46 @@ public static class CommandBuilder
     {
         return BuildCommandWithNameAliasSubject("update", "u", subject);
     }
-    
+
     public static Command BuildDeleteCommand(string subject = "")
     {
         return BuildCommandWithNameAliasSubject("delete", "d", subject);
     }
-    
+
+    public static Command BuildRemoveCommand(string subject = "")
+    {
+        return BuildCommandWithNameAliasSubject("remove", "r", subject);
+    }
+
     public static Command BuildListCommand(string subject = "")
     {
         return BuildCommandWithNameAliasSubject("list", "ls", subject);
     }
-    
+
     public static Command BuildSetCommand(string subject = "")
     {
         return BuildCommandWithNameAliasSubject("set", "st", subject);
     }
-    
+
     public static Command BuildShowCommand(string subject = "")
     {
         return BuildCommandWithNameAliasSubject("show", "sh", subject);
+    }
+
+    public static string BuildFailureToFindMessage<TKey>(string failureSubject, TKey key)
+    {
+        return $"Could not find {failureSubject} using \"{key}\"";
+    }
+
+    public static string BuildAlreadyExistsMessage<TKey>(string failureSubject, TKey key)
+    {
+        return $"Found an existing {failureSubject} using \"{key}\", aborting";
+    }
+}
+
+public class CommandException : Exception
+{
+    public CommandException(string message) : base(message)
+    {
     }
 }

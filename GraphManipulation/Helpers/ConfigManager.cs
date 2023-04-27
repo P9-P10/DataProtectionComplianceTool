@@ -2,7 +2,7 @@
 
 namespace GraphManipulation.Helpers;
 
-public class ConfigManager
+public class ConfigManager : IConfigManager
 {
     private readonly string _filepath;
     private Dictionary<string, string> _config;

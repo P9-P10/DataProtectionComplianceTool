@@ -12,15 +12,13 @@ using Xunit;
 
 namespace Test.CLI;
 
-public class IndividualsCommandTest
+public class IndividualsCommandTest : CommandTest
 {
-    private class TestTestConsole : IConsole
+    private const int IndividualId = 47;
+
+    private static Command BuildCli()
     {
-        public IStandardStreamWriter Out { get; }
-        public bool IsOutputRedirected { get; }
-        public IStandardStreamWriter Error { get; }
-        public bool IsErrorRedirected { get; }
-        public bool IsInputRedirected { get; }
+        return BuildCli(out _, out _);
     }
     
     private static Command BuildCli(out Mock<IIndividualsManager> individualsManager)
@@ -32,32 +30,21 @@ public class IndividualsCommandTest
     {
         console = new TestConsole();
         individualsManager = new Mock<IIndividualsManager>();
+        
+        individualsManager
+            .Setup(manager => manager.Get(It.IsAny<int>()))
+            .Returns(() => null);
+        individualsManager
+            .Setup(manager => manager.Get(IndividualId))
+            .Returns(new Individual { Id = IndividualId });
         individualsManager
             .Setup(manager => manager.GetAll())
-            .Returns(new List<IIndividual> { new Individual { Id = 47 } });
+            .Returns(new List<IIndividual> { new Individual { Id = IndividualId }, new Individual() });
         
         return IndividualsCommandBuilder.Build(console, individualsManager.Object);
     }
 
-    private static void VerifyCommand(Command cli, string command, bool happy = true)
-    {
-        VerifyCommand(cli, command, new TestConsole(), happy);
-    }
-
-    private static void VerifyCommand(Command cli, string command, IConsole console, bool happy = true)
-    {
-        if (happy)
-        {
-            cli.Parse(command).Errors.Should().BeEmpty();
-        }
-        else
-        {
-            cli.Parse(command).Errors.Should().NotBeEmpty();
-        }
-        
-        cli.Invoke(command, console).Should().Be(happy ? 0 : 1);
-    }
-
+    
     public class SetSource
     {
         private const string CommandName = "set-source";
@@ -65,26 +52,27 @@ public class IndividualsCommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(out _), $"{CommandName} --table tableName --column columnName");
+            VerifyCommand(BuildCli(), $"{CommandName} --table-column tableName columnName");
+        }
+        
+        [Fact]
+        public void AliasParses()
+        {
+            VerifyCommand(BuildCli(), $"{CommandName} -tc tableName columnName");
         }
 
         [Fact]
-        public void MissingRequiredOptionTableFails()
+        public void MissingRequiredArgumentFails()
         {
-            VerifyCommand(BuildCli(out _), $"{CommandName} --column columnName", false);
+            VerifyCommand(BuildCli(), $"{CommandName} --table-column tableName", false);
         }
 
         [Fact]
-        public void MissingRequiredOptionColumnFails()
+        public void CallsManagerWithCorrectArguments()
         {
-            VerifyCommand(BuildCli(out _), $"{CommandName} --table tableName", false);
-        }
-
-        [Fact]
-        public void CallsManager()
-        {
-            var cli = BuildCli(out var individualsManagerMock);
-            VerifyCommand(cli, $"{CommandName} --table tableName --column columnName");
+            BuildCli(out var individualsManagerMock)
+                .Invoke($"{CommandName} -tc tableName columnName");
+            
             individualsManagerMock.Verify(manager =>
                 manager.SetIndividualsSource(It.Is<TableColumnPair>(pair => 
                     pair.TableName == "tableName" && pair.ColumnName == "columnName")));
@@ -98,22 +86,25 @@ public class IndividualsCommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(out _), $"{CommandName}");
+            VerifyCommand(BuildCli(), $"{CommandName}");
         }
-        
+
         [Fact]
-        public void CallsManager()
+        public void CallsManagerWithCorrectArguments()
         {
-            var cli = BuildCli(out var individualsManagerMock);
-            VerifyCommand(cli, $"{CommandName}");
+            BuildCli(out var individualsManagerMock)
+                .Invoke($"{CommandName}");
+            
             individualsManagerMock.Verify(manager => manager.GetAll());
         }
         
         [Fact]
         public void PrintsToConsole()
         {
-            VerifyCommand(BuildCli(out _, out var console), $"{CommandName}");
-            console.Out.ToString()!.Trim().Should().Be("47");
+            BuildCli(out _, out var console)
+                .Invoke($"{CommandName}");
+            
+            console.Out.ToString().Should().Be($"{IndividualId}\nUnknown\n");
         }
     }
 
@@ -124,7 +115,57 @@ public class IndividualsCommandTest
         [Fact]
         public void Parses()
         {
+            VerifyCommand(BuildCli(), $"{CommandName} --id {IndividualId}");
+        }
+        
+        [Fact]
+        public void MissingRequiredOptionFails()
+        {
+            VerifyCommand(BuildCli(), $"{CommandName}", false);
+        }
+        
+        [Fact]
+        public void MissingValueForOptionFails()
+        {
+            VerifyCommand(BuildCli(), $"{CommandName} --id", false);
+        }
+        
+        [Fact]
+        public void CallsManagerWithCorrectArguments()
+        {
+            BuildCli(out var individualsManagerMock)
+                .Invoke($"{CommandName} --id {IndividualId}");
             
+            individualsManagerMock.Verify(manager => 
+                manager.Get(It.Is<int>(i => i == IndividualId)));
+        }
+        
+        [Fact]
+        public void DoesNotCallsManagerIfInvalidCommand()
+        {
+            BuildCli(out var individualsManagerMock)
+                .Invoke($"{CommandName}");
+            
+            individualsManagerMock.Verify(manager => 
+                manager.Get(It.IsAny<int>()), Times.Never);
+        }
+        
+        [Fact]
+        public void PrintsToConsoleWhenFound()
+        {
+            BuildCli(out _, out var console)
+                .Invoke($"{CommandName} --id {IndividualId}");
+            
+            console.Out.ToString().Should().Be($"{IndividualId}\n");
+        }
+        
+        [Fact]
+        public void PrintsToConsoleWhenNotFound()
+        {
+            BuildCli(out _, out var console)
+                .Invoke($"{CommandName} --id {IndividualId + 1}");
+            
+            console.Out.ToString().Should().StartWith("Could not find");
         }
     }
 }

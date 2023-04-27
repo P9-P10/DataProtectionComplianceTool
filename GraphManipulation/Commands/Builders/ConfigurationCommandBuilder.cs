@@ -1,5 +1,5 @@
 using System.CommandLine;
-using GraphManipulation.Commands.BaseBuilders;
+using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Helpers;
 
 namespace GraphManipulation.Commands.Builders;
@@ -10,7 +10,7 @@ public static class ConfigurationCommandBuilder
     {
         return CommandBuilder.CreateCommand(CommandNamer.ConfigurationName)
             .WithAlias(CommandNamer.ConfigurationAlias)
-            .WithSubCommand(UpdateConfig());
+            .WithSubCommands(UpdateConfig());
     }
 
     private static Command UpdateConfig()

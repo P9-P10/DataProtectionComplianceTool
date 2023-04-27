@@ -1,10 +1,11 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 using GraphManipulation.Helpers;
+using GraphManipulation.Models.Interfaces.Base;
 
 namespace GraphManipulation.Logging;
 
-public class Log : ILog
+public class Log : ILog, IListable
 {
     public Log(int logNumber, DateTime creationTime, LogType logType, LogMessageFormat logMessageFormat,
         string message)
@@ -48,6 +49,11 @@ public class Log : ILog
                LogType + LogDelimiter() +
                LogMessageFormat + LogDelimiter() +
                Message;
+    }
+
+    public string ToListing()
+    {
+        return ToString();
     }
 
     public static string LogDelimiter()
