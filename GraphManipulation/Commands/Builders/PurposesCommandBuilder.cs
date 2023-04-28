@@ -75,7 +75,7 @@ public static class PurposesCommandBuilder
             .WithOption(out var descriptionOption,
                 OptionBuilder
                     .CreateDescriptionOption()
-                    .WithDescription("The new description of the purpose"))
+                    .WithDescription("The new description of the purpose (Multiple words should be encased with \" \")"))
             .WithOption(out var legallyRequiredOption,
                 BuildLegallyRequiredOption<bool>()
                     .WithDescription("The new value for if the purpose falls under any legal obligations"))
