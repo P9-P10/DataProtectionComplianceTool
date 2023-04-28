@@ -44,7 +44,7 @@ public class ConfigManagerTest
         var configContent =
             new Dictionary<string, string>
             {
-                { "TestValue", "SomeValue" }
+                {"TestValue", "SomeValue"}
             };
         using (var fs = File.Create(path))
         {
@@ -54,5 +54,27 @@ public class ConfigManagerTest
 
         ConfigManager cf = new(path);
         Assert.True(cf.GetValue("TestValue") == "SomeValue");
+    }
+
+    [Fact]
+    public void TestGetEmptyKeysReturnsAllEmptyValues()
+    {
+        var path = $"TestResources{Path.DirectorySeparatorChar}newConfigFile.json";
+
+        var configContent =
+            new Dictionary<string, string>
+            {
+                {"TestValue", ""}
+            };
+        using (var fs = File.Create(path))
+        {
+            var value = JsonConvert.SerializeObject(configContent).ToCharArray();
+            fs.Write(Encoding.UTF8.GetBytes(value), 0, value.Length);
+        }
+
+        ConfigManager cf = new(path);
+        List<string> emptyKeys = cf.GetEmptyKeys();
+        Assert.True(emptyKeys.Count == 1);
+        Assert.Contains("TestValue", emptyKeys);
     }
 }

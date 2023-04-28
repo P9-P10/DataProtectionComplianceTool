@@ -13,12 +13,21 @@ public class ConfigManager : IConfigManager
         _filepath = filepath;
         Init();
     }
+    
+    public ConfigManager(string filepath,Dictionary<string,string> config)
+    {
+        _config = config;
+        _filepath = filepath;
+        Init();
+    }
 
     public string GetValue(string query)
     {
         if (!_config.ContainsKey(query))
         {
-            throw new KeyNotFoundException();
+            throw new KeyNotFoundException(
+                $"Please make sure that the config file located at {_filepath} is correctly set up, " +
+                $"the key {query} could not be found");
         }
 
         var result = _config[query];
@@ -32,19 +41,30 @@ public class ConfigManager : IConfigManager
         File.WriteAllText(_filepath, json);
     }
 
+    public List<string> GetEmptyKeys()
+    {
+        return (from configElement in _config where string.IsNullOrEmpty(configElement.Value) select configElement.Key)
+            .ToList();
+    }
+
     private void Init()
     {
         if (!File.Exists(_filepath))
         {
-            var initialConfig = new Dictionary<string, string>
+            if (_config.Count == 0)
             {
-                { "GraphStoragePath", "" },
-                { "BaseURI", "http://www.test.com/" },
-                { "OntologyPath", "" },
-                { "LogPath", "" }
-            };
+                _config = new Dictionary<string, string>
+                {
+                    {"GraphStoragePath", ""},
+                    {"BaseURI", "http://www.test.com/"},
+                    {"OntologyPath", ""},
+                    {"LogPath", ""},
+                    {"DatabaseConnectionString", ""},
+                    {"IndividualsTable", ""}
+                };
+            }
             using var file = File.CreateText(_filepath);
-            var json = JsonConvert.SerializeObject(initialConfig, Formatting.Indented);
+            var json = JsonConvert.SerializeObject(_config, Formatting.Indented);
             file.Write(json);
         }
 

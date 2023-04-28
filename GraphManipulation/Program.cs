@@ -40,7 +40,16 @@ public static class Program
         ConsoleSetup();
 
         var configFilePath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
-        var configManager = new ConfigManager(configFilePath);
+        Dictionary<string,string> configValues= new Dictionary<string, string>
+        {
+            {"GraphStoragePath", ""},
+            {"BaseURI", "http://www.test.com/"},
+            {"OntologyPath", ""},
+            {"LogPath", ""},
+            {"DatabaseConnectionString", ""},
+            {"IndividualsTable", ""}
+        };
+        var configManager = new ConfigManager(configFilePath,configValues);
 
         if (!ConfigSetup(configManager, configFilePath))
         {
@@ -124,27 +133,19 @@ public static class Program
     {
         try
         {
-            if (ConfigFileHasEmptyValues(configManager))
+            if (configManager.GetEmptyKeys().Count > 0)
             {
-                Console.WriteLine($"Please fill empty values in config file located at: {configFilePath}");
+                Console.WriteLine(
+                    $"Please fill {string.Join(",", configManager.GetEmptyKeys())} in config file located at: {configFilePath}");
                 return false;
             }
         }
-        catch (KeyNotFoundException)
+        catch (KeyNotFoundException exception)
         {
-            Console.WriteLine(
-                $"Please make sure that the config file located at {configFilePath} is correctly set up, " +
-                $"keys seem to be missing");
+            Console.WriteLine(exception.Message);
             return false;
         }
 
         return true;
-    }
-
-    private static bool ConfigFileHasEmptyValues(IConfigManager configManager)
-    {
-        return string.IsNullOrEmpty(configManager.GetValue("DatabaseConnectionString")) ||
-               string.IsNullOrEmpty(configManager.GetValue("IndividualsTable")) ||
-               string.IsNullOrEmpty(configManager.GetValue("LogPath"));
     }
 }
