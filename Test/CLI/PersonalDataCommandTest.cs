@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.IO;
@@ -497,7 +498,7 @@ public class PersonalDataCommandTest : CommandTest
                         $"--table-column {TableName2} {ColumnName2} " +
                         $"--id {IndividualId} ");
 
-            console.Out.ToString().Should().Be(Origin.ToListing() + "\n");
+            console.Out.ToString().Should().Be(Origin.ToListing() + Environment.NewLine);
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.IO;
@@ -104,7 +105,7 @@ public class IndividualsCommandTest : CommandTest
             BuildCli(out _, out var console)
                 .Invoke($"{CommandName}");
             
-            console.Out.ToString().Should().Be($"{IndividualId}\nUnknown\n");
+            console.Out.ToString().Should().Be($"{IndividualId}"+ Environment.NewLine + "Unknown" + Environment.NewLine);
         }
     }
 
@@ -156,7 +157,7 @@ public class IndividualsCommandTest : CommandTest
             BuildCli(out _, out var console)
                 .Invoke($"{CommandName} --id {IndividualId}");
             
-            console.Out.ToString().Should().Be($"{IndividualId}\n");
+            console.Out.ToString().Should().Be($"{IndividualId}" + Environment.NewLine);
         }
         
         [Fact]
