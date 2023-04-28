@@ -11,8 +11,6 @@ using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
-using Sharprompt;
-using Symbol = Sharprompt.Symbol;
 
 namespace GraphManipulation;
 
@@ -37,17 +35,17 @@ public static class Program
 
     private static void Interactive()
     {
-        ConsoleSetup();
+        ConfigureConsoleSettings();
 
         var configFilePath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
         Dictionary<string,string> configValues= new Dictionary<string, string>
         {
-            {"GraphStoragePath", ""},
+            {"GraphStoragePath", "test"},
             {"BaseURI", "http://www.test.com/"},
-            {"OntologyPath", ""},
-            {"LogPath", ""},
-            {"DatabaseConnectionString", ""},
-            {"IndividualsTable", ""}
+            {"OntologyPath", "test"},
+            {"LogPath", "log.txt"},
+            {"DatabaseConnectionString", "metadata_db.sqlite"},
+            {"IndividualsTable", "test"}
         };
         var configManager = new ConfigManager(configFilePath,configValues);
 
@@ -58,6 +56,13 @@ public static class Program
 
         Console.WriteLine($"Using config found at {configFilePath}");
 
+        var cli = BuildCommandLineInterface(configManager);
+
+        Run(cli);
+    }
+
+    private static Command BuildCommandLineInterface(ConfigManager configManager)
+    {
         var logger = new PlaintextLogger(configManager);
         var console = new SystemConsole();
 
@@ -95,25 +100,25 @@ public static class Program
                 decoratedPurposesManager, decoratedOriginsManager, decoratedVacuumingRulesManager,
                 decoratedDeleteConditionsManager, decoratedProcessingsManager, logger, configManager
             );
-
-        Run(cli);
+        return cli;
     }
 
     private static void Run(Command cli)
     {
         var flag = true;
 
+        // I suggest changing the following do-while to a simple while loop
+        // Why is this a do-while, instead of simply a do
+        // The flag, determining if the loop should be run is already
+        // set to true, meaning it is guaranteed to run once.
+        // do-while, which provides the same guarantee, therefore
+        // seems unnecessary.
         do
         {
             try
             {
-                var command = Prompt.Input<string>("");
+                var command = Console.ReadLine();
                 cli.Invoke(command);
-            }
-            catch (PromptCanceledException)
-            {
-                flag = false;
-                Console.WriteLine("Goodbye!");
             }
             catch (Exception e)
             {
@@ -122,11 +127,9 @@ public static class Program
         } while (flag);
     }
 
-    private static void ConsoleSetup()
+    private static void ConfigureConsoleSettings()
     {
         Console.OutputEncoding = Encoding.UTF8;
-        Prompt.ThrowExceptionOnCancel = true;
-        Prompt.Symbols.Prompt = new Symbol("$", "$");
     }
 
     private static bool ConfigSetup(IConfigManager configManager, string configFilePath)
