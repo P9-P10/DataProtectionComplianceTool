@@ -438,7 +438,7 @@ public static class Handlers
     private static string SuccessMessage<TKey>(TKey key, Type type, string operation, params string[] parameters)
     {
         return $"Successfully {operation} {key} {GetEntityType(type)}" +
-               (parameters.Length != 0 ? $"with {string.Join(", ", parameters)}" : "");
+               (parameters.Length != 0 ? $" with {string.Join(", ", parameters)}" : "");
     }
 
     private static string DoesNotContainMessage<TKey>(TKey key, string offender)

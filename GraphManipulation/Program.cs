@@ -59,7 +59,9 @@ public static class Program
         var logger = new PlaintextLogger(configManager);
         var console = new SystemConsole();
 
-        var context = new GdprMetadataContext(configManager.GetValue("DatabaseConnectionString"));
+
+        var context = new GdprMetadataContext($"Data Source={configManager.GetValue("DatabaseConnectionString")}");
+        context.Database.EnsureCreated();
 
         var individualMapper = new Mapper<Individual>(context);
         var personalDataColumnMapper = new Mapper<PersonalDataColumn>(context);
