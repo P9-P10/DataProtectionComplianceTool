@@ -172,7 +172,7 @@ public static class DeleteConditionsCommandBuilder
         return CommandBuilder
             .BuildListCommand()
             .WithDescription("Lists the delete conditions currently in the system")
-            .WithHandler(() => Handlers.ListHandler(console, deleteConditionsManager));
+            .WithHandler(() => Handlers.ListHandler(console, deleteConditionsManager,"Name, Description, Condition"));
     }
 
     private static Command ShowDeleteCondition(IConsole console, IDeleteConditionsManager deleteConditionsManager)

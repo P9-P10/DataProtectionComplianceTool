@@ -348,9 +348,10 @@ public static class Handlers
     }
 
 
-    public static void ListHandler<TValue, _>(IConsole console, IGetter<TValue, _> getter)
+    public static void ListHandler<TValue, _>(IConsole console, IGetter<TValue, _> getter, string header)
         where TValue : IListable
     {
+        console.WriteLine(header);
         getter.GetAll().ToList().ForEach(e => console.WriteLine(e.ToListing()));
     }
 

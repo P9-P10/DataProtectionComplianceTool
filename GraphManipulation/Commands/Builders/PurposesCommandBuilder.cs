@@ -135,7 +135,7 @@ public static class PurposesCommandBuilder
         return CommandBuilder
             .BuildListCommand()
             .WithDescription("Lists the purposes currently in the system")
-            .WithHandler(() => Handlers.ListHandler(console, purposesManager));
+            .WithHandler(() => Handlers.ListHandler(console, purposesManager,"Name, Description, Legally Required, Deletion Conditions, Columns, Rules"));
     }
 
     private static Command ShowPurpose(IConsole console, IPurposesManager purposesManager)

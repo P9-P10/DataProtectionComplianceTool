@@ -102,7 +102,8 @@ public static class PersonalDataCommandBuilder
         return CommandBuilder
             .BuildListCommand()
             .WithDescription("Lists the personal data currently managed by the system")
-            .WithHandler(() => Handlers.ListHandler(console, personalDataManager));
+            .WithHandler(() => Handlers.ListHandler(console, personalDataManager,
+                "Table, Column, Join Condition, Description, Purposes"));
     }
 
     private static Command ShowPersonalData(IConsole console, IPersonalDataManager personalDataManager)

@@ -35,7 +35,7 @@ public static class IndividualsCommandBuilder
         return CommandBuilder
             .BuildListCommand()
             .WithDescription("Lists all individuals currently in the system")
-            .WithHandler(() => Handlers.ListHandler(console, individualsManager));
+            .WithHandler(() => Handlers.ListHandler(console, individualsManager,"Id"));
     }
 
     private static Command ShowIndividual(IConsole console, IIndividualsManager individualsManager)
