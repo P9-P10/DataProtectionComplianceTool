@@ -40,7 +40,7 @@ public static class Program
         ConsoleSetup();
 
         var configFilePath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
-        Dictionary<string,string> configValues= new Dictionary<string, string>
+        Dictionary<string, string> configValues = new Dictionary<string, string>
         {
             {"GraphStoragePath", ""},
             {"BaseURI", "http://www.test.com/"},
@@ -49,7 +49,7 @@ public static class Program
             {"DatabaseConnectionString", ""},
             {"IndividualsTable", ""}
         };
-        var configManager = new ConfigManager(configFilePath,configValues);
+        var configManager = new ConfigManager(configFilePath, configValues);
 
         if (!ConfigSetup(configManager, configFilePath))
         {
@@ -131,21 +131,11 @@ public static class Program
 
     private static bool ConfigSetup(IConfigManager configManager, string configFilePath)
     {
-        try
-        {
-            if (configManager.GetEmptyKeys().Count > 0)
-            {
-                Console.WriteLine(
-                    $"Please fill {string.Join(",", configManager.GetEmptyKeys())} in config file located at: {configFilePath}");
-                return false;
-            }
-        }
-        catch (KeyNotFoundException exception)
-        {
-            Console.WriteLine(exception.Message);
-            return false;
-        }
+        if (configManager.GetEmptyKeys().Count == 0) return true;
+        Console.WriteLine(
+            $"Please fill {string.Join(",", configManager.GetEmptyKeys())} in config file located at: {configFilePath}");
+        return false;
 
-        return true;
+
     }
 }
