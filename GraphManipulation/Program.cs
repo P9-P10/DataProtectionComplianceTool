@@ -81,7 +81,7 @@ public static class Program
         var deleteConditionsManager = new DeleteConditionsManager(deleteConditionMapper);
         var processingsManager = new ProcessingsManager(processingMapper, purposeMapper, personalDataColumnMapper);
 
-        // var decoratedIndividualsManager = new IndividualsManagerDecorator(individualsManager, logger);
+        var decoratedIndividualsManager = new IndividualsManagerDecorator(individualsManager, logger);
         var decoratedPersonalDataManager = new PersonalDataManagerDecorator(personalDataManager, logger);
         var decoratedPurposesManager = new PurposeManagerDecorator(purposesManager, logger);
         var decoratedOriginsManager = new OriginsManagerDecorator(originsManager, logger);
@@ -91,7 +91,7 @@ public static class Program
 
         var cli = CommandLineInterfaceBuilder
             .Build(
-                console, individualsManager, decoratedPersonalDataManager,
+                console, decoratedIndividualsManager, decoratedPersonalDataManager,
                 decoratedPurposesManager, decoratedOriginsManager, decoratedVacuumingRulesManager,
                 decoratedDeleteConditionsManager, decoratedProcessingsManager, logger, configManager
             );
@@ -135,7 +135,5 @@ public static class Program
         Console.WriteLine(
             $"Please fill {string.Join(",", configManager.GetEmptyKeys())} in config file located at: {configFilePath}");
         return false;
-
-
     }
 }
