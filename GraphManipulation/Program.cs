@@ -20,8 +20,7 @@ namespace GraphManipulation;
 // TODO: Skal vi have en kommando til at eksekvere vacuuming? Hvis ja, så skal den laves
 
 // TODO: IProcessingManager skal ikke kunne opdatere purpose. Enten skal den funktionalitet helt væk (fjernes fra interfacen) eller også skal man kunne tilføje og fjerne flere purposes (på samme måde som i IPersonalDataManager)
-// TODO: Lige nu har VacuumingRule en liste af purposes, men igennem IVacuumingRulesManager kan den kun få ét purpose. Enten skal den kun have ét purpose, eller også skal det være muligt at tilføje og fjerne flere purposes (på samme måde som i IPersonalDataManager)
-
+// TODO: IVacuumingRulesManager kan nu tilføje nye purposes. Dette er ikke reflekteret i CLI.
 // TODO: Når navnet på en entity ændres, mangler der at blive tjekket om det nye navn eksisterer i forvejen, og derfor ikke kan bruges
 // TODO: En refactor af managers, så hver manager har en Add(TKey key) i stedet for varierende interfaces ville simplificere kommandoer gevaldigt (de andre værdier kan klares med updates efterfølgende)
 

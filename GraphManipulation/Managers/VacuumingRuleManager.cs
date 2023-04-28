@@ -7,12 +7,12 @@ namespace GraphManipulation.Managers;
 
 public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumingRulesManager
 {
-    private IMapper<VacuumingRule> _vacuumingRule;
+    private IMapper<VacuumingRule> _ruleMapper;
     private IMapper<Purpose> _purposeMapper;
 
-    public VacuumingRuleManager(IMapper<VacuumingRule> vacuumingRule,IMapper<Purpose> purposeMapper) : base(vacuumingRule)
+    public VacuumingRuleManager(IMapper<VacuumingRule> ruleMapper,IMapper<Purpose> purposeMapper) : base(ruleMapper)
     {
-        _vacuumingRule = vacuumingRule;
+        _ruleMapper = ruleMapper;
         _purposeMapper = purposeMapper;
     }
 
@@ -21,7 +21,7 @@ public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumin
 
     public void AddVacuumingRule(string name, string interval, string purposeName)
     {
-        _vacuumingRule.Insert(new VacuumingRule(name:name, interval:interval, 
+        _ruleMapper.Insert(new VacuumingRule(name:name, interval:interval, 
             purposes:new List<Purpose> {_purposeMapper.FindSingle(x=> x.Name == purposeName)}
             )
         );
@@ -32,7 +32,23 @@ public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumin
         VacuumingRule? rule = base.Get(name);
         if (rule == null) return;
         rule.Interval = interval;
-        _vacuumingRule.Update(rule);
+        _ruleMapper.Update(rule);
+    }
+
+    public void AddPurpose(string name, string purposeName)
+    {
+        VacuumingRule? rule = base.Get(name);
+        if (rule == null) return;
+        rule.Purposes.Append(_purposeMapper.FindSingle(x => x.Name == purposeName));
+        _ruleMapper.Update(rule);
+    }
+
+    public void RemovePurpose(string name, string purposeName)
+    {
+        var purpose = _purposeMapper.FindSingle(purpose => purpose.Name == purposeName);
+        VacuumingRule rule = base.Get(name);
+        rule.Purposes =rule.Purposes.Where(p => !p.Equals(purpose));
+        _ruleMapper.Update(rule);
     }
 
     public void UpdateDescription(string key, string description)
@@ -40,6 +56,8 @@ public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumin
         VacuumingRule? rule = base.Get(key);
         if (rule == null) return;
         rule.Description = description;
-        _vacuumingRule.Update(rule);
+        _ruleMapper.Update(rule);
     }
+    
+    
 }
