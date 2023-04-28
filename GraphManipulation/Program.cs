@@ -16,8 +16,6 @@ using Symbol = Sharprompt.Symbol;
 
 namespace GraphManipulation;
 
-// TODO: Manglende decorator til IndividualsManager
-
 // TODO: Skal vi have en kommando til at sætte vores database op? Hvis ja, så skal den laves
 // TODO: Skal vi have en kommando til at eksekvere vacuuming? Hvis ja, så skal den laves
 
