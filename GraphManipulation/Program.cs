@@ -2,7 +2,10 @@
 
 using System.CommandLine;
 using System.CommandLine.IO;
+using System.Data;
+using System.Data.SQLite;
 using System.Text;
+using Dapper;
 using GraphManipulation.Commands.Builders;
 using GraphManipulation.DataAccess;
 using GraphManipulation.DataAccess.Mappers;
@@ -11,6 +14,7 @@ using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
+using Microsoft.EntityFrameworkCore;
 using Sharprompt;
 using Symbol = Sharprompt.Symbol;
 
@@ -23,7 +27,6 @@ namespace GraphManipulation;
 // TODO: IVacuumingRulesManager kan nu tilføje nye purposes. Dette er ikke reflekteret i CLI.
 // TODO: Når navnet på en entity ændres, mangler der at blive tjekket om det nye navn eksisterer i forvejen, og derfor ikke kan bruges
 // TODO: En refactor af managers, så hver manager har en Add(TKey key) i stedet for varierende interfaces ville simplificere kommandoer gevaldigt (de andre værdier kan klares med updates efterfølgende)
-
 
 public static class Program
 {
@@ -58,9 +61,10 @@ public static class Program
         var logger = new PlaintextLogger(configManager);
         var console = new SystemConsole();
 
-
-        var context = new GdprMetadataContext($"Data Source={configManager.GetValue("DatabaseConnectionString")}");
-        context.Database.EnsureCreated();
+        string connectionString = $"Data Source={configManager.GetValue("DatabaseConnectionString")}";
+        var context = new GdprMetadataContext(connectionString);
+        
+        AddStructureToDatabaseIfNotExists(new SQLiteConnection(connectionString), context);
 
         var individualMapper = new Mapper<Individual>(context);
         var personalDataColumnMapper = new Mapper<PersonalDataColumn>(context);
@@ -96,6 +100,12 @@ public static class Program
             );
 
         Run(cli);
+    }
+
+    private static void AddStructureToDatabaseIfNotExists(IDbConnection connection, GdprMetadataContext context)
+    {
+        connection.Execute(
+            CreateStatementManipulator.UpdateCreationScript(context.Database.GenerateCreateScript()));
     }
 
     private static void Run(Command cli)
