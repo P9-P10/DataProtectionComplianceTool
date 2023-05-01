@@ -96,6 +96,7 @@ public static class Program
         {
             try
             {
+                Console.Write("$: ");
                 var command = Console.ReadLine() ?? "";
                 if (!string.IsNullOrEmpty(command))
                 {
@@ -119,12 +120,12 @@ public static class Program
         var configFilePath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
         var configValues = new Dictionary<string, string>
         {
-            { "GraphStoragePath", "" },
-            { "BaseURI", "http://www.test.com/" },
-            { "OntologyPath", "" },
-            { "LogPath", "" },
-            { "DatabaseConnectionString", "" },
-            { "IndividualsTable", "" }
+            {"GraphStoragePath", ""},
+            {"BaseURI", "http://www.test.com/"},
+            {"OntologyPath", ""},
+            {"LogPath", ""},
+            {"DatabaseConnectionString", ""},
+            {"IndividualsTable", ""}
         };
 
         configManager = new ConfigManager(configFilePath, configValues);
