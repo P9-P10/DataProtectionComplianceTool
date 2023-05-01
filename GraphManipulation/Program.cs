@@ -21,6 +21,7 @@ using Symbol = Sharprompt.Symbol;
 namespace GraphManipulation;
 
 // TODO: Skal vi have en kommando til at eksekvere vacuuming? Hvis ja, så skal den laves
+// TODO: Brugeren skal kunne se hvad individuals source er sat til
 
 // TODO: IProcessingManager skal ikke kunne opdatere purpose. Enten skal den funktionalitet helt væk (fjernes fra interfacen) eller også skal man kunne tilføje og fjerne flere purposes (på samme måde som i IPersonalDataManager)
 // TODO: IVacuumingRulesManager kan nu tilføje nye purposes. Dette er ikke reflekteret i CLI.
