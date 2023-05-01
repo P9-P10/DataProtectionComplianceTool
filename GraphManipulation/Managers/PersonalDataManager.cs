@@ -51,6 +51,11 @@ public class PersonalDataManager : IPersonalDataManager
             {TableColumnPair = tableColumnPair, Description = description, JoinCondition = joinCondition});
     }
 
+    public void SetDefaultValue(TableColumnPair tableColumnPair, string defaultValue)
+    {
+        throw new NotImplementedException();
+    }
+
     public void AddPurpose(TableColumnPair tableColumnPair, string purposeName)
     {
         var purpose = _purposeMapper.FindSingle(purpose => purpose.Name == purposeName);

@@ -11,6 +11,7 @@ public interface IPersonalDataManager :
     IHasPurposes<TableColumnPair, string>
 {
     public void AddPersonalData(TableColumnPair tableColumnPair, string joinCondition, string description);
+    public void SetDefaultValue(TableColumnPair tableColumnPair, string defaultValue);
 
     public void SetOriginOf(TableColumnPair tableColumnPair, int individualsId, string originName);
     public IOrigin? GetOriginOf(TableColumnPair tableColumnPair, int individualsId);

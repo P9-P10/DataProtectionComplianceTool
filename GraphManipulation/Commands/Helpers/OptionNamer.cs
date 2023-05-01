@@ -55,4 +55,7 @@ public static class OptionNamer
 
     public const string PurposeList = "--purposes";
     public const string PurposeListAlias = "-ps";
+
+    public const string DefaultValue = "--default-value";
+    public const string DefaultValueAlias = "-dv";
 }

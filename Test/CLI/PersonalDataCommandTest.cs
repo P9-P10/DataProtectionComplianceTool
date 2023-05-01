@@ -36,7 +36,8 @@ public class PersonalDataCommandTest : CommandTest
                 Description = Description,
                 TableColumnPair = TableColumnPair1,
                 Purposes = new List<Purpose>(),
-                JoinCondition = JoinCondition
+                JoinCondition = JoinCondition,
+                DefaultValue = DefaultValue
             });
 
         personalDataManagerMock
@@ -52,6 +53,11 @@ public class PersonalDataCommandTest : CommandTest
             .SetupSequence(manager =>
                 manager.Get(It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair3))))
             .Returns(() => null)
+            .Returns(new PersonalDataColumn
+            {
+                TableColumnPair = TableColumnPair3,
+                Purposes = new List<Purpose>()
+            })
             .Returns(new PersonalDataColumn
             {
                 TableColumnPair = TableColumnPair3,
@@ -122,6 +128,7 @@ public class PersonalDataCommandTest : CommandTest
     
     private const int IndividualId = 12;
     private const string OriginName = "originName";
+    private const string DefaultValue = "defaultValue";
 
     public class Add
     {
@@ -136,6 +143,7 @@ public class PersonalDataCommandTest : CommandTest
                 $"--table-column {TableName1} {ColumnName1} " +
                 $"--join-condition \"{JoinCondition}\" " +
                 $"--description \"{Description}\" " +
+                $"--default-value \"{DefaultValue}\" " +
                 $"--purposes {Purpose1Name} {Purpose2Name}"
             );
         }
@@ -149,6 +157,7 @@ public class PersonalDataCommandTest : CommandTest
                 $"-tc {TableName1} {ColumnName1} " +
                 $"-jc \"{JoinCondition}\" " +
                 $"-d \"{Description}\" " +
+                $"-dv \"{DefaultValue}\" " +
                 $"-ps {Purpose1Name} {Purpose2Name}"
             );
         }
@@ -212,6 +221,7 @@ public class PersonalDataCommandTest : CommandTest
                         $"--table-column {TableName3} {ColumnName3} " +
                         $"--join-condition \"{JoinCondition}\" " +
                         $"--description \"{Description}\" " +
+                        $"--default-value \"{DefaultValue}\" " +
                         $"--purposes {Purpose1Name} {Purpose2Name}"
                 );
 
@@ -225,6 +235,9 @@ public class PersonalDataCommandTest : CommandTest
             managerMock.Verify(manager => manager.AddPurpose(
                 It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair3)),
                 It.Is<string>(s => s == Purpose2Name)));
+            managerMock.Verify(manager => manager.SetDefaultValue(
+                It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair3)),
+                It.Is<string>(s => s == DefaultValue)));
         }
     }
 
@@ -238,7 +251,8 @@ public class PersonalDataCommandTest : CommandTest
             VerifyCommand(BuildCli(out _, out _, out _),
                 $"{CommandName} " +
                 $"--table-column {TableName1} {ColumnName1} " +
-                $"--description \"{Description + "NEW"}\" "
+                $"--description \"{Description + "NEW"}\" " +
+                $"--default-value \"{DefaultValue + "NEW"}\" "
             );
         }
 
@@ -248,11 +262,15 @@ public class PersonalDataCommandTest : CommandTest
             BuildCli(out var managerMock, out _, out _)
                 .Invoke($"{CommandName} " +
                         $"--table-column {TableName1} {ColumnName1} " +
-                        $"--description \"{Description + "NEW"}\" "
+                        $"--description \"{Description + "NEW"}\" " +
+                        $"--default-value \"{DefaultValue + "NEW"}\" "
                 );
             managerMock.Verify(manager => manager.UpdateDescription(
                 It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair1)),
                 It.Is<string>(s => s == Description + "NEW")));
+            managerMock.Verify(manager => manager.SetDefaultValue(
+                It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair1)),
+                It.Is<string>(s => s == DefaultValue + "NEW")));
         }
     }
 

@@ -45,6 +45,13 @@ public static class PersonalDataCommandBuilder
                     .CreateDescriptionOption()
                     .WithDescription("Description of the personal data")
                     .WithDefaultValue(string.Empty))
+            // TODO: Denne options navn skal også være i OptionNamer
+            .WithOption(out var defaultValueOption, 
+                OptionBuilder
+                    .CreateOption<string>(OptionNamer.DefaultValue)
+                    .WithAlias(OptionNamer.DefaultValueAlias)
+                    .WithDescription("The default value that attributes in the column should receive upon deletion")
+                    .WithDefaultValue(string.Empty))
             .WithOption(out var purposeOption, BuildPurposeListOption())
             .WithHandler(context =>
             {
@@ -63,6 +70,13 @@ public static class PersonalDataCommandBuilder
                     pairOption,
                     purposeOption
                 );
+                
+                Handlers.UpdateHandler(context, console, 
+                    personalDataManager.SetDefaultValue,
+                    personalDataManager,
+                    column => column.GetDefaultValue(),
+                    pairOption,
+                    defaultValueOption);
             });
     }
 
@@ -76,15 +90,28 @@ public static class PersonalDataCommandBuilder
                 OptionBuilder
                     .CreateDescriptionOption()
                     .WithDescription("Description of the personal data"))
+            .WithOption(out var defaultValueOption, 
+                OptionBuilder
+                    .CreateOption<string>(OptionNamer.DefaultValue)
+                    .WithAlias(OptionNamer.DefaultValueAlias)
+                    .WithDescription("The default value that attributes in the column should receive upon deletion"))
             .WithHandler(context =>
+            {
                 Handlers.UpdateHandler(context, console,
                     personalDataManager.UpdateDescription,
                     personalDataManager,
                     c => c.GetDescription(),
                     pairOption,
                     descriptionOption
-                )
-            );
+                );
+                
+                Handlers.UpdateHandler(context, console,
+                    personalDataManager.SetDefaultValue,
+                    personalDataManager,
+                    c => c.GetDefaultValue(),
+                    pairOption,
+                    defaultValueOption);
+            });
     }
 
     private static Command DeletePersonalData(IConsole console, IPersonalDataManager personalDataManager)

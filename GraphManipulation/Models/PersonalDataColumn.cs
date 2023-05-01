@@ -8,16 +8,16 @@ public class PersonalDataColumn : DomainEntity, IPersonalDataColumn
     public TableColumnPair? TableColumnPair { get; set; }
     public string? Description { get; set; }
     public IEnumerable<Purpose>? Purposes { get; set; }
-    
-    public string? DefaultValue { get; set; }
 
-    public string JoinCondition { get; set; }
+    public string DefaultValue { get; set; } = "";
+
+    public string JoinCondition { get; set; } = "";
 
 
     public string ToListing()
     {
         return string.Join(", ", TableColumnPair == null ? " " : TableColumnPair.ToListing(), JoinCondition,
-            Description,
+            Description, DefaultValue,
             "[ " + string.Join(", ", Purposes == null ? "" : Purposes.Select(p => p.ToListing())) + " ]");
     }
 
@@ -44,5 +44,10 @@ public class PersonalDataColumn : DomainEntity, IPersonalDataColumn
     public string GetJoinCondition()
     {
         return JoinCondition;
+    }
+
+    public string GetDefaultValue()
+    {
+        return DefaultValue;
     }
 }

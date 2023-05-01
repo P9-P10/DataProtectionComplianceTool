@@ -30,7 +30,7 @@ public class TestPersonalDataColumn
             TableColumnPair = new TableColumnPair("Name","ColumnName")
         };
         
-        Assert.Equal("(Name, ColumnName), , , [  ]",personalDataColumn.ToListing());
+        Assert.Equal("(Name, ColumnName), , , , [  ]",personalDataColumn.ToListing());
     }
 
     [Fact]

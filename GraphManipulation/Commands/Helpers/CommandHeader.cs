@@ -11,5 +11,5 @@ public static class CommandHeader
 
     public const string IndividualsHeader = "Id";
 
-    public const string PersonalDataHeader = "Table, Column, Join Condition, Description, Purposes";
+    public const string PersonalDataHeader = "Table, Column, Join Condition, Description, Default Value, Purposes";
 }
