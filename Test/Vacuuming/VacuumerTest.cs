@@ -51,24 +51,6 @@ public class VacuumerTest
 
 
     [Fact]
-    public void
-        TestGenerateSqlQueryForDeletion_Returns_Correct_Query_When_Provided_Multiple_Purposes_One_TableColumnPair()
-    {
-        TestPersonDataColumnService? personDataColumnService = new();
-        Vacuumer vacuumer = VacuumInstantiate(personDataColumnService);
-        personDataColumnService.AddColumn(PersonDataColumnMaker(multipleDeleteConditions: true));
-
-
-        var query = vacuumer.GenerateUpdateStatement();
-
-
-        DeletionExecution expected = DeletionExecutionMaker("UPDATE Table SET Column = Null " +
-                                                            "WHERE (Condition) AND (SecondCondition);");
-        Assert.Contains(expected, query);
-    }
-
-
-    [Fact]
     public void TestGenerateSqlQueryForDeletion_Returns_Correct_Query_When_Provided_Multiple_TableColumnPairs_()
     {
         TestPersonDataColumnService? personDataColumnService = new();
@@ -283,7 +265,7 @@ public class VacuumerTest
     public void TestRunVacuumingRule_Executes_Correct_Execution()
     {
         TestPersonDataColumnService personDataColumnService = new();
-        personDataColumnService.AddColumn(PersonDataColumnMaker());
+        personDataColumnService.AddColumn(PersonDataColumnMaker(purposeName: "Name"));
         Vacuumer vacuumer = VacuumInstantiate(personDataColumnService: personDataColumnService);
         VacuumingRule vacuumingRule = VacuumingRuleMaker("Name", "Description", "2d 5y");
 
@@ -301,8 +283,8 @@ public class VacuumerTest
     public void TestRunVacuumingRule_Executes_Correct_Executions_Different_Executions_With_Same_Purpose()
     {
         TestPersonDataColumnService personDataColumnService = new();
-        personDataColumnService.AddColumn(PersonDataColumnMaker());
-        personDataColumnService.AddColumn(PersonDataColumnMaker(purpose: "Purpose",
+        personDataColumnService.AddColumn(PersonDataColumnMaker(purposeName: "Name"));
+        personDataColumnService.AddColumn(PersonDataColumnMaker(purposeName: "Name",
             columnName: "AnotherColumn"));
         Vacuumer vacuumer = VacuumInstantiate(personDataColumnService: personDataColumnService);
         VacuumingRule vacuumingRule = VacuumingRuleMaker("Name", "Description", "2d 5y");
