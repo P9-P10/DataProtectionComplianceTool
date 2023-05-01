@@ -15,8 +15,6 @@ using GraphManipulation.Logging;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
 using Microsoft.EntityFrameworkCore;
-using Sharprompt;
-using Symbol = Sharprompt.Symbol;
 
 namespace GraphManipulation;
 
@@ -96,32 +94,23 @@ public static class Program
 
     private static void Run(Command cli)
     {
-        var flag = true;
-
-        do
+        while (true)
         {
             try
             {
-                var command = Prompt.Input<string>("");
+                var command = Console.ReadLine() ?? "";
                 cli.Invoke(command);
-            }
-            catch (PromptCanceledException)
-            {
-                flag = false;
-                Console.WriteLine("Goodbye!");
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
-        } while (flag);
+        }
     }
 
     private static void ConsoleSetup()
     {
         Console.OutputEncoding = Encoding.UTF8;
-        Prompt.ThrowExceptionOnCancel = true;
-        Prompt.Symbols.Prompt = new Symbol("$", "$");
     }
 
     private static bool ConfigSetup(out IConfigManager? configManager)
