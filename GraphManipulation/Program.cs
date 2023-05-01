@@ -1,6 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.IO;
 using System.CommandLine.Parsing;
@@ -17,7 +16,6 @@ using GraphManipulation.Logging;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
 using GraphManipulation.Vacuuming;
-using J2N.Text;
 using Microsoft.EntityFrameworkCore;
 
 namespace GraphManipulation;
@@ -88,7 +86,7 @@ public static class Program
             );
 
         var cli = new CommandLineBuilder(command)
-            .UseHelp("help", "h", "?")
+            .UseHelp("help", "h", "?").UseTypoCorrections()
             .Build();
 
         Run(cli);
