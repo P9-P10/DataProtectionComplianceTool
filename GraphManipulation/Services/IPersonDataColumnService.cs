@@ -1,8 +1,8 @@
-﻿using GraphManipulation.DataAccess.Entities;
+﻿using GraphManipulation.Models;
 
 namespace GraphManipulation.Services;
 
 public interface IPersonDataColumnService
 {
-    IEnumerable<PersonDataColumn> GetColumns();
+    IEnumerable<PersonalDataColumn> GetColumns();
 }
