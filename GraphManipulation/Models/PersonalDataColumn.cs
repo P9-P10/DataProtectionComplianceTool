@@ -5,17 +5,18 @@ namespace GraphManipulation.Models;
 
 public class PersonalDataColumn : DomainEntity, IPersonalDataColumn
 {
-    public TableColumnPair TableColumnPair { get; set; }
+    public TableColumnPair? TableColumnPair { get; set; }
     public string? Description { get; set; }
-    public IEnumerable<Purpose> Purposes { get; set; }
-    
+    public IEnumerable<Purpose>? Purposes { get; set; }
+
     public string JoinCondition { get; set; }
 
 
     public string ToListing()
     {
-        return string.Join(", ", TableColumnPair.ToListing(), JoinCondition, Description,
-            "[ " + string.Join(", ", Purposes.Select(p => p.ToListing())) + " ]");
+        return string.Join(", ", TableColumnPair == null ? " " : TableColumnPair.ToListing(), JoinCondition,
+            Description,
+            "[ " + string.Join(", ", Purposes == null ? "" : Purposes.Select(p => p.ToListing())) + " ]");
     }
 
     public string GetDescription()
@@ -28,9 +29,14 @@ public class PersonalDataColumn : DomainEntity, IPersonalDataColumn
         return TableColumnPair;
     }
 
+    public void AddPurpose(Purpose purpose)
+    {
+        Purposes = Purposes == null ? new List<Purpose>() {purpose} : Purposes.Concat(new List<Purpose>() {purpose});
+    }
+
     public IEnumerable<IPurpose> GetPurposes()
     {
-        return Purposes;
+        return Purposes == null ? new List<IPurpose>() : Purposes;
     }
 
     public string GetJoinCondition()
