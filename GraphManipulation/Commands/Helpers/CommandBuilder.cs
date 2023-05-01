@@ -72,37 +72,37 @@ public static class CommandBuilder
 
     public static Command BuildAddCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject(CommandNamer.AddCommand, CommandNamer.AddAlias, subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.Add, CommandNamer.AddAlias, subject);
     }
 
     public static Command BuildUpdateCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject(CommandNamer.UpdateCommand, CommandNamer.UpdateAlias, subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.Update, CommandNamer.UpdateAlias, subject);
     }
 
     public static Command BuildDeleteCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject(CommandNamer.DeleteCommand, CommandNamer.DeleteAlias, subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.Delete, CommandNamer.DeleteAlias, subject);
     }
 
     public static Command BuildRemoveCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject(CommandNamer.RemoveCommand, CommandNamer.RemoveAlias, subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.Remove, CommandNamer.RemoveAlias, subject);
     }
 
     public static Command BuildListCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject(CommandNamer.ListCommand, CommandNamer.ListAlias, subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.List, CommandNamer.ListAlias, subject);
     }
 
     public static Command BuildSetCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject(CommandNamer.SetCommand, CommandNamer.SetAlias, subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.Set, CommandNamer.SetAlias, subject);
     }
 
     public static Command BuildShowCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject(CommandNamer.ShowCommand, CommandNamer.ShowAlias,subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.Show, CommandNamer.ShowAlias,subject);
     }
 }
 

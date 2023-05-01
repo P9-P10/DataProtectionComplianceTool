@@ -132,7 +132,7 @@ public static class VacuumingRulesCommandBuilder
     private static Command Execute(IConsole console, IVacuumingRulesManager vacuumingRulesManager)
     {
         return CommandBuilder
-            .CreateCommand(CommandNamer.ExecuteCommand)
+            .CreateCommand(CommandNamer.Execute)
             .WithAlias(CommandNamer.ExecuteAlias)
             .WithDescription("Executes the given vacuuming rule(s)")
             .WithOption(out var rulesOption,

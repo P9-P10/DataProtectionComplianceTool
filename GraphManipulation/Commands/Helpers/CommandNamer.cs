@@ -32,27 +32,27 @@ public static class CommandNamer
     public const string ConfigurationName = "configuration";
     public const string ConfigurationAlias = "cfg";
 
-    public const string AddCommand = "add";
+    public const string Add = "add";
     public const string AddAlias = "a";
 
-    public const string UpdateCommand = "update";
+    public const string Update = "update";
     public const string UpdateAlias = "u";
 
-    public const string DeleteCommand = "delete";
+    public const string Delete = "delete";
     public const string DeleteAlias = "d";
 
-    public const string RemoveCommand = "remove";
+    public const string Remove = "remove";
     public const string RemoveAlias = "r";
 
-    public const string ListCommand = "list";
+    public const string List = "list";
     public const string ListAlias = "ls";
 
-    public const string SetCommand = "set";
+    public const string Set = "set";
     public const string SetAlias = "st";
 
-    public const string ShowCommand = "show";
+    public const string Show = "show";
     public const string ShowAlias = "sh";
 
-    public const string ExecuteCommand = "execute";
+    public const string Execute = "execute";
     public const string ExecuteAlias = "e";
 }
