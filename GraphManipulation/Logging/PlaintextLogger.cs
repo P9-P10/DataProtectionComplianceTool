@@ -4,7 +4,7 @@ namespace GraphManipulation.Logging;
 
 public class PlaintextLogger : Logger
 {
-    public PlaintextLogger(ConfigManager configManager)
+    public PlaintextLogger(IConfigManager configManager)
         : base(configManager)
     {
     }

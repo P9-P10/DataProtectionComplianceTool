@@ -4,10 +4,10 @@ namespace GraphManipulation.Logging;
 
 public abstract class Logger : ILogger
 {
-    private readonly ConfigManager _configManager;
+    private readonly IConfigManager _configManager;
     private int _logNumber;
 
-    protected Logger(ConfigManager configManager)
+    protected Logger(IConfigManager configManager)
     {
         _configManager = configManager;
 

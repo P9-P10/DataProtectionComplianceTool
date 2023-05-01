@@ -38,30 +38,16 @@ public static class Program
     private static void Interactive()
     {
         ConsoleSetup();
-
-        var configFilePath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
-        Dictionary<string, string> configValues = new Dictionary<string, string>
-        {
-            {"GraphStoragePath", ""},
-            {"BaseURI", "http://www.test.com/"},
-            {"OntologyPath", ""},
-            {"LogPath", ""},
-            {"DatabaseConnectionString", ""},
-            {"IndividualsTable", ""}
-        };
-        var configManager = new ConfigManager(configFilePath, configValues);
-
-        if (!ConfigSetup(configManager, configFilePath))
+        
+        if (!ConfigSetup(out var configManager))
         {
             return;
         }
-
-        Console.WriteLine($"Using config found at {configFilePath}");
-
+        
         var logger = new PlaintextLogger(configManager);
         var console = new SystemConsole();
 
-        string connectionString = $"Data Source={configManager.GetValue("DatabaseConnectionString")}";
+        var connectionString = $"Data Source={configManager.GetValue("DatabaseConnectionString")}";
         var context = new GdprMetadataContext(connectionString);
         
         AddStructureToDatabaseIfNotExists(new SQLiteConnection(connectionString), context);
@@ -102,7 +88,7 @@ public static class Program
         Run(cli);
     }
 
-    private static void AddStructureToDatabaseIfNotExists(IDbConnection connection, GdprMetadataContext context)
+    private static void AddStructureToDatabaseIfNotExists(IDbConnection connection, DbContext context)
     {
         connection.Execute(
             CreateStatementManipulator.UpdateCreationScript(context.Database.GenerateCreateScript()));
@@ -138,7 +124,31 @@ public static class Program
         Prompt.Symbols.Prompt = new Symbol("$", "$");
     }
 
-    private static bool ConfigSetup(IConfigManager configManager, string configFilePath)
+    private static bool ConfigSetup(out IConfigManager? configManager)
+    {
+        var configFilePath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
+        var configValues = new Dictionary<string, string>
+        {
+            {"GraphStoragePath", ""},
+            {"BaseURI", "http://www.test.com/"},
+            {"OntologyPath", ""},
+            {"LogPath", ""},
+            {"DatabaseConnectionString", ""},
+            {"IndividualsTable", ""}
+        };
+        
+        configManager = new ConfigManager(configFilePath, configValues);
+
+        if (!IsValidConfig(configManager, configFilePath))
+        {
+            return false;
+        }
+
+        Console.WriteLine($"Using config found at {configFilePath}");
+        return true;
+    }
+
+    private static bool IsValidConfig(IConfigManager configManager, string configFilePath)
     {
         if (configManager.GetEmptyKeys().Count == 0) return true;
         Console.WriteLine(
