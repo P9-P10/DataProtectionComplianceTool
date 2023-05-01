@@ -1,7 +1,9 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using System.CommandLine;
+using System.CommandLine.Builder;
 using System.CommandLine.IO;
+using System.CommandLine.Parsing;
 using System.Data;
 using System.Data.SQLite;
 using System.Text;
@@ -79,12 +81,16 @@ public static class Program
         var decoratedDeleteConditionsManager = new DeleteConditionsManagerDecorator(deleteConditionsManager, logger);
         var decoratedProcessingsManager = new ProcessingsManagerDecorator(processingsManager, logger);
 
-        var cli = CommandLineInterfaceBuilder
+        var command = CommandLineInterfaceBuilder
             .Build(
                 console, decoratedIndividualsManager, decoratedPersonalDataManager,
                 decoratedPurposesManager, decoratedOriginsManager, decoratedVacuumingRulesManager,
                 decoratedDeleteConditionsManager, decoratedProcessingsManager, logger, configManager
             );
+
+        var cli = new CommandLineBuilder(command)
+            .UseHelp()
+            .Build();
 
         Run(cli);
     }
@@ -95,7 +101,7 @@ public static class Program
             CreateStatementManipulator.UpdateCreationScript(context.Database.GenerateCreateScript()));
     }
 
-    private static void Run(Command cli)
+    private static void Run(Parser cli)
     {
         while (true)
         {
