@@ -17,7 +17,9 @@ public static class VacuumingRulesCommandBuilder
                 Delete(console, vacuumingRulesManager),
                 List(console, vacuumingRulesManager),
                 Show(console, vacuumingRulesManager),
-                Execute(console, vacuumingRulesManager)
+                Execute(console, vacuumingRulesManager),
+                AddPurpose(console, vacuumingRulesManager, purposesManager),
+                RemovePurpose(console, vacuumingRulesManager)
             );
     }
 
@@ -149,6 +151,39 @@ public static class VacuumingRulesCommandBuilder
                 rulesOption));
     }
 
+    private static Command AddPurpose(IConsole console, IVacuumingRulesManager vacuumingRulesManager,
+        IPurposesManager purposesManager)
+    {
+        return CommandBuilder
+            .BuildAddCommand("purpose")
+            .WithDescription("Adds the given purpose(s) to the vacuuming rule")
+            .WithOption(out var nameOption, BuildNameOption())
+            .WithOption(out var purposeOption, BuildPurposeListOption())
+            .WithHandler(context => Handlers.UpdateHandlerWithKeyList(context, console,
+                vacuumingRulesManager.AddPurpose,
+                vacuumingRulesManager,
+                purposesManager,
+                column => column.GetPurposes().Select(p => p.GetName()),
+                nameOption,
+                purposeOption
+            ));
+    }
+
+    private static Command RemovePurpose(IConsole console, IVacuumingRulesManager vacuumingRulesManager)
+    {
+        return CommandBuilder
+            .BuildRemoveCommand("purpose")
+            .WithDescription("Removes the given purpose(s) from the vacuuming rule")
+            .WithOption(out var nameOption, BuildNameOption())
+            .WithOption(out var purposeOption, BuildPurposeListOption())
+            .WithHandler(context => Handlers.RemoveHandlerKeyList(context, console,
+                vacuumingRulesManager.RemovePurpose,
+                vacuumingRulesManager,
+                column => column.GetPurposes().Select(p => p.GetName()),
+                nameOption,
+                purposeOption));
+    }
+
     private static Option<string> BuildNameOption()
     {
         return OptionBuilder
@@ -163,5 +198,13 @@ public static class VacuumingRulesCommandBuilder
             .CreateOption<string>("--interval")
             .WithAlias("-i")
             .WithDescription("The interval in which the vacuuming rule should be executed");
+    }
+    
+    private static Option<IEnumerable<string>> BuildPurposeListOption()
+    {
+        return OptionBuilder
+            .CreatePurposeListOption()
+            .WithDescription("The purpose(s) under which the personal data is stored")
+            .WithIsRequired(true);
     }
 }

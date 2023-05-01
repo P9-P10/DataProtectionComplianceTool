@@ -210,11 +210,8 @@ public static class PersonalDataCommandBuilder
     private static Option<IEnumerable<string>> BuildPurposeListOption()
     {
         return OptionBuilder
-            .CreateOption<IEnumerable<string>>("--purpose")
-            .WithAlias("-p")
+            .CreatePurposeListOption()
             .WithDescription("The purpose(s) under which the personal data is stored")
-            .WithIsRequired(true)
-            .WithAllowMultipleArguments(true)
-            .WithArity(ArgumentArity.OneOrMore);
+            .WithIsRequired(true);
     }
 }
