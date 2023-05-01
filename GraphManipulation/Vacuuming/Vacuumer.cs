@@ -5,11 +5,11 @@ namespace GraphManipulation.Vacuuming;
 
 public class Vacuumer : IVacuumer
 {
-    private readonly IMapper<PersonalDataColumn>? _personDataColumnMapper;
+    private readonly IMapper<PersonalDataColumn> _personDataColumnMapper;
     private readonly IQueryExecutor _queryExecutor;
     private readonly IMapper<VacuumingRule> _vacuumingRuleMapper;
 
-    public Vacuumer(IMapper<PersonalDataColumn>? personDataColumnMapper, IQueryExecutor queryExecutor,
+    public Vacuumer(IMapper<PersonalDataColumn> personDataColumnMapper, IQueryExecutor queryExecutor,
         IMapper<VacuumingRule> vacuumingRuleMapper)
     {
         _personDataColumnMapper = personDataColumnMapper;
