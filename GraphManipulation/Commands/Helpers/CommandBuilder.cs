@@ -72,37 +72,37 @@ public static class CommandBuilder
 
     public static Command BuildAddCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject("add", "a", subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.AddCommand, CommandNamer.AddAlias, subject);
     }
 
     public static Command BuildUpdateCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject("update", "u", subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.UpdateCommand, CommandNamer.UpdateAlias, subject);
     }
 
     public static Command BuildDeleteCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject("delete", "d", subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.DeleteCommand, CommandNamer.DeleteAlias, subject);
     }
 
     public static Command BuildRemoveCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject("remove", "r", subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.RemoveCommand, CommandNamer.RemoveAlias, subject);
     }
 
     public static Command BuildListCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject("list", "ls", subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.ListCommand, CommandNamer.ListAlias, subject);
     }
 
     public static Command BuildSetCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject("set", "st", subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.SetCommand, CommandNamer.SetAlias, subject);
     }
 
     public static Command BuildShowCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject("show", "sh", subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.ShowCommand, CommandNamer.ShowAlias,subject);
     }
 }
 

@@ -117,7 +117,7 @@ public static class VacuumingRulesCommandBuilder
         return CommandBuilder
             .BuildListCommand()
             .WithDescription("Lists the vacuuming rules currently in the system")
-            .WithHandler(() => Handlers.ListHandler(console, vacuumingRulesManager,"Name, Description, Interval, Purposes"));
+            .WithHandler(() => Handlers.ListHandler(console, vacuumingRulesManager,CommandHeader.VacuumingHeader));
     }
 
     private static Command Show(IConsole console, IVacuumingRulesManager vacuumingRulesManager)
@@ -132,8 +132,8 @@ public static class VacuumingRulesCommandBuilder
     private static Command Execute(IConsole console, IVacuumingRulesManager vacuumingRulesManager)
     {
         return CommandBuilder
-            .CreateCommand("execute")
-            .WithAlias("e")
+            .CreateCommand(CommandNamer.ExecuteCommand)
+            .WithAlias(CommandNamer.ExecuteAlias)
             .WithDescription("Executes the given vacuuming rule(s)")
             .WithOption(out var rulesOption,
                 OptionBuilder
