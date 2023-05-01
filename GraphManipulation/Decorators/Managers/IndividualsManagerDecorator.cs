@@ -28,7 +28,7 @@ public class IndividualsManagerDecorator : LoggingDecorator, IIndividualsManager
 
     public void SetIndividualsSource(TableColumnPair source)
     {
-        LogAdd(source.ToListing(),source);
+        LogSet(source.ToListing(),source);
         _manager.SetIndividualsSource(source);
     }
 }

@@ -50,4 +50,9 @@ public class LoggingDecorator
     {
         AppendLogEntry(new Add(_type, key, GetParameters(parameters)));
     }
+
+    public void LogSet(string key, object parameters)
+    {
+        AppendLogEntry(new Set(_type, key, GetParameters(parameters)));
+    }
 }
