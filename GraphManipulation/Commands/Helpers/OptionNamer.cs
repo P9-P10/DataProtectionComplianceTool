@@ -52,4 +52,7 @@ public static class OptionNamer
 
     public const string NewName = "--new-name";
     public const string NewNameAlias = "-nn";
+
+    public const string PurposeList = "--purposes";
+    public const string PurposeListAlias = "-ps";
 }

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.IO;
-using System.Reflection;
 using FluentAssertions;
 using GraphManipulation.Commands.Builders;
 using GraphManipulation.Managers;
@@ -137,8 +136,7 @@ public class PersonalDataCommandTest : CommandTest
                 $"--table-column {TableName1} {ColumnName1} " +
                 $"--join-condition \"{JoinCondition}\" " +
                 $"--description \"{Description}\" " +
-                $"--purpose {Purpose1Name} " +
-                $"--purpose {Purpose2Name} "
+                $"--purposes {Purpose1Name} {Purpose2Name}"
             );
         }
 
@@ -151,8 +149,7 @@ public class PersonalDataCommandTest : CommandTest
                 $"-tc {TableName1} {ColumnName1} " +
                 $"-jc \"{JoinCondition}\" " +
                 $"-d \"{Description}\" " +
-                $"-p {Purpose1Name} " +
-                $"-p {Purpose2Name} "
+                $"-ps {Purpose1Name} {Purpose2Name}"
             );
         }
 
@@ -165,7 +162,7 @@ public class PersonalDataCommandTest : CommandTest
                 $"--table-column {TableName1} {ColumnName1} " +
                 $"--join-condition \"{JoinCondition}\" " +
                 $"--description \"{Description}\" " +
-                $"--purpose {Purpose1Name} "
+                $"--purposes {Purpose1Name} "
             );
         }
 
@@ -190,8 +187,7 @@ public class PersonalDataCommandTest : CommandTest
                 $"{CommandName} " +
                 $"--table-column {TableName1} {ColumnName1} " +
                 $"--description \"{Description}\" " +
-                $"--purpose {Purpose1Name} " +
-                $"--purpose {Purpose2Name} ",
+                $"--purposes {Purpose1Name} {Purpose2Name}",
                 false
             );
         }
@@ -204,8 +200,7 @@ public class PersonalDataCommandTest : CommandTest
                 $"{CommandName} " +
                 $"--table-column {TableName1} {ColumnName1} " +
                 $"--join-condition \"{JoinCondition}\" " +
-                $"--purpose {Purpose1Name} " +
-                $"--purpose {Purpose2Name} "
+                $"--purposes {Purpose1Name} {Purpose2Name}"
             );
         }
 
@@ -217,8 +212,7 @@ public class PersonalDataCommandTest : CommandTest
                         $"--table-column {TableName3} {ColumnName3} " +
                         $"--join-condition \"{JoinCondition}\" " +
                         $"--description \"{Description}\" " +
-                        $"--purpose {Purpose1Name} " +
-                        $"--purpose {Purpose2Name} "
+                        $"--purposes {Purpose1Name} {Purpose2Name}"
                 );
 
             managerMock.Verify(manager => manager.AddPersonalData(
@@ -353,8 +347,7 @@ public class PersonalDataCommandTest : CommandTest
             VerifyCommand(BuildCli(out _, out _, out _),
                 $"{CommandName} " +
                 $"--table-column {TableName1} {ColumnName1} " +
-                $"--purpose {Purpose1Name} " +
-                $"--purpose {Purpose2Name} "
+                $"--purposes {Purpose1Name} {Purpose2Name}"
             );
         }
 
@@ -364,8 +357,7 @@ public class PersonalDataCommandTest : CommandTest
             VerifyCommand(BuildCli(out _, out _, out _),
                 $"{CommandName} " +
                 $"-tc {TableName1} {ColumnName1} " +
-                $"-p {Purpose1Name} " +
-                $"-p {Purpose2Name} "
+                $"-ps {Purpose1Name} {Purpose2Name}"
             );
         }
 
@@ -375,8 +367,7 @@ public class PersonalDataCommandTest : CommandTest
             BuildCli(out var managerMock, out _, out _)
                 .Invoke($"{CommandName} " +
                         $"--table-column {TableName1} {ColumnName1} " +
-                        $"--purpose {Purpose1Name} " +
-                        $"--purpose {Purpose2Name} ");
+                        $"--purposes {Purpose1Name} {Purpose2Name}");
 
             managerMock.Verify(manager => manager.AddPurpose(
                 It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair1)),
@@ -397,8 +388,7 @@ public class PersonalDataCommandTest : CommandTest
             VerifyCommand(BuildCli(out _, out _, out _),
                 $"{CommandName} " +
                 $"--table-column {TableName1} {ColumnName1} " +
-                $"--purpose {Purpose1Name} " +
-                $"--purpose {Purpose2Name} "
+                $"--purposes {Purpose1Name} {Purpose2Name}"
             );
         }
 
@@ -408,8 +398,7 @@ public class PersonalDataCommandTest : CommandTest
             BuildCli(out var managerMock, out _, out _)
                 .Invoke($"{CommandName} " +
                         $"--table-column {TableName2} {ColumnName2} " +
-                        $"--purpose {Purpose1Name} " +
-                        $"--purpose {Purpose2Name} "
+                        $"--purposes {Purpose1Name} {Purpose2Name}"
                 );
 
             managerMock.Verify(manager => manager.RemovePurpose(

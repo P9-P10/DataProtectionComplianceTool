@@ -26,6 +26,11 @@ public class VacuumingRule : DomainEntity, IVacuumingRule
         return Interval;
     }
 
+    public IEnumerable<IPurpose> GetPurposes()
+    {
+        return Purposes is null ? new List<IPurpose>() : Purposes;
+    }
+
     public string GetName()
     {
         return Name;

@@ -83,6 +83,14 @@ public static class OptionBuilder
             .WithArity(new ArgumentArity(2, 2))
             .WithAllowMultipleArguments(true);
     }
+    
+    public static Option<IEnumerable<string>> CreatePurposeListOption()
+    {
+        return CreateOption<IEnumerable<string>>(OptionNamer.PurposeList)
+            .WithAlias(OptionNamer.PurposeListAlias)
+            .WithAllowMultipleArguments(true)
+            .WithArity(ArgumentArity.OneOrMore);
+    }
 
     public static Option<string> CreateNameOption()
     {
