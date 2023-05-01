@@ -3,7 +3,6 @@ using System.Linq;
 using GraphManipulation.DataAccess;
 using GraphManipulation.DataAccess.Mappers;
 using GraphManipulation.Models;
-using GraphManipulation.Services;
 using GraphManipulation.Vacuuming;
 using Test.Vacuuming.TestClasses;
 using Xunit;
@@ -13,10 +12,10 @@ namespace Test.Vacuuming;
 
 public class VacuumerTest
 {
-    private Vacuumer VacuumInstantiate(IPersonDataColumnService? personDataColumnService = null,
+    private Vacuumer VacuumInstantiate(TestPersonalDataColumnMapper? personDataColumnService = null,
         IQueryExecutor? queryExecutor = null, IMapper<VacuumingRule> vacuumingRuleMapper = null)
     {
-        personDataColumnService ??= new TestPersonDataColumnService();
+        personDataColumnService ??= new TestPersonalDataColumnMapper();
 
         queryExecutor ??= new TestQueryExecutor();
 
@@ -39,9 +38,9 @@ public class VacuumerTest
     [Fact]
     public void TestGenerateSqlQueryForDeletion_Returns_Correct_Query_When_Provided_TablePairs()
     {
-        TestPersonDataColumnService? personDataColumnService = new();
+        TestPersonalDataColumnMapper? personDataColumnService = new();
         Vacuumer vacuumer = VacuumInstantiate(personDataColumnService);
-        personDataColumnService.AddColumn(VacuumingModelsMakers.PersonDataColumnMaker());
+        personDataColumnService.Insert(PersonDataColumnMaker());
 
         var query = vacuumer.GenerateUpdateStatement();
 
@@ -53,7 +52,7 @@ public class VacuumerTest
     [Fact]
     public void TestGenerateSqlQueryForDeletion_Returns_Correct_Query_When_Provided_Multiple_TableColumnPairs_()
     {
-        TestPersonDataColumnService? personDataColumnService = new();
+        TestPersonalDataColumnMapper? personDataColumnService = new();
         Vacuumer vacuumer = VacuumInstantiate(personDataColumnService);
         personDataColumnService.AddColumn(PersonDataColumnMaker());
         personDataColumnService.AddColumn(PersonDataColumnMaker(tableName: "SecondTable", columnName: "SecondColumn"));
@@ -74,7 +73,7 @@ public class VacuumerTest
     [Fact]
     public void TestExecuteExecutesCorrectly()
     {
-        TestPersonDataColumnService? personDataColumnService = new();
+        TestPersonalDataColumnMapper? personDataColumnService = new();
         TestQueryExecutor testQueryExecutor = new();
         Vacuumer vacuumer = VacuumInstantiate(personDataColumnService, testQueryExecutor);
         personDataColumnService.AddColumn(PersonDataColumnMaker());
@@ -90,7 +89,7 @@ public class VacuumerTest
     [Fact]
     public void TestExecute_Executes_Correctly_With_Multiple_Executions()
     {
-        TestPersonDataColumnService? personDataColumnService = new();
+        TestPersonalDataColumnMapper? personDataColumnService = new();
         TestQueryExecutor? testQueryExecutor = new();
         Vacuumer vacuumer = VacuumInstantiate(personDataColumnService, testQueryExecutor);
         personDataColumnService.AddColumn(PersonDataColumnMaker());
@@ -109,7 +108,7 @@ public class VacuumerTest
     [Fact]
     public void TestExecute_Executes_Correctly_With_Multiple_Executions_Returns_Correct_DeletionExecutions()
     {
-        TestPersonDataColumnService? personDataColumnService = new();
+        TestPersonalDataColumnMapper? personDataColumnService = new();
         TestQueryExecutor? testQueryExecutor = new();
         Vacuumer vacuumer = VacuumInstantiate(personDataColumnService, testQueryExecutor);
         personDataColumnService.AddColumn(PersonDataColumnMaker());
@@ -264,9 +263,9 @@ public class VacuumerTest
     [Fact]
     public void TestRunVacuumingRule_Executes_Correct_Execution()
     {
-        TestPersonDataColumnService personDataColumnService = new();
-        personDataColumnService.AddColumn(PersonDataColumnMaker(purposeName: "Name"));
-        Vacuumer vacuumer = VacuumInstantiate(personDataColumnService: personDataColumnService);
+        TestPersonalDataColumnMapper? personalDataColumnMapper = new();
+        personalDataColumnMapper.AddColumn(PersonDataColumnMaker(purposeName: "Name"));
+        Vacuumer vacuumer = VacuumInstantiate(personDataColumnService: personalDataColumnMapper);
         VacuumingRule vacuumingRule = VacuumingRuleMaker("Name", "Description", "2d 5y");
 
         List<DeletionExecution> executions =
@@ -282,11 +281,11 @@ public class VacuumerTest
     [Fact]
     public void TestRunVacuumingRule_Executes_Correct_Executions_Different_Executions_With_Same_Purpose()
     {
-        TestPersonDataColumnService personDataColumnService = new();
-        personDataColumnService.AddColumn(PersonDataColumnMaker(purposeName: "Name"));
-        personDataColumnService.AddColumn(PersonDataColumnMaker(purposeName: "Name",
+        TestPersonalDataColumnMapper? personalDataColumnMapper = new();
+        personalDataColumnMapper.AddColumn(PersonDataColumnMaker(purposeName: "Name"));
+        personalDataColumnMapper.AddColumn(PersonDataColumnMaker(purposeName: "Name",
             columnName: "AnotherColumn"));
-        Vacuumer vacuumer = VacuumInstantiate(personDataColumnService: personDataColumnService);
+        Vacuumer vacuumer = VacuumInstantiate(personDataColumnService: personalDataColumnMapper);
         VacuumingRule vacuumingRule = VacuumingRuleMaker("Name", "Description", "2d 5y");
 
 

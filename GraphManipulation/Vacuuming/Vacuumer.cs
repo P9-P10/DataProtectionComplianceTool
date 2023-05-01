@@ -1,26 +1,25 @@
 using GraphManipulation.DataAccess.Mappers;
 using GraphManipulation.Models;
-using GraphManipulation.Services;
 
 namespace GraphManipulation.Vacuuming;
 
 public class Vacuumer : IVacuumer
 {
-    private readonly IPersonDataColumnService _personDataColumnService;
+    private readonly IMapper<PersonalDataColumn>? _personDataColumnMapper;
     private readonly IQueryExecutor _queryExecutor;
     private readonly IMapper<VacuumingRule> _vacuumingRuleMapper;
 
-    public Vacuumer(IPersonDataColumnService personDataColumnService, IQueryExecutor queryExecutor,
+    public Vacuumer(IMapper<PersonalDataColumn>? personDataColumnMapper, IQueryExecutor queryExecutor,
         IMapper<VacuumingRule> vacuumingRuleMapper)
     {
-        _personDataColumnService = personDataColumnService;
+        _personDataColumnMapper = personDataColumnMapper;
         _queryExecutor = queryExecutor;
         _vacuumingRuleMapper = vacuumingRuleMapper;
     }
 
     public IEnumerable<DeletionExecution> GenerateUpdateStatement(string predefinedExpirationDate = "")
     {
-        return _personDataColumnService.GetColumns().Select(CreateDeletionExecution).ToList();
+        return _personDataColumnMapper.Find(_ => true).Select(CreateDeletionExecution).ToList();
     }
 
     private DeletionExecution CreateDeletionExecution(PersonalDataColumn personDataColumn)
@@ -80,7 +79,7 @@ public class Vacuumer : IVacuumer
     {
         List<DeletionExecution> executions = new List<DeletionExecution>();
 
-        List<PersonalDataColumn> personDataColumns = _personDataColumnService.GetColumns().ToList();
+        List<PersonalDataColumn> personDataColumns = _personDataColumnMapper.Find(x=>true).ToList();
 
         foreach (var personDataColumn in personDataColumns)
         {

@@ -10,8 +10,8 @@ public class TestPersonalDataColumn
     [Fact]
     public void TestAddPurposeWorksWithPurposesBeingNull()
     {
-        PersonalDataColumn personalDataColumn = new PersonalDataColumn();
-        Purpose purpose = new Purpose()
+        PersonalDataColumn personalDataColumn = new();
+        Purpose purpose = new()
         {
             Name = "Name"
         };
