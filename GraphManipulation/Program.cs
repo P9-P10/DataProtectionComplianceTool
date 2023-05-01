@@ -46,7 +46,7 @@ public static class Program
         var logger = new PlaintextLogger(configManager);
         var console = new SystemConsole();
 
-        var connectionString = $"Data Source={configManager.GetValue("DatabaseConnectionString")}";
+        var connectionString = configManager.GetValue("DatabaseConnectionString");
         var context = new GdprMetadataContext(connectionString);
 
         AddStructureToDatabaseIfNotExists(new SQLiteConnection(connectionString), context);
