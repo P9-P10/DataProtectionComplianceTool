@@ -1,7 +1,9 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using System.CommandLine;
+using System.CommandLine.Builder;
 using System.CommandLine.IO;
+using System.CommandLine.Parsing;
 using System.Data;
 using System.Data.SQLite;
 using System.Text;
@@ -14,11 +16,11 @@ using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
+using GraphManipulation.Vacuuming;
+using J2N.Text;
 using Microsoft.EntityFrameworkCore;
 
 namespace GraphManipulation;
-
-// TODO: Skal vi have en kommando til at eksekvere vacuuming? Hvis ja, så skal den laves
 
 // TODO: IVacuumingRulesManager kan nu tilføje nye purposes. Dette er ikke reflekteret i CLI.
 // TODO: Når navnet på en entity ændres, mangler der at blive tjekket om det nye navn eksisterer i forvejen, og derfor ikke kan bruges
@@ -42,11 +44,13 @@ public static class Program
 
         var logger = new PlaintextLogger(configManager);
         var console = new SystemConsole();
+        
 
         var connectionString = configManager.GetValue("DatabaseConnectionString");
         var context = new GdprMetadataContext(connectionString);
+        var dbConnection = new SQLiteConnection(connectionString);
 
-        AddStructureToDatabaseIfNotExists(new SQLiteConnection(connectionString), context);
+        AddStructureToDatabaseIfNotExists(dbConnection, context);
 
         var individualMapper = new Mapper<Individual>(context);
         var personalDataColumnMapper = new Mapper<PersonalDataColumn>(context);
@@ -57,12 +61,14 @@ public static class Program
         var processingMapper = new Mapper<Processing>(context);
         var personalDataMapper = new Mapper<PersonalData>(context);
 
+        var vacuumer = new Vacuumer(personalDataColumnMapper, new SqliteQueryExecutor(dbConnection));
+
         var individualsManager = new IndividualsManager(individualMapper);
         var personalDataManager = new PersonalDataManager(personalDataColumnMapper, purposeMapper, originMapper,
             personalDataMapper, individualMapper);
         var purposesManager = new PurposeManager(purposeMapper, deleteConditionMapper);
         var originsManager = new OriginsManager(originMapper);
-        var vacuumingRulesManager = new VacuumingRuleManager(vacuumingRuleMapper, purposeMapper);
+        var vacuumingRulesManager = new VacuumingRuleManager(vacuumingRuleMapper, purposeMapper, vacuumer);
         var deleteConditionsManager = new DeleteConditionsManager(deleteConditionMapper);
         var processingsManager = new ProcessingsManager(processingMapper, purposeMapper, personalDataColumnMapper);
 
@@ -74,12 +80,16 @@ public static class Program
         var decoratedDeleteConditionsManager = new DeleteConditionsManagerDecorator(deleteConditionsManager, logger);
         var decoratedProcessingsManager = new ProcessingsManagerDecorator(processingsManager, logger);
 
-        var cli = CommandLineInterfaceBuilder
+        var command = CommandLineInterfaceBuilder
             .Build(
                 console, decoratedIndividualsManager, decoratedPersonalDataManager,
                 decoratedPurposesManager, decoratedOriginsManager, decoratedVacuumingRulesManager,
                 decoratedDeleteConditionsManager, decoratedProcessingsManager, logger, configManager
             );
+
+        var cli = new CommandLineBuilder(command)
+            .UseHelp("help", "h", "?")
+            .Build();
 
         Run(cli);
     }
@@ -90,14 +100,15 @@ public static class Program
             CreateStatementManipulator.UpdateCreationScript(context.Database.GenerateCreateScript()));
     }
 
-    private static void Run(Command cli)
+    private static void Run(Parser cli)
     {
         while (true)
         {
             try
             {
-                Console.Write("$: ");
-                var command = Console.ReadLine() ?? "";
+                Console.Write("\n$: ");
+                var command = (Console.ReadLine() ?? "").Trim();
+                
                 if (!string.IsNullOrEmpty(command))
                 {
                     cli.Invoke(command);

@@ -5,16 +5,13 @@ namespace GraphManipulation.Vacuuming;
 
 public class Vacuumer : IVacuumer
 {
-    private readonly IMapper<PersonalDataColumn>? _personDataColumnMapper;
+    private readonly IMapper<PersonalDataColumn> _personDataColumnMapper;
     private readonly IQueryExecutor _queryExecutor;
-    private readonly IMapper<VacuumingRule> _vacuumingRuleMapper;
 
-    public Vacuumer(IMapper<PersonalDataColumn>? personDataColumnMapper, IQueryExecutor queryExecutor,
-        IMapper<VacuumingRule> vacuumingRuleMapper)
+    public Vacuumer(IMapper<PersonalDataColumn> personDataColumnMapper, IQueryExecutor queryExecutor)
     {
         _personDataColumnMapper = personDataColumnMapper;
         _queryExecutor = queryExecutor;
-        _vacuumingRuleMapper = vacuumingRuleMapper;
     }
 
     public IEnumerable<DeletionExecution> GenerateUpdateStatement(string predefinedExpirationDate = "")
@@ -22,7 +19,7 @@ public class Vacuumer : IVacuumer
         return _personDataColumnMapper.Find(_ => true).Select(CreateDeletionExecution).ToList();
     }
 
-    private DeletionExecution CreateDeletionExecution(PersonalDataColumn personDataColumn)
+    private static DeletionExecution CreateDeletionExecution(PersonalDataColumn personDataColumn)
     {
         DeletionExecution deletionExecution = new();
         var logicOperator = " AND ";
@@ -75,7 +72,7 @@ public class Vacuumer : IVacuumer
     /// </summary>
     /// <param name="vacuumingRules"></param>
     /// <returns></returns>
-    public IEnumerable<DeletionExecution> RunVacuumingRules(IEnumerable<VacuumingRule> vacuumingRules)
+    public IEnumerable<DeletionExecution> ExecuteVacuumingRules(IEnumerable<VacuumingRule> vacuumingRules)
     {
         List<DeletionExecution> executions = new List<DeletionExecution>();
 
@@ -110,61 +107,8 @@ public class Vacuumer : IVacuumer
 
         return false;
     }
-
-    /// <summary>
-    /// Same as Execute
-    /// </summary>
-    public void RunAllVacuumingRules()
-    {
-        // TODO Find ud af om vi kalder den RunAll eller Execute.
-        Execute();
-    }
-
-    public VacuumingRule AddVacuumingRule(string ruleName, string interval, string description,
-        List<Purpose>? purposes = null)
-    {
-        purposes ??= new List<Purpose>();
-        VacuumingRule? vacuumingRule = new(description, ruleName, interval, purposes);
-        return _vacuumingRuleMapper.Insert(vacuumingRule);
-    }
-
-    public void UpdateVacuumingRule(VacuumingRule vacuumingRule, string newName = "", string newDescription = "",
-        string newInterval = "")
-    {
-        if (newName != "")
-        {
-            vacuumingRule.Name = newName;
-        }
-
-        if (newDescription != "")
-        {
-            vacuumingRule.Description = newDescription;
-        }
-
-        if (newInterval != "")
-        {
-            vacuumingRule.Interval = newInterval;
-        }
-
-        _vacuumingRuleMapper.Update(vacuumingRule);
-    }
-
-    public void DeleteVacuumingRule(VacuumingRule vacuumingRule)
-    {
-        _vacuumingRuleMapper.Delete(vacuumingRule);
-    }
-
-    public VacuumingRule? GetVacuumingRule(int ruleId)
-    {
-        return _vacuumingRuleMapper.FindSingle(vacuumingRule => vacuumingRule.Id == ruleId);
-    }
-
-    public IEnumerable<VacuumingRule> GetAllVacuumingRules()
-    {
-        return _vacuumingRuleMapper.Find(_ =>true);
-    }
-
-    private string ReplaceLastOccurrenceOfString(string inputString, string occurrenceToReplace,
+    
+    private static string ReplaceLastOccurrenceOfString(string inputString, string occurrenceToReplace,
         string replaceWith = ";")
     {
         var place = inputString.LastIndexOf(occurrenceToReplace, StringComparison.Ordinal);
