@@ -158,14 +158,14 @@ public static class PurposesCommandBuilder
     private static Option<T> BuildLegallyRequiredOption<T>()
     {
         return OptionBuilder
-            .CreateOption<T>("--legally-required")
-            .WithAlias("-lr");
+            .CreateOption<T>(CommandNamer.LegallyRequiredOption)
+            .WithAlias(CommandNamer.LegallyRequiredOptionAlias);
     }
 
     private static Option<string> BuildDeleteConditionOption()
     {
         return OptionBuilder
-            .CreateOption<string>("--delete-condition-name")
-            .WithAlias("-dcn");
+            .CreateOption<string>(CommandNamer.DeleteConditionNameOption)
+            .WithAlias(CommandNamer.DeleteConditionNameOptionAlias);
     }
 }
