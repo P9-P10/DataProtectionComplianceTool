@@ -13,15 +13,13 @@ namespace Test.Vacuuming;
 public class VacuumerTest
 {
     private Vacuumer VacuumInstantiate(TestPersonalDataColumnMapper? personDataColumnService = null,
-        IQueryExecutor? queryExecutor = null, IMapper<VacuumingRule> vacuumingRuleMapper = null)
+        IQueryExecutor? queryExecutor = null)
     {
         personDataColumnService ??= new TestPersonalDataColumnMapper();
 
         queryExecutor ??= new TestQueryExecutor();
 
-        vacuumingRuleMapper ??= new Mapper<VacuumingRule>(new GdprMetadataContext(""));
-
-        Vacuumer vacuumer = new(personDataColumnService, queryExecutor, vacuumingRuleMapper);
+        Vacuumer vacuumer = new(personDataColumnService, queryExecutor);
         return vacuumer;
     }
 
@@ -128,139 +126,6 @@ public class VacuumerTest
     }
 
     [Fact]
-    public void TestAddVacuumingRule_Adds_Correct_Rule()
-    {
-        TestVacuumingRuleMapper testVacuumingRuleMapper = new();
-        Vacuumer vacuumer = VacuumInstantiate(vacuumingRuleMapper: testVacuumingRuleMapper);
-
-        VacuumingRule actual = vacuumer.AddVacuumingRule("Rule", "2y 5d", "Description");
-
-        VacuumingRule? expected = new(0, "Description", "Rule", "2y 5d", new List<Purpose>());
-        Assert.True(testVacuumingRuleMapper.FetchVacuumingRules().ToList().Count == 1);
-        Assert.Contains(expected, testVacuumingRuleMapper.FetchVacuumingRules());
-        Assert.Equal(expected, actual);
-    }
-
-    [Fact]
-    public void TestUpdateVacuumingRule_Updates_Values()
-    {
-        TestVacuumingRuleMapper testVacuumingRuleMapper = new();
-        Vacuumer vacuumer = VacuumInstantiate(vacuumingRuleMapper: testVacuumingRuleMapper);
-        VacuumingRule oldRule = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
-
-        vacuumer.UpdateVacuumingRule(oldRule, newName: "NewName", newDescription: "Description", newInterval: "2y 20d");
-
-
-        VacuumingRule? expected = new(0, "Description", "NewName", "2y 20d");
-        VacuumingRule? oldUnexpected = new(0, "Rule", "Purpose", "2y 5d");
-
-        List<VacuumingRule> storedRules = testVacuumingRuleMapper.FetchVacuumingRules();
-        Assert.DoesNotContain(oldUnexpected, storedRules);
-        Assert.Contains(expected, storedRules);
-        Assert.Single(storedRules);
-    }
-
-    [Fact]
-    public void TestUpdateVacuumingRule_Only_Updates_Specified_Values()
-    {
-        TestVacuumingRuleMapper testVacuumingRuleMapper = new();
-        Vacuumer vacuumer = VacuumInstantiate(vacuumingRuleMapper: testVacuumingRuleMapper);
-        VacuumingRule oldVacuumingRule = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
-
-        vacuumer.UpdateVacuumingRule(oldVacuumingRule, newDescription: "NewDescription", newInterval: "2y 20d",
-            newName: "Purpose");
-
-
-        VacuumingRule? expected = new(0, "NewDescription", "Purpose", "2y 20d");
-        VacuumingRule? oldUnexpected = new(0, "Rule", "Purpose", "2y 5d");
-
-        List<VacuumingRule> storedRules = testVacuumingRuleMapper.FetchVacuumingRules();
-        Assert.DoesNotContain(oldUnexpected, storedRules);
-        Assert.Contains(expected, storedRules);
-    }
-
-    [Fact]
-    public void TestUpdateVacuumingRule_Updates_Values_Multiple_Rules()
-    {
-        TestVacuumingRuleMapper testVacuumingRuleMapper = new();
-        Vacuumer vacuumer = VacuumInstantiate(vacuumingRuleMapper: testVacuumingRuleMapper);
-        VacuumingRule oldVacuumingRule = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
-        vacuumer.AddVacuumingRule("AnotherRule", "AnotherPurpose", "2y 5d");
-
-        vacuumer.UpdateVacuumingRule(oldVacuumingRule, newDescription: "NewDescription", newInterval: "2y 20d",
-            newName: "NewPurpose");
-
-
-        VacuumingRule? expected = new(0, "NewDescription", "NewPurpose", "2y 20d");
-        VacuumingRule? oldUnexpected = new(0, "Rule", "Purpose", "2y 5d");
-
-
-        List<VacuumingRule> storedRules = testVacuumingRuleMapper.FetchVacuumingRules();
-        Assert.DoesNotContain(oldUnexpected, storedRules);
-        Assert.Contains(expected, storedRules);
-        Assert.Equal(2, storedRules.Count);
-    }
-
-    [Fact]
-    public void TestDeleteVacuumingRule_Removes_Rule()
-    {
-        TestVacuumingRuleMapper testVacuumingRuleMapper = new();
-        Vacuumer vacuumer = VacuumInstantiate(vacuumingRuleMapper: testVacuumingRuleMapper);
-        VacuumingRule oldVacuumingRule = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
-
-        vacuumer.DeleteVacuumingRule(oldVacuumingRule);
-
-
-        List<VacuumingRule> storedRules = testVacuumingRuleMapper.FetchVacuumingRules();
-        VacuumingRule? oldUnexpected = new("Purpose", "Rule", "2y 5d");
-        Assert.DoesNotContain(oldUnexpected, storedRules);
-        Assert.Empty(storedRules);
-    }
-
-
-    [Fact]
-    public void TestGetAllVacuumingRules_Returns_Correct_values_Single_Element_In_List()
-    {
-        TestVacuumingRuleMapper testVacuumingRuleMapper = new();
-        Vacuumer vacuumer = VacuumInstantiate(vacuumingRuleMapper: testVacuumingRuleMapper);
-        VacuumingRule rule = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
-
-        List<VacuumingRule> rules = vacuumer.GetAllVacuumingRules().ToList();
-
-
-        Assert.Contains(rule, rules);
-        Assert.Single(rules);
-    }
-
-    [Fact]
-    public void TestGetAllVacuumingRules_Returns_Correct_values_Multiple_Elements_In_List()
-    {
-        TestVacuumingRuleMapper testVacuumingRuleMapper = new();
-        Vacuumer vacuumer = VacuumInstantiate(vacuumingRuleMapper: testVacuumingRuleMapper);
-        VacuumingRule rule = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
-        VacuumingRule secondRule = vacuumer.AddVacuumingRule("SecondRUle", "SecondInterval", "Description");
-
-        List<VacuumingRule> rules = vacuumer.GetAllVacuumingRules().ToList();
-
-
-        Assert.Contains(rule, rules);
-        Assert.Contains(secondRule, rules);
-    }
-
-    [Fact]
-    public void TestGetVacuumingRule_Returns_Correct_Value()
-    {
-        TestVacuumingRuleMapper testVacuumingRuleMapper = new();
-        Vacuumer vacuumer = VacuumInstantiate(vacuumingRuleMapper: testVacuumingRuleMapper);
-        VacuumingRule rule = vacuumer.AddVacuumingRule("Rule", "Purpose", "2y 5d");
-
-        VacuumingRule foundRule = vacuumer.GetVacuumingRule(0);
-
-
-        Assert.Equal(rule, foundRule);
-    }
-
-    [Fact]
     public void TestRunVacuumingRule_Executes_Correct_Execution()
     {
         TestPersonalDataColumnMapper? personalDataColumnMapper = new();
@@ -269,7 +134,7 @@ public class VacuumerTest
         VacuumingRule vacuumingRule = VacuumingRuleMaker("Name", "Description", "2d 5y");
 
         List<DeletionExecution> executions =
-            vacuumer.RunVacuumingRules(new List<VacuumingRule>() {vacuumingRule}).ToList();
+            vacuumer.ExecuteVacuumingRules(new List<VacuumingRule>() {vacuumingRule}).ToList();
 
 
         DeletionExecution expected = DeletionExecutionMaker("UPDATE Table SET Column = Null WHERE (Condition);");
@@ -290,7 +155,7 @@ public class VacuumerTest
 
 
         List<DeletionExecution> executions =
-            vacuumer.RunVacuumingRules(new List<VacuumingRule>() {vacuumingRule}).ToList();
+            vacuumer.ExecuteVacuumingRules(new List<VacuumingRule>() {vacuumingRule}).ToList();
 
 
         DeletionExecution expected = DeletionExecutionMaker("UPDATE Table SET Column = Null WHERE (Condition);");

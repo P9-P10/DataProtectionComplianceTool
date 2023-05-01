@@ -14,6 +14,7 @@ using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
+using GraphManipulation.Vacuuming;
 using Microsoft.EntityFrameworkCore;
 
 namespace GraphManipulation;
@@ -42,11 +43,13 @@ public static class Program
 
         var logger = new PlaintextLogger(configManager);
         var console = new SystemConsole();
+        
 
         var connectionString = configManager.GetValue("DatabaseConnectionString");
         var context = new GdprMetadataContext(connectionString);
+        var dbConnection = new SQLiteConnection(connectionString);
 
-        AddStructureToDatabaseIfNotExists(new SQLiteConnection(connectionString), context);
+        AddStructureToDatabaseIfNotExists(dbConnection, context);
 
         var individualMapper = new Mapper<Individual>(context);
         var personalDataColumnMapper = new Mapper<PersonalDataColumn>(context);
@@ -57,12 +60,14 @@ public static class Program
         var processingMapper = new Mapper<Processing>(context);
         var personalDataMapper = new Mapper<PersonalData>(context);
 
+        var vacuumer = new Vacuumer(personalDataColumnMapper, new SqliteQueryExecutor(dbConnection));
+
         var individualsManager = new IndividualsManager(individualMapper);
         var personalDataManager = new PersonalDataManager(personalDataColumnMapper, purposeMapper, originMapper,
             personalDataMapper, individualMapper);
         var purposesManager = new PurposeManager(purposeMapper, deleteConditionMapper);
         var originsManager = new OriginsManager(originMapper);
-        var vacuumingRulesManager = new VacuumingRuleManager(vacuumingRuleMapper, purposeMapper);
+        var vacuumingRulesManager = new VacuumingRuleManager(vacuumingRuleMapper, purposeMapper, vacuumer);
         var deleteConditionsManager = new DeleteConditionsManager(deleteConditionMapper);
         var processingsManager = new ProcessingsManager(processingMapper, purposeMapper, personalDataColumnMapper);
 

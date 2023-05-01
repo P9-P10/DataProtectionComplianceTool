@@ -2,18 +2,22 @@
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
 using GraphManipulation.Models.Interfaces;
+using GraphManipulation.Vacuuming;
 
 namespace GraphManipulation.Managers;
 
 public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumingRulesManager
 {
-    private IMapper<VacuumingRule> _ruleMapper;
-    private IMapper<Purpose> _purposeMapper;
+    private readonly IMapper<VacuumingRule> _ruleMapper;
+    private readonly IMapper<Purpose> _purposeMapper;
+    private readonly IVacuumer _vacuumer;
+    
 
-    public VacuumingRuleManager(IMapper<VacuumingRule> ruleMapper,IMapper<Purpose> purposeMapper) : base(ruleMapper)
+    public VacuumingRuleManager(IMapper<VacuumingRule> ruleMapper,IMapper<Purpose> purposeMapper, IVacuumer vacuumer) : base(ruleMapper)
     {
         _ruleMapper = ruleMapper;
         _purposeMapper = purposeMapper;
+        _vacuumer = vacuumer;
     }
 
     public IEnumerable<IVacuumingRule> GetAll() => base.GetAll();
@@ -37,7 +41,10 @@ public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumin
 
     public void ExecuteRule(string name)
     {
-        throw new NotImplementedException();
+        var rule = base.Get(name);
+        if (rule is null) return;
+
+        _vacuumer.ExecuteVacuumingRules(new[] { rule });
     }
 
     public void AddPurpose(string name, string purposeName)
