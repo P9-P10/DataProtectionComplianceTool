@@ -99,7 +99,10 @@ public static class Program
             try
             {
                 var command = Console.ReadLine() ?? "";
-                cli.Invoke(command);
+                if (!string.IsNullOrEmpty(command))
+                {
+                    cli.Invoke(command);
+                }
             }
             catch (Exception e)
             {
