@@ -108,7 +108,12 @@ public static class Program
             try
             {
                 Console.Write("\n$: ");
-                var command = Console.ReadLine() ?? "";
+                var command = (Console.ReadLine() ?? "").Trim();
+                
+                if (command is "help" or "h" or "?")
+                {
+                    cli.Invoke("--help");
+                }
                 if (!string.IsNullOrEmpty(command))
                 {
                     cli.Invoke(command);
