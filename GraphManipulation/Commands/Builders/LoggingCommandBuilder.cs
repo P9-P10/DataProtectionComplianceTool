@@ -44,7 +44,7 @@ public static class LoggingCommandBuilder
     private static Option<NumberRange> CreateNumbersOption()
     {
         return new Option<NumberRange>(
-                CommandNamer.NumbersOption,
+                OptionNamer.NumbersOption,
                 result =>
                 {
                     if (result.Tokens.Count == 2)
@@ -59,15 +59,15 @@ public static class LoggingCommandBuilder
                         }
 
                         result.ErrorMessage =
-                            $"{CommandNamer.NumbersOption} require input to be integers, which \"{startString} {endString}\" is not";
+                            $"{OptionNamer.NumbersOption} require input to be integers, which \"{startString} {endString}\" is not";
                     }
 
-                    result.ErrorMessage = $"{CommandNamer.NumbersOption} requires two arguments";
+                    result.ErrorMessage = $"{OptionNamer.NumbersOption} requires two arguments";
                     return new NumberRange(0, 0);
                 })
-            .WithAlias(CommandNamer.NumbersOptionAlias)
+            .WithAlias(OptionNamer.NumbersOptionAlias)
             .WithDescription("Limits results to the specified numbers range (inclusive).\n" +
-                             $"Must provide two numbers as range (e.g. {CommandNamer.NumbersOptionAlias} 3 6), first minimum then maximum")
+                             $"Must provide two numbers as range (e.g. {OptionNamer.NumbersOptionAlias} 3 6), first minimum then maximum")
             .WithArity(ExactlyTwo)
             .WithAllowMultipleArguments(true)
             .WithGetDefaultValue(() => new NumberRange(int.MinValue, int.MaxValue));
@@ -76,7 +76,7 @@ public static class LoggingCommandBuilder
     private static Option<TimeRange> CreateDateTimeOption()
     {
         return new Option<TimeRange>(
-                CommandNamer.DateTimeOption,
+                OptionNamer.DateTimeOption,
                 result =>
                 {
                     if (result.Tokens.Count == 2)
@@ -91,15 +91,15 @@ public static class LoggingCommandBuilder
                         }
 
                         result.ErrorMessage =
-                            $"{CommandNamer.DateTimeOption} require input to be date times, which \"{startString} {endString}\" is not";
+                            $"{OptionNamer.DateTimeOption} require input to be date times, which \"{startString} {endString}\" is not";
                     }
 
                     result.ErrorMessage = "--numbers requires two arguments";
                     return new TimeRange(DateTime.Now, DateTime.Now);
                 })
-            .WithAlias(CommandNamer.DateTimeOptionAlias)
+            .WithAlias(OptionNamer.DateTimeOptionAlias)
             .WithDescription("Limits results to the specified time range (inclusive).\n" +
-                             $"Must provide two date times as range (e.g. {CommandNamer.DateTimeOptionAlias} 2000/04/28T12:34:56 3000/06/16T09:38:12), first minimum then maximum")
+                             $"Must provide two date times as range (e.g. {OptionNamer.DateTimeOptionAlias} 2000/04/28T12:34:56 3000/06/16T09:38:12), first minimum then maximum")
             .WithArity(ExactlyTwo)
             .WithAllowMultipleArguments(true)
             .WithGetDefaultValue(() => new TimeRange(DateTime.MinValue, DateTime.MaxValue));
@@ -107,8 +107,8 @@ public static class LoggingCommandBuilder
 
     private static Option<IEnumerable<LogType>> CreateLogTypesOption()
     {
-        return OptionBuilder.CreateOption<IEnumerable<LogType>>(CommandNamer.LogsTypeOption)
-            .WithAlias(CommandNamer.LogsTypeOptionAlias)
+        return OptionBuilder.CreateOption<IEnumerable<LogType>>(OptionNamer.LogsTypeOption)
+            .WithAlias(OptionNamer.LogsTypeOptionAlias)
             .WithDescription("Limits results to the specified log type(s).")
             .WithArity(ArgumentArity.OneOrMore)
             .WithAllowMultipleArguments(true)
@@ -118,8 +118,8 @@ public static class LoggingCommandBuilder
 
     private static Option<IEnumerable<LogMessageFormat>> CreateLogFormatOptions()
     {
-        return OptionBuilder.CreateOption<IEnumerable<LogMessageFormat>>(CommandNamer.LogFormatOption)
-            .WithAlias(CommandNamer.LogFormatOptionAlias)
+        return OptionBuilder.CreateOption<IEnumerable<LogMessageFormat>>(OptionNamer.LogFormatOption)
+            .WithAlias(OptionNamer.LogFormatOptionAlias)
             .WithDescription("Limits results to the specified log format(s)")
             .WithArity(ArgumentArity.OneOrMore)
             .WithAllowMultipleArguments(true)

@@ -128,7 +128,7 @@ public static class DeleteConditionsCommandBuilder
     private static Option<T> BuildConditionOption<T>()
     {
         return OptionBuilder
-            .CreateOption<T>(CommandNamer.ConditionOption)
-            .WithAlias(CommandNamer.ConditionOptionAlias);
+            .CreateOption<T>(OptionNamer.ConditionOption)
+            .WithAlias(OptionNamer.ConditionOptionAlias);
     }
 }

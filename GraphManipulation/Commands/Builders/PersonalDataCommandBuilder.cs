@@ -35,8 +35,8 @@ public static class PersonalDataCommandBuilder
             .WithOption(out var pairOption, BuildPairOption())
             .WithOption(out var joinConditionOption,
                 OptionBuilder
-                    .CreateOption<string>(CommandNamer.JoinConditionOption)
-                    .WithAlias(CommandNamer.JoinConditionOptionAlias)
+                    .CreateOption<string>(OptionNamer.JoinConditionOption)
+                    .WithAlias(OptionNamer.JoinConditionOptionAlias)
                     .WithDescription(
                         "The condition under which the given table can be joined with the individuals table")
                     .WithIsRequired(true))
@@ -162,8 +162,8 @@ public static class PersonalDataCommandBuilder
                     .WithIsRequired(true))
             .WithOption(out var originOption,
                 OptionBuilder
-                    .CreateOption<string>(CommandNamer.OriginOption)
-                    .WithAlias(CommandNamer.OriginOptionAlias)
+                    .CreateOption<string>(OptionNamer.OriginOption)
+                    .WithAlias(OptionNamer.OriginOptionAlias)
                     .WithDescription("The origin from which the personal data was retrieved")
                     .WithIsRequired(true))
             .WithHandler(context => Handlers.SetHandlerKey(context, console,
@@ -210,8 +210,8 @@ public static class PersonalDataCommandBuilder
     private static Option<IEnumerable<string>> BuildPurposeListOption()
     {
         return OptionBuilder
-            .CreateOption<IEnumerable<string>>(CommandNamer.PurposeOption)
-            .WithAlias(CommandNamer.PurposeOptionAlias)
+            .CreateOption<IEnumerable<string>>(OptionNamer.PurposeOption)
+            .WithAlias(OptionNamer.PurposeOptionAlias)
             .WithDescription("The purpose(s) under which the personal data is stored")
             .WithIsRequired(true)
             .WithAllowMultipleArguments(true)
