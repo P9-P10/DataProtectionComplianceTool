@@ -35,6 +35,11 @@ public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumin
         _ruleMapper.Update(rule);
     }
 
+    public void ExecuteRule(string name)
+    {
+        throw new NotImplementedException();
+    }
+
     public void AddPurpose(string name, string purposeName)
     {
         VacuumingRule? rule = base.Get(name);
@@ -58,6 +63,4 @@ public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumin
         rule.Description = description;
         _ruleMapper.Update(rule);
     }
-    
-    
 }

@@ -12,4 +12,5 @@ public interface IVacuumingRulesManager :
 {
     public void AddVacuumingRule(string name, string interval, string purposeName);
     public void UpdateInterval(string name, string interval);
+    public void ExecuteRule(string name);
 }
