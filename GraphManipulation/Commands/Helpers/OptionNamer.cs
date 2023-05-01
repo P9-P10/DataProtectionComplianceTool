@@ -2,39 +2,54 @@
 
 public static class OptionNamer
 {
-    public const string LogsTypeOption = "--log-types";
-    public const string LogsTypeOptionAlias = "-lt";
+    public const string LogsType = "--log-types";
+    public const string LogsTypeAlias = "-lt";
 
-    public const string LogFormatOption = "--log-formats";
-    public const string LogFormatOptionAlias = "-lf";
+    public const string LogFormat = "--log-formats";
+    public const string LogFormatAlias = "-lf";
 
-    public const string DateTimeOption = "--date-times";
-    public const string DateTimeOptionAlias = "-d";
+    public const string DateTime = "--date-times";
+    public const string DateTimeAlias = "-d";
 
-    public const string NumbersOption = "--numbers";
-    public const string NumbersOptionAlias = "-n";
+    public const string Numbers = "--numbers";
+    public const string NumbersAlias = "-n";
 
-    public const string OriginOption = "--origin";
-    public const string OriginOptionAlias = "-o";
+    public const string Origin = "--origin";
+    public const string OriginAlias = "-o";
 
-    public const string PurposeOption = "--purpose";
-    public const string PurposeOptionAlias = "-p";
+    public const string Purpose = "--purpose";
+    public const string PurposeAlias = "-p";
 
-    public const string JoinConditionOption = "--join-condition";
-    public const string JoinConditionOptionAlias = "-jc";
+    public const string JoinCondition = "--join-condition";
+    public const string JoinConditionAlias = "-jc";
 
-    public const string LegallyRequiredOption = "--legally-required";
-    public const string LegallyRequiredOptionAlias = "-lr";
+    public const string LegallyRequired = "--legally-required";
+    public const string LegallyRequiredAlias = "-lr";
 
-    public const string DeleteConditionNameOption = "--delete-condition-name";
-    public const string DeleteConditionNameOptionAlias = "-dcn";
+    public const string DeleteConditionName = "--delete-condition-name";
+    public const string DeleteConditionNameAlias = "-dcn";
 
-    public const string ConditionOption = "--condition";
-    public const string ConditionOptionAlias = "-c";
+    public const string Condition = "--condition";
+    public const string ConditionAlias = "-c";
 
-    public const string IntervalOption = "--interval";
-    public const string IntervalOptionAlias = "-i";
+    public const string Interval = "--interval";
+    public const string IntervalAlias = "-i";
 
-    public const string RulesOption = "--rules";
-    public const string RulesOptionAlias = "-rs";
+    public const string Rules = "--rules";
+    public const string RulesAlias = "-rs";
+
+    public const string Id = "--id";
+    public const string IdAlias = "-i";
+
+    public const string Description = "--description";
+    public const string DescriptionAlias = "-d";
+
+    public const string TableColumn = "--table-column";
+    public const string TableColumnAlias = "-tc";
+
+    public const string Name = "--name";
+    public const string NameAlias = "-n";
+
+    public const string NewName = "--new-name";
+    public const string NewNameAlias = "-nn";
 }
