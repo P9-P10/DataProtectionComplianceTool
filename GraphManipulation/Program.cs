@@ -101,7 +101,7 @@ public static class Program
         {
             try
             {
-                Console.Write("$: ");
+                Console.Write("\n$: ");
                 var command = Console.ReadLine() ?? "";
                 if (!string.IsNullOrEmpty(command))
                 {
