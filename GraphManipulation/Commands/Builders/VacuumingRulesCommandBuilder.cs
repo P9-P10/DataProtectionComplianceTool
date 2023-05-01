@@ -33,8 +33,8 @@ public static class VacuumingRulesCommandBuilder
             .WithOption(out var intervalOption, BuildIntervalOption().WithIsRequired(true))
             .WithOption(out var purposeOption,
                 OptionBuilder
-                    .CreateOption<string>("--purpose")
-                    .WithAlias("-p")
+                    .CreateOption<string>(CommandNamer.PurposeOption)
+                    .WithAlias(CommandNamer.PurposeOptionAlias)
                     .WithDescription("The purpose whose delete conditions should be executed by the rule")
                     .WithIsRequired(true))
             .WithOption(out var descriptionOption,
@@ -119,7 +119,7 @@ public static class VacuumingRulesCommandBuilder
         return CommandBuilder
             .BuildListCommand()
             .WithDescription("Lists the vacuuming rules currently in the system")
-            .WithHandler(() => Handlers.ListHandler(console, vacuumingRulesManager,"Name, Description, Interval, Purposes"));
+            .WithHandler(() => Handlers.ListHandler(console, vacuumingRulesManager,CommandHeader.VacuumingHeader));
     }
 
     private static Command Show(IConsole console, IVacuumingRulesManager vacuumingRulesManager)
@@ -134,13 +134,13 @@ public static class VacuumingRulesCommandBuilder
     private static Command Execute(IConsole console, IVacuumingRulesManager vacuumingRulesManager)
     {
         return CommandBuilder
-            .CreateCommand("execute")
-            .WithAlias("e")
+            .CreateCommand(CommandNamer.ExecuteCommand)
+            .WithAlias(CommandNamer.ExecuteAlias)
             .WithDescription("Executes the given vacuuming rule(s)")
             .WithOption(out var rulesOption,
                 OptionBuilder
-                    .CreateOption<IEnumerable<string>>("--rules")
-                    .WithAlias("-rs")
+                    .CreateOption<IEnumerable<string>>(CommandNamer.RulesOption)
+                    .WithAlias(CommandNamer.RulesOptionAlias)
                     .WithDescription("The name(s) of the vacuuming rule(s) that should be executed")
                     .WithIsRequired(true)
                     .WithArity(ArgumentArity.OneOrMore)
@@ -195,8 +195,8 @@ public static class VacuumingRulesCommandBuilder
     private static Option<string> BuildIntervalOption()
     {
         return OptionBuilder
-            .CreateOption<string>("--interval")
-            .WithAlias("-i")
+            .CreateOption<string>(CommandNamer.IntervalOption)
+            .WithAlias(CommandNamer.IntervalOptionAlias)
             .WithDescription("The interval in which the vacuuming rule should be executed");
     }
     

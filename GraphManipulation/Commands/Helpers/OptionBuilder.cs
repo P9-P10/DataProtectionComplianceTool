@@ -86,8 +86,8 @@ public static class OptionBuilder
     
     public static Option<IEnumerable<string>> CreatePurposeListOption()
     {
-        return CreateOption<IEnumerable<string>>("--purposes")
-            .WithAlias("-ps")
+        return CreateOption<IEnumerable<string>>(CommandNamer.PurposeListOption)
+            .WithAlias(CommandNamer.PurposeListOptionAlias)
             .WithAllowMultipleArguments(true)
             .WithArity(ArgumentArity.OneOrMore);
     }

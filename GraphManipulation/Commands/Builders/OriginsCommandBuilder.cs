@@ -78,7 +78,7 @@ public static class OriginsCommandBuilder
         return CommandBuilder
             .BuildListCommand()
             .WithDescription("Lists the origins currently in the system")
-            .WithHandler(() => Handlers.ListHandler(console, originsManager,"TableName, ColumnName, JoinCondition, Description, Purposes"));
+            .WithHandler(() => Handlers.ListHandler(console, originsManager,CommandHeader.OriginsHeader));
     }
 
     private static Command Show(IConsole console, IOriginsManager originsManager)

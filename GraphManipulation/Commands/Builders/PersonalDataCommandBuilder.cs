@@ -35,8 +35,8 @@ public static class PersonalDataCommandBuilder
             .WithOption(out var pairOption, BuildPairOption())
             .WithOption(out var joinConditionOption,
                 OptionBuilder
-                    .CreateOption<string>("--join-condition")
-                    .WithAlias("-jc")
+                    .CreateOption<string>(CommandNamer.JoinConditionOption)
+                    .WithAlias(CommandNamer.JoinConditionOptionAlias)
                     .WithDescription(
                         "The condition under which the given table can be joined with the individuals table")
                     .WithIsRequired(true))
@@ -103,7 +103,7 @@ public static class PersonalDataCommandBuilder
             .BuildListCommand()
             .WithDescription("Lists the personal data currently managed by the system")
             .WithHandler(() => Handlers.ListHandler(console, personalDataManager,
-                "Table, Column, Join Condition, Description, Purposes"));
+                CommandHeader.PersonalDataHeader));
     }
 
     private static Command ShowPersonalData(IConsole console, IPersonalDataManager personalDataManager)
@@ -162,8 +162,8 @@ public static class PersonalDataCommandBuilder
                     .WithIsRequired(true))
             .WithOption(out var originOption,
                 OptionBuilder
-                    .CreateOption<string>("--origin")
-                    .WithAlias("-o")
+                    .CreateOption<string>(CommandNamer.OriginOption)
+                    .WithAlias(CommandNamer.OriginOptionAlias)
                     .WithDescription("The origin from which the personal data was retrieved")
                     .WithIsRequired(true))
             .WithHandler(context => Handlers.SetHandlerKey(context, console,

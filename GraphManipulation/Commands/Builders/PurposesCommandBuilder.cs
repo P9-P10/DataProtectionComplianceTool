@@ -75,7 +75,8 @@ public static class PurposesCommandBuilder
             .WithOption(out var descriptionOption,
                 OptionBuilder
                     .CreateDescriptionOption()
-                    .WithDescription("The new description of the purpose (Multiple words should be encased with \" \")"))
+                    .WithDescription(
+                        "The new description of the purpose (Multiple words should be encased with \" \")"))
             .WithOption(out var legallyRequiredOption,
                 BuildLegallyRequiredOption<bool>()
                     .WithDescription("The new value for if the purpose falls under any legal obligations"))
@@ -135,7 +136,7 @@ public static class PurposesCommandBuilder
         return CommandBuilder
             .BuildListCommand()
             .WithDescription("Lists the purposes currently in the system")
-            .WithHandler(() => Handlers.ListHandler(console, purposesManager,"Name, Description, Legally Required, Deletion Conditions, Columns, Rules"));
+            .WithHandler(() => Handlers.ListHandler(console, purposesManager, CommandHeader.PurposesHeader));
     }
 
     private static Command ShowPurpose(IConsole console, IPurposesManager purposesManager)
@@ -157,14 +158,14 @@ public static class PurposesCommandBuilder
     private static Option<T> BuildLegallyRequiredOption<T>()
     {
         return OptionBuilder
-            .CreateOption<T>("--legally-required")
-            .WithAlias("-lr");
+            .CreateOption<T>(CommandNamer.LegallyRequiredOption)
+            .WithAlias(CommandNamer.LegallyRequiredOptionAlias);
     }
 
     private static Option<string> BuildDeleteConditionOption()
     {
         return OptionBuilder
-            .CreateOption<string>("--delete-condition-name")
-            .WithAlias("-dcn");
+            .CreateOption<string>(CommandNamer.DeleteConditionNameOption)
+            .WithAlias(CommandNamer.DeleteConditionNameOptionAlias);
     }
 }

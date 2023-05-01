@@ -26,7 +26,7 @@ public static class IndividualsCommandBuilder
             .WithOption(out var pairOption,
                 OptionBuilder
                     .CreateTableColumnPairOption()
-                    .WithDescription("The table and column in which the individuals can be found"))
+                    .WithDescription("The table and column in which the individuals can be found, should be written as: Table Column"))
             .WithHandler(context =>
                 Handlers.SetHandler(context, console, individualsManager.SetIndividualsSource, pairOption));
     }
@@ -44,7 +44,7 @@ public static class IndividualsCommandBuilder
         return CommandBuilder
             .BuildListCommand()
             .WithDescription("Lists all individuals currently in the system")
-            .WithHandler(() => Handlers.ListHandler(console, individualsManager,"Id"));
+            .WithHandler(() => Handlers.ListHandler(console, individualsManager,CommandHeader.IndividualsHeader));
     }
 
     private static Command ShowIndividual(IConsole console, IIndividualsManager individualsManager)
