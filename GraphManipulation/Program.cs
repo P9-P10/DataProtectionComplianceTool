@@ -17,11 +17,10 @@ using GraphManipulation.Logging;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
 using GraphManipulation.Vacuuming;
+using J2N.Text;
 using Microsoft.EntityFrameworkCore;
 
 namespace GraphManipulation;
-
-// TODO: Skal vi have en kommando til at eksekvere vacuuming? Hvis ja, så skal den laves
 
 // TODO: IVacuumingRulesManager kan nu tilføje nye purposes. Dette er ikke reflekteret i CLI.
 // TODO: Når navnet på en entity ændres, mangler der at blive tjekket om det nye navn eksisterer i forvejen, og derfor ikke kan bruges
@@ -89,7 +88,7 @@ public static class Program
             );
 
         var cli = new CommandLineBuilder(command)
-            .UseHelp()
+            .UseHelp("help", "h", "?")
             .Build();
 
         Run(cli);
@@ -110,10 +109,6 @@ public static class Program
                 Console.Write("\n$: ");
                 var command = (Console.ReadLine() ?? "").Trim();
                 
-                if (command is "help" or "h" or "?")
-                {
-                    cli.Invoke("--help");
-                }
                 if (!string.IsNullOrEmpty(command))
                 {
                     cli.Invoke(command);
