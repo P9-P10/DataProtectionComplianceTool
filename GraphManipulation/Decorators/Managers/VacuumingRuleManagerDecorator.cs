@@ -54,6 +54,11 @@ public class VacuumingRuleManagerDecorator : LoggingDecorator, IVacuumingRulesMa
         _manager.UpdateInterval(name, interval);
     }
 
+    public void ExecuteRule(string name)
+    {
+        _manager.ExecuteRule(name);
+    }
+
     public void AddPurpose(string name, string purposeName)
     {
         LogUpdate(name, new {Purpose = purposeName});

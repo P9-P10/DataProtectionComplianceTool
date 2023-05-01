@@ -16,7 +16,8 @@ public static class VacuumingRulesCommandBuilder
                 Update(console, vacuumingRulesManager),
                 Delete(console, vacuumingRulesManager),
                 List(console, vacuumingRulesManager),
-                Show(console, vacuumingRulesManager)
+                Show(console, vacuumingRulesManager),
+                Execute(console, vacuumingRulesManager)
             );
     }
 
@@ -126,6 +127,26 @@ public static class VacuumingRulesCommandBuilder
             .WithDescription("Shows information about the given vacuuming rule")
             .WithOption(out var nameOption, BuildNameOption())
             .WithHandler(context => Handlers.ShowHandler(context, console, vacuumingRulesManager, nameOption));
+    }
+
+    private static Command Execute(IConsole console, IVacuumingRulesManager vacuumingRulesManager)
+    {
+        return CommandBuilder
+            .CreateCommand("execute")
+            .WithAlias("e")
+            .WithDescription("Executes the given vacuuming rule(s)")
+            .WithOption(out var rulesOption,
+                OptionBuilder
+                    .CreateOption<IEnumerable<string>>("--rules")
+                    .WithAlias("-rs")
+                    .WithDescription("The name(s) of the vacuuming rule(s) that should be executed")
+                    .WithIsRequired(true)
+                    .WithArity(ArgumentArity.OneOrMore)
+                    .WithAllowMultipleArguments(true))
+            .WithHandler(context => Handlers.ExecuteHandlerList(context, console,
+                vacuumingRulesManager.ExecuteRule,
+                vacuumingRulesManager,
+                rulesOption));
     }
 
     private static Option<string> BuildNameOption()
