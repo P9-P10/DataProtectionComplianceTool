@@ -41,10 +41,16 @@ public class IndividualsCommandTest : CommandTest
         individualsManager
             .Setup(manager => manager.GetAll())
             .Returns(new List<IIndividual> {new Individual {Id = IndividualId}, new Individual()});
+        individualsManager
+            .Setup(manager => manager.GetIndividualsSource())
+            .Returns(TableColumnPair);
 
         return IndividualsCommandBuilder.Build(console, individualsManager.Object);
     }
 
+    private const string TableName = "tableName";
+    private const string ColumnName = "columnName";
+    private static readonly TableColumnPair TableColumnPair = new(TableName, ColumnName); 
 
     public class SetSource
     {
@@ -53,30 +59,59 @@ public class IndividualsCommandTest : CommandTest
         [Fact]
         public void Parses()
         {
-            VerifyCommand(BuildCli(), $"{CommandName} --table-column tableName columnName");
+            VerifyCommand(BuildCli(), $"{CommandName} --table-column {TableName} {ColumnName}");
         }
 
         [Fact]
         public void AliasParses()
         {
-            VerifyCommand(BuildCli(), $"{CommandName} -tc tableName columnName");
+            VerifyCommand(BuildCli(), $"{CommandName} -tc {TableName} {ColumnName}");
         }
 
         [Fact]
         public void MissingRequiredArgumentFails()
         {
-            VerifyCommand(BuildCli(), $"{CommandName} --table-column tableName", false);
+            VerifyCommand(BuildCli(), $"{CommandName} --table-column {TableName}", false);
         }
 
         [Fact]
         public void CallsManagerWithCorrectArguments()
         {
             BuildCli(out var individualsManagerMock)
-                .Invoke($"{CommandName} -tc tableName columnName");
+                .Invoke($"{CommandName} -tc {TableName} {ColumnName}");
+
+            individualsManagerMock.Verify(manager => manager.SetIndividualsSource(
+                It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair))));
+        }
+    }
+    
+    public class ShowSource
+    {
+        private const string CommandName = "show-source";
+
+        [Fact]
+        public void Parses()
+        {
+            VerifyCommand(BuildCli(), $"{CommandName}");
+        }
+
+        [Fact]
+        public void CallsManagerWithCorrectArguments()
+        {
+            BuildCli(out var individualsManagerMock)
+                .Invoke($"{CommandName}");
 
             individualsManagerMock.Verify(manager =>
-                manager.SetIndividualsSource(It.Is<TableColumnPair>(pair =>
-                    pair.TableName == "tableName" && pair.ColumnName == "columnName")));
+                manager.GetIndividualsSource());
+        }
+        
+        [Fact]
+        public void PrintsToConsole()
+        {
+            BuildCli(out _, out var console)
+                .Invoke($"{CommandName}");
+
+            console.Out.ToString().Should().Be(TableColumnPair.ToListing() + Environment.NewLine);
         }
     }
 
