@@ -152,7 +152,7 @@ public static class Program
         if (configManager.GetEmptyKeys().Count == 0) return true;
 
         Console.WriteLine(
-            $"Please fill {string.Join(",", configManager.GetEmptyKeys())} in config file located at: {configFilePath}");
+            $"Please fill {string.Join(", ", configManager.GetEmptyKeys())} in config file located at: {configFilePath}");
         return false;
     }
 }
