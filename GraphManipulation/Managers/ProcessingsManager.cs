@@ -36,15 +36,4 @@ public class ProcessingsManager : NamedEntityManager<Processing>, IProcessingsMa
         var column = _columnMapper.FindSingle(column => column.TableColumnPair == tableColumnPair);
         _processingMapper.Insert(new Processing { Name = name, Description = description, Purpose = purpose, PersonalDataColumn = column});
     }
-
-    public void UpdatePurpose(string name, TableColumnPair tableColumnPair, string purposeName)
-    {
-        var purpose = _purposeMapper.FindSingle(purpose => purpose.Name == purposeName);
-        var column = _columnMapper.FindSingle(column => column.TableColumnPair == tableColumnPair);
-
-        var processing = GetByName(name);
-        processing.PersonalDataColumn = column;
-        processing.Purpose = purpose;
-        _processingMapper.Update(processing);
-    }
 }
