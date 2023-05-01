@@ -20,7 +20,6 @@ using Symbol = Sharprompt.Symbol;
 
 namespace GraphManipulation;
 
-// TODO: Skal vi have en kommando til at sætte vores database op? Hvis ja, så skal den laves
 // TODO: Skal vi have en kommando til at eksekvere vacuuming? Hvis ja, så skal den laves
 
 // TODO: IProcessingManager skal ikke kunne opdatere purpose. Enten skal den funktionalitet helt væk (fjernes fra interfacen) eller også skal man kunne tilføje og fjerne flere purposes (på samme måde som i IPersonalDataManager)
@@ -38,18 +37,18 @@ public static class Program
     private static void Interactive()
     {
         ConsoleSetup();
-        
+
         if (!ConfigSetup(out var configManager))
         {
             return;
         }
-        
+
         var logger = new PlaintextLogger(configManager);
         var console = new SystemConsole();
 
         var connectionString = $"Data Source={configManager.GetValue("DatabaseConnectionString")}";
         var context = new GdprMetadataContext(connectionString);
-        
+
         AddStructureToDatabaseIfNotExists(new SQLiteConnection(connectionString), context);
 
         var individualMapper = new Mapper<Individual>(context);
@@ -129,14 +128,14 @@ public static class Program
         var configFilePath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
         var configValues = new Dictionary<string, string>
         {
-            {"GraphStoragePath", ""},
-            {"BaseURI", "http://www.test.com/"},
-            {"OntologyPath", ""},
-            {"LogPath", ""},
-            {"DatabaseConnectionString", ""},
-            {"IndividualsTable", ""}
+            { "GraphStoragePath", "" },
+            { "BaseURI", "http://www.test.com/" },
+            { "OntologyPath", "" },
+            { "LogPath", "" },
+            { "DatabaseConnectionString", "" },
+            { "IndividualsTable", "" }
         };
-        
+
         configManager = new ConfigManager(configFilePath, configValues);
 
         if (!IsValidConfig(configManager, configFilePath))
@@ -151,6 +150,7 @@ public static class Program
     private static bool IsValidConfig(IConfigManager configManager, string configFilePath)
     {
         if (configManager.GetEmptyKeys().Count == 0) return true;
+
         Console.WriteLine(
             $"Please fill {string.Join(",", configManager.GetEmptyKeys())} in config file located at: {configFilePath}");
         return false;
