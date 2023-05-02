@@ -133,7 +133,7 @@ public class TestDeletionConditions
         process.GiveInput(
             $"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.ConditionAlias} \"Condition\"");
         
-        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.ShowAlias} -n DeletionConditionk");
+        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.ShowAlias} -n DeletionCondition");
         string result = process.GetOutput();
         result.Should().Contain("DeletionCondition, , Condition");
     }
