@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Test;
 
-public class TestOrigin
+public class OriginTest
 {
     [Fact]
     public void TestToListingWorksWithNullValues()

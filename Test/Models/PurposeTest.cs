@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Test;
 
-public class TestPurpose
+public class PurposeTest
 {
     [Fact]
     public void TestToListingWorksWithNullValues()
