@@ -88,7 +88,7 @@ public class TestProcess : IDisposable
     {
         // This is a suboptimal way of obtaining the output
         // But it is asynchronous, and there is no way to tell when it is finished writing
-        int timeout = 100;
+        int timeout = 120;
         int duration = 0;
         while (outputCount < 20 && duration < timeout)
         {
