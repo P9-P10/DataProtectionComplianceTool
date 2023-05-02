@@ -85,7 +85,7 @@ public class TestProcess : IDisposable
 
     public List<string> GetAllErrors()
     {
-        return FlattenList(AllOutputs);
+        return FlattenList(AllErrors);
     }
 
     public List<string> GetLastError()
