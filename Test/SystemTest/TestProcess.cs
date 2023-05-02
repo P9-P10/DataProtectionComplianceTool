@@ -1,24 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 
 namespace Test.SystemTest;
 
 public class TestProcess : IDisposable
 {
-    public Process Process { get; private set; }
+    public Process Process { get; }
     public List<string> Output { get; private set; }
     public List<string> Errors { get; private set; }
-
-    private int producedOutput;
-    private int producedError;
+    
+    public List<List<string>> AllOutputs { get; }
+    public List<List<string>> AllErrors { get; }
 
     public TestProcess(string executablePath)
     {
+        AllOutputs = new List<List<string>>();
+        AllErrors = new List<List<string>>();
         Process = CreateProcess(executablePath);
-        Output = new List<string>();
-        Errors = new List<string>();
     }
 
     private Process CreateProcess(string executablePath)
@@ -47,16 +48,8 @@ public class TestProcess : IDisposable
 
     public void Start()
     {
-        Process.OutputDataReceived += (sender, args) =>
-        {
-            producedOutput++;
-            Output.Add(args.Data);
-        };
-        Process.ErrorDataReceived += (sender, args) =>
-        {
-            producedError++;
-            Errors.Add(args.Data);
-        };
+        Process.OutputDataReceived += (sender, args) => Output.Add(args.Data);
+        Process.ErrorDataReceived += (sender, args) => Errors.Add(args.Data);
         Process.Start();
         Process.BeginOutputReadLine();
         Process.BeginErrorReadLine();
@@ -64,37 +57,59 @@ public class TestProcess : IDisposable
 
     public void GiveInput(string input)
     {
-        producedError = 0;
-        producedOutput = 0;
+        Output = new List<string>();
+        Errors = new List<string>();
         Process.StandardInput.WriteLine(input);
-        //Process.StandardInput.WriteLineAsync(input);
     }
-
+    
     public string GetOutput()
     {
-        WaitForOutput(ref producedOutput);
-
+        AwaitProcessResponse();
         return string.Join("", Output);
+    }
+
+    public List<string> GetAllOutput()
+    {
+        AwaitProcessResponse();
+        return FlattenList(AllOutputs);
+    }
+
+    public List<string> GetLastOutput()
+    {
+        AwaitProcessResponse();
+        return Output;
     }
 
     public string GetError()
     {
-        WaitForOutput(ref producedError);
-
+        AwaitProcessResponse();
         return string.Join("\n", Errors);
     }
 
-    private void WaitForOutput(ref int outputCount)
+    public List<string> GetAllErrors()
+    {
+        AwaitProcessResponse();
+        return FlattenList(AllOutputs);
+    }
+
+    public List<string> GetLastError()
+    {
+        AwaitProcessResponse();
+        return Errors;
+    }
+
+    private List<T> FlattenList<T>(List<List<T>> listOfLists)
+    {
+        return listOfLists.SelectMany(e => e).ToList();
+    }
+
+    private void AwaitProcessResponse()
     {
         // This is a suboptimal way of obtaining the output
         // But it is asynchronous, and there is no way to tell when it is finished writing
-        int timeout = 120;
-        int duration = 0;
-        while (outputCount < 20 && duration < timeout)
-        {
-            Thread.Sleep(10);
-            duration++;
-        }
+        Thread.Sleep(2000);
+        AllOutputs.Add(Output);
+        AllErrors.Add(Errors);
     }
 
     public void Dispose()
