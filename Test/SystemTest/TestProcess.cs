@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 
 namespace Test.SystemTest;
 
@@ -11,6 +10,7 @@ public class TestProcess : IDisposable
     public Process Process { get; }
     public List<string> Output { get; private set; }
     public List<string> Errors { get; private set; }
+    public List<string> Inputs { get; }
     
     public List<List<string>> AllOutputs { get; }
     public List<List<string>> AllErrors { get; }
@@ -19,6 +19,7 @@ public class TestProcess : IDisposable
     {
         AllOutputs = new List<List<string>>();
         AllErrors = new List<List<string>>();
+        Inputs = new List<string>();
         Process = CreateProcess(executablePath);
     }
 
@@ -48,17 +49,14 @@ public class TestProcess : IDisposable
 
     public void Start()
     {
-        Process.OutputDataReceived += (sender, args) => Output.Add(args.Data);
-        Process.ErrorDataReceived += (sender, args) => Errors.Add(args.Data);
         Process.Start();
-        Process.BeginOutputReadLine();
-        Process.BeginErrorReadLine();
     }
 
     public void GiveInput(string input)
     {
         Output = new List<string>();
         Errors = new List<string>();
+        Inputs.Add(input);
         Process.StandardInput.WriteLine(input);
         AwaitProcessResponse();
     }
@@ -112,7 +110,28 @@ public class TestProcess : IDisposable
     {
         // This is a suboptimal way of obtaining the output
         // But it is asynchronous, and there is no way to tell when it is finished writing
-        Thread.Sleep(2000);
+        
+        List<char> chars = new List<char> ();
+        bool encounteredPrompt = false;
+        while (true)
+        {
+            if ((char)Process.StandardOutput.Peek() == '$')
+            {
+                if (encounteredPrompt)
+                {
+                    break;
+                }
+                encounteredPrompt = true;
+            }
+            char chr = (char)Process.StandardOutput.Read();
+            chars.Add(chr);
+
+        }
+        
+        string res = new String(chars.ToArray());
+
+        Output = res.Split(Environment.NewLine).ToList();
+        
         AllOutputs.Add(Output);
         AllErrors.Add(Errors);
     }

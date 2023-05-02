@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using GraphManipulation.Commands.Helpers;
@@ -115,9 +115,12 @@ public class TestDeletionConditions
     {
         using TestProcess process = SystemTest.CreateTestProcess();
         process.Start();
+        
+        // dcs add --name DeletionCondition -c "Condition"
         process.GiveInput(
             $"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.ConditionAlias} \"Condition\"");
 
+        // dcs d --name DeletionCondition
         process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name}" +
                           $" DeletionCondition");
         List<string> result = process.GetLastOutput();
