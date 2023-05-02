@@ -1,10 +1,13 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Generic;
+using System.Linq;
+using FluentAssertions;
 using GraphManipulation.Commands.Helpers;
 using Xunit;
 
 namespace Test.SystemTest;
 
-// TODO sørg for at tests altid køre ekslusivt af hinanden, så de ikke kan komme til at fejle fordi de mangler den samme resource.
+
+[Collection("SystemTestSequential")]
 public class TestDeletionConditions
 {
     [Fact]
@@ -16,10 +19,7 @@ public class TestDeletionConditions
         process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.Condition} \"Condition\"");
         string result = process.GetOutput();
 
-        result.Should()
-            .Be(
-                $@"Using config found at {SystemTest.ConfigPath}" +
-                "$: Successfully added DeletionCondition entity with , Condition");
+        result.Should().Contain("Successfully added DeletionCondition delete condition with , Condition");
     }
 
     [Fact]
@@ -46,8 +46,8 @@ public class TestDeletionConditions
 
         process.GiveInput(
             $"{CommandNamer.DeleteConditionAlias} {CommandNamer.UpdateAlias} {OptionNamer.NameAlias} DeletionCondition {OptionNamer.NewNameAlias} NewName");
-        string result = process.GetOutput();
-        result.Should().Contain("Successfully updated DeletionCondition entity with NewName");
+        List<string> result = process.GetLastOutput();
+        result.First().Should().Contain("Successfully updated DeletionCondition delete condition with NewName");
     }
 
     [Fact]
@@ -120,9 +120,8 @@ public class TestDeletionConditions
 
         process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name}" +
                           $" DeletionCondition");
-        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.List} -n DeletionCondition");
-        string result = process.GetOutput();
-        result.Should().Contain("Successfully deleted DeletionCondition");
+        List<string> result = process.GetLastOutput();
+        result.First().Should().Contain("Successfully deleted DeletionCondition");
     }
     
     [Fact]
@@ -132,9 +131,8 @@ public class TestDeletionConditions
         process.Start();
         process.GiveInput(
             $"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.ConditionAlias} \"Condition\"");
-        
         process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.ShowAlias} -n DeletionCondition");
-        string result = process.GetOutput();
-        result.Should().Contain("DeletionCondition, , Condition");
+        List<string> result = process.GetLastOutput();
+        result.First().Should().Contain("DeletionCondition, , Condition");
     }
 }

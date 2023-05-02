@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
 using GraphManipulation.Commands.Helpers;
 using Xunit;
 
 namespace Test.SystemTest;
 
+[Collection("SystemTestSequential")]
 public class TestOrigins
 {
     [Fact]
@@ -51,10 +53,10 @@ public class TestOrigins
         
         
         process.GiveInput($"{CommandNamer.OriginsAlias} {CommandNamer.UpdateAlias} {OptionNamer.Name} {name} {OptionNamer.NewName} NewName");
-        string result = process.GetOutput();
+        List<string> result = process.GetLastOutput();
 
-        result.Should().Contain("NewName");
-        result.Should().Contain(name);
-        result.Should().Contain("Successfully");
+        result.First().Should().Contain("NewName");
+        result.First().Should().Contain(name);
+        result.First().Should().Contain("Successfully");
     }
 }
