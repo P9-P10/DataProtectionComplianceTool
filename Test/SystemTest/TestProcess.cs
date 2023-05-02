@@ -60,6 +60,7 @@ public class TestProcess : IDisposable
         Output = new List<string>();
         Errors = new List<string>();
         Process.StandardInput.WriteLine(input);
+        Thread.Sleep(250);
     }
     
     public string GetOutput()
