@@ -60,42 +60,36 @@ public class TestProcess : IDisposable
         Output = new List<string>();
         Errors = new List<string>();
         Process.StandardInput.WriteLine(input);
-        Thread.Sleep(250);
+        AwaitProcessResponse();
     }
     
     public string GetOutput()
     {
-        AwaitProcessResponse();
         return string.Join("", Output);
     }
 
     public List<string> GetAllOutput()
     {
-        AwaitProcessResponse();
         return FlattenList(AllOutputs);
     }
 
     public List<string> GetLastOutput()
     {
-        AwaitProcessResponse();
         return Output;
     }
 
     public string GetError()
     {
-        AwaitProcessResponse();
         return string.Join("\n", Errors);
     }
 
     public List<string> GetAllErrors()
     {
-        AwaitProcessResponse();
         return FlattenList(AllOutputs);
     }
 
     public List<string> GetLastError()
     {
-        AwaitProcessResponse();
         return Errors;
     }
 
