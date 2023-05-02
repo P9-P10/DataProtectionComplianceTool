@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
+using IntegrationTests.SystemTest.Tools;
 
-namespace Test.SystemTest;
+namespace IntegrationTests.SystemTest;
 
 [Collection("SystemTestSequential")]
 public class CommandlineTest
@@ -8,13 +9,13 @@ public class CommandlineTest
     [Fact]
     public void TestHelpCommand()
     {
-        using TestProcess process = SystemTest.CreateTestProcess();
+        using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
         process.GiveInput("help");
         string result = string.Join("", process.GetLastOutput());
         string error = process.GetError();
-        result.Should().Be(@$"Using config found at {SystemTest.ConfigPath}" +
+        result.Should().Be(@$"Using config found at {IntegrationTests.SystemTest.Tools.SystemTest.ConfigPath}" +
                            "$: Description:  This is a description of the root command" +
                            "Usage:  ! [command] [options]" +
                            "Options:  ?, h, help  Show help and usage information" +
@@ -33,7 +34,7 @@ public class CommandlineTest
     [Fact]
     public void TestWithError()
     {
-        using TestProcess process = SystemTest.CreateTestProcess();
+        using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
         process.GiveInput("please break");
