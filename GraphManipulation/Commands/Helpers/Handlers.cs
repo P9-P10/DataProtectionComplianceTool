@@ -3,6 +3,7 @@ using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
 using GraphManipulation.Managers.Interfaces.Base;
 using GraphManipulation.Models;
+using GraphManipulation.Models.Interfaces;
 using GraphManipulation.Models.Interfaces.Base;
 
 namespace GraphManipulation.Commands.Helpers;
@@ -478,6 +479,13 @@ public static class Handlers
     {
         return type switch
         {
+            not null when type == typeof(IDeleteCondition) => "delete condition",
+            not null when type == typeof(IIndividual) => "individual",
+            not null when type == typeof(IOrigin) => "origin",
+            not null when type == typeof(IPersonalDataColumn) => "personal data column",
+            not null when type == typeof(IProcessing) => "processing",
+            not null when type == typeof(IPurpose) => "purpose",
+            not null when type == typeof(IVacuumingRule) => "vacuuming rule",
             not null when type == typeof(DeleteCondition) => "delete condition",
             not null when type == typeof(Individual) => "individual",
             not null when type == typeof(Origin) => "origin",
