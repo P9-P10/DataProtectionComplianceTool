@@ -67,6 +67,7 @@ public class TestProcess : IDisposable
         producedError = 0;
         producedOutput = 0;
         Process.StandardInput.WriteLine(input);
+        Thread.Sleep(250);
         //Process.StandardInput.WriteLineAsync(input);
     }
 
