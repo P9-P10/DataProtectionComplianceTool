@@ -85,7 +85,9 @@ public static class Program
             );
 
         var cli = new CommandLineBuilder(command)
-            .UseHelp("help", "h", "?").UseTypoCorrections()
+            .UseHelp("help", "h", "?")
+            .UseTypoCorrections()
+            .UseParseErrorReporting()
             .Build();
 
         Run(cli);
