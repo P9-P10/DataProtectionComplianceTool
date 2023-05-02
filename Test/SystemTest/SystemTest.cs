@@ -17,7 +17,7 @@ public static class SystemTest
             {"BaseURI", "http://www.test.com/"},
             {"OntologyPath", "test"},
             {"LogPath", "system_test_log.txt"},
-            {"DatabaseConnectionString", "system_test_db.sqlite"},
+            {"DatabaseConnectionString", "Data Source=system_test_db.sqlite"},
             {"IndividualsTable", "test"}
         };
         File.WriteAllText(configPath, JsonConvert.SerializeObject( configValues ));

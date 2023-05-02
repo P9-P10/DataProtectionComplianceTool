@@ -67,6 +67,7 @@ public class TestProcess : IDisposable
         producedError = 0;
         producedOutput = 0;
         Process.StandardInput.WriteLine(input);
+        //Process.StandardInput.WriteLineAsync(input);
     }
 
     public string GetOutput()
