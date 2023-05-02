@@ -96,7 +96,7 @@ public class TestDeletionConditions
     }
     
     [Fact]
-    public void TestUpdateCommand_Delete_Condition_No_Longer_stored()
+    public void TestDeleteCommand_Condition_No_Longer_stored()
     {
         using TestProcess process = SystemTest.CreateTestProcess();
         process.Start();
@@ -111,7 +111,7 @@ public class TestDeletionConditions
     }
     
     [Fact]
-    public void TestUpdateCommand_Delete_Return_Correct_Output()
+    public void TestDeleteCommand_Return_Correct_Output()
     {
         using TestProcess process = SystemTest.CreateTestProcess();
         process.Start();
@@ -120,8 +120,21 @@ public class TestDeletionConditions
 
         process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name}" +
                           $" DeletionCondition");
-        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.List}");
+        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.List} -n DeletionCondition");
         string result = process.GetOutput();
         result.Should().Contain("Successfully deleted DeletionCondition");
+    }
+    
+    [Fact]
+    public void TestShowCommand_Return_Correct_Output()
+    {
+        using TestProcess process = SystemTest.CreateTestProcess();
+        process.Start();
+        process.GiveInput(
+            $"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.ConditionAlias} \"Condition\"");
+        
+        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.ShowAlias} -n DeletionConditionk");
+        string result = process.GetOutput();
+        result.Should().Contain("DeletionCondition, , Condition");
     }
 }
