@@ -9,8 +9,6 @@ namespace Test.SystemTest;
 [Collection("SystemTestSequential")]
 public class PurposeTest : TestResources
 {
-    
-    
     [Fact]
     public void AddIsSuccessful()
     {
