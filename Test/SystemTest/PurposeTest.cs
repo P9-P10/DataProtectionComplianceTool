@@ -14,13 +14,6 @@ namespace Test.SystemTest;
 [Collection("SystemTestSequential")]
 public class PurposeTest
 {
-    private readonly ITestOutputHelper _testOutputHelper;
-
-    public PurposeTest(ITestOutputHelper testOutputHelper)
-    {
-        _testOutputHelper = testOutputHelper;
-    }
-
     private const string Description = "This is a description";
 
     private static readonly DeleteCondition TestDeleteCondition = new()
@@ -67,13 +60,13 @@ public class PurposeTest
         testProcess.GiveInput(addDeleteConditionCommand);
     }
 
-    private static void AddPurpose(TestProcess testProcess)
+    private static void AddPurpose(TestProcess testProcess, IPurpose purpose)
     {
         var addPurposeCommand = $"{CommandNamer.PurposesName} {CommandNamer.Add} " +
-                                         $"{OptionNamer.Name} {TestPurpose.GetName()} " +
-                                         $"{OptionNamer.Description} \"{TestPurpose.GetDescription()}\" " +
-                                         $"{OptionNamer.DeleteConditionName} {TestPurpose.GetDeleteCondition()} " +
-                                         $"{OptionNamer.LegallyRequired} {TestPurpose.GetLegallyRequired()} ";
+                                         $"{OptionNamer.Name} {purpose.GetName()} " +
+                                         $"{OptionNamer.Description} \"{purpose.GetDescription()}\" " +
+                                         $"{OptionNamer.DeleteConditionName} {purpose.GetDeleteCondition()} " +
+                                         $"{OptionNamer.LegallyRequired} {purpose.GetLegallyRequired()} ";
 
         testProcess.GiveInput(addPurposeCommand);
     }
@@ -97,6 +90,18 @@ public class PurposeTest
         
         testProcess.GiveInput(updatePurposeCommand);
     }
+
+    private static void ListPurpose(TestProcess testProcess)
+    {
+        testProcess.GiveInput($"{CommandNamer.PurposesName} {CommandNamer.List}");
+    }
+
+    private static void DeletePurpose(TestProcess testProcess, IPurpose purpose)
+    {
+        var deleteCommand = $"{CommandNamer.PurposesName} {CommandNamer.Delete} " +
+                            $"{OptionNamer.Name} {purpose.GetName()}";
+        testProcess.GiveInput(deleteCommand);
+    }
     
     [Fact]
     public void AddIsSuccessful()
@@ -105,7 +110,7 @@ public class PurposeTest
         process.Start();
 
         AddDeleteCondition(process, TestDeleteCondition);
-        AddPurpose(process);
+        AddPurpose(process, TestPurpose);
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetAllOutputNoWhitespace().ToList();
@@ -127,11 +132,12 @@ public class PurposeTest
         process.Start();
 
         AddDeleteCondition(process, TestDeleteCondition);
-        AddPurpose(process);
+        AddPurpose(process, TestPurpose);
         ShowPurpose(process, TestPurpose);
         
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetAllOutputNoWhitespace();
+        
         error.Should().BeEmpty();
         output.Should().ContainSingle(s => s.Contains(TestPurpose.ToListing()));
     }
@@ -144,14 +150,53 @@ public class PurposeTest
 
         AddDeleteCondition(process, TestDeleteCondition);
         AddDeleteCondition(process, NewTestDeleteCondition);
-        AddPurpose(process);
+        AddPurpose(process, TestPurpose);
         UpdatePurpose(process);
         ShowPurpose(process, NewTestPurpose);
-        process.GiveInput("lgs ls");
         
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetAllOutputNoWhitespace();
+        
         error.Should().BeEmpty();
         output.Should().ContainSingle(s => s.Contains(NewTestPurpose.ToListing()));
+    }
+    
+    [Fact]
+    public void PurposeCanBeListed()
+    {
+        using var process = SystemTest.CreateTestProcess();
+        process.Start();
+
+        AddDeleteCondition(process, TestDeleteCondition);
+        AddDeleteCondition(process, NewTestDeleteCondition);
+        AddPurpose(process, TestPurpose);
+        AddPurpose(process, NewTestPurpose);
+        ListPurpose(process);
+
+        var error = process.GetAllErrorsNoWhitespace();
+        var output = process.GetAllOutputNoWhitespace().ToList();
+        
+        error.Should().BeEmpty();
+        output.Should().ContainSingle(s => s.Contains(TestPurpose.ToListing()));
+        output.Should().ContainSingle(s => s.Contains(NewTestPurpose.ToListing()));
+    }
+
+    [Fact]
+    public void PurposeCanBeDeleted()
+    {
+        using var process = SystemTest.CreateTestProcess();
+        process.Start();
+
+        AddDeleteCondition(process, TestDeleteCondition);
+        AddPurpose(process, TestPurpose);
+        ListPurpose(process);
+        DeletePurpose(process, TestPurpose);
+        
+        var error = process.GetAllErrorsNoWhitespace();
+        var output = process.GetAllOutputNoWhitespace();
+        
+        error.Should().BeEmpty();
+        output.Should().ContainSingle(s => 
+            s.Contains($"Successfully deleted {TestPurpose.GetName()} purpose"));
     }
 }
