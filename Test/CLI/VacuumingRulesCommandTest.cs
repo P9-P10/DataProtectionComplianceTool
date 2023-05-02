@@ -195,4 +195,31 @@ public class VacuumingRulesCommandTest : CommandTest
                 .StartWith($"{RuleName}, {Description}, {Interval}");
         }
     }
+
+    public class Execute
+    {
+        private const string CommandName = "execute";
+
+        [Fact]
+        public void Parses()
+        {
+            VerifyCommand(BuildCli(out _, out _), $"{CommandName} --rules {RuleName} {NewRuleName}");
+        }
+        
+        [Fact]
+        public void AliasParses()
+        {
+            VerifyCommand(BuildCli(out _, out _), $"{CommandName} -rs {RuleName} {NewRuleName}");
+        }
+
+        [Fact]
+        public void CallsManagerWithCorrectArguments()
+        {
+            BuildCli(out var managerMock, out _)
+                .Invoke($"{CommandName} --rules {RuleName} {NewRuleName}");
+            
+            managerMock.Verify(manager => manager.ExecuteRule(It.Is<string>(s => s == RuleName)));
+            managerMock.Verify(manager => manager.ExecuteRule(It.Is<string>(s => s == NewRuleName)), Times.Never);
+        }
+    }
 }

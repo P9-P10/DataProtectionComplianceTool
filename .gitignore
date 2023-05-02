@@ -18,3 +18,4 @@ GraphStorage.sqlite
 Test/TestResources/log
 
 Test/TestResources/testConfig.json
+*.sqlite

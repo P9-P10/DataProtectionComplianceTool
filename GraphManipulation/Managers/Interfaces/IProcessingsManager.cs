@@ -11,6 +11,4 @@ public interface IProcessingsManager :
     INameUpdater
 {
     public void AddProcessing(string name, TableColumnPair tableColumnPair, string purposeName, string description);
-    
-    public void UpdatePurpose(string name, TableColumnPair tableColumnPair, string purposeName);
 }

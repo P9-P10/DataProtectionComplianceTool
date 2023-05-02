@@ -72,37 +72,37 @@ public static class CommandBuilder
 
     public static Command BuildAddCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject("add", "a", subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.Add, CommandNamer.AddAlias, subject);
     }
 
     public static Command BuildUpdateCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject("update", "u", subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.Update, CommandNamer.UpdateAlias, subject);
     }
 
     public static Command BuildDeleteCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject("delete", "d", subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.Delete, CommandNamer.DeleteAlias, subject);
     }
 
     public static Command BuildRemoveCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject("remove", "r", subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.Remove, CommandNamer.RemoveAlias, subject);
     }
 
     public static Command BuildListCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject("list", "ls", subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.List, CommandNamer.ListAlias, subject);
     }
 
     public static Command BuildSetCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject("set", "st", subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.Set, CommandNamer.SetAlias, subject);
     }
 
     public static Command BuildShowCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject("show", "sh", subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.Show, CommandNamer.ShowAlias,subject);
     }
 }
 

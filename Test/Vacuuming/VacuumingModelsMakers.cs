@@ -1,51 +1,55 @@
 ﻿using System.Collections.Generic;
-using GraphManipulation.DataAccess.Entities;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
 using GraphManipulation.Vacuuming;
-using DeleteCondition = GraphManipulation.DataAccess.Entities.DeleteCondition;
 
 namespace Test.Vacuuming;
 
 public static class VacuumingModelsMakers
 {
-    public static PersonDataColumn PersonDataColumnMaker(string defaultValue = "Null",
+    public static PersonalDataColumn PersonDataColumnMaker(string defaultValue = "Null",
         bool multipleDeleteConditions = false,
-        string tableName = "Table", string columnName = "Column", string purpose = "Purpose")
+        string tableName = "Table", string columnName = "Column", string purposeName = "Purpose")
     {
-        List<DeleteCondition> deleteConditions = new List<DeleteCondition>();
+        List<Purpose> purposes = new List<Purpose>();
         if (!multipleDeleteConditions)
         {
-            DeleteCondition deleteCondition = new("Condition", new Purpose
+            DeleteCondition deleteCondition = new()
             {
                 Id = 0,
                 Name = "Name",
-                Description = "Description"
-            });
-            deleteConditions.Add(deleteCondition);
+                Description = "Description",
+                Condition = "Condition"
+            };
+            purposes.Add(new Purpose()
+                {Id = 0, Name = purposeName, Description = "Description", DeleteCondition = deleteCondition});
         }
         else
         {
-            DeleteCondition deleteCondition = new("Condition", new Purpose
+            DeleteCondition deleteCondition = new()
             {
                 Id = 0,
                 Name = "Name",
-                Description = "Description"
-            });
-            DeleteCondition deleteCondition2 = new("SecondCondition", new Purpose
+                Description = "Description",
+                Condition = "FirstCondition"
+            };
+            DeleteCondition deleteCondition2 = new()
             {
                 Id = 1,
                 Name = "SecondName",
-                Description = "Description"
-            });
-            deleteConditions.Add(deleteCondition);
-            deleteConditions.Add(deleteCondition2);
+                Description = "Description",
+                Condition = "SecondCondition"
+            };
+            purposes.Add(new Purpose() {Id = 0, Name = purposeName, DeleteCondition = deleteCondition});
+            purposes.Add(new Purpose() {Id = 1, Name = purposeName, DeleteCondition = deleteCondition2});
         }
 
-        PersonDataColumn personDataColumn = new(tableName,
-            columnName,
-            defaultValue,
-            deleteConditions);
+        PersonalDataColumn personDataColumn = new()
+        {
+            TableColumnPair = new TableColumnPair(tableName, columnName),
+            DefaultValue = defaultValue,
+            Purposes = purposes
+        };
         return personDataColumn;
     }
 
@@ -68,7 +72,7 @@ public static class VacuumingModelsMakers
         string interval = "2y 5d", IEnumerable<Purpose>? purposes = null)
     {
         purposes ??= PurposesMaker();
-        return new VacuumingRule(name, description, interval, purposes);
+        return new VacuumingRule(description, name, interval, purposes) {Id = 0};
     }
 
     private static IEnumerable<Purpose> PurposesMaker()
@@ -81,6 +85,7 @@ public static class VacuumingModelsMakers
             Name = "Name",
             Description = "Description",
             Columns = PersonDataColumns(),
+            DeleteCondition = new DeleteCondition(),
             Rules = new List<VacuumingRule>()
         });
 

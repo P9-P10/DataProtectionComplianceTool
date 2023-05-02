@@ -4,5 +4,5 @@ namespace GraphManipulation.Models.Interfaces;
 
 public interface IOrigin : INamedEntity, IDescribedEntity, IListable
 {
-    public IEnumerable<IPersonalDataColumn> GetPersonalDataColumns();
+    public IEnumerable<IPersonalDataColumn>? GetPersonalDataColumns();
 }

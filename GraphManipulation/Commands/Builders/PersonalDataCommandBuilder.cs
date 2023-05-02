@@ -35,8 +35,8 @@ public static class PersonalDataCommandBuilder
             .WithOption(out var pairOption, BuildPairOption())
             .WithOption(out var joinConditionOption,
                 OptionBuilder
-                    .CreateOption<string>("--join-condition")
-                    .WithAlias("-jc")
+                    .CreateOption<string>(OptionNamer.JoinCondition)
+                    .WithAlias(OptionNamer.JoinConditionAlias)
                     .WithDescription(
                         "The condition under which the given table can be joined with the individuals table")
                     .WithIsRequired(true))
@@ -44,6 +44,13 @@ public static class PersonalDataCommandBuilder
                 OptionBuilder
                     .CreateDescriptionOption()
                     .WithDescription("Description of the personal data")
+                    .WithDefaultValue(string.Empty))
+            // TODO: Denne options navn skal også være i OptionNamer
+            .WithOption(out var defaultValueOption, 
+                OptionBuilder
+                    .CreateOption<string>(OptionNamer.DefaultValue)
+                    .WithAlias(OptionNamer.DefaultValueAlias)
+                    .WithDescription("The default value that attributes in the column should receive upon deletion")
                     .WithDefaultValue(string.Empty))
             .WithOption(out var purposeOption, BuildPurposeListOption())
             .WithHandler(context =>
@@ -63,6 +70,13 @@ public static class PersonalDataCommandBuilder
                     pairOption,
                     purposeOption
                 );
+                
+                Handlers.UpdateHandler(context, console, 
+                    personalDataManager.SetDefaultValue,
+                    personalDataManager,
+                    column => column.GetDefaultValue(),
+                    pairOption,
+                    defaultValueOption);
             });
     }
 
@@ -76,15 +90,28 @@ public static class PersonalDataCommandBuilder
                 OptionBuilder
                     .CreateDescriptionOption()
                     .WithDescription("Description of the personal data"))
+            .WithOption(out var defaultValueOption, 
+                OptionBuilder
+                    .CreateOption<string>(OptionNamer.DefaultValue)
+                    .WithAlias(OptionNamer.DefaultValueAlias)
+                    .WithDescription("The default value that attributes in the column should receive upon deletion"))
             .WithHandler(context =>
+            {
                 Handlers.UpdateHandler(context, console,
                     personalDataManager.UpdateDescription,
                     personalDataManager,
                     c => c.GetDescription(),
                     pairOption,
                     descriptionOption
-                )
-            );
+                );
+                
+                Handlers.UpdateHandler(context, console,
+                    personalDataManager.SetDefaultValue,
+                    personalDataManager,
+                    c => c.GetDefaultValue(),
+                    pairOption,
+                    defaultValueOption);
+            });
     }
 
     private static Command DeletePersonalData(IConsole console, IPersonalDataManager personalDataManager)
@@ -102,7 +129,8 @@ public static class PersonalDataCommandBuilder
         return CommandBuilder
             .BuildListCommand()
             .WithDescription("Lists the personal data currently managed by the system")
-            .WithHandler(() => Handlers.ListHandler(console, personalDataManager));
+            .WithHandler(() => Handlers.ListHandler(console, personalDataManager,
+                CommandHeader.PersonalDataHeader));
     }
 
     private static Command ShowPersonalData(IConsole console, IPersonalDataManager personalDataManager)
@@ -161,8 +189,8 @@ public static class PersonalDataCommandBuilder
                     .WithIsRequired(true))
             .WithOption(out var originOption,
                 OptionBuilder
-                    .CreateOption<string>("--origin")
-                    .WithAlias("-o")
+                    .CreateOption<string>(OptionNamer.Origin)
+                    .WithAlias(OptionNamer.OriginAlias)
                     .WithDescription("The origin from which the personal data was retrieved")
                     .WithIsRequired(true))
             .WithHandler(context => Handlers.SetHandlerKey(context, console,
@@ -209,11 +237,8 @@ public static class PersonalDataCommandBuilder
     private static Option<IEnumerable<string>> BuildPurposeListOption()
     {
         return OptionBuilder
-            .CreateOption<IEnumerable<string>>("--purpose")
-            .WithAlias("-p")
+            .CreatePurposeListOption()
             .WithDescription("The purpose(s) under which the personal data is stored")
-            .WithIsRequired(true)
-            .WithAllowMultipleArguments(true)
-            .WithArity(ArgumentArity.OneOrMore);
+            .WithIsRequired(true);
     }
 }

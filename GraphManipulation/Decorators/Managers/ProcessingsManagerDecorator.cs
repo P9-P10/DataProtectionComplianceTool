@@ -46,10 +46,4 @@ public class ProcessingsManagerDecorator : LoggingDecorator, IProcessingsManager
         LogUpdate(name, new {Column = tableColumnPair.ToListing(), Purpose = purposeName, Description = description});
         _manager.AddProcessing(name, tableColumnPair, purposeName, description);
     }
-
-    public void UpdatePurpose(string name, TableColumnPair tableColumnPair, string purposeName)
-    {
-        LogUpdate(name, new {Column = tableColumnPair.ToListing(), Purpose = purposeName});
-        _manager.UpdatePurpose(name, tableColumnPair, purposeName);
-    }
 }

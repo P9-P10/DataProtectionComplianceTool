@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using FluentAssertions;
-using Sharprompt;
 using Xunit;
 
 namespace Test.SystemTest;
@@ -13,8 +13,8 @@ public class CommandlineTest
     {
         using TestProcess process = SystemTest.CreateTestProcess();
         process.Start();
-
-        process.GiveInput("--help");
+        
+        process.GiveInput("help");
 
         string result = process.GetOutput();
         result.Should().Be(@$"Using config found at {SystemTest.DefaultConfigPath}" +
@@ -68,17 +68,5 @@ public class CommandlineTest
         reader.ReadToEnd().Should().Be("test" + Environment.NewLine);
 
         Console.IsOutputRedirected.Should().BeTrue();
-    }
-
-    [Fact]
-    public void RedirectingOutputCausesSharpromptToThrow()
-    {
-        // I believe that xunit redirects console output
-        // Therefore it is not necessary to setup redirection in this test
-        Action act = () => Prompt.Input<string>("");
-
-        act.Should().Throw<TypeInitializationException>()
-            .WithInnerException<InvalidOperationException>()
-            .WithMessage("Sharprompt requires an interactive environment.");
     }
 }

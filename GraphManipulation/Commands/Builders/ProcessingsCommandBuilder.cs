@@ -103,7 +103,7 @@ public static class ProcessingsCommandBuilder
         return CommandBuilder
             .BuildListCommand()
             .WithDescription("Lists the processings currently in the system")
-            .WithHandler(() => Handlers.ListHandler(console, processingsManager));
+            .WithHandler(() => Handlers.ListHandler(console, processingsManager,CommandHeader.ProcessingsHeader));
     }
 
     private static Command Show(IConsole console, IProcessingsManager processingsManager)

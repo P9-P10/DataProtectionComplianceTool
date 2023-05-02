@@ -35,4 +35,16 @@ public class TestVacuumingRule
         
         Assert.False(vacuumingRule.ShouldExecute());
     }
+
+    [Fact]
+    public void TestToListingWorksWithNullValues()
+    {
+        VacuumingRule vacuumingRule = new()
+        {
+            Name = "Name",
+            Purposes = null
+        };
+        
+        Assert.Equal("Name, , , [   ]", vacuumingRule.ToListing());
+    }
 }

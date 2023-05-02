@@ -56,18 +56,18 @@ public static class OptionBuilder
 
     public static Option<int> CreateIdOption()
     {
-        return CreateOption<int>("--id").WithAlias("-i");
+        return CreateOption<int>(OptionNamer.Id).WithAlias(OptionNamer.IdAlias);
     }
 
     public static Option<string> CreateDescriptionOption()
     {
-        return CreateOption<string>("--description").WithAlias("-d");
+        return CreateOption<string>(OptionNamer.Description).WithAlias(OptionNamer.DescriptionAlias);
     }
 
     public static Option<TableColumnPair> CreateTableColumnPairOption()
     {
         return new Option<TableColumnPair>(
-                "--table-column",
+                OptionNamer.TableColumn,
                 result =>
                 {
                     if (result.Tokens.Count == 2)
@@ -75,23 +75,31 @@ public static class OptionBuilder
                         return new TableColumnPair(result.Tokens[0].Value, result.Tokens[1].Value);
                     }
 
-                    result.ErrorMessage = "--table-column requires two arguments";
+                    result.ErrorMessage = $"{OptionNamer.TableColumn} requires two arguments";
                     return new TableColumnPair("", "");
                 })
-            .WithAlias("-tc")
+            .WithAlias(OptionNamer.TableColumnAlias)
             .WithIsRequired(true)
             .WithArity(new ArgumentArity(2, 2))
             .WithAllowMultipleArguments(true);
     }
+    
+    public static Option<IEnumerable<string>> CreatePurposeListOption()
+    {
+        return CreateOption<IEnumerable<string>>(OptionNamer.PurposeList)
+            .WithAlias(OptionNamer.PurposeListAlias)
+            .WithAllowMultipleArguments(true)
+            .WithArity(ArgumentArity.OneOrMore);
+    }
 
     public static Option<string> CreateNameOption()
     {
-        return CreateOption<string>("--name").WithAlias("-n");
+        return CreateOption<string>(OptionNamer.Name).WithAlias(OptionNamer.NameAlias);
     }
 
     public static Option<string> CreateNewNameOption()
     {
-        return CreateOption<string>("--new-name").WithAlias("-nn");
+        return CreateOption<string>(OptionNamer.NewName).WithAlias(OptionNamer.NewNameAlias);
     }
 
     public static void ValidateOrder<TEnumerable, TValue>(CommandResult commandResult, Option<TEnumerable> option)

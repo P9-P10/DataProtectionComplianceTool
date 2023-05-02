@@ -18,12 +18,17 @@ public class VacuumingRule : DomainEntity, IVacuumingRule
     public string ToListing()
     {
         return string.Join(", ", Name, Description, Interval,
-            "[ " + string.Join(", ", Purposes.Select(p => p.ToListing())) + " ]");
+            "[ " + string.Join(", ", Purposes is null ? " " : Purposes.Select(p => p.ToListing())) + " ]");
     }
 
     public string GetInterval()
     {
         return Interval;
+    }
+
+    public IEnumerable<IPurpose> GetPurposes()
+    {
+        return Purposes is null ? new List<IPurpose>() : Purposes;
     }
 
     public string GetName()

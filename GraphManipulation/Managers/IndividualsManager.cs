@@ -28,4 +28,9 @@ public class IndividualsManager : IIndividualsManager
     {
         _individualsSource = source;
     }
+
+    public TableColumnPair GetIndividualsSource()
+    {
+        return _individualsSource;
+    }
 }

@@ -7,4 +7,5 @@ namespace GraphManipulation.Managers.Interfaces;
 public interface IIndividualsManager : IGetter<IIndividual, int>
 {
     public void SetIndividualsSource(TableColumnPair source);
+    public TableColumnPair GetIndividualsSource();
 }

@@ -1,8 +1,12 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using System.CommandLine;
+using System.CommandLine.Builder;
 using System.CommandLine.IO;
+using System.CommandLine.Parsing;
+using System.Data;
+using System.Data.SQLite;
 using System.Text;
+using Dapper;
 using GraphManipulation.Commands.Builders;
 using GraphManipulation.DataAccess;
 using GraphManipulation.DataAccess.Mappers;
@@ -11,20 +15,13 @@ using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
+using GraphManipulation.Vacuuming;
+using Microsoft.EntityFrameworkCore;
 
 namespace GraphManipulation;
 
-// TODO: Manglende decorator til IndividualsManager
-
-// TODO: Skal vi have en kommando til at sætte vores database op? Hvis ja, så skal den laves
-// TODO: Skal vi have en kommando til at eksekvere vacuuming? Hvis ja, så skal den laves
-
-// TODO: IProcessingManager skal ikke kunne opdatere purpose. Enten skal den funktionalitet helt væk (fjernes fra interfacen) eller også skal man kunne tilføje og fjerne flere purposes (på samme måde som i IPersonalDataManager)
-// TODO: Lige nu har VacuumingRule en liste af purposes, men igennem IVacuumingRulesManager kan den kun få ét purpose. Enten skal den kun have ét purpose, eller også skal det være muligt at tilføje og fjerne flere purposes (på samme måde som i IPersonalDataManager)
-
 // TODO: Når navnet på en entity ændres, mangler der at blive tjekket om det nye navn eksisterer i forvejen, og derfor ikke kan bruges
 // TODO: En refactor af managers, så hver manager har en Add(TKey key) i stedet for varierende interfaces ville simplificere kommandoer gevaldigt (de andre værdier kan klares med updates efterfølgende)
-// TODO: Når vi udskriver lister af entities, ville det være brugbart hvis listen havde en header (ala. "Name, Description, ...") så brugeren har nemmere ved at forstå hvad de kigger på
 
 public static class Program
 {
@@ -35,38 +32,22 @@ public static class Program
 
     private static void Interactive()
     {
-        ConfigureConsoleSettings();
+        ConsoleSetup();
 
-        var configFilePath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
-        Dictionary<string,string> configValues= new Dictionary<string, string>
-        {
-            {"GraphStoragePath", "test"},
-            {"BaseURI", "http://www.test.com/"},
-            {"OntologyPath", "test"},
-            {"LogPath", "log.txt"},
-            {"DatabaseConnectionString", "metadata_db.sqlite"},
-            {"IndividualsTable", "test"}
-        };
-        var configManager = new ConfigManager(configFilePath,configValues);
-
-        if (!ConfigSetup(configManager, configFilePath))
+        if (!ConfigSetup(out var configManager))
         {
             return;
         }
 
-        Console.WriteLine($"Using config found at {configFilePath}");
-
-        var cli = BuildCommandLineInterface(configManager);
-
-        Run(cli);
-    }
-
-    private static Command BuildCommandLineInterface(ConfigManager configManager)
-    {
         var logger = new PlaintextLogger(configManager);
         var console = new SystemConsole();
+        
 
-        var context = new GdprMetadataContext(configManager.GetValue("DatabaseConnectionString"));
+        var connectionString = configManager.GetValue("DatabaseConnectionString");
+        var context = new GdprMetadataContext(connectionString);
+        var dbConnection = new SQLiteConnection(connectionString);
+
+        AddStructureToDatabaseIfNotExists(dbConnection, context);
 
         var individualMapper = new Mapper<Individual>(context);
         var personalDataColumnMapper = new Mapper<PersonalDataColumn>(context);
@@ -77,16 +58,18 @@ public static class Program
         var processingMapper = new Mapper<Processing>(context);
         var personalDataMapper = new Mapper<PersonalData>(context);
 
+        var vacuumer = new Vacuumer(personalDataColumnMapper, new SqliteQueryExecutor(dbConnection));
+
         var individualsManager = new IndividualsManager(individualMapper);
         var personalDataManager = new PersonalDataManager(personalDataColumnMapper, purposeMapper, originMapper,
             personalDataMapper, individualMapper);
         var purposesManager = new PurposeManager(purposeMapper, deleteConditionMapper);
         var originsManager = new OriginsManager(originMapper);
-        var vacuumingRulesManager = new VacuumingRuleManager(vacuumingRuleMapper, purposeMapper);
+        var vacuumingRulesManager = new VacuumingRuleManager(vacuumingRuleMapper, purposeMapper, vacuumer);
         var deleteConditionsManager = new DeleteConditionsManager(deleteConditionMapper);
         var processingsManager = new ProcessingsManager(processingMapper, purposeMapper, personalDataColumnMapper);
 
-        // var decoratedIndividualsManager = new IndividualsManagerDecorator(individualsManager, logger);
+        var decoratedIndividualsManager = new IndividualsManagerDecorator(individualsManager, logger);
         var decoratedPersonalDataManager = new PersonalDataManagerDecorator(personalDataManager, logger);
         var decoratedPurposesManager = new PurposeManagerDecorator(purposesManager, logger);
         var decoratedOriginsManager = new OriginsManagerDecorator(originsManager, logger);
@@ -94,61 +77,82 @@ public static class Program
         var decoratedDeleteConditionsManager = new DeleteConditionsManagerDecorator(deleteConditionsManager, logger);
         var decoratedProcessingsManager = new ProcessingsManagerDecorator(processingsManager, logger);
 
-        var cli = CommandLineInterfaceBuilder
+        var command = CommandLineInterfaceBuilder
             .Build(
-                console, individualsManager, decoratedPersonalDataManager,
+                console, decoratedIndividualsManager, decoratedPersonalDataManager,
                 decoratedPurposesManager, decoratedOriginsManager, decoratedVacuumingRulesManager,
                 decoratedDeleteConditionsManager, decoratedProcessingsManager, logger, configManager
             );
-        return cli;
+
+        var cli = new CommandLineBuilder(command)
+            .UseHelp("help", "h", "?").UseTypoCorrections()
+            .Build();
+
+        Run(cli);
     }
 
-    private static void Run(Command cli)
+    private static void AddStructureToDatabaseIfNotExists(IDbConnection connection, DbContext context)
     {
-        var flag = true;
+        connection.Execute(
+            CreateStatementManipulator.UpdateCreationScript(context.Database.GenerateCreateScript()));
+    }
 
-        // I suggest changing the following do-while to a simple while loop
-        // Why is this a do-while, instead of simply a do
-        // The flag, determining if the loop should be run is already
-        // set to true, meaning it is guaranteed to run once.
-        // do-while, which provides the same guarantee, therefore
-        // seems unnecessary.
-        do
+    private static void Run(Parser cli)
+    {
+        while (true)
         {
             try
             {
-                var command = Console.ReadLine();
-                cli.Invoke(command);
+                Console.Write("\n$: ");
+                var command = (Console.ReadLine() ?? "").Trim();
+                
+                if (!string.IsNullOrEmpty(command))
+                {
+                    cli.Invoke(command);
+                }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
-        } while (flag);
+        }
     }
 
-    private static void ConfigureConsoleSettings()
+    private static void ConsoleSetup()
     {
         Console.OutputEncoding = Encoding.UTF8;
     }
 
-    private static bool ConfigSetup(IConfigManager configManager, string configFilePath)
+    private static bool ConfigSetup(out IConfigManager? configManager)
     {
-        try
+        var configFilePath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
+        var configValues = new Dictionary<string, string>
         {
-            if (configManager.GetEmptyKeys().Count > 0)
-            {
-                Console.WriteLine(
-                    $"Please fill {string.Join(",", configManager.GetEmptyKeys())} in config file located at: {configFilePath}");
-                return false;
-            }
-        }
-        catch (KeyNotFoundException exception)
+            {"GraphStoragePath", ""},
+            {"BaseURI", "http://www.test.com/"},
+            {"OntologyPath", ""},
+            {"LogPath", ""},
+            {"DatabaseConnectionString", ""},
+            {"IndividualsTable", ""}
+        };
+
+        configManager = new ConfigManager(configFilePath, configValues);
+
+        if (!IsValidConfig(configManager, configFilePath))
         {
-            Console.WriteLine(exception.Message);
             return false;
         }
 
+        Console.WriteLine($"Using config found at {configFilePath}");
         return true;
+    }
+
+    private static bool IsValidConfig(IConfigManager configManager, string configFilePath)
+    {
+        if (configManager.GetEmptyKeys().Count == 0) return true;
+
+        Console.WriteLine(
+            $"Please fill {string.Join(", ", configManager.GetEmptyKeys())} in config file located at: {configFilePath}");
+        return false;
     }
 }

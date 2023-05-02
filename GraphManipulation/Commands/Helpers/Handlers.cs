@@ -331,7 +331,7 @@ public static class Handlers
         }
     }
 
-    public static void DeleteHandler<TValue, TKey>(InvocationContext context, IConsole console,
+    public static void DeleteHandler<TKey, TValue>(InvocationContext context, IConsole console,
         Action<TKey> deleteAction,
         IGetter<TValue, TKey> getter, Option<TKey> keyOption)
     {
@@ -348,13 +348,14 @@ public static class Handlers
     }
 
 
-    public static void ListHandler<TValue, _>(IConsole console, IGetter<TValue, _> getter)
+    public static void ListHandler<TValue, _>(IConsole console, IGetter<TValue, _> getter, string header)
         where TValue : IListable
     {
+        console.WriteLine(header);
         getter.GetAll().ToList().ForEach(e => console.WriteLine(e.ToListing()));
     }
 
-    public static void ShowHandler<TValue, TKey>(InvocationContext context, IConsole console,
+    public static void ShowHandler<TKey, TValue>(InvocationContext context, IConsole console,
         IGetter<TValue, TKey> getter,
         Option<TKey> keyOption)
         where TValue : IListable
@@ -370,7 +371,7 @@ public static class Handlers
         console.WriteLine(keyValue.ToListing());
     }
 
-    public static void ShowHandler<TValue1, TKey1, TValue2, TKey2, TValue3>(InvocationContext context, IConsole console,
+    public static void ShowHandler<TKey1, TValue1, TKey2, TValue2, TValue3>(InvocationContext context, IConsole console,
         IGetter<TValue1, TKey1> getter1,
         IGetter<TValue2, TKey2> getter2,
         Func<TKey1, TKey2, TValue3> getCurrent,
@@ -394,6 +395,29 @@ public static class Handlers
         }
 
         console.WriteLine(getCurrent(key1, key2).ToListing());
+    }
+
+    public static void ExecuteHandlerList<TKey, TValue>(InvocationContext context, IConsole console,
+        Action<TKey> executeAction,
+        IGetter<TValue, TKey> getter,
+        Option<IEnumerable<TKey>> keyOption)
+    {
+        if (!TryGetValueOfOption(context, keyOption, out var keyList))
+        {
+            return;
+        }
+
+        foreach (var key in keyList)
+        {
+            if (!TryGet(getter, key, out _))
+            {
+                console.WriteLine(FailureToFindMessage(key, typeof(TValue)));
+                continue;
+            }
+
+            executeAction(key);
+            console.WriteLine(SuccessMessage(key, typeof(TValue), Operations.Executed));
+        }
     }
 
 
@@ -437,7 +461,7 @@ public static class Handlers
     private static string SuccessMessage<TKey>(TKey key, Type type, string operation, params string[] parameters)
     {
         return $"Successfully {operation} {key} {GetEntityType(type)}" +
-               (parameters.Length != 0 ? $"with {string.Join(", ", parameters)}" : "");
+               (parameters.Length != 0 ? $" with {string.Join(", ", parameters)}" : "");
     }
 
     private static string DoesNotContainMessage<TKey>(TKey key, string offender)
@@ -472,6 +496,7 @@ public static class Handlers
         Deleted,
         Added,
         Set,
-        Removed
+        Removed,
+        Executed
     }
 }

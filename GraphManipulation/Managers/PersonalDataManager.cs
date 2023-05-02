@@ -13,7 +13,8 @@ public class PersonalDataManager : IPersonalDataManager
     private IMapper<PersonalData> _personDataMapper;
     private IMapper<Individual> _individualMapper;
 
-    public PersonalDataManager(IMapper<PersonalDataColumn> columnMapper, IMapper<Purpose> purposeMapper, IMapper<Origin> originMapper, IMapper<PersonalData> personDataMapper, IMapper<Individual> individualMapper)
+    public PersonalDataManager(IMapper<PersonalDataColumn> columnMapper, IMapper<Purpose> purposeMapper,
+        IMapper<Origin> originMapper, IMapper<PersonalData> personDataMapper, IMapper<Individual> individualMapper)
     {
         _columnMapper = columnMapper;
         _purposeMapper = purposeMapper;
@@ -21,6 +22,7 @@ public class PersonalDataManager : IPersonalDataManager
         _personDataMapper = personDataMapper;
         _individualMapper = individualMapper;
     }
+
     public IEnumerable<IPersonalDataColumn> GetAll()
     {
         return _columnMapper.Find(_ => true);
@@ -46,14 +48,19 @@ public class PersonalDataManager : IPersonalDataManager
     public void AddPersonalData(TableColumnPair tableColumnPair, string joinCondition, string description)
     {
         _columnMapper.Insert(new PersonalDataColumn
-            { TableColumnPair = tableColumnPair, Description = description, JoinCondition = joinCondition });
+            {TableColumnPair = tableColumnPair, Description = description, JoinCondition = joinCondition});
+    }
+
+    public void SetDefaultValue(TableColumnPair tableColumnPair, string defaultValue)
+    {
+        throw new NotImplementedException();
     }
 
     public void AddPurpose(TableColumnPair tableColumnPair, string purposeName)
     {
         var purpose = _purposeMapper.FindSingle(purpose => purpose.Name == purposeName);
         var column = FindByKey(tableColumnPair);
-        column.Purposes = column.Purposes.Concat(new [] { purpose });
+        column.AddPurpose(purpose);
         _columnMapper.Update(column);
     }
 
@@ -70,8 +77,8 @@ public class PersonalDataManager : IPersonalDataManager
         var individual = _individualMapper.FindSingle(individual => individual.Id == individualsId);
         var origin = _originMapper.FindSingle(origin => origin.Name == originName);
         var column = FindByKey(tableColumnPair);
-        var personData = new PersonalData() { Column = column, Origin = origin };
-        individual.PersonalData = individual.PersonalData.Concat(new[] { personData });
+        var personData = new PersonalData() {Column = column, Origin = origin};
+        individual.PersonalData = individual.PersonalData.Concat(new[] {personData});
         _personDataMapper.Insert(personData);
         _individualMapper.Update(individual);
     }

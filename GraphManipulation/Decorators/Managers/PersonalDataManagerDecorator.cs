@@ -42,6 +42,11 @@ public class PersonalDataManagerDecorator : LoggingDecorator, IPersonalDataManag
         _manager.AddPersonalData(tableColumnPair, joinCondition, description);
     }
 
+    public void SetDefaultValue(TableColumnPair tableColumnPair, string defaultValue)
+    {
+        throw new NotImplementedException();
+    }
+
     public void AddPurpose(TableColumnPair tableColumnPair, string purposeName)
     {
         LogUpdate(tableColumnPair.ToListing(), new {PurposeName = purposeName});
