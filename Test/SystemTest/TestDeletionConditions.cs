@@ -13,7 +13,7 @@ public class TestDeletionConditions
         using TestProcess process = SystemTest.CreateTestProcess();
         process.Start();
 
-        process.GiveInput("dcs a -n DeletionCondition -c \"Condition\"");
+        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.Condition} \"Condition\"");
         string result = process.GetOutput();
 
         result.Should()
