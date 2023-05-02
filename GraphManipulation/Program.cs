@@ -59,8 +59,8 @@ public static class Program
         var personalDataMapper = new Mapper<PersonalData>(context);
 
         var vacuumer = new Vacuumer(personalDataColumnMapper, new SqliteQueryExecutor(dbConnection));
-
-        var individualsManager = new IndividualsManager(individualMapper);
+        
+        var individualsManager = new IndividualsManager(individualMapper,new Mapper<ConfigKeyValue>(context));
         var personalDataManager = new PersonalDataManager(personalDataColumnMapper, purposeMapper, originMapper,
             personalDataMapper, individualMapper);
         var purposesManager = new PurposeManager(purposeMapper, deleteConditionMapper);

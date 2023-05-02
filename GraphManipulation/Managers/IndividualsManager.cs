@@ -7,13 +7,16 @@ namespace GraphManipulation.Managers;
 
 public class IndividualsManager : IIndividualsManager
 {
-    private IMapper<Individual> _mapper;
-    private TableColumnPair _individualsSource;
+    private readonly IMapper<Individual> _mapper;
+    private readonly IMapper<ConfigKeyValue> _keyValueMapper;
+    private const string IndividualsSourceKey = "IndividualsSource";
 
-    public IndividualsManager(IMapper<Individual> individualsMapper)
+    public IndividualsManager(IMapper<Individual> individualsMapper, IMapper<ConfigKeyValue> keyValueMapper)
     {
         _mapper = individualsMapper;
+        _keyValueMapper = keyValueMapper;
     }
+
     public IEnumerable<IIndividual> GetAll()
     {
         return _mapper.Find(_ => true);
@@ -26,11 +29,25 @@ public class IndividualsManager : IIndividualsManager
 
     public void SetIndividualsSource(TableColumnPair source)
     {
-        _individualsSource = source;
+        ConfigKeyValue keyValue = _keyValueMapper.FindSingle(x => x.Key == IndividualsSourceKey);
+        if (keyValue == null)
+        {
+            _keyValueMapper.Insert(new ConfigKeyValue()
+                {Key = IndividualsSourceKey, Value = $"({source.TableName}, {source.ColumnName})"});
+        }
+        else
+        {
+            keyValue.Value = $"({source.TableName}, {source.ColumnName})";
+            _keyValueMapper.Update(keyValue);
+        }
     }
 
     public TableColumnPair GetIndividualsSource()
     {
-        return _individualsSource;
+        ConfigKeyValue? keyValue = _keyValueMapper.FindSingle(x => x.Key == IndividualsSourceKey);
+        string table = keyValue.Value.Split(",")[0].Replace("(", "");
+        string column = keyValue.Value.Split(",")[1].Replace(")", "");
+        TableColumnPair tableColumnPair = new TableColumnPair(table, column);
+        return tableColumnPair;
     }
 }
