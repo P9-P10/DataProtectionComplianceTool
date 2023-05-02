@@ -94,4 +94,47 @@ public class TestDeletionConditions
         string result = process.GetOutput();
         result.Should().Contain("DeletionCondition, , NewCondition");
     }
+    
+    [Fact]
+    public void TestDeleteCommand_Condition_No_Longer_stored()
+    {
+        using TestProcess process = SystemTest.CreateTestProcess();
+        process.Start();
+        process.GiveInput(
+            $"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.ConditionAlias} \"Condition\"");
+
+        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name}" +
+                          $" DeletionCondition");
+        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.List}");
+        string result = process.GetOutput();
+        result.Should().NotContain("DeletionCondition, , NewCondition");
+    }
+    
+    [Fact]
+    public void TestDeleteCommand_Return_Correct_Output()
+    {
+        using TestProcess process = SystemTest.CreateTestProcess();
+        process.Start();
+        process.GiveInput(
+            $"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.ConditionAlias} \"Condition\"");
+
+        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name}" +
+                          $" DeletionCondition");
+        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.List} -n DeletionCondition");
+        string result = process.GetOutput();
+        result.Should().Contain("Successfully deleted DeletionCondition");
+    }
+    
+    [Fact]
+    public void TestShowCommand_Return_Correct_Output()
+    {
+        using TestProcess process = SystemTest.CreateTestProcess();
+        process.Start();
+        process.GiveInput(
+            $"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.ConditionAlias} \"Condition\"");
+        
+        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.ShowAlias} -n DeletionCondition");
+        string result = process.GetOutput();
+        result.Should().Contain("DeletionCondition, , Condition");
+    }
 }

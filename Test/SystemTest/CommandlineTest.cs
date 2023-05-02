@@ -15,7 +15,7 @@ public class CommandlineTest
         process.Start();
         
         process.GiveInput("help");
-        string result = process.GetOutput();
+        string result = string.Join("", process.GetLastOutput());
         string error = process.GetError();
         result.Should().Be(@$"Using config found at {SystemTest.ConfigPath}" +
                            "$: Description:  This is a description of the root command" +
