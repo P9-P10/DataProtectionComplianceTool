@@ -37,7 +37,7 @@ public class TestOrigins
         process.GiveInput($"{CommandNamer.OriginsAlias} {CommandNamer.List}");
         List<string> result = process.GetLastOutput();
 
-        result.Should().Contain($"{name}, {description}, [   ]");
+        result.Should().Contain($"{name}, {description}, [  ]");
     }
 
     [Fact]
