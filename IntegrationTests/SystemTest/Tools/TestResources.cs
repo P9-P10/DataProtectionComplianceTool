@@ -2,7 +2,7 @@ using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Models;
 using GraphManipulation.Models.Interfaces;
 
-namespace IntegrationTests.SystemTest.Tools;
+namespace Test.SystemTest;
 
 public class TestResources
 {

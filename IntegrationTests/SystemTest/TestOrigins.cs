@@ -1,8 +1,7 @@
 ﻿using FluentAssertions;
 using GraphManipulation.Commands.Helpers;
-using IntegrationTests.SystemTest.Tools;
 
-namespace IntegrationTests.SystemTest;
+namespace Test.SystemTest;
 
 [Collection("SystemTestSequential")]
 public class TestOrigins
@@ -10,7 +9,7 @@ public class TestOrigins
     [Fact]
     public void TestAddOrigin_Returns_Correct_Message()
     {
-        using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
+        using TestProcess process = SystemTest.CreateTestProcess();
         process.Start();
 
         const string description = "This is the description";
@@ -26,7 +25,7 @@ public class TestOrigins
     [Fact]
     public void TestAddOrigin_Origin_Stored_Correctly()
     {
-        using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
+        using TestProcess process = SystemTest.CreateTestProcess();
         process.Start();
 
         const string description = "This is the description";
@@ -41,7 +40,7 @@ public class TestOrigins
     [Fact]
     public void TestUpdateOrigin_Returns_Correct_Message()
     {
-        using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
+        using TestProcess process = SystemTest.CreateTestProcess();
         process.Start();
 
         const string description = "This is the description";

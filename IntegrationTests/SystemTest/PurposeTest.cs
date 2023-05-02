@@ -1,7 +1,6 @@
 using FluentAssertions;
-using IntegrationTests.SystemTest.Tools;
 
-namespace IntegrationTests.SystemTest;
+namespace Test.SystemTest;
 
 [Collection("SystemTestSequential")]
 public class PurposeTest : TestResources
@@ -9,7 +8,7 @@ public class PurposeTest : TestResources
     [Fact]
     public void AddIsSuccessful()
     {
-        using var process = Tools.SystemTest.CreateTestProcess();
+        using var process = SystemTest.CreateTestProcess();
         process.Start();
 
         AddDeleteCondition(process, TestDeleteCondition);
@@ -31,7 +30,7 @@ public class PurposeTest : TestResources
     [Fact]
     public void PurposeCanBeRetrievedAfterAdd()
     {
-        using var process = Tools.SystemTest.CreateTestProcess();
+        using var process = SystemTest.CreateTestProcess();
         process.Start();
 
         AddDeleteCondition(process, TestDeleteCondition);
@@ -48,7 +47,7 @@ public class PurposeTest : TestResources
     [Fact]
     public void PurposeCanBeUpdated()
     {
-        using var process = Tools.SystemTest.CreateTestProcess();
+        using var process = SystemTest.CreateTestProcess();
         process.Start();
 
         AddDeleteCondition(process, TestDeleteCondition);
@@ -67,7 +66,7 @@ public class PurposeTest : TestResources
     [Fact]
     public void PurposeCanBeListed()
     {
-        using var process = Tools.SystemTest.CreateTestProcess();
+        using var process = SystemTest.CreateTestProcess();
         process.Start();
 
         AddDeleteCondition(process, TestDeleteCondition);
@@ -87,7 +86,7 @@ public class PurposeTest : TestResources
     [Fact]
     public void PurposeCanBeDeleted()
     {
-        using var process = Tools.SystemTest.CreateTestProcess();
+        using var process = SystemTest.CreateTestProcess();
         process.Start();
 
         AddDeleteCondition(process, TestDeleteCondition);

@@ -1,8 +1,7 @@
-﻿using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 
-namespace IntegrationTests.SystemTest.Tools;
+namespace Test.SystemTest;
 
 public static class SystemTest
 {
@@ -10,7 +9,7 @@ public static class SystemTest
     public static string ExecutablePath { get; set; } = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Path.Combine(Directory.GetCurrentDirectory(), "GraphManipulation.exe") : Path.Combine(Directory.GetCurrentDirectory(), "GraphManipulation");
     public static string DatabasePath { get; set; } = "system_test2_db.sqlite";
 
-    public static void CreateConfigFile()
+    public static void CreateConfigFile(string configPath)
     {
         var configValues = new Dictionary<string, string>
         {
@@ -21,24 +20,31 @@ public static class SystemTest
             {$"DatabaseConnectionString", $"Data Source={DatabasePath}"},
             {"IndividualsTable", "test"}
         };
-        if (!File.Exists(ConfigPath))
-        {
-            File.WriteAllText(ConfigPath, JsonConvert.SerializeObject( configValues ));
-        }
+        File.WriteAllText(configPath, JsonConvert.SerializeObject( configValues ));
     }
 
-    public static TestProcess CreateTestProcess([CallerMemberName] string caller = null)
+    public static void CreateConfigFile()
+    {
+        CreateConfigFile(ConfigPath);
+    }
+    
+    public static TestProcess CreateTestProcess(string executablePath)
     {
         CreateConfigFile();
         // Delete database to avoid sharing data across tests
         DeleteDatabase();
-        
-        TestProcess process = new TestProcess(ExecutablePath);
+
+        TestProcess process = new TestProcess(executablePath);
         return process;
     }
     
     private static void DeleteDatabase()
     {
         File.Delete(DatabasePath);
+    }
+
+    public static TestProcess CreateTestProcess()
+    {
+        return CreateTestProcess(ExecutablePath);
     }
 }
