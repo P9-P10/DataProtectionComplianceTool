@@ -71,6 +71,11 @@ public class TestProcess : IDisposable
     {
         return FlattenList(AllOutputs);
     }
+    
+    public IEnumerable<string> GetAllOutputNoWhitespace()
+    {
+        return GetAllOutput().Where(s => !string.IsNullOrWhiteSpace(s));
+    }
 
     public List<string> GetLastOutput()
     {
@@ -85,6 +90,11 @@ public class TestProcess : IDisposable
     public List<string> GetAllErrors()
     {
         return FlattenList(AllErrors);
+    }
+
+    public IEnumerable<string> GetAllErrorsNoWhitespace()
+    {
+        return GetAllErrors().Where(s => !string.IsNullOrWhiteSpace(s));
     }
 
     public List<string> GetLastError()
