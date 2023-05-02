@@ -1,5 +1,3 @@
-using Xunit;
-
 namespace Test.SystemTest;
 
 [Collection("SystemTestSequential")]
