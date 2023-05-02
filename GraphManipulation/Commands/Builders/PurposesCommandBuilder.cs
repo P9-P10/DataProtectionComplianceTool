@@ -40,7 +40,8 @@ public static class PurposesCommandBuilder
                     .WithGetDefaultValue(() => false))
             .WithOption(out var deleteConditionOption,
                 BuildDeleteConditionOption()
-                    .WithDescription("The delete condition that the purpose receives"))
+                    .WithDescription("The delete condition that the purpose receives")
+                    .WithIsRequired(true))
             .WithHandler(context =>
             {
                 Handlers.AddHandler(context, console,
