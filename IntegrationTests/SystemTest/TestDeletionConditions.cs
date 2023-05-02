@@ -1,7 +1,8 @@
 using FluentAssertions;
 using GraphManipulation.Commands.Helpers;
+using IntegrationTests.SystemTest.Tools;
 
-namespace Test.SystemTest;
+namespace IntegrationTests.SystemTest;
 
 
 [Collection("SystemTestSequential")]
@@ -10,7 +11,7 @@ public class TestDeletionConditions
     [Fact]
     public void TestAddCommand_Returns_Correct_Message()
     {
-        using TestProcess process = SystemTest.CreateTestProcess();
+        using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
         process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.Condition} \"Condition\"");
@@ -22,7 +23,7 @@ public class TestDeletionConditions
     [Fact]
     public void TestAddCommand_Stores_Value()
     {
-        using TestProcess process = SystemTest.CreateTestProcess();
+        using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
         process.GiveInput(
@@ -36,7 +37,7 @@ public class TestDeletionConditions
     [Fact]
     public void TestUpdateCommand_Updates_Name_Returns_Correct_Message()
     {
-        using TestProcess process = SystemTest.CreateTestProcess();
+        using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
         process.GiveInput(
             $"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.ConditionAlias} \"Condition\"");
@@ -50,7 +51,7 @@ public class TestDeletionConditions
     [Fact]
     public void TestUpdateCommand_Updates_Name_Updated_Value_Is_Stored()
     {
-        using TestProcess process = SystemTest.CreateTestProcess();
+        using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
         process.GiveInput(
             $"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.ConditionAlias} \"Condition\"");
@@ -65,7 +66,7 @@ public class TestDeletionConditions
     [Fact]
     public void TestUpdateCommand_Updates_Description_Updated_Value_Is_Stored()
     {
-        using TestProcess process = SystemTest.CreateTestProcess();
+        using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
         process.GiveInput(
             $"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.ConditionAlias} \"Condition\"");
@@ -80,7 +81,7 @@ public class TestDeletionConditions
     [Fact]
     public void TestUpdateCommand_Updates_Condition_Updated_Value_Is_Stored()
     {
-        using TestProcess process = SystemTest.CreateTestProcess();
+        using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
         process.GiveInput(
             $"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.ConditionAlias} \"Condition\"");
@@ -95,7 +96,7 @@ public class TestDeletionConditions
     [Fact]
     public void TestDeleteCommand_Condition_No_Longer_stored()
     {
-        using TestProcess process = SystemTest.CreateTestProcess();
+        using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
         process.GiveInput(
             $"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.ConditionAlias} \"Condition\"");
@@ -110,7 +111,7 @@ public class TestDeletionConditions
     [Fact]
     public void TestDeleteCommand_Return_Correct_Output()
     {
-        using TestProcess process = SystemTest.CreateTestProcess();
+        using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
         
         // dcs add --name DeletionCondition -c "Condition"
@@ -127,7 +128,7 @@ public class TestDeletionConditions
     [Fact]
     public void TestShowCommand_Return_Correct_Output()
     {
-        using TestProcess process = SystemTest.CreateTestProcess();
+        using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
         process.GiveInput(
             $"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.ConditionAlias} \"Condition\"");

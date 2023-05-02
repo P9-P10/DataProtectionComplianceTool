@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 
-namespace Test.SystemTest;
+namespace IntegrationTests.SystemTest.Tools;
 
 public static class SystemTest
 {

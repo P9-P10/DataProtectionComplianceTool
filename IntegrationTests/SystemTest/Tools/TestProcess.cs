@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace Test.SystemTest;
+namespace IntegrationTests.SystemTest.Tools;
 
 public class TestProcess : IDisposable
 {
