@@ -39,8 +39,7 @@ public class TestOrigins
 
         result.Should().Contain($"{name}, {description}, [   ]");
     }
-    // TODO Opdater tests til ikke at bruge .getoutput men getLastoutput i stedet.
-    
+
     [Fact]
     public void TestUpdateOrigin_Returns_Correct_Message()
     {

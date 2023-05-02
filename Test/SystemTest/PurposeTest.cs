@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using FluentAssertions;
 using GraphManipulation.Commands.Helpers;
 using Xunit;
@@ -7,6 +5,7 @@ using Xunit.Abstractions;
 
 namespace Test.SystemTest;
 
+[Collection("SystemTestSequential")]
 public class PurposeTest
 {
     private readonly ITestOutputHelper _testOutputHelper;
