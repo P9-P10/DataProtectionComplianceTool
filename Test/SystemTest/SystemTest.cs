@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 
 namespace Test.SystemTest;
@@ -8,7 +10,7 @@ namespace Test.SystemTest;
 public static class SystemTest
 {
     public static string ConfigPath { get; set; } = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
-    public static string ExecutablePath { get; set; } = Path.Combine(Directory.GetCurrentDirectory(), "GraphManipulation.exe");
+    public static string ExecutablePath { get; set; } = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Path.Combine(Directory.GetCurrentDirectory(), "GraphManipulation.exe") : Path.Combine(Directory.GetCurrentDirectory(), "GraphManipulation");
     public static string DatabasePath { get; set; } = "system_test_db.sqlite";
 
     public static void CreateConfigFile(string configPath)
