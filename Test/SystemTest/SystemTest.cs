@@ -7,8 +7,8 @@ namespace Test.SystemTest;
 
 public static class SystemTest
 {
-    public static readonly string DefaultConfigPath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
-    public static readonly string DefaultExecutablePath = Path.Combine(Directory.GetCurrentDirectory(), "GraphManipulation.exe");
+    public static string ConfigPath { get; set; } = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
+    public static string ExecutablePath { get; set; } = Path.Combine(Directory.GetCurrentDirectory(), "GraphManipulation.exe");
     public static string DatabasePath { get; set; } = "system_test_db.sqlite";
 
     public static void CreateConfigFile(string configPath)
@@ -27,7 +27,7 @@ public static class SystemTest
 
     public static void CreateConfigFile()
     {
-        CreateConfigFile(DefaultConfigPath);
+        CreateConfigFile(ConfigPath);
     }
     
     public static TestProcess CreateTestProcess(string executablePath)
@@ -47,6 +47,6 @@ public static class SystemTest
 
     public static TestProcess CreateTestProcess()
     {
-        return CreateTestProcess(DefaultExecutablePath);
+        return CreateTestProcess(ExecutablePath);
     }
 }
