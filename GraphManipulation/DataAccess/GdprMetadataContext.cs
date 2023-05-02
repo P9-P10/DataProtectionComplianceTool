@@ -12,25 +12,26 @@ public class GdprMetadataContext : DbContext
     {
         _connectionString = connectionString;
     }
-    
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSqlite(_connectionString);
     }
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<PersonalDataColumn>().OwnsOne(p => p.TableColumnPair);
     }
-    
+
     public DbSet<PersonalDataColumn> columns { get; set; }
     public DbSet<VacuumingRule> vacuumingRules { get; set; }
     public DbSet<Processing> processes { get; set; }
     public DbSet<Individual> people { get; set; }
+
+    public DbSet<ConfigKeyValue> IndividualsSourceStores { get; set; }
     public DbSet<Purpose> purposes { get; set; }
     public DbSet<Origin> origins { get; set; }
     public DbSet<PersonalData> personalDatas { get; set; }
-    
-    public IDbConnection Connection => Database.GetDbConnection();
 
+    public IDbConnection Connection => Database.GetDbConnection();
 }
