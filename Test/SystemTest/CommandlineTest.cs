@@ -10,7 +10,7 @@ public class CommandlineTest
     {
         using TestProcess process = SystemTest.CreateTestProcess();
         process.Start();
-        
+
         process.GiveInput("help");
         string result = string.Join("", process.GetLastOutput());
         string error = process.GetError();
@@ -29,5 +29,18 @@ public class CommandlineTest
                            "lgs, logs  " +
                            "cfg, configuration");
     }
-    
+
+    [Fact]
+    public void TestWithError()
+    {
+        using TestProcess process = SystemTest.CreateTestProcess();
+        process.Start();
+
+        process.GiveInput("please break");
+        string result = string.Join("", process.GetLastOutput());
+        string error = process.GetError();
+        result.Should().NotBeEmpty();
+        error.Should().NotBeEmpty();
+        error.Should().Be("Required command was not provided.\nUnrecognized command or argument 'please'.\nUnrecognized command or argument 'break'.\n");
+    }
 }
