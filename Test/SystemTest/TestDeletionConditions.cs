@@ -115,11 +115,17 @@ public class TestDeletionConditions
     {
         using TestProcess process = SystemTest.CreateTestProcess();
         process.Start();
+        
+        // dcs add --name DeletionCondition -c "Condition"
         process.GiveInput(
             $"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.ConditionAlias} \"Condition\"");
 
+        // dcs d --name DeletionCondition
         process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name}" +
                           $" DeletionCondition");
+        
+        // dcs list -n DeletionCondition
+        // This command does not produce the expected output
         process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.List} -n DeletionCondition");
         string result = process.GetOutput();
         result.Should().Contain("Successfully deleted DeletionCondition");

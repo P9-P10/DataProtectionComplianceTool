@@ -105,7 +105,7 @@ public static class Program
         {
             try
             {
-                Console.Write("\n$: ");
+                Console.Write($"{Environment.NewLine}$: ");
                 var command = (Console.ReadLine() ?? "").Trim();
                 
                 if (!string.IsNullOrEmpty(command))

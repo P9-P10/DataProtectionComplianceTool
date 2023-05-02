@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Xunit;
 
 namespace Test.SystemTest;
