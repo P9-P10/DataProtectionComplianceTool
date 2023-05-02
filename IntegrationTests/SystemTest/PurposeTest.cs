@@ -1,8 +1,4 @@
-using System.Linq;
 using FluentAssertions;
-using GraphManipulation.Commands.Helpers;
-using GraphManipulation.Models.Interfaces;
-using Xunit;
 
 namespace Test.SystemTest;
 
