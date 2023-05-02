@@ -18,8 +18,8 @@ public class Purpose : DomainEntity, IPurpose
             Description,
             LegallyRequired,
             "[ " + (DeleteCondition is null ? "" : DeleteCondition.ToListing()) + " ]",
-            "[ " + string.Join(", ", Columns is null ? "" : Columns.Select(c => c.ToListing())) + " ]",
-            "[ " + string.Join(", ", Rules is null ? "" : Rules.Select(r => r.ToListing())) + " ]"
+            "[ " + string.Join(", ", Columns is null ? new List<string>() : Columns.Select(c => c.ToListing())) + " ]",
+            "[ " + string.Join(", ", Rules is null ? new List<string>() : Rules.Select(r => r.ToListing())) + " ]"
         );
     }
 

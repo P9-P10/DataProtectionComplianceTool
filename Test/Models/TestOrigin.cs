@@ -14,6 +14,6 @@ public class TestOrigin
             PersonalDataColumns = null
         };
         
-        Assert.Equal("Name, , [   ]",origin.ToListing());
+        Assert.Equal("Name, , [  ]",origin.ToListing());
     }
 }

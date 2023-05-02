@@ -45,6 +45,6 @@ public class TestVacuumingRule
             Purposes = null
         };
         
-        Assert.Equal("Name, , , [   ]", vacuumingRule.ToListing());
+        Assert.Equal("Name, , , [  ]", vacuumingRule.ToListing());
     }
 }
