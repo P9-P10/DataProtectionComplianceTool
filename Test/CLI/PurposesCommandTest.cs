@@ -95,7 +95,8 @@ public class PurposesCommandTest : CommandTest
         {
             VerifyCommand(BuildCli(out _, out _, out _),
                 $"{CommandName} " +
-                $"--name {PurposeName} "
+                $"--name {PurposeName} " +
+                $"--delete-condition-name {DeleteCondition.GetName()} "
             );
         }
 
@@ -136,7 +137,8 @@ public class PurposesCommandTest : CommandTest
         {
             BuildCli(out var purposeManagerMock, out _, out _)
                 .Invoke($"{CommandName} " +
-                        $"-n {PurposeWithoutDeleteConditionName} ");
+                        $"-n {PurposeWithoutDeleteConditionName} " +
+                        $"-dcn {DeleteCondition.GetName()} ");
 
             purposeManagerMock.Verify(manager => manager.Add(
                 It.Is<string>(s => s == PurposeWithoutDeleteConditionName),
@@ -145,7 +147,7 @@ public class PurposesCommandTest : CommandTest
             
             purposeManagerMock.Verify(manager => manager.SetDeleteCondition(
                 It.Is<string>(s => s == PurposeWithoutDeleteConditionName),
-                It.IsAny<string>()), Times.Never);
+                It.Is<string>(s => s == DeleteCondition.GetName())));
         }
     }
     
