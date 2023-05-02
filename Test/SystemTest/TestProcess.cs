@@ -49,7 +49,9 @@ public class TestProcess : IDisposable
 
     public void Start()
     {
+        Process.ErrorDataReceived += (sender, args) => Errors.Add(args.Data);
         Process.Start();
+        Process.BeginErrorReadLine();
     }
 
     public void GiveInput(string input)
@@ -108,9 +110,16 @@ public class TestProcess : IDisposable
 
     private void AwaitProcessResponse()
     {
-        // This is a suboptimal way of obtaining the output
-        // But it is asynchronous, and there is no way to tell when it is finished writing
-        
+        string output = ReadStandardOutputToString();
+
+        Output = output.Split(Environment.NewLine).ToList();
+
+        AllOutputs.Add(Output);
+        AllErrors.Add(Errors);
+    }
+
+    private string ReadStandardOutputToString()
+    {
         List<char> chars = new List<char> ();
         bool encounteredPrompt = false;
         while (true)
@@ -125,15 +134,9 @@ public class TestProcess : IDisposable
             }
             char chr = (char)Process.StandardOutput.Read();
             chars.Add(chr);
-
         }
-        
-        string res = new String(chars.ToArray());
 
-        Output = res.Split(Environment.NewLine).ToList();
-        
-        AllOutputs.Add(Output);
-        AllErrors.Add(Errors);
+        return new String(chars.ToArray());
     }
 
     public void Dispose()
