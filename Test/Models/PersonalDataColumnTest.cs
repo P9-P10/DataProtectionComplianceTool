@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Test.Models;
 
-public class TestPersonalDataColumn
+public class PersonalDataColumnTest
 {
     [Fact]
     public void TestAddPurposeWorksWithPurposesBeingNull()

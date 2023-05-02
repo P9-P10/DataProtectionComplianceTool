@@ -1,50 +1,15 @@
-using System;
 using System.Linq;
 using FluentAssertions;
 using GraphManipulation.Commands.Helpers;
+using GraphManipulation.Models.Interfaces;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Test.SystemTest;
 
-public class PurposeTest
+[Collection("SystemTestSequential")]
+public class PurposeTest : TestResources
 {
-    private readonly ITestOutputHelper _testOutputHelper;
-
-    public PurposeTest(ITestOutputHelper testOutputHelper)
-    {
-        _testOutputHelper = testOutputHelper;
-    }
-
-    private const string PurposeName1 = "purposeName1";
-    private const string DeleteConditionName = "deleteConditionName";
-    private const string DeleteCondition = "This is a delete condition";
-
-    private static void AddDeleteCondition(TestProcess testProcess)
-    {
-        const string addDeleteConditionCommand = $"{CommandNamer.DeleteConditionName} {CommandNamer.Add} " +
-                                                 $"{OptionNamer.Name} {DeleteConditionName} " +
-                                                 $"{OptionNamer.Condition} \"{DeleteCondition}\" ";
-        
-        testProcess.GiveInput(addDeleteConditionCommand);
-    }
-
-    private static void AddPurpose(TestProcess testProcess)
-    {
-        const string addPurposeCommand = $"{CommandNamer.PurposesName} {CommandNamer.Add} " +
-                                         $"{OptionNamer.Name} {PurposeName1} " +
-                                         $"{OptionNamer.DeleteConditionName} {DeleteConditionName}";
-        
-        testProcess.GiveInput(addPurposeCommand);
-    }
-
-    private static void ShowPurpose(TestProcess testProcess)
-    {
-        const string showPurposeCommand = $"{CommandNamer.PurposesName} {CommandNamer.Show} " +
-                                          $"{OptionNamer.Name} {PurposeName1}";
-        
-        testProcess.GiveInput(showPurposeCommand);
-    }
+    
     
     [Fact]
     public void AddIsSuccessful()
@@ -52,11 +17,20 @@ public class PurposeTest
         using var process = SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process);
-        AddPurpose(process);
+        AddDeleteCondition(process, TestDeleteCondition);
+        AddPurpose(process, TestPurpose);
 
-        process.GetError().Should().BeEmpty();
-        process.GetOutput().Should().Contain($"Successfully added {PurposeName1} purpose");
+        var error = process.GetAllErrorsNoWhitespace();
+        var output = process.GetAllOutputNoWhitespace().ToList();
+
+        error.Should().BeEmpty();
+        output.Should().ContainSingle(s => 
+            s.Contains($"Successfully added {TestPurpose.GetName()} purpose") &&
+            s.Contains($"{TestPurpose.GetLegallyRequired()}") && 
+            s.Contains(TestPurpose.GetDescription())
+            );
+        output.Should().ContainSingle(s =>
+            s.Contains($"Successfully updated {TestPurpose.GetName()} purpose with {TestDeleteCondition.GetName()}"));
     }
 
     [Fact]
@@ -65,10 +39,71 @@ public class PurposeTest
         using var process = SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process);
-        AddPurpose(process);
-        ShowPurpose(process);
+        AddDeleteCondition(process, TestDeleteCondition);
+        AddPurpose(process, TestPurpose);
+        ShowPurpose(process, TestPurpose);
+        
+        var error = process.GetAllErrorsNoWhitespace();
+        var output = process.GetAllOutputNoWhitespace();
+        
+        error.Should().BeEmpty();
+        output.Should().ContainSingle(s => s.Contains(TestPurpose.ToListing()));
+    }
 
-        process.GetError().Should().BeEmpty();
+    [Fact]
+    public void PurposeCanBeUpdated()
+    {
+        using var process = SystemTest.CreateTestProcess();
+        process.Start();
+
+        AddDeleteCondition(process, TestDeleteCondition);
+        AddDeleteCondition(process, NewTestDeleteCondition);
+        AddPurpose(process, TestPurpose);
+        UpdatePurpose(process, TestPurpose, NewTestPurpose);
+        ShowPurpose(process, NewTestPurpose);
+        
+        var error = process.GetAllErrorsNoWhitespace();
+        var output = process.GetAllOutputNoWhitespace();
+        
+        error.Should().BeEmpty();
+        output.Should().ContainSingle(s => s.Contains(NewTestPurpose.ToListing()));
+    }
+    
+    [Fact]
+    public void PurposeCanBeListed()
+    {
+        using var process = SystemTest.CreateTestProcess();
+        process.Start();
+
+        AddDeleteCondition(process, TestDeleteCondition);
+        AddDeleteCondition(process, NewTestDeleteCondition);
+        AddPurpose(process, TestPurpose);
+        AddPurpose(process, NewTestPurpose);
+        ListPurpose(process);
+
+        var error = process.GetAllErrorsNoWhitespace();
+        var output = process.GetAllOutputNoWhitespace().ToList();
+        
+        error.Should().BeEmpty();
+        output.Should().ContainSingle(s => s.Contains(TestPurpose.ToListing()));
+        output.Should().ContainSingle(s => s.Contains(NewTestPurpose.ToListing()));
+    }
+
+    [Fact]
+    public void PurposeCanBeDeleted()
+    {
+        using var process = SystemTest.CreateTestProcess();
+        process.Start();
+
+        AddDeleteCondition(process, TestDeleteCondition);
+        AddPurpose(process, TestPurpose);
+        DeletePurpose(process, TestPurpose);
+        
+        var error = process.GetAllErrorsNoWhitespace();
+        var output = process.GetAllOutputNoWhitespace();
+        
+        error.Should().BeEmpty();
+        output.Should().ContainSingle(s => 
+            s.Contains($"Successfully deleted {TestPurpose.GetName()} purpose"));
     }
 }

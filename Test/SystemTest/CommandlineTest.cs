@@ -3,6 +3,7 @@ using Xunit;
 
 namespace Test.SystemTest;
 
+[Collection("SystemTestSequential")]
 public class CommandlineTest
 {
     [Fact]

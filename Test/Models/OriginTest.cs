@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Test;
 
-public class TestOrigin
+public class OriginTest
 {
     [Fact]
     public void TestToListingWorksWithNullValues()
@@ -14,6 +14,6 @@ public class TestOrigin
             PersonalDataColumns = null
         };
         
-        Assert.Equal("Name, , [   ]",origin.ToListing());
+        Assert.Equal("Name, , [  ]",origin.ToListing());
     }
 }

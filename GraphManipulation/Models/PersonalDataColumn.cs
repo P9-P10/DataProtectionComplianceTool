@@ -18,7 +18,7 @@ public class PersonalDataColumn : DomainEntity, IPersonalDataColumn
     {
         return string.Join(", ", TableColumnPair == null ? " " : TableColumnPair.ToListing(), JoinCondition,
             Description, DefaultValue,
-            "[ " + string.Join(", ", Purposes == null ? "" : Purposes.Select(p => p.ToListing())) + " ]");
+            "[ " + string.Join(", ", Purposes == null ? new List<string>() : Purposes.Select(p => p.ToListing())) + " ]");
     }
 
     public string GetDescription()
