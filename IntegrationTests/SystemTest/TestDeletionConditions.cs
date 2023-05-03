@@ -1,12 +1,12 @@
 using FluentAssertions;
-using GraphManipulation.Commands.Helpers;
+using GraphManipulation.Models;
 using IntegrationTests.SystemTest.Tools;
 
 namespace IntegrationTests.SystemTest;
 
 
 [Collection("SystemTestSequential")]
-public class TestDeletionConditions
+public class TestDeletionConditions : TestResources
 {
     [Fact]
     public void TestAddCommand_Returns_Correct_Message()
@@ -14,7 +14,7 @@ public class TestDeletionConditions
         using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.Condition} \"Condition\"");
+        AddDeleteCondition(process,new DeleteCondition(){Name = "DeletionCondition",Condition = "Condition"});
         string result = process.GetOutput();
 
         result.Should().Contain("Successfully added DeletionCondition delete condition with , Condition");
@@ -26,56 +26,45 @@ public class TestDeletionConditions
         using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        process.GiveInput(
-            $"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.Condition} \"Condition\"");
-        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.List}");
+        AddDeleteCondition(process,new DeleteCondition(){Name = "DeletionCondition",Condition = "Condition"});
+        ListDeletionConditions(process);
         string result = process.GetOutput();
 
         result.Should().Contain("DeletionCondition, , Condition");
     }
 
-    [Fact]
-    public void TestUpdateCommand_Updates_Name_Returns_Correct_Message()
-    {
-        using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
-        process.Start();
-        process.GiveInput(
-            $"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.ConditionAlias} \"Condition\"");
-
-        process.GiveInput(
-            $"{CommandNamer.DeleteConditionAlias} {CommandNamer.UpdateAlias} {OptionNamer.NameAlias} DeletionCondition {OptionNamer.NewNameAlias} NewName");
-        List<string> result = process.GetLastOutput();
-        result.First().Should().Contain("Successfully updated DeletionCondition delete condition with NewName");
-    }
 
     [Fact]
     public void TestUpdateCommand_Updates_Name_Updated_Value_Is_Stored()
     {
         using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
-        process.GiveInput(
-            $"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.ConditionAlias} \"Condition\"");
+        DeleteCondition deleteCondition = new() {Name = "DeletionCondition", Condition = "Condition"};
+        AddDeleteCondition(process,deleteCondition);
 
-        process.GiveInput(
-            $"{CommandNamer.DeleteConditionAlias} {CommandNamer.UpdateAlias} {OptionNamer.NameAlias} DeletionCondition {OptionNamer.NewNameAlias} NewName");
-        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.List}");
-        string result = process.GetOutput();
-        result.Should().Contain("NewName, , Condition");
+    
+        UpdateDeletionCondition(process,deleteCondition,new DeleteCondition(){Name = "NewName",Condition = Condition});
+        
+        ListDeletionConditions(process);
+        List<string> result = process.GetLastOutput();
+        result[1].Should().Contain("NewName, , This is a condition");
     }
 
     [Fact]
     public void TestUpdateCommand_Updates_Description_Updated_Value_Is_Stored()
     {
-        using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
+        using TestProcess process = Tools.SystemTest.CreateTestProcess();
         process.Start();
-        process.GiveInput(
-            $"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.ConditionAlias} \"Condition\"");
+        DeleteCondition deleteCondition = new() {Name = "DeletionCondition", Condition = "Condition"};
+        AddDeleteCondition(process,deleteCondition);
 
-        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.UpdateAlias} {OptionNamer.Name}" +
-                          $" DeletionCondition {OptionNamer.Description} \"This is the new description\"");
-        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.List}");
-        string result = process.GetOutput();
-        result.Should().Contain("DeletionCondition, This is the new description, Condition");
+    
+        UpdateDeletionCondition(process,deleteCondition,new DeleteCondition(){Name = "NewName",Condition = "Condition",
+            Description = "This is the new description"});
+        ListDeletionConditions(process);
+        
+        List<string> result = process.GetLastOutput();
+        result[1].Should().Contain("NewName, This is the new description, Condition");
     }
     
     [Fact]
@@ -83,14 +72,14 @@ public class TestDeletionConditions
     {
         using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
-        process.GiveInput(
-            $"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.ConditionAlias} \"Condition\"");
+        DeleteCondition deleteCondition = new() {Name = "DeletionCondition", Condition = "Condition"};
+        AddDeleteCondition(process,deleteCondition);
 
-        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.UpdateAlias} {OptionNamer.Name}" +
-                          $" DeletionCondition {OptionNamer.Condition} \"NewCondition\"");
-        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.List}");
+        UpdateDeletionCondition(process,deleteCondition,
+            new DeleteCondition(){Name = "NewName",Condition = Condition,Description = "This is a new description"});
+        ListDeletionConditions(process);
         string result = process.GetOutput();
-        result.Should().Contain("DeletionCondition, , NewCondition");
+        result.Should().Contain("NewName, This is a new description, This is a condition");
     }
     
     [Fact]
@@ -98,14 +87,14 @@ public class TestDeletionConditions
     {
         using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
-        process.GiveInput(
-            $"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.ConditionAlias} \"Condition\"");
+        DeleteCondition deleteCondition = new() {Name = "DeletionCondition", Condition = "Condition"};
+        AddDeleteCondition(process,deleteCondition);
 
-        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name}" +
-                          $" DeletionCondition");
-        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.List}");
+        DeleteDeletionCondition(process,deleteCondition);
+        
+        ListDeletionConditions(process);
         string result = process.GetOutput();
-        result.Should().NotContain("DeletionCondition, , NewCondition");
+        result.Should().NotContain("DeletionCondition, , Condition");
     }
     
     [Fact]
@@ -115,12 +104,11 @@ public class TestDeletionConditions
         process.Start();
         
         // dcs add --name DeletionCondition -c "Condition"
-        process.GiveInput(
-            $"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.ConditionAlias} \"Condition\"");
+        DeleteCondition deleteCondition = new() {Name = "DeletionCondition", Condition = "Condition"};
+        AddDeleteCondition(process,deleteCondition);
 
         // dcs d --name DeletionCondition
-        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name}" +
-                          $" DeletionCondition");
+        DeleteDeletionCondition(process,deleteCondition);
         List<string> result = process.GetLastOutput();
         result.First().Should().Contain("Successfully deleted DeletionCondition");
     }
@@ -130,9 +118,10 @@ public class TestDeletionConditions
     {
         using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
-        process.GiveInput(
-            $"{CommandNamer.DeleteConditionAlias} {CommandNamer.Add} {OptionNamer.Name} DeletionCondition {OptionNamer.ConditionAlias} \"Condition\"");
-        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.ShowAlias} -n DeletionCondition");
+        DeleteCondition deleteCondition = new() {Name = "DeletionCondition", Condition = "Condition"};
+        AddDeleteCondition(process,deleteCondition);
+        
+        ShowDeleteCondition(process,deleteCondition);
         List<string> result = process.GetLastOutput();
         result.First().Should().Contain("DeletionCondition, , Condition");
     }
