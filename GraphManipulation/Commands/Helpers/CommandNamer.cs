@@ -67,4 +67,10 @@ public static class CommandNamer
 
     public const string ShowOrigin = "show-origin";
     public const string ShowOriginAlias = "sho";
+
+    public const string SetSource = "set-source";
+    public const string SetSourceAlias = "sts";
+
+    public const string ShowSource = "show-source";
+    public const string ShowSourceAlias = "shs";
 }

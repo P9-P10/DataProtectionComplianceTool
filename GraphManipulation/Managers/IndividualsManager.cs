@@ -33,11 +33,11 @@ public class IndividualsManager : IIndividualsManager
         if (keyValue == null)
         {
             _keyValueMapper.Insert(new ConfigKeyValue()
-                {Key = IndividualsSourceKey, Value = $"({source.TableName}, {source.ColumnName})"});
+                {Key = IndividualsSourceKey, Value = $"({source.TableName},{source.ColumnName})"});
         }
         else
         {
-            keyValue.Value = $"({source.TableName}, {source.ColumnName})";
+            keyValue.Value = $"({source.TableName},{source.ColumnName})";
             _keyValueMapper.Update(keyValue);
         }
     }

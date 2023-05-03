@@ -9,6 +9,7 @@ public class TestResources
 {
     protected const string Description = "This is a description";
     protected const string Condition = "This is a condition";
+    protected static readonly TableColumnPair IndividualsSource = new TableColumnPair("sourceTable", "sourceColumn");
 
     protected static readonly DeleteCondition TestDeleteCondition = new()
     {
@@ -46,8 +47,8 @@ public class TestResources
 
     protected static readonly Purpose NewNewTestPurpose = new()
     {
-        Name = NewTestPurpose.GetName() + "NEW",
-        Description = NewTestPurpose.GetDescription() + "NEW",
+        Name = TestPurpose.GetName() + "VERY_NEW",
+        Description = TestPurpose.GetDescription() + "VERY_NEW",
         DeleteCondition = NewTestDeleteCondition,
         LegallyRequired = !NewTestPurpose.GetLegallyRequired(),
         Columns = new List<PersonalDataColumn>(),
@@ -289,7 +290,7 @@ public class TestResources
         testProcess.GiveInput(command);
     }
 
-    protected static void PersonalDataAddPurposes(TestProcess testProcess, IPersonalDataColumn personalDataColumn,
+    protected static void AddPurposesToPersonalData(TestProcess testProcess, IPersonalDataColumn personalDataColumn,
         IEnumerable<IPurpose> purposes)
     {
         var command = $"{CommandNamer.PersonalDataName} {CommandNamer.AddPurpose} " +
@@ -299,7 +300,7 @@ public class TestResources
         testProcess.GiveInput(command);
     }
 
-    protected static void PersonalDataRemovePurposes(TestProcess testProcess, IPersonalDataColumn personalDataColumn,
+    protected static void RemovePurposesFromPersonalData(TestProcess testProcess, IPersonalDataColumn personalDataColumn,
         IEnumerable<IPurpose> purposes)
     {
         var command = $"{CommandNamer.PersonalDataName} {CommandNamer.RemovePurpose} " +
@@ -329,6 +330,25 @@ public class TestResources
                       $"{personalDataColumn.GetTableColumnPair().ColumnName} " +
                       $"{OptionNamer.Id} {individual.ToListing()} ";
 
+        testProcess.GiveInput(command);
+    }
+
+    protected static void SetIndividualsSource(TestProcess testProcess, TableColumnPair source)
+    {
+        var command = $"{CommandNamer.IndividualsName} {CommandNamer.SetSource} " +
+                      $"{OptionNamer.TableColumn} {source.TableName} {source.ColumnName}";
+        testProcess.GiveInput(command);
+    }
+
+    protected static void ShowIndividualsSource(TestProcess testProcess)
+    {
+        var command = $"{CommandNamer.IndividualsName} {CommandNamer.ShowSource}";
+        testProcess.GiveInput(command);
+    }
+
+    protected static void ListIndividuals(TestProcess testProcess)
+    {
+        var command = $"{CommandNamer.IndividualsName} {CommandNamer.List}";
         testProcess.GiveInput(command);
     }
 }
