@@ -16,9 +16,14 @@ public class PersonalDataColumn : DomainEntity, IPersonalDataColumn
 
     public string ToListing()
     {
-        return string.Join(", ", TableColumnPair == null ? " " : TableColumnPair.ToListing(), JoinCondition,
+        return string.Join(", ", TableColumnPair == null ? " " : TableColumnPair.ToListingIdentifier(), JoinCondition,
             Description, DefaultValue,
-            "[ " + string.Join(", ", Purposes == null ? new List<string>() : Purposes.Select(p => p.ToListing())) + " ]");
+            "[ " + string.Join(", ", Purposes == null ? new List<string>() : Purposes.Select(p => p.ToListingIdentifier())) + " ]");
+    }
+
+    public string ToListingIdentifier()
+    {
+        return GetTableColumnPair().ToListing();
     }
 
     public string GetDescription()

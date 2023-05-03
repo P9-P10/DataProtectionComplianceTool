@@ -12,7 +12,12 @@ public class Origin : DomainEntity, IOrigin
     {
         return string.Join(", ", Name, Description,
             "[ " + string.Join(", ",
-                PersonalDataColumns is null ? new List<string>() : PersonalDataColumns.Select(c => c.ToListing())) + " ]");
+                PersonalDataColumns is null ? new List<string>() : PersonalDataColumns.Select(c => c.ToListingIdentifier())) + " ]");
+    }
+
+    public string ToListingIdentifier()
+    {
+        return GetName();
     }
 
     public IEnumerable<IPersonalDataColumn>? GetPersonalDataColumns()

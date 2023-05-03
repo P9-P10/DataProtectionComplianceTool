@@ -10,4 +10,9 @@ public class Individual : DomainEntity, IIndividual
     {
         return Id == null ? "Unknown" : Id.ToString();
     }
+
+    public string ToListingIdentifier()
+    {
+        return ToListing();
+    }
 }

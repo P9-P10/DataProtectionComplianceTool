@@ -9,8 +9,6 @@ public class VacuumingRule : DomainEntity, IVacuumingRule
     public string? Description { get; set; }
     public string Interval { get; set; }
 
-    public int? Id { get; set; }
-
     public DateTime? LastExecution { get; set; }
     
     public IEnumerable<Purpose>? Purposes { get; set; }
@@ -18,7 +16,12 @@ public class VacuumingRule : DomainEntity, IVacuumingRule
     public string ToListing()
     {
         return string.Join(", ", Name, Description, Interval,
-            "[ " + string.Join(", ", Purposes is null ? new List<string>() : Purposes.Select(p => p.ToListing())) + " ]");
+            "[ " + string.Join(", ", Purposes is null ? new List<string>() : Purposes.Select(p => p.ToListingIdentifier())) + " ]");
+    }
+
+    public string ToListingIdentifier()
+    {
+        return GetName();
     }
 
     public string GetInterval()

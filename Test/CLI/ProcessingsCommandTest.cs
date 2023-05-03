@@ -209,7 +209,7 @@ public class ProcessingsCommandTest : CommandTest
                 .Invoke($"{CommandName} --name {ProcessingName}");
 
             console.Out.ToString().Should()
-                .StartWith($"{ProcessingName}, {Description}, {Purpose.ToListing()}");
+                .StartWith($"{ProcessingName}, {Description}, {Purpose.ToListingIdentifier()}");
         }
     }
 }

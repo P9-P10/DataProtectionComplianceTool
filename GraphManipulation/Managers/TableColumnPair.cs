@@ -19,6 +19,11 @@ public class TableColumnPair : IListable
         return "(" + string.Join(", ", TableName, ColumnName) + ")";
     }
 
+    public string ToListingIdentifier()
+    {
+        return ToListing();
+    }
+
     public override string ToString()
     {
         return ToListing();
