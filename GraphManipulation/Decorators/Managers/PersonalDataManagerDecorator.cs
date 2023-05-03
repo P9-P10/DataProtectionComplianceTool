@@ -44,7 +44,8 @@ public class PersonalDataManagerDecorator : LoggingDecorator, IPersonalDataManag
 
     public void SetDefaultValue(TableColumnPair tableColumnPair, string defaultValue)
     {
-        throw new NotImplementedException();
+        LogSet(tableColumnPair.ToListing(), new {DefaultValue = defaultValue});
+        _manager.SetDefaultValue(tableColumnPair, defaultValue);
     }
 
     public void AddPurpose(TableColumnPair tableColumnPair, string purposeName)

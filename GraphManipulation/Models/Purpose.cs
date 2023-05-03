@@ -17,10 +17,15 @@ public class Purpose : DomainEntity, IPurpose
             Name,
             Description,
             LegallyRequired,
-            "[ " + (DeleteCondition is null ? "" : DeleteCondition.ToListing()) + " ]",
-            "[ " + string.Join(", ", Columns is null ? new List<string>() : Columns.Select(c => c.ToListing())) + " ]",
-            "[ " + string.Join(", ", Rules is null ? new List<string>() : Rules.Select(r => r.ToListing())) + " ]"
+            "[ " + (DeleteCondition is null ? "" : DeleteCondition.ToListingIdentifier()) + " ]",
+            "[ " + string.Join(", ", Columns is null ? new List<string>() : Columns.Select(c => c.ToListingIdentifier())) + " ]",
+            "[ " + string.Join(", ", Rules is null ? new List<string>() : Rules.Select(r => r.ToListingIdentifier())) + " ]"
         );
+    }
+
+    public string ToListingIdentifier()
+    {
+        return GetName();
     }
 
     public string GetName()

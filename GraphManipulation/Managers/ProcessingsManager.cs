@@ -33,7 +33,7 @@ public class ProcessingsManager : NamedEntityManager<Processing>, IProcessingsMa
     public void AddProcessing(string name, TableColumnPair tableColumnPair, string purposeName, string description)
     {
         var purpose = _purposeMapper.FindSingle(purpose => purpose.Name == purposeName);
-        var column = _columnMapper.FindSingle(column => column.TableColumnPair == tableColumnPair);
+        var column = _columnMapper.FindSingle(column => column.TableColumnPair.Equals(tableColumnPair));
         _processingMapper.Insert(new Processing { Name = name, Description = description, Purpose = purpose, PersonalDataColumn = column});
     }
 }

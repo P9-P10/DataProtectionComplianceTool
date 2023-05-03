@@ -56,6 +56,11 @@ public class Log : ILog, IListable
         return ToString();
     }
 
+    public string ToListingIdentifier()
+    {
+        return LogNumber.ToString();
+    }
+
     public static string LogDelimiter()
     {
         // WARNING: MUST NOT BE SET TO ANY REGEX OPERATORS,

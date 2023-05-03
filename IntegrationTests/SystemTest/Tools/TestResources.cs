@@ -47,14 +47,28 @@ public class TestResources
     protected static readonly PersonalDataColumn TestPersonalDataColumn = new()
     {
         TableColumnPair = new TableColumnPair("Table", "Column"),
-        Purposes = new[] {TestPurpose}
+        Purposes = new[] { TestPurpose },
+        DefaultValue = "defaultValue",
+        Description = Description,
+        JoinCondition = "This is a join condition"
+    };
+
+    protected static readonly PersonalDataColumn NewTestPersonalDataColumn = new()
+    {
+        TableColumnPair = new TableColumnPair(
+            TestPersonalDataColumn.TableColumnPair.TableName + "NEW",
+            TestPersonalDataColumn.TableColumnPair.ColumnName + "NEW"),
+        Purposes = new[] { NewTestPurpose },
+        DefaultValue = TestPersonalDataColumn.DefaultValue + "NEW",
+        Description = TestPersonalDataColumn.Description + "NEW",
+        JoinCondition = TestPersonalDataColumn.JoinCondition + "NEW"
     };
 
     protected static readonly Processing TestProcessing = new()
     {
         Name = "ProcessingName", Description = "ProcessingDescription",
         PersonalDataColumn = TestPersonalDataColumn,
-        Purpose = new Purpose() {Name = "Purpose", Description = "Description"}
+        Purpose = new Purpose() { Name = "Purpose", Description = "Description" }
     };
 
     protected static void AddDeleteCondition(TestProcess testProcess, IDeleteCondition deleteCondition)
@@ -181,11 +195,89 @@ public class TestResources
 
     protected static void AddPersonalData(TestProcess process, IPersonalDataColumn personalDataColumn)
     {
-        string command = $"{CommandNamer.PersonalDataAlias} {CommandNamer.AddAlias}" +
-                         $" {OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} {personalDataColumn.GetTableColumnPair().ColumnName}" +
-                         $" {OptionNamer.JoinCondition} \"{personalDataColumn.GetJoinCondition()}\"" +
-                         $" {OptionNamer.DefaultValueAlias} \"{personalDataColumn.GetDefaultValue()}\"" +
-                         $" {OptionNamer.PurposeList} {personalDataColumn.GetPurposes().First().GetName()}";
+        var command = $"{CommandNamer.PersonalDataAlias} {CommandNamer.AddAlias}" +
+                      $" {OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} {personalDataColumn.GetTableColumnPair().ColumnName}" +
+                      $" {OptionNamer.JoinCondition} \"{personalDataColumn.GetJoinCondition()}\"" +
+                      $" {OptionNamer.DefaultValueAlias} \"{personalDataColumn.GetDefaultValue()}\"" +
+                      $" {OptionNamer.Description} \"{personalDataColumn.GetDescription()}\"" +
+                      $" {OptionNamer.PurposeList} {string.Join(" ", personalDataColumn.GetPurposes().Select(p => p.GetName()))}";
         process.GiveInput(command);
+    }
+
+    protected static void UpdatePersonalData(TestProcess testProcess, IPersonalDataColumn old,
+        IPersonalDataColumn updated)
+    {
+        var command = $"{CommandNamer.PersonalDataName} {CommandNamer.Update} " +
+                      $"{OptionNamer.TableColumn} {old.GetTableColumnPair().TableName} {old.GetTableColumnPair().ColumnName} " +
+                      $"{OptionNamer.DefaultValue} \"{updated.GetDefaultValue()}\" " +
+                      $"{OptionNamer.Description} \"{updated.GetDescription()}\" ";
+
+        testProcess.GiveInput(command);
+    }
+
+    protected static void ShowPersonalData(TestProcess testProcess, IPersonalDataColumn personalDataColumn)
+    {
+        var command = $"{CommandNamer.PersonalDataName} {CommandNamer.Show} " +
+                      $"{OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} " +
+                      $"{personalDataColumn.GetTableColumnPair().ColumnName} ";
+
+        testProcess.GiveInput(command);
+    }
+
+    protected static void ListPersonalData(TestProcess testProcess)
+    {
+        var command = $"{CommandNamer.PersonalDataName} {CommandNamer.List}";
+        testProcess.GiveInput(command);
+    }
+
+    protected static void DeletePersonalData(TestProcess testProcess, IPersonalDataColumn personalDataColumn)
+    {
+        var command = $"{CommandNamer.PersonalDataName} {CommandNamer.Delete} " +
+                      $"{OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} " +
+                      $"{personalDataColumn.GetTableColumnPair().ColumnName} ";
+        testProcess.GiveInput(command);
+    }
+
+    protected static void PersonalDataAddPurposes(TestProcess testProcess, IPersonalDataColumn personalDataColumn,
+        IEnumerable<IPurpose> purposes)
+    {
+        var command = $"{CommandNamer.PersonalDataName} {CommandNamer.AddPurpose} " +
+                      $"{OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} " +
+                      $"{personalDataColumn.GetTableColumnPair().ColumnName} " +
+                      $"{OptionNamer.PurposeList} {string.Join(" ", purposes.Select(p => p.GetName()))}";
+        testProcess.GiveInput(command);
+    }
+
+    protected static void PersonalDataRemovePurposes(TestProcess testProcess, IPersonalDataColumn personalDataColumn,
+        IEnumerable<IPurpose> purposes)
+    {
+        var command = $"{CommandNamer.PersonalDataName} {CommandNamer.RemovePurpose} " +
+                      $"{OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} " +
+                      $"{personalDataColumn.GetTableColumnPair().ColumnName} " +
+                      $"{OptionNamer.PurposeList} {string.Join(" ", purposes.Select(p => p.GetName()))}";
+        testProcess.GiveInput(command);
+    }
+
+    protected static void PersonalDataSetOrigin(TestProcess testProcess, IPersonalDataColumn personalDataColumn,
+        IIndividual individual, IOrigin origin)
+    {
+        var command = $"{CommandNamer.PersonalDataName} {CommandNamer.SetOrigin} " +
+                      $"{OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} " +
+                      $"{personalDataColumn.GetTableColumnPair().ColumnName} " +
+                      $"{OptionNamer.Id} {individual.ToListing()} " +
+                      $"{OptionNamer.Origin} {origin.GetName()}";
+
+        testProcess.GiveInput(command);
+    }
+
+    protected static void PersonalDataShowOrigin(TestProcess testProcess, IPersonalDataColumn personalDataColumn,
+        IIndividual individual)
+    {
+        var command = $"{CommandNamer.PersonalDataName} {CommandNamer.ShowOrigin} " +
+                      $"{OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} " +
+                      $"{personalDataColumn.GetTableColumnPair().ColumnName} " +
+                      $"{OptionNamer.Id} {individual.ToListing()} ";
+
+        testProcess.GiveInput(command);
     }
 }
