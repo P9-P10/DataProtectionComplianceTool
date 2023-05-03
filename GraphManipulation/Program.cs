@@ -25,9 +25,29 @@ namespace GraphManipulation;
 
 public static class Program
 {
-    public static void Main()
+    private static string configPath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
+
+    public static void Main(string[] args)
     {
-        Interactive();
+        if (args.Length > 0)
+        {
+            if(args.Length == 1)
+                configPath = args[0];
+            else
+            {
+                Console.WriteLine("Received too many arguments. Only a single argument specifying the path of the configuration file expected");
+                return;
+            }
+        }
+
+        try
+        {
+            Interactive();
+        }
+        catch (IOException e)
+        {
+            Console.WriteLine("The given argument is not a valid filepath");
+        }
     }
 
     private static void Interactive()
@@ -41,7 +61,7 @@ public static class Program
 
         var logger = new PlaintextLogger(configManager);
         var console = new SystemConsole();
-        
+
 
         var connectionString = configManager.GetValue("DatabaseConnectionString");
         var context = new GdprMetadataContext(connectionString);
@@ -59,22 +79,24 @@ public static class Program
         var personalDataMapper = new Mapper<PersonalData>(context);
 
         var vacuumer = new Vacuumer(personalDataColumnMapper, new SqliteQueryExecutor(dbConnection));
-        
-        var individualsManager = new IndividualsManager(individualMapper,new Mapper<ConfigKeyValue>(context));
+
+        var individualsManager = new IndividualsManager(individualMapper, new Mapper<ConfigKeyValue>(context));
         var personalDataManager = new PersonalDataManager(personalDataColumnMapper, purposeMapper, originMapper,
             personalDataMapper, individualMapper);
         var purposesManager = new PurposeManager(purposeMapper, deleteConditionMapper);
         var originsManager = new OriginsManager(originMapper);
         var vacuumingRulesManager = new VacuumingRuleManager(vacuumingRuleMapper, purposeMapper, vacuumer);
         var deleteConditionsManager = new DeleteConditionsManager(deleteConditionMapper);
-        var processingsManager = new ProcessingsManager(processingMapper, purposeMapper, personalDataColumnMapper);
+        var processingsManager =
+            new ProcessingsManager(processingMapper, purposeMapper, personalDataColumnMapper);
 
         var decoratedIndividualsManager = new IndividualsManagerDecorator(individualsManager, logger);
         var decoratedPersonalDataManager = new PersonalDataManagerDecorator(personalDataManager, logger);
         var decoratedPurposesManager = new PurposeManagerDecorator(purposesManager, logger);
         var decoratedOriginsManager = new OriginsManagerDecorator(originsManager, logger);
         var decoratedVacuumingRulesManager = new VacuumingRuleManagerDecorator(vacuumingRulesManager, logger);
-        var decoratedDeleteConditionsManager = new DeleteConditionsManagerDecorator(deleteConditionsManager, logger);
+        var decoratedDeleteConditionsManager =
+            new DeleteConditionsManagerDecorator(deleteConditionsManager, logger);
         var decoratedProcessingsManager = new ProcessingsManagerDecorator(processingsManager, logger);
 
         var command = CommandLineInterfaceBuilder
@@ -107,7 +129,7 @@ public static class Program
             {
                 Console.Write($"{Environment.NewLine}$: ");
                 var command = (Console.ReadLine() ?? "").Trim();
-                
+
                 if (!string.IsNullOrEmpty(command))
                 {
                     cli.Invoke(command);
@@ -127,15 +149,15 @@ public static class Program
 
     private static bool ConfigSetup(out IConfigManager? configManager)
     {
-        var configFilePath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
+        var configFilePath = configPath;
         var configValues = new Dictionary<string, string>
         {
-            {"GraphStoragePath", ""},
-            {"BaseURI", "http://www.test.com/"},
-            {"OntologyPath", ""},
-            {"LogPath", ""},
-            {"DatabaseConnectionString", ""},
-            {"IndividualsTable", ""}
+            { "GraphStoragePath", "" },
+            { "BaseURI", "http://www.test.com/" },
+            { "OntologyPath", "" },
+            { "LogPath", "" },
+            { "DatabaseConnectionString", "" },
+            { "IndividualsTable", "" }
         };
 
         configManager = new ConfigManager(configFilePath, configValues);

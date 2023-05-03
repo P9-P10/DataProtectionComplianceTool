@@ -51,6 +51,12 @@ public class TestProcess : IDisposable
         Process.BeginErrorReadLine();
     }
 
+    public void Start(string configPath)
+    {
+        Process.StartInfo.Arguments = configPath;
+        Start();
+    }
+
     public void GiveInput(string input)
     {
         Output = new List<string>();
@@ -119,7 +125,7 @@ public class TestProcess : IDisposable
     {
         List<char> chars = new List<char> ();
         bool encounteredPrompt = false;
-        while (true)
+        while (!Process.StandardOutput.EndOfStream)
         {
             if ((char)Process.StandardOutput.Peek() == '$')
             {
