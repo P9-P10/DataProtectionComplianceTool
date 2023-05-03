@@ -45,7 +45,6 @@ public static class PersonalDataCommandBuilder
                     .CreateDescriptionOption()
                     .WithDescription("Description of the personal data")
                     .WithDefaultValue(string.Empty))
-            // TODO: Denne options navn skal også være i OptionNamer
             .WithOption(out var defaultValueOption, 
                 OptionBuilder
                     .CreateOption<string>(OptionNamer.DefaultValue)
