@@ -9,8 +9,6 @@ public class VacuumingRule : DomainEntity, IVacuumingRule
     public string? Description { get; set; }
     public string Interval { get; set; }
 
-    public int? Id { get; set; }
-
     public DateTime? LastExecution { get; set; }
     
     public IEnumerable<Purpose>? Purposes { get; set; }
