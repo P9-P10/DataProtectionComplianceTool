@@ -140,4 +140,16 @@ public class TestResources
                          $"{old.GetName()} {OptionNamer.NewName} {newOrigin.GetName()} {OptionNamer.Description} \"{newOrigin.GetDescription()}\"";
         process.GiveInput(command);
     }
+
+    protected static void DeleteOrigin(TestProcess process, IOrigin origin)
+    {
+        process.GiveInput($"{CommandNamer.OriginsAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name} {origin.GetName()}");
+        
+    }
+    
+    protected static void ShowOrigin(TestProcess process, IOrigin origin)
+    {
+        process.GiveInput($"{CommandNamer.OriginsAlias} {CommandNamer.ShowAlias} {OptionNamer.Name} {origin.GetName()}");
+        
+    }
 }

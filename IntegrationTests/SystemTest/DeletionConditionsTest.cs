@@ -6,7 +6,7 @@ namespace IntegrationTests.SystemTest;
 
 
 [Collection("SystemTestSequential")]
-public class TestDeletionConditions : TestResources
+public class DeletionConditionsTest : TestResources
 {
     [Fact]
     public void TestAddCommand_Returns_Correct_Message()
@@ -93,8 +93,8 @@ public class TestDeletionConditions : TestResources
         DeleteDeletionCondition(process,deleteCondition);
         
         ListDeletionConditions(process);
-        string result = process.GetOutput();
-        result.Should().NotContain("DeletionCondition, , Condition");
+        List<string> result = process.GetLastOutput();
+        result.FindAll(s=>s.Contains("DeletionCondition")).Should().BeEmpty();
     }
     
     [Fact]
