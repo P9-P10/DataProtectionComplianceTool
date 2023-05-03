@@ -7,7 +7,7 @@ namespace IntegrationTests.SystemTest;
 public class PurposeTest : TestResources
 {
     [Fact]
-    public void AddIsSuccessful()
+    public void PurposeCanBeAdded()
     {
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
