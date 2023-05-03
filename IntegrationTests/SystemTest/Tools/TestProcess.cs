@@ -14,6 +14,8 @@ public class TestProcess : IDisposable
     public List<List<string>> AllErrors { get; }
     public string ConfigPath { get; }
 
+    private bool processStarted = false;
+
 
     public TestProcess(string executablePath, string configPath = "")
     {
@@ -54,6 +56,7 @@ public class TestProcess : IDisposable
         Process.ErrorDataReceived += (sender, args) => Errors.Add(args.Data);
         Process.Start();
         Process.BeginErrorReadLine();
+        processStarted = true;
     }
 
     public void GiveInput(string input)
@@ -143,7 +146,10 @@ public class TestProcess : IDisposable
 
     public void Dispose()
     {
-        Process.Kill();
-        Process.Dispose();
+        if (processStarted)
+        {
+            Process.Kill();
+            Process.Dispose();
+        }
     }
 }
