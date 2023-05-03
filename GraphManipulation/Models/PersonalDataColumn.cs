@@ -18,7 +18,8 @@ public class PersonalDataColumn : DomainEntity, IPersonalDataColumn
     {
         return string.Join(", ", TableColumnPair == null ? " " : TableColumnPair.ToListingIdentifier(), JoinCondition,
             Description, DefaultValue,
-            "[ " + string.Join(", ", Purposes == null ? new List<string>() : Purposes.Select(p => p.ToListingIdentifier())) + " ]");
+            "[ " + string.Join(", ",
+                Purposes == null ? new List<string>() : Purposes.Select(p => p.ToListingIdentifier())) + " ]");
     }
 
     public string ToListingIdentifier()
@@ -38,7 +39,16 @@ public class PersonalDataColumn : DomainEntity, IPersonalDataColumn
 
     public void AddPurpose(Purpose purpose)
     {
-        Purposes = Purposes == null ? new List<Purpose>() {purpose} : Purposes.Concat(new List<Purpose>() {purpose});
+        if (Purposes == null)
+        {
+            Purposes = new List<Purpose> { purpose };
+        }
+        else
+        {
+            var l = Purposes.ToList();
+            l.Add(purpose);
+            Purposes = l;
+        }
     }
 
     public IEnumerable<IPurpose> GetPurposes()
