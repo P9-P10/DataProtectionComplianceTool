@@ -62,7 +62,7 @@ public class CommandLineArgsTest
     [Fact]
     public void PrintsErrorMessageGivenTooManyArguments()
     {
-        using TestProcess process = new TestProcess(executablePath, "too many arguments");
+        using TestProcess process = new TestProcess(executablePath, @"too"" many arguments");
         process.Start();
         process.GiveInput("");
         string result = string.Join("", process.GetLastOutput());
@@ -79,5 +79,21 @@ public class CommandLineArgsTest
         string error = string.Join("", process.GetLastError());
         result.Should().Be("The given argument is not a valid filepath");
         error.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void WrapsGivenFilePathInQuotes()
+    {
+        string configPath = Path.Combine(Directory.GetCurrentDirectory(), "created Config.json");
+        File.Delete(configPath);
+        File.Exists(configPath).Should().BeFalse();
+        
+        using TestProcess process = new TestProcess(executablePath, configPath);
+        process.ConfigPath.Should().Be(configPath);
+        process.Start();
+        process.GiveInput("");
+        string result = string.Join("", process.GetLastOutput());
+        result.Should().Be($"Please fill GraphStoragePath, OntologyPath, LogPath, "+
+                           $"DatabaseConnectionString, IndividualsTable in config file located at: {configPath}");
     }
 }

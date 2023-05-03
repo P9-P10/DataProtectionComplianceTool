@@ -45,7 +45,7 @@ public class TestProcess : IDisposable
         startInfo.RedirectStandardError = true;
 
         startInfo.UseShellExecute = false;
-        startInfo.Arguments = ConfigPath;
+        startInfo.Arguments =  ConfigPath == "" ? ConfigPath : @$"""{ConfigPath}""";
         startInfo.FileName = executablePath;
 
         return startInfo;

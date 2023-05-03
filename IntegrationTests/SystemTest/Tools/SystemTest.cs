@@ -34,12 +34,9 @@ public static class SystemTest
 
     public static TestProcess CreateTestProcess([CallerMemberName] string callerName = "", [CallerFilePath] string fileName = "")
     {
-
-        string configPath = Path
-            .Combine(Directory.GetCurrentDirectory(), Path.GetFileName(fileName) + callerName + ".json")
-            .Replace(" ", "");
-        string dbPath = Path.Combine(Directory.GetCurrentDirectory(),
-            Path.GetFileName(fileName) + callerName + ".sqlite");
+        
+        string configPath = Path.Combine(Directory.GetCurrentDirectory(), Path.GetFileName(fileName) + callerName + ".json");
+        string dbPath = Path.Combine(Directory.GetCurrentDirectory(), Path.GetFileName(fileName) + callerName + ".sqlite");
         DeleteDatabase(dbPath);
         CreateConfigFile(configPath, dbPath);
         
