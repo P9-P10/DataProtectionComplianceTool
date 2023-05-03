@@ -135,9 +135,23 @@ public static class Program
                     cli.Invoke(command);
                 }
             }
+            catch (AggregateException e)
+            {
+                Console.WriteLine(e.Message);
+                
+                foreach (var innerException in e.InnerExceptions)
+                {
+                    Console.WriteLine(innerException.Message);
+                }
+            }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+
+                if (e.InnerException is not null)
+                {
+                    Console.WriteLine(e.InnerException.Message);
+                }
             }
         }
     }
