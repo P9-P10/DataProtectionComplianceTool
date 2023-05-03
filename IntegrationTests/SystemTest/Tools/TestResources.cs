@@ -1,9 +1,11 @@
 using GraphManipulation.Commands.Helpers;
+using GraphManipulation.Managers;
 using GraphManipulation.Models;
 using GraphManipulation.Models.Interfaces;
 
 namespace IntegrationTests.SystemTest.Tools;
 
+[Collection("SystemTestSequential")]
 public class TestResources
 {
     protected const string Description = "This is a description";
@@ -41,6 +43,19 @@ public class TestResources
         LegallyRequired = !TestPurpose.GetLegallyRequired(),
         Columns = new List<PersonalDataColumn>(),
         Rules = new List<VacuumingRule>()
+    };
+
+    protected static readonly PersonalDataColumn TestPersonalDataColumn = new()
+    {
+        TableColumnPair = new TableColumnPair("Table", "Column"),
+        Purposes = new[] {TestPurpose}
+    };
+
+    protected static readonly Processing TestProcessing = new()
+    {
+        Name = "ProcessingName", Description = "ProcessingDescription",
+        PersonalDataColumn = TestPersonalDataColumn,
+        Purpose = new Purpose() {Name = "Purpose", Description = "Description"}
     };
 
     protected static void AddDeleteCondition(TestProcess testProcess, IDeleteCondition deleteCondition)
@@ -119,7 +134,8 @@ public class TestResources
 
     protected static void ShowDeleteCondition(TestProcess process, IDeleteCondition deleteCondition)
     {
-        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.ShowAlias} -n {deleteCondition.GetName()}");
+        process.GiveInput(
+            $"{CommandNamer.DeleteConditionAlias} {CommandNamer.ShowAlias} -n {deleteCondition.GetName()}");
     }
 
     protected static void AddOrigin(TestProcess testProcess, IOrigin origin)
@@ -143,13 +159,34 @@ public class TestResources
 
     protected static void DeleteOrigin(TestProcess process, IOrigin origin)
     {
-        process.GiveInput($"{CommandNamer.OriginsAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name} {origin.GetName()}");
-        
+        process.GiveInput(
+            $"{CommandNamer.OriginsAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name} {origin.GetName()}");
     }
-    
+
     protected static void ShowOrigin(TestProcess process, IOrigin origin)
     {
-        process.GiveInput($"{CommandNamer.OriginsAlias} {CommandNamer.ShowAlias} {OptionNamer.Name} {origin.GetName()}");
-        
+        process.GiveInput(
+            $"{CommandNamer.OriginsAlias} {CommandNamer.ShowAlias} {OptionNamer.Name} {origin.GetName()}");
+    }
+
+    protected static void AddProcessing(TestProcess process, IProcessing processing)
+    {
+        string command =
+            $"{CommandNamer.ProcessingsName} {CommandNamer.Add} {OptionNamer.Name} {processing.GetName()}" +
+            $" {OptionNamer.Description} {processing.GetDescription()}" +
+            $" {OptionNamer.TableColumn} {processing.GetPersonalDataTableColumnPair().TableName} {processing.GetPersonalDataTableColumnPair().ColumnName}" +
+            $" {OptionNamer.Purpose} {processing.GetPurpose().GetName()}";
+        process.GiveInput(command);
+    }
+
+
+    protected static void AddPersonalData(TestProcess process, IPersonalDataColumn personalDataColumn)
+    {
+        string command = $"{CommandNamer.PersonalDataAlias} {CommandNamer.AddAlias}" +
+                         $" {OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} {personalDataColumn.GetTableColumnPair().ColumnName}" +
+                         $" {OptionNamer.JoinCondition} \"{personalDataColumn.GetJoinCondition()}\"" +
+                         $" {OptionNamer.DefaultValueAlias} \"{personalDataColumn.GetDefaultValue()}\"" +
+                         $" {OptionNamer.PurposeList} {personalDataColumn.GetPurposes().First().GetName()}";
+        process.GiveInput(command);
     }
 }
