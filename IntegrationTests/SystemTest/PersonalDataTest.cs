@@ -124,11 +124,11 @@ public class PersonalDataTest : TestResources
         AddPurpose(process, NewTestPurpose);
         AddPurpose(process, NewNewTestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
-        PersonalDataAddPurposes(process, TestPersonalDataColumn, new[] { NewTestPurpose, NewNewTestPurpose });
+        AddPurposesToPersonalData(process, TestPersonalDataColumn, new[] { NewTestPurpose, NewNewTestPurpose });
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetAllOutputNoWhitespace().ToList();
-        
+
         error.Should().BeEmpty();
         output.Should().ContainSingle(s =>
             s.Contains(
@@ -141,15 +141,39 @@ public class PersonalDataTest : TestResources
     [Fact]
     public void PersonalDataCanHavePurposesRemoved()
     {
+        using var process = Tools.SystemTest.CreateTestProcess();
+        process.Start();
+
+        AddDeleteCondition(process, TestDeleteCondition);
+        AddDeleteCondition(process, NewTestDeleteCondition);
+        AddPurpose(process, TestPurpose);
+        AddPurpose(process, NewTestPurpose);
+        AddPurpose(process, NewNewTestPurpose);
+        AddPersonalData(process, TestPersonalDataColumn);
+        AddPurposesToPersonalData(process, TestPersonalDataColumn, new[] { NewTestPurpose, NewNewTestPurpose });
+        RemovePurposesFromPersonalData(process, TestPersonalDataColumn, new[] { NewTestPurpose, NewNewTestPurpose });
+
+        var error = process.GetAllErrorsNoWhitespace();
+        var output = process.GetAllOutputNoWhitespace().ToList();
+
+        error.Should().BeEmpty();
+        output.Should().ContainSingle(s =>
+            s.Contains(
+                $"{NewTestPurpose.GetName()} successfully removed from {TestPersonalDataColumn.TableColumnPair.ToListing()}"));
+        output.Should().ContainSingle(s =>
+            s.Contains(
+                $"{NewNewTestPurpose.GetName()} successfully removed from {TestPersonalDataColumn.TableColumnPair.ToListing()}"));
     }
 
     [Fact]
     public void PersonalDataCanSetOriginForAnIndividual()
     {
+        throw new NotImplementedException();
     }
 
     [Fact]
     public void PersonalDataCanShowOriginForAnIndividual()
     {
+        throw new NotImplementedException();
     }
 }
