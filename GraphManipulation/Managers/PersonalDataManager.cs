@@ -53,7 +53,9 @@ public class PersonalDataManager : IPersonalDataManager
 
     public void SetDefaultValue(TableColumnPair tableColumnPair, string defaultValue)
     {
-        throw new NotImplementedException();
+        var column = FindByKey(tableColumnPair);
+        column.DefaultValue = defaultValue;
+        _columnMapper.Update(column);
     }
 
     public void AddPurpose(TableColumnPair tableColumnPair, string purposeName)
