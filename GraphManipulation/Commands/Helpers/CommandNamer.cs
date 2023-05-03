@@ -55,4 +55,10 @@ public static class CommandNamer
 
     public const string Execute = "execute";
     public const string ExecuteAlias = "e";
+
+    public const string AddPurpose = "add-purpose";
+    public const string AddPurposeAlias = "ap";
+
+    public const string RemovePurpose = "remove-purpose";
+    public const string RemovePurposeAlias = "rp";
 }
