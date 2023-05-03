@@ -3,7 +3,6 @@ using IntegrationTests.SystemTest.Tools;
 
 namespace IntegrationTests.SystemTest;
 
-[Collection("SystemTestSequential")]
 public class PurposeTest : TestResources
 {
     [Fact]
@@ -29,7 +28,7 @@ public class PurposeTest : TestResources
     }
 
     [Fact]
-    public void PurposeCanBeRetrievedAfterAdd()
+    public void PurposeCanBeShown()
     {
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
