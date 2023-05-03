@@ -70,7 +70,8 @@ public class PersonalDataManager : IPersonalDataManager
     {
         var purpose = _purposeMapper.FindSingle(purpose => purpose.Name == purposeName);
         var column = FindByKey(tableColumnPair);
-        column.Purposes = column.Purposes.Where(p => !p.Equals(purpose));
+        var purposes = column.Purposes.Where(p => !p.Equals(purpose)).ToList();
+        column.Purposes = purposes;
         _columnMapper.Update(column);
     }
 

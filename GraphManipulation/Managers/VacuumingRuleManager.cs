@@ -51,7 +51,11 @@ public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumin
     {
         VacuumingRule? rule = base.Get(name);
         if (rule == null) return;
-        rule.Purposes.Append(_purposeMapper.FindSingle(x => x.Name == purposeName));
+
+        var purpose = _purposeMapper.FindSingle(x => x.Name == purposeName);
+        var purposes = rule.Purposes.ToList();
+        purposes.Add(purpose);
+        rule.Purposes = purposes;
         _ruleMapper.Update(rule);
     }
 
@@ -59,7 +63,8 @@ public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumin
     {
         var purpose = _purposeMapper.FindSingle(purpose => purpose.Name == purposeName);
         VacuumingRule rule = base.Get(name);
-        rule.Purposes =rule.Purposes.Where(p => !p.Equals(purpose));
+        var purposes = rule.Purposes.Where(p => !p.Equals(purpose)).ToList();
+        rule.Purposes = purposes;
         _ruleMapper.Update(rule);
     }
 
