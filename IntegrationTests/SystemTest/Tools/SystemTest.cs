@@ -32,22 +32,14 @@ public static class SystemTest
         }
     }
 
-    public static TestProcess CreateTestProcess([CallerMemberName] string callerName = "config.json", [CallerFilePath] string fileName = "")
+    public static TestProcess CreateTestProcess([CallerMemberName] string callerName = "", [CallerFilePath] string fileName = "")
     {
-        string configPath = fileName + callerName;
-        // If the given argument is a file path, it is assumed to be the path of a config file
-        // Otherwise it is the name of the calling method, and a config file should be created for it
-        if (!File.Exists(callerName))
-        {
-            configPath = Path.Combine(Directory.GetCurrentDirectory(), fileName + callerName + ".json");
-            string dbPath = fileName + callerName + ".sqlite";
-            DeleteDatabase(dbPath);
-            CreateConfigFile(configPath, dbPath);
-        }
-
-        // Delete database to avoid sharing data across tests
-
-
+        
+        string configPath = Path.Combine(Directory.GetCurrentDirectory(), Path.GetFileName(fileName) + callerName + ".json");
+        string dbPath = Path.Combine(Directory.GetCurrentDirectory(), Path.GetFileName(fileName) + callerName + ".sqlite");
+        DeleteDatabase(dbPath);
+        CreateConfigFile(configPath, dbPath);
+        
         TestProcess process = new TestProcess(ExecutablePath, configPath);
         return process;
     }
