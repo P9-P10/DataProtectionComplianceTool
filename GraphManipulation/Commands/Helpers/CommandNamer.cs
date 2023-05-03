@@ -61,4 +61,10 @@ public static class CommandNamer
 
     public const string RemovePurpose = "remove-purpose";
     public const string RemovePurposeAlias = "rp";
+
+    public const string SetOrigin = "set-origin";
+    public const string SetOriginAlias = "sto";
+
+    public const string ShowOrigin = "show-origin";
+    public const string ShowOriginAlias = "sho";
 }
