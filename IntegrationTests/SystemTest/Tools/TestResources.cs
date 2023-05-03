@@ -89,6 +89,13 @@ public class TestResources
         PersonalDataColumn = TestPersonalDataColumn,
         Purpose = TestPurpose
     };
+    
+    protected static readonly Processing NewTestProcessing = new()
+    {
+        Name = "NewProcessingName", Description = "NewProcessingDescription",
+        PersonalDataColumn = TestPersonalDataColumn,
+        Purpose = TestPurpose
+    };
 
     protected static void AddDeleteCondition(TestProcess testProcess, IDeleteCondition deleteCondition)
     {
@@ -211,6 +218,31 @@ public class TestResources
         process.GiveInput(command);
     }
 
+    protected static void ListProcessing(TestProcess process)
+    {
+        string command = $"{CommandNamer.ProcessingsAlias} {CommandNamer.List}";
+        process.GiveInput(command);
+    }
+
+    protected static void UpdateProcessing(TestProcess process, IProcessing old, IProcessing newProcess)
+    {
+        string command = $"{CommandNamer.ProcessingsAlias} {CommandNamer.UpdateAlias} {OptionNamer.Name} {old.GetName()}" +
+                         $" {OptionNamer.NewNameAlias} {newProcess.GetName()}" +
+                         $" {OptionNamer.Description} {newProcess.GetDescription()}";
+        process.GiveInput(command);
+    }
+
+    protected static void DeleteProcessing(TestProcess process, IProcessing processing)
+    {
+        string command = $"{CommandNamer.ProcessingsAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name} {processing.GetName()}";
+        process.GiveInput(command);
+    }
+
+    protected static void ShowProcessing(TestProcess process, IProcessing processing)
+    {
+        string command = $"{CommandNamer.ProcessingsAlias} {CommandNamer.ShowAlias} {OptionNamer.Name} {processing.GetName()}";
+        process.GiveInput(command);
+    }
 
     protected static void AddPersonalData(TestProcess process, IPersonalDataColumn personalDataColumn)
     {
