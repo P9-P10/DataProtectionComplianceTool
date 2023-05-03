@@ -37,8 +37,8 @@ public class CommandLineArgsTest
 
         File.WriteAllText(configPath, JsonConvert.SerializeObject( configValues ));
 
-        using TestProcess process = new TestProcess(executablePath);
-        process.Start(configPath);
+        using TestProcess process = new TestProcess(executablePath, configPath);
+        process.Start();
         process.GiveInput("");
         string result = string.Join("", process.GetLastOutput());
         result.Should().Be($"Using config found at {configPath}$: ");
@@ -51,8 +51,8 @@ public class CommandLineArgsTest
         File.Delete(configPath);
         File.Exists(configPath).Should().BeFalse();
         
-        using TestProcess process = new TestProcess(executablePath);
-        process.Start(configPath);
+        using TestProcess process = new TestProcess(executablePath, configPath);
+        process.Start();
         process.GiveInput("");
         string result = string.Join("", process.GetLastOutput());
         result.Should().Be($"Please fill GraphStoragePath, OntologyPath, LogPath, "+
@@ -62,8 +62,8 @@ public class CommandLineArgsTest
     [Fact]
     public void PrintsErrorMessageGivenTooManyArguments()
     {
-        using TestProcess process = new TestProcess(executablePath);
-        process.Start("too many arguments");
+        using TestProcess process = new TestProcess(executablePath, "too many arguments");
+        process.Start();
         process.GiveInput("");
         string result = string.Join("", process.GetLastOutput());
         result.Should().Be("Received too many arguments. Only a single argument specifying the path of the configuration file expected");
@@ -72,8 +72,8 @@ public class CommandLineArgsTest
     [Fact]
     public void PrintsErrorMessageGivenInvalidFilePath()
     {
-        using TestProcess process = new TestProcess(executablePath);
-        process.Start("Not@File||");
+        using TestProcess process = new TestProcess(executablePath, "Not@File||");
+        process.Start();
         process.GiveInput("");
         string result = string.Join("", process.GetLastOutput());
         string error = string.Join("", process.GetLastError());

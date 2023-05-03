@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Newtonsoft.Json;
 
 namespace IntegrationTests.SystemTest.Tools;
 
@@ -11,12 +12,16 @@ public class TestProcess : IDisposable
     
     public List<List<string>> AllOutputs { get; }
     public List<List<string>> AllErrors { get; }
+    public string ConfigPath { get; }
 
-    public TestProcess(string executablePath)
+
+    public TestProcess(string executablePath, string configPath = "")
     {
         AllOutputs = new List<List<string>>();
         AllErrors = new List<List<string>>();
         Inputs = new List<string>();
+        ConfigPath = configPath;
+
         Process = CreateProcess(executablePath);
     }
 
@@ -38,7 +43,7 @@ public class TestProcess : IDisposable
         startInfo.RedirectStandardError = true;
 
         startInfo.UseShellExecute = false;
-        startInfo.Arguments = "";
+        startInfo.Arguments = ConfigPath;
         startInfo.FileName = executablePath;
 
         return startInfo;
@@ -49,12 +54,6 @@ public class TestProcess : IDisposable
         Process.ErrorDataReceived += (sender, args) => Errors.Add(args.Data);
         Process.Start();
         Process.BeginErrorReadLine();
-    }
-
-    public void Start(string configPath)
-    {
-        Process.StartInfo.Arguments = configPath;
-        Start();
     }
 
     public void GiveInput(string input)

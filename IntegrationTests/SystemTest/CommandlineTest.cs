@@ -3,7 +3,6 @@ using IntegrationTests.SystemTest.Tools;
 
 namespace IntegrationTests.SystemTest;
 
-[Collection("SystemTestSequential")]
 public class CommandlineTest
 {
     [Fact]
@@ -15,7 +14,7 @@ public class CommandlineTest
         process.GiveInput("help");
         string result = string.Join("", process.GetLastOutput());
         string error = process.GetError();
-        result.Should().Be(@$"Using config found at {IntegrationTests.SystemTest.Tools.SystemTest.ConfigPath}" +
+        result.Should().Be(@$"Using config found at {process.ConfigPath}" +
                            "$: Description:  This is a description of the root command" +
                            "Usage:  ! [command] [options]" +
                            "Options:  ?, h, help  Show help and usage information" +

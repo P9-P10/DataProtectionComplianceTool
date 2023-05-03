@@ -2,7 +2,6 @@ using IntegrationTests.SystemTest.Tools;
 
 namespace IntegrationTests.SystemTest;
 
-[Collection("SystemTestSequential")]
 public class PersonalDataTest : TestResources
 {
     [Fact]
