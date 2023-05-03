@@ -322,7 +322,7 @@ public class PurposesCommandTest : CommandTest
                 .Invoke($"{CommandName} --name {PurposeName}");
 
             console.Out.ToString().Should()
-                .StartWith($"{PurposeName}, {Description}, {LegallyRequired}, [ {DeleteCondition.ToListing()} ]");
+                .StartWith($"{PurposeName}, {Description}, {LegallyRequired}, [ {DeleteCondition.ToListingIdentifier()} ]");
         }
     }
 }

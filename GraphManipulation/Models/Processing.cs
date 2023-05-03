@@ -13,7 +13,12 @@ public class Processing : DomainEntity, IProcessing
     public PersonalDataColumn PersonalDataColumn { get; set; }
     public string ToListing()
     {
-        return string.Join(", ", Name, Description, Purpose.ToListing(), PersonalDataColumn.TableColumnPair.ToListing());
+        return string.Join(", ", Name, Description, Purpose.ToListingIdentifier(), PersonalDataColumn.TableColumnPair.ToListingIdentifier());
+    }
+
+    public string ToListingIdentifier()
+    {
+        return GetName();
     }
 
     public string GetName()

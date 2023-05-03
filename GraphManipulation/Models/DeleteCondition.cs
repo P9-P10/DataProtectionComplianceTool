@@ -14,6 +14,11 @@ public class DeleteCondition : DomainEntity, IDeleteCondition
         return string.Join(", ", Name, Description, Condition);
     }
 
+    public string ToListingIdentifier()
+    {
+        return GetName();
+    }
+
     public string GetCondition()
     {
         return Condition;
