@@ -28,7 +28,7 @@ public class PurposeTest : TestResources
     }
 
     [Fact]
-    public void PurposeCanBeRetrievedAfterAdd()
+    public void PurposeCanBeShown()
     {
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
