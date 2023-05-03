@@ -37,9 +37,19 @@ public class TestResources
     protected static readonly Purpose NewTestPurpose = new()
     {
         Name = TestPurpose.GetName() + "NEW",
-        Description = Description + "NEW",
+        Description = TestPurpose.GetDescription() + "NEW",
         DeleteCondition = NewTestDeleteCondition,
         LegallyRequired = !TestPurpose.GetLegallyRequired(),
+        Columns = new List<PersonalDataColumn>(),
+        Rules = new List<VacuumingRule>()
+    };
+
+    protected static readonly Purpose NewNewTestPurpose = new()
+    {
+        Name = NewTestPurpose.GetName() + "NEW",
+        Description = NewTestPurpose.GetDescription() + "NEW",
+        DeleteCondition = NewTestDeleteCondition,
+        LegallyRequired = !NewTestPurpose.GetLegallyRequired(),
         Columns = new List<PersonalDataColumn>(),
         Rules = new List<VacuumingRule>()
     };
@@ -53,12 +63,21 @@ public class TestResources
         JoinCondition = "This is a join condition"
     };
 
+    protected static readonly PersonalDataColumn UpdatedTestPersonalDataColumn = new()
+    {
+        TableColumnPair = TestPersonalDataColumn.TableColumnPair,
+        Purposes = TestPersonalDataColumn.Purposes,
+        DefaultValue = TestPersonalDataColumn.DefaultValue + "UPDATED",
+        Description = TestPersonalDataColumn.Description + "UPDATED",
+        JoinCondition = TestPersonalDataColumn.JoinCondition
+    };
+    
     protected static readonly PersonalDataColumn NewTestPersonalDataColumn = new()
     {
         TableColumnPair = new TableColumnPair(
             TestPersonalDataColumn.TableColumnPair.TableName + "NEW",
             TestPersonalDataColumn.TableColumnPair.ColumnName + "NEW"),
-        Purposes = new[] { NewTestPurpose },
+        Purposes = TestPersonalDataColumn.Purposes,
         DefaultValue = TestPersonalDataColumn.DefaultValue + "NEW",
         Description = TestPersonalDataColumn.Description + "NEW",
         JoinCondition = TestPersonalDataColumn.JoinCondition + "NEW"
