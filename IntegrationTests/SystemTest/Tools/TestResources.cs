@@ -53,6 +53,17 @@ public class TestResources
         JoinCondition = "This is a join condition"
     };
 
+    protected static readonly PersonalDataColumn NewTestPersonalDataColumn = new()
+    {
+        TableColumnPair = new TableColumnPair(
+            TestPersonalDataColumn.TableColumnPair.TableName + "NEW",
+            TestPersonalDataColumn.TableColumnPair.ColumnName + "NEW"),
+        Purposes = new[] { NewTestPurpose },
+        DefaultValue = TestPersonalDataColumn.DefaultValue + "NEW",
+        Description = TestPersonalDataColumn.Description + "NEW",
+        JoinCondition = TestPersonalDataColumn.JoinCondition + "NEW"
+    };
+
     protected static readonly Processing TestProcessing = new()
     {
         Name = "ProcessingName", Description = "ProcessingDescription",
@@ -196,7 +207,7 @@ public class TestResources
     protected static void UpdatePersonalData(TestProcess testProcess, IPersonalDataColumn old,
         IPersonalDataColumn updated)
     {
-        var command = $"{CommandNamer.PersonalDataName} {CommandNamer.Add} " +
+        var command = $"{CommandNamer.PersonalDataName} {CommandNamer.Update} " +
                       $"{OptionNamer.TableColumn} {old.GetTableColumnPair().TableName} {old.GetTableColumnPair().ColumnName} " +
                       $"{OptionNamer.DefaultValue} \"{updated.GetDefaultValue()}\" " +
                       $"{OptionNamer.Description} \"{updated.GetDescription()}\" ";
@@ -213,7 +224,7 @@ public class TestResources
         testProcess.GiveInput(command);
     }
 
-    protected static void ListPersonalData(TestProcess testProcess, IPersonalDataColumn personalDataColumn)
+    protected static void ListPersonalData(TestProcess testProcess)
     {
         var command = $"{CommandNamer.PersonalDataName} {CommandNamer.List}";
         testProcess.GiveInput(command);
