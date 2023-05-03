@@ -68,7 +68,7 @@ public class TestResources
     {
         Name = "ProcessingName", Description = "ProcessingDescription",
         PersonalDataColumn = TestPersonalDataColumn,
-        Purpose = new Purpose() { Name = "Purpose", Description = "Description" }
+        Purpose = TestPurpose
     };
 
     protected static void AddDeleteCondition(TestProcess testProcess, IDeleteCondition deleteCondition)

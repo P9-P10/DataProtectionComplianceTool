@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using Newtonsoft.Json;
 
 namespace IntegrationTests.SystemTest.Tools;
 
@@ -45,7 +44,7 @@ public class TestProcess : IDisposable
         startInfo.RedirectStandardError = true;
 
         startInfo.UseShellExecute = false;
-        startInfo.Arguments =  ConfigPath == "" ? ConfigPath : @$"""{ConfigPath}""";
+        startInfo.Arguments =  ConfigPath == "" ? ConfigPath : @$"""{ConfigPath}""";;
         startInfo.FileName = executablePath;
 
         return startInfo;

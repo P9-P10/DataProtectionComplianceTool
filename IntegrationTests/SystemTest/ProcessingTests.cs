@@ -1,6 +1,4 @@
 ﻿using FluentAssertions;
-using GraphManipulation.Managers;
-using GraphManipulation.Models;
 using IntegrationTests.SystemTest.Tools;
 
 namespace IntegrationTests.SystemTest;
@@ -16,13 +14,13 @@ public class ProcessingTests : TestResources
         
         AddPurpose(process,TestPurpose);
         AddPersonalData(process,TestPersonalDataColumn);
-        var firstResult = process.GetLastOutput();
+
         AddProcessing(process, TestProcessing);
 
         List<string> result = process.GetLastOutput();
-        result[1].Should().Contain("ProcessingDescription");
-        result[1].Should().Contain("ProcessingName");
-        result[1].Should().Contain("Successfully");
+        result.First().Should().Contain("ProcessingDescription");
+        result.First().Should().Contain("ProcessingName");
+        result.First().Should().Contain("Successfully");
     }
 
     [Fact]
