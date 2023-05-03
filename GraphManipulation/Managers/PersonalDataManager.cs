@@ -88,12 +88,12 @@ public class PersonalDataManager : IPersonalDataManager
     public IOrigin? GetOriginOf(TableColumnPair tableColumnPair, int individualsId)
     {
         var individual = _individualMapper.FindSingle(individual => individual.Id == individualsId);
-        var personData = individual.PersonalData.FirstOrDefault(data => data.Column.TableColumnPair == tableColumnPair);
+        var personData = individual.PersonalData.FirstOrDefault(data => data.Column.TableColumnPair.Equals(tableColumnPair));
         return personData.Origin;
     }
 
     private PersonalDataColumn? FindByKey(TableColumnPair key)
     {
-        return _columnMapper.FindSingle(column => column.TableColumnPair == key);
+        return _columnMapper.FindSingle(column => column.TableColumnPair.Equals(key));
     }
 }

@@ -13,7 +13,10 @@ namespace Test.DataAccess;
 
 public class MapperTest
 {
-    private class DomainEntityStub : DomainEntity { }
+    private class DomainEntityStub : DomainEntity
+    {
+    }
+
     public class Insert
     {
         [Fact]
@@ -23,7 +26,7 @@ public class MapperTest
             Assert.Throws<ArgumentNullException>(() => mapper.Insert(null));
         }
     }
-    
+
     public class Update
     {
         [Fact]
@@ -33,7 +36,7 @@ public class MapperTest
             Assert.Throws<ArgumentNullException>(() => mapper.Update(null));
         }
     }
-    
+
     public class Delete
     {
         [Fact]
@@ -53,26 +56,28 @@ public class MapperTest
                 TableColumnPair = new TableColumnPair("tableOne", "columnOne"),
                 JoinCondition = "test"
             };
+
             public static PersonalDataColumn column2 = new()
             {
                 TableColumnPair = new TableColumnPair("tableTwo", "columnTwo"),
                 JoinCondition = "test"
             };
 
-            public static VacuumingRule rule1 = new VacuumingRule() { Name = "ruleOne", Interval = "one"};
-            public static VacuumingRule rule2 = new VacuumingRule() { Name = "ruleTwo", Interval = "two" };
+            public static VacuumingRule rule1 = new VacuumingRule() {Name = "ruleOne", Interval = "one"};
+            public static VacuumingRule rule2 = new VacuumingRule() {Name = "ruleTwo", Interval = "two"};
 
             public static Purpose purpose1 = new Purpose()
             {
-                Columns = new []{ column1 },
-                Name = "purposeOne", 
-                Rules = new []{ rule1 }
+                Columns = new[] {column1},
+                Name = "purposeOne",
+                Rules = new[] {rule1}
             };
+
             public static Purpose purpose2 = new Purpose()
             {
-                Columns = new []{ column1, column2 },
-                Name = "purposeTwo", 
-                Rules = new []{ rule1, rule2 }
+                Columns = new[] {column1, column2},
+                Name = "purposeTwo",
+                Rules = new[] {rule1, rule2}
             };
 
             public static void SeedDatabase(GdprMetadataContext context)
@@ -81,8 +86,8 @@ public class MapperTest
                 context.purposes.Add(purpose2);
                 context.SaveChanges();
             }
-
         }
+
         // Mapper is generic, and requires an instance of DbContext to test.
         // To get any value from testing, the DbContext should be connected to an actual database.
         // To reduce the number of duplicated tests, only Mapper<Purpose> is tested with a database
@@ -104,7 +109,7 @@ public class MapperTest
             // Insert is tested further in other tests
             // Assignment of id is the only functionality that can be tested in isolation.
             Mapper<Purpose> mapper = new Mapper<Purpose>(_context);
-            var testPurpose = new Purpose() { Name = "TestPurpose" };
+            var testPurpose = new Purpose() {Name = "TestPurpose"};
 
             var insertedPurpose = mapper.Insert(testPurpose);
 
@@ -144,12 +149,31 @@ public class MapperTest
         public void FindSingleReturnsOnlyMatchingElement()
         {
             Mapper<Purpose> mapper = new Mapper<Purpose>(_context);
-            var expectedPurpose = new Purpose() { Name = "TestPurpose" };
+            var expectedPurpose = new Purpose() {Name = "TestPurpose"};
             mapper.Insert(expectedPurpose);
-            
+
             Purpose? actualPurpose = mapper.FindSingle(purpose => purpose.Name == "TestPurpose");
 
             actualPurpose.Should().Be(expectedPurpose);
+        }
+
+        [Fact]
+        public void FindSingleTableColumnFromPersonalDataColumn()
+        {
+            Mapper<PersonalDataColumn> mapper = new Mapper<PersonalDataColumn>(_context);
+            var expectedColumn = new PersonalDataColumn()
+            {
+                DefaultValue = "",
+                Description = "",
+                TableColumnPair = new TableColumnPair("Table", "Column")
+            };
+            mapper.Insert(expectedColumn);
+
+            PersonalDataColumn? result = mapper.FindSingle(x =>
+                x.TableColumnPair.Equals(new TableColumnPair("Table","Column")));
+            var tableColumnPair = result?.TableColumnPair;
+
+            tableColumnPair.Should().Be(new TableColumnPair("Table", "Column"));
         }
 
         [Fact]
@@ -157,15 +181,16 @@ public class MapperTest
         {
             SeedData.SeedDatabase(_context);
             Mapper<Purpose> mapper = new Mapper<Purpose>(_context);
-            Assert.Throws<InvalidOperationException>(() => mapper.FindSingle(purpose => purpose.Name.Contains("purpose")));
+            Assert.Throws<InvalidOperationException>(() =>
+                mapper.FindSingle(purpose => purpose.Name.Contains("purpose")));
         }
 
         [Fact]
         public void UpdateInsertsGivenNonExistingElement()
         {
             Mapper<Purpose> mapper = new Mapper<Purpose>(_context);
-            var newPurpose = new Purpose() { Name = "NoSuchPurpose" };
-            
+            var newPurpose = new Purpose() {Name = "NoSuchPurpose"};
+
             mapper.Update(newPurpose);
             var fetchedPurpose = mapper.FindSingle(purpose => purpose.Name == "NoSuchPurpose");
 
@@ -176,13 +201,13 @@ public class MapperTest
         public void UpdatesExistingValue()
         {
             Mapper<Purpose> mapper = new Mapper<Purpose>(_context);
-            
-            var newPurpose = new Purpose() { Name = "OriginalValue" };
+
+            var newPurpose = new Purpose() {Name = "OriginalValue"};
             mapper.Insert(newPurpose);
 
             newPurpose.Name = "NewValue";
             mapper.Update(newPurpose);
-            
+
             var updatedPurpose = mapper.FindSingle(purpose => purpose.Id == newPurpose.Id);
             updatedPurpose.Name.Should().Be("NewValue");
         }
@@ -191,7 +216,7 @@ public class MapperTest
         public void DeletingNonExistingEntryThrowsInvalidOperationException()
         {
             Mapper<Purpose> mapper = new Mapper<Purpose>(_context);
-            var nonExistingPurpose = new Purpose() { Name = "NoSuchPurpose" };
+            var nonExistingPurpose = new Purpose() {Name = "NoSuchPurpose"};
 
             Assert.Throws<InvalidOperationException>(() => mapper.Delete(nonExistingPurpose));
         }
@@ -201,14 +226,14 @@ public class MapperTest
         {
             SeedData.SeedDatabase(_context);
             Mapper<Purpose> mapper = new Mapper<Purpose>(_context);
-            
+
             mapper.Delete(SeedData.purpose2);
 
             var allPurposes = mapper.Find(purpose => true);
             allPurposes.Should().Contain(SeedData.purpose1);
             allPurposes.Should().NotContain(SeedData.purpose2);
         }
-        
+
         public void Dispose()
         {
             _context.Database.EnsureDeleted();
