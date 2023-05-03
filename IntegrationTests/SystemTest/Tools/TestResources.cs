@@ -47,14 +47,17 @@ public class TestResources
     protected static readonly PersonalDataColumn TestPersonalDataColumn = new()
     {
         TableColumnPair = new TableColumnPair("Table", "Column"),
-        Purposes = new[] {TestPurpose}
+        Purposes = new[] { TestPurpose },
+        DefaultValue = "defaultValue",
+        Description = Description,
+        JoinCondition = "This is a join condition"
     };
 
     protected static readonly Processing TestProcessing = new()
     {
         Name = "ProcessingName", Description = "ProcessingDescription",
         PersonalDataColumn = TestPersonalDataColumn,
-        Purpose = new Purpose() {Name = "Purpose", Description = "Description"}
+        Purpose = new Purpose() { Name = "Purpose", Description = "Description" }
     };
 
     protected static void AddDeleteCondition(TestProcess testProcess, IDeleteCondition deleteCondition)
@@ -185,6 +188,7 @@ public class TestResources
                       $" {OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} {personalDataColumn.GetTableColumnPair().ColumnName}" +
                       $" {OptionNamer.JoinCondition} \"{personalDataColumn.GetJoinCondition()}\"" +
                       $" {OptionNamer.DefaultValueAlias} \"{personalDataColumn.GetDefaultValue()}\"" +
+                      $" {OptionNamer.Description} \"{personalDataColumn.GetDescription()}\"" +
                       $" {OptionNamer.PurposeList} {string.Join(" ", personalDataColumn.GetPurposes().Select(p => p.GetName()))}";
         process.GiveInput(command);
     }
@@ -194,9 +198,9 @@ public class TestResources
     {
         var command = $"{CommandNamer.PersonalDataName} {CommandNamer.Add} " +
                       $"{OptionNamer.TableColumn} {old.GetTableColumnPair().TableName} {old.GetTableColumnPair().ColumnName} " +
-                      $"{OptionNamer.DefaultValue} {updated.GetDefaultValue()} " +
-                      $"{OptionNamer.Description} {updated.GetDescription()} ";
-        
+                      $"{OptionNamer.DefaultValue} \"{updated.GetDefaultValue()}\" " +
+                      $"{OptionNamer.Description} \"{updated.GetDescription()}\" ";
+
         testProcess.GiveInput(command);
     }
 
@@ -205,7 +209,7 @@ public class TestResources
         var command = $"{CommandNamer.PersonalDataName} {CommandNamer.Show} " +
                       $"{OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} " +
                       $"{personalDataColumn.GetTableColumnPair().ColumnName} ";
-        
+
         testProcess.GiveInput(command);
     }
 
@@ -251,7 +255,7 @@ public class TestResources
                       $"{personalDataColumn.GetTableColumnPair().ColumnName} " +
                       $"{OptionNamer.Id} {individual.ToListing()} " +
                       $"{OptionNamer.Origin} {origin.GetName()}";
-        
+
         testProcess.GiveInput(command);
     }
 
@@ -262,7 +266,7 @@ public class TestResources
                       $"{OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} " +
                       $"{personalDataColumn.GetTableColumnPair().ColumnName} " +
                       $"{OptionNamer.Id} {individual.ToListing()} ";
-        
+
         testProcess.GiveInput(command);
     }
 }
