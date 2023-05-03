@@ -1,9 +1,11 @@
 using GraphManipulation.Commands.Helpers;
+using GraphManipulation.Managers;
 using GraphManipulation.Models;
 using GraphManipulation.Models.Interfaces;
 
 namespace IntegrationTests.SystemTest.Tools;
 
+[Collection("SystemTestSequential")]
 public class TestResources
 {
     protected const string Description = "This is a description";
@@ -42,33 +44,46 @@ public class TestResources
         Columns = new List<PersonalDataColumn>(),
         Rules = new List<VacuumingRule>()
     };
-    
+
+    protected static readonly PersonalDataColumn TestPersonalDataColumn = new()
+    {
+        TableColumnPair = new TableColumnPair("Table", "Column"),
+        Purposes = new[] {TestPurpose}
+    };
+
+    protected static readonly Processing TestProcessing = new()
+    {
+        Name = "ProcessingName", Description = "ProcessingDescription",
+        PersonalDataColumn = TestPersonalDataColumn,
+        Purpose = new Purpose() {Name = "Purpose", Description = "Description"}
+    };
+
     protected static void AddDeleteCondition(TestProcess testProcess, IDeleteCondition deleteCondition)
     {
         var addDeleteConditionCommand = $"{CommandNamer.DeleteConditionName} {CommandNamer.Add} " +
                                         $"{OptionNamer.Name} {deleteCondition.GetName()} " +
                                         $"{OptionNamer.Condition} \"{deleteCondition.GetCondition()}\" " +
                                         $"{OptionNamer.Description} \"{deleteCondition.GetDescription()}\"";
-        
+
         testProcess.GiveInput(addDeleteConditionCommand);
     }
 
     protected static void AddPurpose(TestProcess testProcess, IPurpose purpose)
     {
         var addPurposeCommand = $"{CommandNamer.PurposesName} {CommandNamer.Add} " +
-                                         $"{OptionNamer.Name} {purpose.GetName()} " +
-                                         $"{OptionNamer.Description} \"{purpose.GetDescription()}\" " +
-                                         $"{OptionNamer.DeleteConditionName} {purpose.GetDeleteCondition()} " +
-                                         $"{OptionNamer.LegallyRequired} {purpose.GetLegallyRequired()} ";
+                                $"{OptionNamer.Name} {purpose.GetName()} " +
+                                $"{OptionNamer.Description} \"{purpose.GetDescription()}\" " +
+                                $"{OptionNamer.DeleteConditionName} {purpose.GetDeleteCondition()} " +
+                                $"{OptionNamer.LegallyRequired} {purpose.GetLegallyRequired()} ";
 
         testProcess.GiveInput(addPurposeCommand);
     }
 
     protected static void ShowPurpose(TestProcess testProcess, IPurpose purpose)
     {
-        var showPurposeCommand = $"{CommandNamer.PurposesName} {CommandNamer.Show} " + 
+        var showPurposeCommand = $"{CommandNamer.PurposesName} {CommandNamer.Show} " +
                                  $"{OptionNamer.Name} {purpose.GetName()}";
-        
+
         testProcess.GiveInput(showPurposeCommand);
     }
 
@@ -80,7 +95,7 @@ public class TestResources
                                    $"{OptionNamer.LegallyRequired} {updated.GetLegallyRequired()} " +
                                    $"{OptionNamer.DeleteConditionName} {updated.GetDeleteCondition()} " +
                                    $"{OptionNamer.NewName} {updated.GetName()}";
-        
+
         testProcess.GiveInput(updatePurposeCommand);
     }
 
@@ -94,5 +109,84 @@ public class TestResources
         var deleteCommand = $"{CommandNamer.PurposesName} {CommandNamer.Delete} " +
                             $"{OptionNamer.Name} {purpose.GetName()}";
         testProcess.GiveInput(deleteCommand);
+    }
+
+    protected static void ListDeletionConditions(TestProcess process)
+    {
+        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.List}");
+    }
+
+    protected static void UpdateDeletionCondition(TestProcess process, IDeleteCondition old,
+        IDeleteCondition newDeletionCondition)
+    {
+        string command =
+            $"{CommandNamer.DeleteConditionAlias} {CommandNamer.UpdateAlias} {OptionNamer.NameAlias} {old.GetName()}  {OptionNamer.NewNameAlias}  {newDeletionCondition.GetName()}" +
+            $" {OptionNamer.Condition} \"{newDeletionCondition.GetCondition()}\"" +
+            $" {OptionNamer.Description} \"{newDeletionCondition.GetDescription()}\"";
+        process.GiveInput(command);
+    }
+
+    protected static void DeleteDeletionCondition(TestProcess process, IDeleteCondition deleteCondition)
+    {
+        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name}" +
+                          $" {deleteCondition.GetName()}");
+    }
+
+    protected static void ShowDeleteCondition(TestProcess process, IDeleteCondition deleteCondition)
+    {
+        process.GiveInput(
+            $"{CommandNamer.DeleteConditionAlias} {CommandNamer.ShowAlias} -n {deleteCondition.GetName()}");
+    }
+
+    protected static void AddOrigin(TestProcess testProcess, IOrigin origin)
+    {
+        string command =
+            $"{CommandNamer.OriginsAlias} {CommandNamer.AddAlias} {OptionNamer.Name} {origin.GetName()} {OptionNamer.Description} \"{origin.GetDescription()}\"";
+        testProcess.GiveInput(command);
+    }
+
+    protected static void ListOrigins(TestProcess process)
+    {
+        process.GiveInput($"{CommandNamer.OriginsAlias} {CommandNamer.List}");
+    }
+
+    protected static void UpdateOrigin(TestProcess process, IOrigin old, IOrigin newOrigin)
+    {
+        string command = $"{CommandNamer.OriginsAlias} {CommandNamer.UpdateAlias} {OptionNamer.Name} " +
+                         $"{old.GetName()} {OptionNamer.NewName} {newOrigin.GetName()} {OptionNamer.Description} \"{newOrigin.GetDescription()}\"";
+        process.GiveInput(command);
+    }
+
+    protected static void DeleteOrigin(TestProcess process, IOrigin origin)
+    {
+        process.GiveInput(
+            $"{CommandNamer.OriginsAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name} {origin.GetName()}");
+    }
+
+    protected static void ShowOrigin(TestProcess process, IOrigin origin)
+    {
+        process.GiveInput(
+            $"{CommandNamer.OriginsAlias} {CommandNamer.ShowAlias} {OptionNamer.Name} {origin.GetName()}");
+    }
+
+    protected static void AddProcessing(TestProcess process, IProcessing processing)
+    {
+        string command =
+            $"{CommandNamer.ProcessingsName} {CommandNamer.Add} {OptionNamer.Name} {processing.GetName()}" +
+            $" {OptionNamer.Description} {processing.GetDescription()}" +
+            $" {OptionNamer.TableColumn} {processing.GetPersonalDataTableColumnPair().TableName} {processing.GetPersonalDataTableColumnPair().ColumnName}" +
+            $" {OptionNamer.Purpose} {processing.GetPurpose().GetName()}";
+        process.GiveInput(command);
+    }
+
+
+    protected static void AddPersonalData(TestProcess process, IPersonalDataColumn personalDataColumn)
+    {
+        string command = $"{CommandNamer.PersonalDataAlias} {CommandNamer.AddAlias}" +
+                         $" {OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} {personalDataColumn.GetTableColumnPair().ColumnName}" +
+                         $" {OptionNamer.JoinCondition} \"{personalDataColumn.GetJoinCondition()}\"" +
+                         $" {OptionNamer.DefaultValueAlias} \"{personalDataColumn.GetDefaultValue()}\"" +
+                         $" {OptionNamer.PurposeList} {personalDataColumn.GetPurposes().First().GetName()}";
+        process.GiveInput(command);
     }
 }
