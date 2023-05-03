@@ -5,7 +5,6 @@ using GraphManipulation.Models.Interfaces;
 
 namespace IntegrationTests.SystemTest.Tools;
 
-[Collection("SystemTestSequential")]
 public class TestResources
 {
     protected const string Description = "This is a description";
