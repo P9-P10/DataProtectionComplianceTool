@@ -49,8 +49,8 @@ public class IndividualsTest : TestResources
         var output = process.GetAllOutputNoWhitespace().ToList();
 
         error.Should().BeEmpty();
-        output.Should().ContainSingle(s => s.Contains(1.ToString()));
-        output.Should().ContainSingle(s => s.Contains(2.ToString()));
-        output.Should().ContainSingle(s => s.Contains(3.ToString()));
+        output.Should().ContainSingle(s => s.Contains(TestIndividual1.ToListing()));
+        output.Should().ContainSingle(s => s.Contains(TestIndividual2.ToListing()));
+        output.Should().ContainSingle(s => s.Contains(TestIndividual3.ToListing()));
     }
 }

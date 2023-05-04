@@ -168,12 +168,45 @@ public class PersonalDataTest : TestResources
     [Fact]
     public void PersonalDataCanSetOriginForAnIndividual()
     {
-        throw new NotImplementedException();
+        using var process = Tools.SystemTest.CreateTestProcess();
+        process.Start();
+        
+        SetIndividualsSource(process, IndividualsSource);
+        AddDeleteCondition(process, TestDeleteCondition);
+        AddPurpose(process, TestPurpose);
+        AddPersonalData(process, TestPersonalDataColumn);
+        AddOrigin(process, TestOrigin);
+        SetOriginOfPersonalData(process, TestPersonalDataColumn, TestIndividual1, TestOrigin);
+        
+        var error = process.GetAllErrorsNoWhitespace();
+        var output = process.GetAllOutputNoWhitespace().ToList();
+        
+        error.Should().BeEmpty();
+        output.Any(s => s.Contains($"Could not find individual using {TestIndividual1.ToListing()}")).Should().BeFalse();
+        output.Should().ContainSingle(s => s.Contains($"Successfully completed set operation using " +
+                                                      $"{TestPersonalDataColumn.ToListingIdentifier()}, " +
+                                                      $"{TestIndividual1.ToListing()}, " +
+                                                      $"{TestOrigin.ToListingIdentifier()}"));
     }
 
     [Fact]
     public void PersonalDataCanShowOriginForAnIndividual()
     {
-        throw new NotImplementedException();
+        using var process = Tools.SystemTest.CreateTestProcess();
+        process.Start();
+        
+        SetIndividualsSource(process, IndividualsSource);
+        AddDeleteCondition(process, TestDeleteCondition);
+        AddPurpose(process, TestPurpose);
+        AddPersonalData(process, TestPersonalDataColumn);
+        AddOrigin(process, TestOrigin);
+        SetOriginOfPersonalData(process, TestPersonalDataColumn, TestIndividual1, TestOrigin);
+        ShowOriginOfPersonalData(process, TestPersonalDataColumn, TestIndividual1);
+        
+        var error = process.GetAllErrorsNoWhitespace();
+        var output = process.GetAllOutputNoWhitespace();
+        
+        error.Should().BeEmpty();
+        output.Should().ContainSingle(s => s.Contains(TestOrigin.ToListing()));
     }
 }

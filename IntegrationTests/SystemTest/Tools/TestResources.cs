@@ -9,7 +9,7 @@ public class TestResources
 {
     protected const string Description = "This is a description";
     protected const string Condition = "This is a condition";
-    protected static readonly TableColumnPair IndividualsSource = new TableColumnPair("sourceTable", "sourceColumn");
+    protected static readonly TableColumnPair IndividualsSource = new("sourceTable", "sourceColumn");
 
     protected static readonly DeleteCondition TestDeleteCondition = new()
     {
@@ -96,6 +96,28 @@ public class TestResources
         Name = "NewProcessingName", Description = "NewProcessingDescription",
         PersonalDataColumn = TestPersonalDataColumn,
         Purpose = TestPurpose
+    };
+
+    protected static readonly Origin TestOrigin = new()
+    {
+        Name = "originName",
+        Description = Description,
+        PersonalDataColumns = new List<PersonalDataColumn>()
+    };
+
+    protected static readonly Individual TestIndividual1 = new()
+    {
+        Id = 1
+    };
+    
+    protected static readonly Individual TestIndividual2 = new()
+    {
+        Id = 2
+    };
+    
+    protected static readonly Individual TestIndividual3 = new()
+    {
+        Id = 3
     };
 
     protected static void AddDeleteCondition(TestProcess testProcess, IDeleteCondition deleteCondition)
@@ -310,7 +332,7 @@ public class TestResources
         testProcess.GiveInput(command);
     }
 
-    protected static void PersonalDataSetOrigin(TestProcess testProcess, IPersonalDataColumn personalDataColumn,
+    protected static void SetOriginOfPersonalData(TestProcess testProcess, IPersonalDataColumn personalDataColumn,
         IIndividual individual, IOrigin origin)
     {
         var command = $"{CommandNamer.PersonalDataName} {CommandNamer.SetOrigin} " +
@@ -322,7 +344,7 @@ public class TestResources
         testProcess.GiveInput(command);
     }
 
-    protected static void PersonalDataShowOrigin(TestProcess testProcess, IPersonalDataColumn personalDataColumn,
+    protected static void ShowOriginOfPersonalData(TestProcess testProcess, IPersonalDataColumn personalDataColumn,
         IIndividual individual)
     {
         var command = $"{CommandNamer.PersonalDataName} {CommandNamer.ShowOrigin} " +
