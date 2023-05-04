@@ -23,6 +23,7 @@ public class LogStringParserTest
         return "123" + Log.LogDelimiter() +
                "12-05-1937 09:57:33" + Log.LogDelimiter() +
                LogType.Vacuuming + Log.LogDelimiter() +
+               "TestSubject" + Log.LogDelimiter() +
                LogMessageFormat.Plaintext + Log.LogDelimiter() +
                "This is a message";
     }

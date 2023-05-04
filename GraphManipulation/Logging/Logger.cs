@@ -29,7 +29,7 @@ public abstract class Logger : ILogger
     public abstract IOrderedEnumerable<ILog> Read(ILogConstraints constraints);
     protected abstract void AppendLogToFile(ILog log);
     protected abstract ILog CreateLog(IMutableLog mutableLog);
-    protected abstract ILog CreateLog(LogType logType, LogMessageFormat logMessageFormat, string message);
+    protected abstract ILog CreateLog(LogType logType, string subject, LogMessageFormat logMessageFormat, string message);
 
     protected string GetLogFilePath()
     {

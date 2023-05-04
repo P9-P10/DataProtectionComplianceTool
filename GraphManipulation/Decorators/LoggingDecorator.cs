@@ -20,7 +20,7 @@ public class LoggingDecorator
 
     private void AppendLogEntry(Operation operation)
     {
-        _logger.Append(new MutableLog(LogType.Metadata, LogMessageFormat.Plaintext, operation.ToString()));
+        _logger.Append(new MutableLog(LogType.Metadata, operation, LogMessageFormat.Plaintext, operation.ToString()));
     }
 
 

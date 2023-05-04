@@ -11,12 +11,12 @@ public class PlaintextLogger : Logger
 
     protected override ILog CreateLog(IMutableLog mutableLog)
     {
-        return CreateLog(mutableLog.LogType, mutableLog.LogMessageFormat, mutableLog.Message);
+        return CreateLog(mutableLog.LogType, mutableLog.Subject, mutableLog.LogMessageFormat, mutableLog.Message);
     }
 
-    protected override ILog CreateLog(LogType logType, LogMessageFormat logMessageFormat, string message)
+    protected override ILog CreateLog(LogType logType, string subject, LogMessageFormat logMessageFormat, string message)
     {
-        return new Log(ServeNextLogNumber(), DateTime.Now, logType, logMessageFormat, message);
+        return new Log(ServeNextLogNumber(), DateTime.Now, logType, subject, logMessageFormat, message);
     }
 
     protected override void AppendLogToFile(ILog log)
