@@ -120,6 +120,22 @@ public class TestResources
         Id = 3
     };
 
+    protected static readonly VacuumingRule TestVacuumingRule = new()
+    {
+        Name = "vacuumingRule",
+        Description = Description,
+        Interval = "2h 4d",
+        Purposes = new List<Purpose> { TestPurpose }
+    };
+
+    protected static readonly VacuumingRule UpdatedTestVacuumingRule = new()
+    {
+        Name = TestVacuumingRule.GetName() + "UPDATED",
+        Description = TestVacuumingRule.GetDescription() + "NEW",
+        Interval = TestVacuumingRule.GetInterval() + "6h",
+        Purposes = new List<Purpose> { TestPurpose }
+    };
+
     protected static void AddDeleteCondition(TestProcess testProcess, IDeleteCondition deleteCondition)
     {
         var addDeleteConditionCommand = $"{CommandNamer.DeleteConditionName} {CommandNamer.Add} " +
@@ -371,6 +387,64 @@ public class TestResources
     protected static void ListIndividuals(TestProcess testProcess)
     {
         var command = $"{CommandNamer.IndividualsName} {CommandNamer.List}";
+        testProcess.GiveInput(command);
+    }
+
+    protected static void AddVacuumingRule(TestProcess testProcess, IVacuumingRule vacuumingRule)
+    {
+        var command = $"{CommandNamer.VacuumingRulesName} {CommandNamer.Add} " +
+                      $"{OptionNamer.Name} {vacuumingRule.GetName()} " +
+                      $"{OptionNamer.Interval} \"{vacuumingRule.GetInterval()}\" " +
+                      $"{OptionNamer.Purpose} {vacuumingRule.GetPurposes().First().ToListingIdentifier()} " +
+                      $"{OptionNamer.Description} \"{vacuumingRule.GetDescription()}\"";
+        testProcess.GiveInput(command);
+    }
+
+    protected static void UpdateVacuumingRule(TestProcess testProcess, IVacuumingRule old, IVacuumingRule updated)
+    {
+        var command = $"{CommandNamer.VacuumingRulesName} {CommandNamer.Update} " +
+                      $"{OptionNamer.Name} {old.GetName()} " +
+                      $"{OptionNamer.NewName} {updated.GetName()} " +
+                      $"{OptionNamer.Interval} \"{updated.GetInterval()}\" " +
+                      $"{OptionNamer.Description} \"{updated.GetDescription()}\"";
+        testProcess.GiveInput(command);
+    }
+
+    protected static void ShowVacuumingRule(TestProcess testProcess, IVacuumingRule vacuumingRule)
+    {
+        var command = $"{CommandNamer.VacuumingRulesName} {CommandNamer.Show} " +
+                      $"{OptionNamer.Name} {vacuumingRule.GetName()}";
+        testProcess.GiveInput(command);
+    }
+
+    protected static void ListVacuumingRule(TestProcess testProcess)
+    {
+        var command = $"{CommandNamer.VacuumingRulesName} {CommandNamer.List}";
+        testProcess.GiveInput(command);
+    }
+
+    protected static void DeleteVacuumingRule(TestProcess testProcess, IVacuumingRule vacuumingRule)
+    {
+        var command = $"{CommandNamer.VacuumingRulesName} {CommandNamer.Delete} " +
+                      $"{OptionNamer.Name} {vacuumingRule.GetName()}";
+        testProcess.GiveInput(command);
+    }
+
+    protected static void AddPurposesToVacuumingRule(TestProcess testProcess, IVacuumingRule vacuumingRule,
+        IEnumerable<IPurpose> purposes)
+    {
+        var command = $"{CommandNamer.VacuumingRulesName} {CommandNamer.AddPurpose} " +
+                      $"{OptionNamer.Name} {vacuumingRule.GetName()} " +
+                      $"{OptionNamer.PurposeList} {string.Join(" ", purposes.Select(p => p.GetName()))}";
+        testProcess.GiveInput(command);
+    }
+
+    protected static void RemovePurposesFromVacuumingRule(TestProcess testProcess, IVacuumingRule vacuumingRule,
+        IEnumerable<IPurpose> purposes)
+    {
+        var command = $"{CommandNamer.VacuumingRulesName} {CommandNamer.RemovePurpose} " +
+                       $"{OptionNamer.Name} {vacuumingRule.GetName()} " +
+                       $"{OptionNamer.PurposeList} {string.Join(" ", purposes.Select(p => p.GetName()))}";
         testProcess.GiveInput(command);
     }
 }
