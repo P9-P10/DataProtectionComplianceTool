@@ -76,7 +76,7 @@ public class PlaintextLoggerTest : LogTest
         {
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            var log = new MutableLog(LogType.SchemaChange, LogMessageFormat.Plaintext, "Test message");
+            var log = new MutableLog(LogType.SchemaChange, "TestSubject", LogMessageFormat.Plaintext, "Test message");
 
             logger.Append(log);
 
@@ -88,14 +88,14 @@ public class PlaintextLoggerTest : LogTest
         {
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            var log = new MutableLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
+            var log = new MutableLog(LogType.Metadata, "TestSubject", LogMessageFormat.Plaintext, "Test message");
 
             logger.Append(log);
 
             var actual = File.ReadLines(GetTestLogFilePath()).First();
 
             Assert.Contains(
-                "Metadata" + Log.LogDelimiter() + "Plaintext" + Log.LogDelimiter() + "Test message",
+                "Metadata" + Log.LogDelimiter() + "TestSubject" + Log.LogDelimiter() + "Plaintext" + Log.LogDelimiter() + "Test message",
                 actual);
         }
 
@@ -104,8 +104,8 @@ public class PlaintextLoggerTest : LogTest
         {
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            var log1 = new MutableLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
-            var log2 = new MutableLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
+            var log1 = new MutableLog(LogType.Metadata, "TestSubject", LogMessageFormat.Plaintext, "Test message 1");
+            var log2 = new MutableLog(LogType.Vacuuming, "TestSubject", LogMessageFormat.Plaintext, "Test message 2");
 
             logger.Append(log1);
             logger.Append(log2);
@@ -123,7 +123,7 @@ public class PlaintextLoggerTest : LogTest
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
 
-            var log = new MutableLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
+            var log = new MutableLog(LogType.Metadata, "TestSubject", LogMessageFormat.Plaintext, "Test message");
 
             logger.Append(log);
 
@@ -137,9 +137,9 @@ public class PlaintextLoggerTest : LogTest
         {
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            var log1 = new MutableLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
-            var log2 = new MutableLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
-            var log3 = new MutableLog(LogType.SchemaChange, LogMessageFormat.Plaintext, "Test message 3");
+            var log1 = new MutableLog(LogType.Metadata, "TestSubject", LogMessageFormat.Plaintext, "Test message 1");
+            var log2 = new MutableLog(LogType.Vacuuming, "TestSubject", LogMessageFormat.Plaintext, "Test message 2");
+            var log3 = new MutableLog(LogType.SchemaChange, "TestSubject", LogMessageFormat.Plaintext, "Test message 3");
 
             logger.Append(log1);
             logger.Append(log2);
@@ -162,7 +162,7 @@ public class PlaintextLoggerTest : LogTest
         {
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            var log = new MutableLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
+            var log = new MutableLog(LogType.Metadata, "TestSubject", LogMessageFormat.Plaintext, "Test message");
 
             logger.Append(log);
 
@@ -176,7 +176,7 @@ public class PlaintextLoggerTest : LogTest
         {
             var configManager = CreateConfigManager();
             var logger1 = new PlaintextLogger(configManager);
-            var log1 = new MutableLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message A");
+            var log1 = new MutableLog(LogType.Metadata, "TestSubject", LogMessageFormat.Plaintext, "Test message A");
 
             logger1.Append(log1);
 
@@ -188,7 +188,7 @@ public class PlaintextLoggerTest : LogTest
             File.WriteAllLines(GetTestLogFilePath(), new List<string> { modifiedLogString });
 
             var logger2 = new PlaintextLogger(configManager);
-            var log2 = new MutableLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message B");
+            var log2 = new MutableLog(LogType.Vacuuming, "TestSubject", LogMessageFormat.Plaintext, "Test message B");
 
             logger2.Append(log2);
 
@@ -203,7 +203,7 @@ public class PlaintextLoggerTest : LogTest
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
 
-            var log = new MutableLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message");
+            var log = new MutableLog(LogType.Metadata, "TestSubject", LogMessageFormat.Plaintext, "Test message");
             logger.Append(log);
 
             var logString = File.ReadAllText(GetTestLogFilePath());
@@ -225,9 +225,9 @@ public class PlaintextLoggerTest : LogTest
         {
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
-            var log1 = new MutableLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
-            var log2 = new MutableLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
-            var log3 = new MutableLog(LogType.SchemaChange, LogMessageFormat.Plaintext, "Test message 3");
+            var log1 = new MutableLog(LogType.Metadata, "TestSubject", LogMessageFormat.Plaintext, "Test message 1");
+            var log2 = new MutableLog(LogType.Vacuuming, "TestSubject", LogMessageFormat.Plaintext, "Test message 2");
+            var log3 = new MutableLog(LogType.SchemaChange, "TestSubject", LogMessageFormat.Plaintext, "Test message 3");
 
             logger.Append(log1);
             logger.Append(log2);
@@ -244,9 +244,9 @@ public class PlaintextLoggerTest : LogTest
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
 
-            var log1 = new MutableLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
-            var log2 = new MutableLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
-            var log3 = new MutableLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 3");
+            var log1 = new MutableLog(LogType.Metadata, "TestSubject", LogMessageFormat.Plaintext, "Test message 1");
+            var log2 = new MutableLog(LogType.Vacuuming, "TestSubject", LogMessageFormat.Plaintext, "Test message 2");
+            var log3 = new MutableLog(LogType.Vacuuming, "TestSubject", LogMessageFormat.Plaintext, "Test message 3");
 
             logger.Append(log1);
             logger.Append(log2);
@@ -276,6 +276,7 @@ public class PlaintextLoggerTest : LogTest
             return $"{number}" + Log.LogDelimiter() +
                    timeString + Log.LogDelimiter() +
                    LogType.Vacuuming + Log.LogDelimiter() +
+                   "TestSubject" + Log.LogDelimiter() +
                    LogMessageFormat.Plaintext + Log.LogDelimiter() +
                    "This is a message";
         }
@@ -330,9 +331,9 @@ public class PlaintextLoggerTest : LogTest
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
 
-            var log1 = new MutableLog(LogType.Metadata, LogMessageFormat.Plaintext, "Test message 1");
-            var log2 = new MutableLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 2");
-            var log3 = new MutableLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "Test message 3");
+            var log1 = new MutableLog(LogType.Metadata, "TestSubject", LogMessageFormat.Plaintext, "Test message 1");
+            var log2 = new MutableLog(LogType.Vacuuming, "TestSubject", LogMessageFormat.Plaintext, "Test message 2");
+            var log3 = new MutableLog(LogType.Vacuuming, "TestSubject", LogMessageFormat.Plaintext, "Test message 3");
 
             logger.Append(log1);
             logger.Append(log2);
@@ -377,9 +378,9 @@ public class PlaintextLoggerTest : LogTest
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
 
-            var log1 = new MutableLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "");
-            var log2 = new MutableLog(LogType.Vacuuming, LogMessageFormat.Json, "");
-            var log3 = new MutableLog(LogType.Vacuuming, LogMessageFormat.Json, "");
+            var log1 = new MutableLog(LogType.Vacuuming, "TestSubject", LogMessageFormat.Plaintext, "");
+            var log2 = new MutableLog(LogType.Vacuuming, "TestSubject", LogMessageFormat.Json, "");
+            var log3 = new MutableLog(LogType.Vacuuming, "TestSubject", LogMessageFormat.Json, "");
 
             logger.Append(log1);
             logger.Append(log2);
@@ -425,10 +426,10 @@ public class PlaintextLoggerTest : LogTest
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
 
-            var log1 = new MutableLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "");
-            var log2 = new MutableLog(LogType.SchemaChange, LogMessageFormat.Json, "");
-            var log3 = new MutableLog(LogType.Vacuuming, LogMessageFormat.Turtle, "");
-            var log4 = new MutableLog(LogType.Metadata, LogMessageFormat.Plaintext, "");
+            var log1 = new MutableLog(LogType.Vacuuming, "TestSubject", LogMessageFormat.Plaintext, "");
+            var log2 = new MutableLog(LogType.SchemaChange, "TestSubject", LogMessageFormat.Json, "");
+            var log3 = new MutableLog(LogType.Vacuuming, "TestSubject", LogMessageFormat.Turtle, "");
+            var log4 = new MutableLog(LogType.Metadata, "TestSubject", LogMessageFormat.Plaintext, "");
 
             logger.Append(log1);
             logger.Append(log2);
@@ -465,8 +466,8 @@ public class PlaintextLoggerTest : LogTest
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
 
-            var log1 = new MutableLog(LogType.Vacuuming, LogMessageFormat.Plaintext, "");
-            var log2 = new MutableLog(LogType.SchemaChange, LogMessageFormat.Json, "");
+            var log1 = new MutableLog(LogType.Vacuuming, "TestSubject", LogMessageFormat.Plaintext, "");
+            var log2 = new MutableLog(LogType.SchemaChange, "TestSubject", LogMessageFormat.Json, "");
 
             logger.Append(log2);
             logger.Append(log1);

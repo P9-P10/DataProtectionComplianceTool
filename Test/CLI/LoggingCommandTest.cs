@@ -195,10 +195,10 @@ public class LoggingCommandTest : CommandTest
                         $"-lf {LogMessageFormat.Plaintext} {LogMessageFormat.Json}");
 
             var expected = new LogConstraints(
-                new NumberRange(3, 5),
-                new TimeRange(new DateTime(2000, 4, 12), new DateTime(3000, 6, 15, 9, 38, 0)),
-                new List<LogType> { LogType.Vacuuming, LogType.Metadata },
-                new List<LogMessageFormat> { LogMessageFormat.Plaintext, LogMessageFormat.Json }
+                logNumberRange: new NumberRange(3, 5),
+                timeRange: new TimeRange(new DateTime(2000, 4, 12), new DateTime(3000, 6, 15, 9, 38, 0)),
+                logTypes: new List<LogType> { LogType.Vacuuming, LogType.Metadata },
+                logMessageFormats: new List<LogMessageFormat> { LogMessageFormat.Plaintext, LogMessageFormat.Json }
             );
 
             loggerMock.Verify(logger => logger.Read(It.IsAny<LogConstraints>()));

@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.CommandLine.IO;
 using System.CommandLine.Parsing;
 using GraphManipulation.Managers.Interfaces.Base;
 using GraphManipulation.Models;
@@ -23,13 +24,13 @@ public static class Handlers
 
         if (TryGet(getter1, key1, out _))
         {
-            console.WriteLine(AlreadyExistsMessage(key1, typeof(TValue1)));
+            console.Error.WriteLine(AlreadyExistsMessage(key1, typeof(TValue1)));
             return;
         }
 
         if (!TryGet(getter2, key2, out _))
         {
-            console.WriteLine(FailureToFindMessage(key2, typeof(TValue2)));
+            console.Error.WriteLine(FailureToFindMessage(key2, typeof(TValue2)));
             return;
         }
 
@@ -60,19 +61,19 @@ public static class Handlers
 
         if (TryGet(getter1, key1, out _))
         {
-            console.WriteLine(AlreadyExistsMessage(key1, typeof(TValue1)));
+            console.Error.WriteLine(AlreadyExistsMessage(key1, typeof(TValue1)));
             return;
         }
 
         if (!TryGet(getter2, key2, out _))
         {
-            console.WriteLine(FailureToFindMessage(key2, typeof(TValue2)));
+            console.Error.WriteLine(FailureToFindMessage(key2, typeof(TValue2)));
             return;
         }
 
         if (!TryGet(getter3, key3, out _))
         {
-            console.WriteLine(FailureToFindMessage(key3, typeof(TValue3)));
+            console.Error.WriteLine(FailureToFindMessage(key3, typeof(TValue3)));
             return;
         }
 
@@ -95,7 +96,7 @@ public static class Handlers
 
         if (TryGet(getter, key, out _))
         {
-            console.WriteLine(AlreadyExistsMessage(key, typeof(TValue)));
+            console.Error.WriteLine(AlreadyExistsMessage(key, typeof(TValue)));
             return;
         }
 
@@ -114,7 +115,7 @@ public static class Handlers
 
         if (TryGet(getter, key, out _))
         {
-            console.WriteLine(AlreadyExistsMessage(key, typeof(TValue)));
+            console.Error.WriteLine(AlreadyExistsMessage(key, typeof(TValue)));
             return;
         }
 
@@ -135,7 +136,7 @@ public static class Handlers
 
         if (TryGet(getter, key, out _))
         {
-            console.WriteLine(AlreadyExistsMessage(key, typeof(TValue)));
+            console.Error.WriteLine(AlreadyExistsMessage(key, typeof(TValue)));
             return;
         }
 
@@ -173,19 +174,19 @@ public static class Handlers
 
         if (!TryGet(getter1, key1, out _))
         {
-            console.WriteLine(FailureToFindMessage(key1, typeof(TValue1)));
+            console.Error.WriteLine(FailureToFindMessage(key1, typeof(TValue1)));
             return;
         }
 
         if (!TryGet(getter2, key2, out _))
         {
-            console.WriteLine(FailureToFindMessage(key2, typeof(TValue2)));
+            console.Error.WriteLine(FailureToFindMessage(key2, typeof(TValue2)));
             return;
         }
 
         if (!TryGet(getter3, key3, out _))
         {
-            console.WriteLine(FailureToFindMessage(key3, typeof(TValue3)));
+            console.Error.WriteLine(FailureToFindMessage(key3, typeof(TValue3)));
             return;
         }
 
@@ -206,7 +207,7 @@ public static class Handlers
 
         if (!TryGet(getter, key, out var keyValue))
         {
-            console.WriteLine(FailureToFindMessage(key, typeof(TValue)));
+            console.Error.WriteLine(FailureToFindMessage(key, typeof(TValue)));
             return;
         }
 
@@ -236,7 +237,7 @@ public static class Handlers
 
         if (!TryGet(getter1, key1, out var keyValue1))
         {
-            console.WriteLine(FailureToFindMessage(key1, typeof(TValue1)));
+            console.Error.WriteLine(FailureToFindMessage(key1, typeof(TValue1)));
             return;
         }
 
@@ -247,7 +248,7 @@ public static class Handlers
 
         if (!TryGet(getter2, key2!, out _))
         {
-            console.WriteLine(FailureToFindMessage(key2, typeof(TValue2)));
+            console.Error.WriteLine(FailureToFindMessage(key2, typeof(TValue2)));
             return;
         }
 
@@ -273,7 +274,7 @@ public static class Handlers
 
         if (!TryGet(getter1, key1, out var keyValue1))
         {
-            console.WriteLine(FailureToFindMessage(key1, typeof(TValue1)));
+            console.Error.WriteLine(FailureToFindMessage(key1, typeof(TValue1)));
             return;
         }
 
@@ -295,7 +296,7 @@ public static class Handlers
             }
             else
             {
-                console.WriteLine(FailureToFindMessage(key2, typeof(TValue2)));
+                console.Error.WriteLine(FailureToFindMessage(key2, typeof(TValue2)));
             }
     }
 
@@ -310,7 +311,7 @@ public static class Handlers
 
         if (!TryGet(getter, key1, out var keyValue1))
         {
-            console.WriteLine(FailureToFindMessage(key1, typeof(TValue1)));
+            console.Error.WriteLine(FailureToFindMessage(key1, typeof(TValue1)));
             return;
         }
 
@@ -323,7 +324,7 @@ public static class Handlers
         {
             if (!getCurrent(keyValue1).Contains(key2))
             {
-                console.WriteLine(DoesNotContainMessage(key1, key2.ToString()));
+                console.Error.WriteLine(DoesNotContainMessage(key1, key2.ToString()));
                 continue;
             }
 
@@ -340,7 +341,7 @@ public static class Handlers
 
         if (!TryGet(getter, key, out _))
         {
-            console.WriteLine(FailureToFindMessage(key, typeof(TValue)));
+            console.Error.WriteLine(FailureToFindMessage(key, typeof(TValue)));
             return;
         }
 
@@ -365,7 +366,7 @@ public static class Handlers
 
         if (!TryGet(getter, key, out var keyValue))
         {
-            console.WriteLine(FailureToFindMessage(key, typeof(TValue)));
+            console.Error.WriteLine(FailureToFindMessage(key, typeof(TValue)));
             return;
         }
 
@@ -385,13 +386,13 @@ public static class Handlers
 
         if (!TryGet(getter1, key1, out _))
         {
-            console.WriteLine(FailureToFindMessage(key1, typeof(TValue1)));
+            console.Error.WriteLine(FailureToFindMessage(key1, typeof(TValue1)));
             return;
         }
 
         if (!TryGet(getter2, key2, out _))
         {
-            console.WriteLine(FailureToFindMessage(key2, typeof(TValue2)));
+            console.Error.WriteLine(FailureToFindMessage(key2, typeof(TValue2)));
             return;
         }
 
@@ -412,7 +413,7 @@ public static class Handlers
         {
             if (!TryGet(getter, key, out _))
             {
-                console.WriteLine(FailureToFindMessage(key, typeof(TValue)));
+                console.Error.WriteLine(FailureToFindMessage(key, typeof(TValue)));
                 continue;
             }
 

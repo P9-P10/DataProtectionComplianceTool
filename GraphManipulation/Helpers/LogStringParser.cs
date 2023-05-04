@@ -52,10 +52,17 @@ public static class LogStringParser
 
         throw new LogStringParserException("Could not parse log type: " + logTypeString);
     }
+    
+    public static string ParseSubject(string logString)
+    {
+        var subject = GetRelevantPartFromString(logString, 3);
+
+        return subject;
+    }
 
     public static LogMessageFormat ParseLogMessageFormat(string logString)
     {
-        var logMessageFormatString = GetRelevantPartFromString(logString, 3);
+        var logMessageFormatString = GetRelevantPartFromString(logString, 4);
 
         if (Enum.TryParse(typeof(LogMessageFormat), logMessageFormatString, out var result))
         {
@@ -67,7 +74,7 @@ public static class LogStringParser
 
     public static string ParseLogMessage(string logString)
     {
-        var logMessage = GetRelevantPartFromString(logString, 4);
+        var logMessage = GetRelevantPartFromString(logString, 5);
 
         return logMessage;
     }
