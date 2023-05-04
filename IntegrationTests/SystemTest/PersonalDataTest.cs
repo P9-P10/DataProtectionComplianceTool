@@ -182,7 +182,6 @@ public class PersonalDataTest : TestResources
         var output = process.GetAllOutputNoWhitespace().ToList();
         
         error.Should().BeEmpty();
-        output.Any(s => s.Contains($"Could not find individual using {TestIndividual1.ToListing()}")).Should().BeFalse();
         output.Should().ContainSingle(s => s.Contains($"Successfully completed set operation using " +
                                                       $"{TestPersonalDataColumn.ToListingIdentifier()}, " +
                                                       $"{TestIndividual1.ToListing()}, " +

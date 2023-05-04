@@ -20,8 +20,6 @@ public class VacuumingRulesTest : TestResources
 
         error.Should().BeEmpty();
 
-        output.Any(s => s.Contains("Object reference not set to an instance of an object.")).Should().BeFalse();
-
         output.Should().ContainSingle(s =>
             s.Contains($"Successfully added {TestVacuumingRule.ToListingIdentifier()} vacuuming rule") &&
             s.Contains($"{TestVacuumingRule.GetInterval()}") &&
@@ -47,8 +45,6 @@ public class VacuumingRulesTest : TestResources
 
         error.Should().BeEmpty();
 
-        output.Any(s => s.Contains("Object reference not set to an instance of an object.")).Should().BeFalse();
-
         output.Should().ContainSingle(s => s.Contains(TestVacuumingRule.ToListing()));
     }
 
@@ -69,8 +65,6 @@ public class VacuumingRulesTest : TestResources
 
         error.Should().BeEmpty();
 
-        output.Any(s => s.Contains("Object reference not set to an instance of an object.")).Should().BeFalse();
-
         output.Should().ContainSingle(s => s.Contains(UpdatedTestVacuumingRule.ToListing()));
     }
 
@@ -90,8 +84,6 @@ public class VacuumingRulesTest : TestResources
         var output = process.GetAllOutputNoWhitespace().ToList();
 
         error.Should().BeEmpty();
-
-        output.Any(s => s.Contains("Object reference not set to an instance of an object.")).Should().BeFalse();
 
         output.Should().ContainSingle(s => s.Contains(TestVacuumingRule.ToListing()));
         output.Should().ContainSingle(s => s.Contains(UpdatedTestVacuumingRule.ToListing()));
@@ -186,11 +178,9 @@ public class VacuumingRulesTest : TestResources
         ExecuteVacuumingRule(process, new[] { TestVacuumingRule });
 
         var error = process.GetAllErrorsNoWhitespace();
-        var output = process.GetAllOutputNoWhitespace().ToList();
+        var output = process.GetAllOutputNoWhitespace();
 
         error.Should().BeEmpty();
-        
-        output.Any(s => s.Contains("Object reference not set to an instance of an object.")).Should().BeFalse();
         
         output.Should().ContainSingle(s =>
             s.Contains(

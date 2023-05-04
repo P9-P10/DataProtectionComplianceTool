@@ -203,7 +203,7 @@ public class IndividualsCommandTest : CommandTest
             BuildCli(out _, out var console)
                 .Invoke($"{CommandName} --id {IndividualId + 1}");
 
-            console.Out.ToString().Should().StartWith("Could not find");
+            console.Error.ToString().Should().StartWith("Could not find");
         }
     }
 }
