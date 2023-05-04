@@ -22,15 +22,15 @@ public class PersonalDataTest : TestResources
         error.Should().BeEmpty();
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully added {TestPersonalDataColumn.TableColumnPair.ToListing()} personal data column") &&
+                $"Successfully added {TestPersonalDataColumn.ToListingIdentifier()} personal data column") &&
             s.Contains($"{TestPersonalDataColumn.GetDescription()}") &&
             s.Contains($"{TestPersonalDataColumn.GetJoinCondition()}"));
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully updated {TestPersonalDataColumn.TableColumnPair.ToListing()} personal data column with {TestPurpose.GetName()}"));
+                $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {TestPurpose.GetName()}"));
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully updated {TestPersonalDataColumn.TableColumnPair.ToListing()} personal data column with {TestPersonalDataColumn.GetDefaultValue()}"));
+                $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {TestPersonalDataColumn.GetDefaultValue()}"));
     }
 
     [Fact]
@@ -132,10 +132,10 @@ public class PersonalDataTest : TestResources
         error.Should().BeEmpty();
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully updated {TestPersonalDataColumn.TableColumnPair.ToListing()} personal data column with {NewTestPurpose.GetName()}"));
+                $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {NewTestPurpose.GetName()}"));
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully updated {TestPersonalDataColumn.TableColumnPair.ToListing()} personal data column with {NewNewTestPurpose.GetName()}"));
+                $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {NewNewTestPurpose.GetName()}"));
     }
 
     [Fact]
@@ -159,10 +159,10 @@ public class PersonalDataTest : TestResources
         error.Should().BeEmpty();
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"{NewTestPurpose.GetName()} successfully removed from {TestPersonalDataColumn.TableColumnPair.ToListing()}"));
+                $"{NewTestPurpose.GetName()} successfully removed from {TestPersonalDataColumn.ToListingIdentifier()}"));
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"{NewNewTestPurpose.GetName()} successfully removed from {TestPersonalDataColumn.TableColumnPair.ToListing()}"));
+                $"{NewNewTestPurpose.GetName()} successfully removed from {TestPersonalDataColumn.ToListingIdentifier()}"));
     }
 
     [Fact]
