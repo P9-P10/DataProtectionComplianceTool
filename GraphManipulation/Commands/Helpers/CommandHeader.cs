@@ -6,9 +6,9 @@ public static class CommandHeader
 
     public const string VacuumingHeader = "Name, Description, Interval, Purposes";
 
-    public const string ProcessingsHeader = "Name, Description, Purposes, Table, Columns";
+    public const string ProcessingsHeader = "Name, Description, Purposes, Table, Personal Data Columns";
     
-    public const string PurposesHeader = "Name, Description, Legally Required, Deletion Condition, Columns, Rules";
+    public const string PurposesHeader = "Name, Description, Legally Required, Deletion Condition, Personal Data Columns, Rules";
 
     public const string IndividualsHeader = "Id";
 

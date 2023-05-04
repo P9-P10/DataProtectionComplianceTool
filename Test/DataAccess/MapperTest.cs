@@ -68,14 +68,14 @@ public class MapperTest
 
             public static Purpose purpose1 = new Purpose()
             {
-                Columns = new[] {column1},
+                PersonalDataColumns = new[] {column1},
                 Name = "purposeOne",
                 Rules = new[] {rule1}
             };
 
             public static Purpose purpose2 = new Purpose()
             {
-                Columns = new[] {column1, column2},
+                PersonalDataColumns = new[] {column1, column2},
                 Name = "purposeTwo",
                 Rules = new[] {rule1, rule2}
             };

@@ -5,7 +5,7 @@ namespace GraphManipulation.Models;
 public class Purpose : DomainEntity, IPurpose
 {
     public bool LegallyRequired { get; set; }
-    public IEnumerable<PersonalDataColumn>? Columns { get; set; }
+    public IEnumerable<PersonalDataColumn>? PersonalDataColumns { get; set; }
     public DeleteCondition? DeleteCondition { get; set; }
     public string? Description { get; set; }
     public string Name { get; set; }
@@ -18,7 +18,7 @@ public class Purpose : DomainEntity, IPurpose
             Description,
             LegallyRequired,
             "[ " + (DeleteCondition is null ? "" : DeleteCondition.ToListingIdentifier()) + " ]",
-            "[ " + string.Join(", ", Columns is null ? new List<string>() : Columns.Select(c => c.ToListingIdentifier())) + " ]",
+            "[ " + string.Join(", ", PersonalDataColumns is null ? new List<string>() : PersonalDataColumns.Select(c => c.ToListingIdentifier())) + " ]",
             "[ " + string.Join(", ", Rules is null ? new List<string>() : Rules.Select(r => r.ToListingIdentifier())) + " ]"
         );
     }

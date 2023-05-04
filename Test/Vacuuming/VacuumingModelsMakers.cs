@@ -84,7 +84,7 @@ public static class VacuumingModelsMakers
                 Id = 0,
                 Name = "Name",
                 Description = "Description",
-                Columns = PersonalDataColumns(),
+                PersonalDataColumns = PersonalDataColumns(),
                 DeleteCondition = new DeleteCondition(),
                 Rules = new List<VacuumingRule>()
             }

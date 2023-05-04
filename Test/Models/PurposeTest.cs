@@ -12,7 +12,7 @@ public class PurposeTest
         Purpose purpose = new Purpose()
         {
             Name = "Name",
-            Columns = null
+            PersonalDataColumns = null
         };
 
         Assert.Equal("Name, , False, [  ], [  ], [  ]", purpose.ToListing());
@@ -24,7 +24,7 @@ public class PurposeTest
         Purpose purpose = new Purpose()
         {
             Name = "Name",
-            Columns = new List<PersonalDataColumn>()
+            PersonalDataColumns = new List<PersonalDataColumn>()
         };
 
         Assert.Equal("Name, , False, [  ], [  ], [  ]", purpose.ToListing());

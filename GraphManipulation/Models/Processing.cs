@@ -36,11 +36,6 @@ public class Processing : DomainEntity, IProcessing
         return Purpose;
     }
 
-    public IPersonalDataColumn GetPersonalDataColumn()
-    {
-        return PersonalDataColumn;
-    }
-
     public TableColumnPair GetPersonalDataTableColumnPair()
     {
         return PersonalDataColumn.TableColumnPair;

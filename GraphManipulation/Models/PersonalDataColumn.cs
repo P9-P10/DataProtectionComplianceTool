@@ -5,7 +5,7 @@ namespace GraphManipulation.Models;
 
 public class PersonalDataColumn : DomainEntity, IPersonalDataColumn
 {
-    public TableColumnPair? TableColumnPair { get; set; }
+    public TableColumnPair TableColumnPair { get; set; }
     public string? Description { get; set; }
     public IEnumerable<Purpose>? Purposes { get; set; }
 
@@ -16,7 +16,7 @@ public class PersonalDataColumn : DomainEntity, IPersonalDataColumn
 
     public string ToListing()
     {
-        return string.Join(", ", TableColumnPair == null ? " " : TableColumnPair.ToListingIdentifier(), JoinCondition,
+        return string.Join(", ", TableColumnPair.ToListingIdentifier(), JoinCondition,
             Description, DefaultValue,
             "[ " + string.Join(", ",
                 Purposes == null ? new List<string>() : Purposes.Select(p => p.ToListingIdentifier())) + " ]");
