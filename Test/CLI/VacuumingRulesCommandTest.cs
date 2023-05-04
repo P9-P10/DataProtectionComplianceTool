@@ -20,7 +20,7 @@ public class VacuumingRulesCommandTest : CommandTest
         managerMock
             .SetupSequence(manager => manager.Get(It.Is<string>(s => s == NewRuleName)))
             .Returns(() => null)
-            .Returns(new VacuumingRule { Name = NewRuleName });
+            .Returns(new VacuumingRule { Name = NewRuleName, Description = ""});
 
         managerMock
             .Setup(manager => manager.Get(It.Is<string>(s => s == RuleName)))

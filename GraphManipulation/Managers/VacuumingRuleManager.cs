@@ -11,9 +11,10 @@ public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumin
     private readonly IMapper<VacuumingRule> _ruleMapper;
     private readonly IMapper<Purpose> _purposeMapper;
     private readonly IVacuumer _vacuumer;
-    
 
-    public VacuumingRuleManager(IMapper<VacuumingRule> ruleMapper,IMapper<Purpose> purposeMapper, IVacuumer vacuumer) : base(ruleMapper)
+
+    public VacuumingRuleManager(IMapper<VacuumingRule> ruleMapper, IMapper<Purpose> purposeMapper, IVacuumer vacuumer) :
+        base(ruleMapper)
     {
         _ruleMapper = ruleMapper;
         _purposeMapper = purposeMapper;
@@ -25,8 +26,10 @@ public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumin
 
     public void AddVacuumingRule(string name, string interval, string purposeName)
     {
-        _ruleMapper.Insert(new VacuumingRule(name:name, interval:interval, 
-            purposes:new List<Purpose> {_purposeMapper.FindSingle(x=> x.Name == purposeName)}
+        _ruleMapper.Insert(new VacuumingRule(
+                name: name, 
+                interval: interval,
+                purposes: new List<Purpose> { _purposeMapper.FindSingle(x => x.Name == purposeName) }
             )
         );
     }
@@ -35,6 +38,7 @@ public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumin
     {
         VacuumingRule? rule = base.Get(name);
         if (rule == null) return;
+
         rule.Interval = interval;
         _ruleMapper.Update(rule);
     }
@@ -72,6 +76,7 @@ public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumin
     {
         VacuumingRule? rule = base.Get(key);
         if (rule == null) return;
+
         rule.Description = description;
         _ruleMapper.Update(rule);
     }

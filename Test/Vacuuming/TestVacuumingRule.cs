@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using GraphManipulation.Models;
 using Xunit;
 
@@ -42,7 +43,7 @@ public class TestVacuumingRule
         VacuumingRule vacuumingRule = new()
         {
             Name = "Name",
-            Purposes = null
+            Purposes = new List<Purpose>()
         };
         
         Assert.Equal("Name, , , [  ]", vacuumingRule.ToListing());
