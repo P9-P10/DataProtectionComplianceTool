@@ -2,17 +2,20 @@
 
 public static class OptionNamer
 {
-    public const string LogsType = "--log-types";
-    public const string LogsTypeAlias = "-lt";
+    public const string LogTypes = "--log-types";
+    public const string LogTypesAlias = "-lt";
 
-    public const string LogFormat = "--log-formats";
-    public const string LogFormatAlias = "-lf";
+    public const string LogFormats = "--log-formats";
+    public const string LogFormatsAlias = "-lf";
 
-    public const string DateTime = "--date-times";
-    public const string DateTimeAlias = "-d";
+    public const string DateTimes = "--date-times";
+    public const string DateTimesAlias = "-d";
 
     public const string Numbers = "--numbers";
     public const string NumbersAlias = "-n";
+
+    public const string Subjects = "--subjects";
+    public const string SubjectsAlias = "-s";
 
     public const string Origin = "--origin";
     public const string OriginAlias = "-o";
