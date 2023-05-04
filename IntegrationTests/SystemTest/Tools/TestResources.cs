@@ -45,7 +45,7 @@ public class TestResources
         Rules = new List<VacuumingRule>()
     };
 
-    protected static readonly Purpose NewNewTestPurpose = new()
+    protected static readonly Purpose VeryNewTestPurpose = new()
     {
         Name = TestPurpose.GetName() + "VERY_NEW",
         Description = TestPurpose.GetDescription() + "VERY_NEW",
@@ -427,6 +427,13 @@ public class TestResources
     {
         var command = $"{CommandNamer.VacuumingRulesName} {CommandNamer.Delete} " +
                       $"{OptionNamer.Name} {vacuumingRule.GetName()}";
+        testProcess.GiveInput(command);
+    }
+
+    protected static void ExecuteVacuumingRule(TestProcess testProcess, IEnumerable<IVacuumingRule> vacuumingRules)
+    {
+        var command = $"{CommandNamer.VacuumingRulesName} {CommandNamer.Execute} " +
+                      $"{OptionNamer.Rules} {string.Join(" ", vacuumingRules.Select(p => p.GetName()))}";
         testProcess.GiveInput(command);
     }
 

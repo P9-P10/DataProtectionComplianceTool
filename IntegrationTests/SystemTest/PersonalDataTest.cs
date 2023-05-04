@@ -109,7 +109,7 @@ public class PersonalDataTest : TestResources
         error.Should().BeEmpty();
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully deleted {TestPersonalDataColumn.GetTableColumnPair().ToListing()} personal data column"));
+                $"Successfully deleted {TestPersonalDataColumn.ToListingIdentifier()} personal data column"));
     }
 
     [Fact]
@@ -122,9 +122,9 @@ public class PersonalDataTest : TestResources
         AddDeleteCondition(process, NewTestDeleteCondition);
         AddPurpose(process, TestPurpose);
         AddPurpose(process, NewTestPurpose);
-        AddPurpose(process, NewNewTestPurpose);
+        AddPurpose(process, VeryNewTestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
-        AddPurposesToPersonalData(process, TestPersonalDataColumn, new[] { NewTestPurpose, NewNewTestPurpose });
+        AddPurposesToPersonalData(process, TestPersonalDataColumn, new[] { NewTestPurpose, VeryNewTestPurpose });
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetAllOutputNoWhitespace().ToList();
@@ -135,7 +135,7 @@ public class PersonalDataTest : TestResources
                 $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {NewTestPurpose.GetName()}"));
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {NewNewTestPurpose.GetName()}"));
+                $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {VeryNewTestPurpose.GetName()}"));
     }
 
     [Fact]
@@ -148,10 +148,10 @@ public class PersonalDataTest : TestResources
         AddDeleteCondition(process, NewTestDeleteCondition);
         AddPurpose(process, TestPurpose);
         AddPurpose(process, NewTestPurpose);
-        AddPurpose(process, NewNewTestPurpose);
+        AddPurpose(process, VeryNewTestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
-        AddPurposesToPersonalData(process, TestPersonalDataColumn, new[] { NewTestPurpose, NewNewTestPurpose });
-        RemovePurposesFromPersonalData(process, TestPersonalDataColumn, new[] { NewTestPurpose, NewNewTestPurpose });
+        AddPurposesToPersonalData(process, TestPersonalDataColumn, new[] { NewTestPurpose, VeryNewTestPurpose });
+        RemovePurposesFromPersonalData(process, TestPersonalDataColumn, new[] { NewTestPurpose, VeryNewTestPurpose });
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetAllOutputNoWhitespace().ToList();
@@ -162,7 +162,7 @@ public class PersonalDataTest : TestResources
                 $"{NewTestPurpose.GetName()} successfully removed from {TestPersonalDataColumn.ToListingIdentifier()}"));
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"{NewNewTestPurpose.GetName()} successfully removed from {TestPersonalDataColumn.ToListingIdentifier()}"));
+                $"{VeryNewTestPurpose.GetName()} successfully removed from {TestPersonalDataColumn.ToListingIdentifier()}"));
     }
 
     [Fact]
