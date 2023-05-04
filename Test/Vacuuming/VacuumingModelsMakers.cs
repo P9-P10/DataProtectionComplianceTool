@@ -7,7 +7,7 @@ namespace Test.Vacuuming;
 
 public static class VacuumingModelsMakers
 {
-    public static PersonalDataColumn PersonDataColumnMaker(string defaultValue = "Null",
+    public static PersonalDataColumn PersonalDataColumnMaker(string defaultValue = "Null",
         bool multipleDeleteConditions = false,
         string tableName = "Table", string columnName = "Column", string purposeName = "Purpose")
     {
@@ -44,13 +44,13 @@ public static class VacuumingModelsMakers
             purposes.Add(new Purpose() {Id = 1, Name = purposeName, DeleteCondition = deleteCondition2});
         }
 
-        PersonalDataColumn personDataColumn = new()
+        PersonalDataColumn personalDataColumn = new()
         {
             TableColumnPair = new TableColumnPair(tableName, columnName),
             DefaultValue = defaultValue,
             Purposes = purposes
         };
-        return personDataColumn;
+        return personalDataColumn;
     }
 
     public static DeletionExecution DeletionExecutionMaker(string query, string table = "Table",
@@ -77,22 +77,21 @@ public static class VacuumingModelsMakers
 
     private static IEnumerable<Purpose> PurposesMaker()
     {
-        List<Purpose> purposes = new List<Purpose>();
-
-        purposes.Add(new Purpose()
+        return new List<Purpose>
         {
-            Id = 0,
-            Name = "Name",
-            Description = "Description",
-            Columns = PersonDataColumns(),
-            DeleteCondition = new DeleteCondition(),
-            Rules = new List<VacuumingRule>()
-        });
-
-        return purposes;
+            new()
+            {
+                Id = 0,
+                Name = "Name",
+                Description = "Description",
+                Columns = PersonalDataColumns(),
+                DeleteCondition = new DeleteCondition(),
+                Rules = new List<VacuumingRule>()
+            }
+        };
     }
 
-    private static IEnumerable<PersonalDataColumn> PersonDataColumns()
+    private static IEnumerable<PersonalDataColumn> PersonalDataColumns()
     {
         return new List<PersonalDataColumn>()
         {

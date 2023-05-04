@@ -8,44 +8,44 @@ namespace Test.Vacuuming.TestClasses;
 
 public class TestPersonalDataColumnMapper : IMapper<PersonalDataColumn>
 {
-    private readonly List<PersonalDataColumn> _personDataColumns = new();
+    private readonly List<PersonalDataColumn> _personalDataColumns = new();
 
     public void AddColumn(PersonalDataColumn inputColumn)
     {
-        _personDataColumns.Add(inputColumn);
+        _personalDataColumns.Add(inputColumn);
     }
 
     public IEnumerable<PersonalDataColumn> GetColumns()
     {
-        return _personDataColumns;
+        return _personalDataColumns;
     }
 
     public PersonalDataColumn Insert(PersonalDataColumn value)
     {
-        _personDataColumns.Add(value);
-        value.Id = _personDataColumns.Count - 1;
+        _personalDataColumns.Add(value);
+        value.Id = _personalDataColumns.Count - 1;
         return value;
     }
 
     public IEnumerable<PersonalDataColumn> Find(Func<PersonalDataColumn, bool> condition)
     {
-        return _personDataColumns.Where(condition);
+        return _personalDataColumns.Where(condition);
     }
 
     public PersonalDataColumn? FindSingle(Func<PersonalDataColumn, bool> condition)
     {
-        return _personDataColumns.Where(condition).First();
+        return _personalDataColumns.Where(condition).First();
     }
 
     public PersonalDataColumn Update(PersonalDataColumn value)
     {
-        int index = _personDataColumns.FindIndex(x => x.Id == value.Id);
-        _personDataColumns[index] = value;
-        return _personDataColumns[index];
+        int index = _personalDataColumns.FindIndex(x => x.Id == value.Id);
+        _personalDataColumns[index] = value;
+        return _personalDataColumns[index];
     }
 
     public void Delete(PersonalDataColumn value)
     {
-        _personDataColumns.Remove(value);
+        _personalDataColumns.Remove(value);
     }
 }
