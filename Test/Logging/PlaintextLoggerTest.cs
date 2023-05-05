@@ -271,6 +271,78 @@ public class PlaintextLoggerTest : LogTest
             Assert.Empty(probe4);
         }
 
+        [Fact]
+        public void ReadReturnsLogsWithinLimit()
+        {
+            var configManager = CreateConfigManager();
+            var logger = new PlaintextLogger(configManager);
+
+            var log1 = new MutableLog(LogType.Metadata, "TestSubject", LogMessageFormat.Plaintext, "Test message 1");
+            var log2 = new MutableLog(LogType.Vacuuming, "TestSubject", LogMessageFormat.Plaintext, "Test message 2");
+            var log3 = new MutableLog(LogType.Vacuuming, "TestSubject", LogMessageFormat.Plaintext, "Test message 3");
+
+            logger.Append(log1);
+            logger.Append(log2);
+            logger.Append(log3);
+            
+            var probe1 = logger.Read(new LogConstraints(limit: 1)).ToList();
+            var probe2 = logger.Read(new LogConstraints(limit: 2)).ToList();
+            var probe3 = logger.Read(new LogConstraints(limit: 3)).ToList();
+            var probe4 = logger.Read(new LogConstraints(limit: 0)).ToList();
+            
+            Assert.Single(probe1);
+            Assert.Equal(3, probe1.First().LogNumber);
+            
+            Assert.Equal(2, probe2.Count);
+            Assert.Equal(2, probe2.First().LogNumber);
+            Assert.Equal(3, probe2.Last().LogNumber);
+            
+            Assert.Equal(3, probe3.Count);
+            Assert.Equal(1, probe3.First().LogNumber);
+            Assert.Equal(2, probe3.Skip(1).First().LogNumber);
+            Assert.Equal(3, probe3.Skip(2).First().LogNumber);
+            
+            Assert.Empty(probe4);
+        }
+
+        [Fact]
+        public void ReadReturnsLogsWithGivenSubject()
+        {
+            var configManager = CreateConfigManager();
+            var logger = new PlaintextLogger(configManager);
+
+            const string subject1 = "TestSubject1";
+            const string subject2 = "TestSubject2";
+            const string noSubject = "None";
+            
+            var log1 = new MutableLog(LogType.Vacuuming, subject1, LogMessageFormat.Plaintext, "Test message 1");
+            var log2 = new MutableLog(LogType.Vacuuming, subject2, LogMessageFormat.Plaintext, "Test message 2");
+            var log3 = new MutableLog(LogType.Vacuuming, subject1, LogMessageFormat.Plaintext, "Test message 3");
+
+            logger.Append(log1);
+            logger.Append(log2);
+            logger.Append(log3);
+            
+            var probe1 = logger.Read(new LogConstraints(subjects: new []{subject1})).ToList();
+            var probe2 = logger.Read(new LogConstraints(subjects: new []{subject2})).ToList();
+            var probe3 = logger.Read(new LogConstraints(subjects: new []{subject1, subject2})).ToList();
+            var probe4 = logger.Read(new LogConstraints(subjects: new []{noSubject})).ToList();
+            
+            Assert.Equal(2, probe1.Count);
+            Assert.Equal(1, probe1.First().LogNumber);
+            Assert.Equal(3, probe1.Last().LogNumber);
+            
+            Assert.Single(probe2);
+            Assert.Equal(2, probe2.First().LogNumber);
+
+            Assert.Equal(3, probe3.Count);
+            Assert.Equal(1, probe3.First().LogNumber);
+            Assert.Equal(2, probe3.Skip(1).First().LogNumber);
+            Assert.Equal(3, probe3.Skip(2).First().LogNumber);
+            
+            Assert.Empty(probe4);
+        }
+
         private static string CreateLogStringWithNumberAndTime(int number, string timeString)
         {
             return $"{number}" + Log.LogDelimiter() +
@@ -421,8 +493,6 @@ public class PlaintextLoggerTest : LogTest
         [Fact]
         public void ReadReturnsOnlyLogThatMatchesAllOptions()
         {
-            // Assert.True(false);
-
             var configManager = CreateConfigManager();
             var logger = new PlaintextLogger(configManager);
 
