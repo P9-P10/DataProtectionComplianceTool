@@ -177,7 +177,7 @@ public class PersonalDataTest : TestResources
         AddPersonalData(process, TestPersonalDataColumn);
         AddOrigin(process, TestOrigin);
         SetOriginOfPersonalData(process, TestPersonalDataColumn, TestIndividual1, TestOrigin);
-        
+
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetAllOutputNoWhitespace().ToList();
         

@@ -48,7 +48,7 @@ public class PersonalDataManager : IPersonalDataManager
     public void AddPersonalData(TableColumnPair tableColumnPair, string joinCondition, string description)
     {
         _columnMapper.Insert(new PersonalDataColumn
-            {TableColumnPair = tableColumnPair, Description = description, JoinCondition = joinCondition});
+            { TableColumnPair = tableColumnPair, Description = description, JoinCondition = joinCondition });
     }
 
     public void SetDefaultValue(TableColumnPair tableColumnPair, string defaultValue)
@@ -80,8 +80,12 @@ public class PersonalDataManager : IPersonalDataManager
         var individual = _individualMapper.FindSingle(individual => individual.Id == individualsId);
         var origin = _originMapper.FindSingle(origin => origin.Name == originName);
         var column = FindByKey(tableColumnPair);
-        var personalData = new PersonalData() {PersonalDataColumn = column, Origin = origin};
-        individual.PersonalData = individual.PersonalData.Concat(new[] {personalData});
+        var personalData = new PersonalData { PersonalDataColumn = column, Origin = origin };
+
+        individual.PersonalData = individual.PersonalData is null 
+            ? new List<PersonalData> { personalData } 
+            : individual.PersonalData.Concat(new[] { personalData });
+        
         _personalDataMapper.Insert(personalData);
         _individualMapper.Update(individual);
     }
@@ -89,8 +93,10 @@ public class PersonalDataManager : IPersonalDataManager
     public IOrigin? GetOriginOf(TableColumnPair tableColumnPair, int individualsId)
     {
         var individual = _individualMapper.FindSingle(individual => individual.Id == individualsId);
-        var personalData = individual.PersonalData.FirstOrDefault(data => data.PersonalDataColumn.TableColumnPair.Equals(tableColumnPair));
-        return personalData.Origin;
+        var personalData =
+            individual?.PersonalData?.FirstOrDefault(data =>
+                data.PersonalDataColumn.TableColumnPair.Equals(tableColumnPair));
+        return personalData?.Origin;
     }
 
     private PersonalDataColumn? FindByKey(TableColumnPair key)

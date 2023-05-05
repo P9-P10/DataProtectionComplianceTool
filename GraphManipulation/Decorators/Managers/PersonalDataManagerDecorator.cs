@@ -66,7 +66,7 @@ public class PersonalDataManagerDecorator : LoggingDecorator, IPersonalDataManag
         _manager.SetOriginOf(tableColumnPair, individualsId, originName);
     }
 
-    public IOrigin GetOriginOf(TableColumnPair tableColumnPair, int individualsId)
+    public IOrigin? GetOriginOf(TableColumnPair tableColumnPair, int individualsId)
     {
         return _manager.GetOriginOf(tableColumnPair, individualsId);
     }
