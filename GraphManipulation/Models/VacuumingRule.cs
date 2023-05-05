@@ -41,7 +41,7 @@ public class VacuumingRule : DomainEntity, IVacuumingRule
 
     public string GetDescription()
     {
-        return Description;
+        return Description ?? "";
     }
 
     private struct ParsedInterval
