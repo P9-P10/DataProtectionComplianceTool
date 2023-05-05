@@ -100,7 +100,7 @@ public static class LoggingCommandBuilder
                             $"{OptionNamer.DateTimes} require input to be date times, which \"{startString} {endString}\" is not";
                     }
 
-                    result.ErrorMessage = "--numbers requires two arguments";
+                    result.ErrorMessage = $"{OptionNamer.DateTimes} requires two arguments";
                     return new TimeRange(DateTime.Now, DateTime.Now);
                 })
             .WithAlias(OptionNamer.DateTimesAlias)
