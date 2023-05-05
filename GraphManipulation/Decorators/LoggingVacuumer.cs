@@ -32,9 +32,9 @@ public class LoggingVacuumer : IVacuumer
         return ExecuteAndLog(() => _vacuumer.ExecuteVacuumingRules(vacuumingRules));
     }
 
-    private IEnumerable<DeletionExecution> ExecuteAndLog(Func<IEnumerable<DeletionExecution>> func)
+    private IEnumerable<DeletionExecution> ExecuteAndLog(Func<IEnumerable<DeletionExecution>> executeFunc)
     {
-        var executions = func().ToList();
+        var executions = executeFunc().ToList();
         CreateDeletionExecutionLogs(executions).ToList().ForEach(_logger.Append);
         return executions;
     }
