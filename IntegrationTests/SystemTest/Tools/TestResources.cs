@@ -1,4 +1,6 @@
+using System.Globalization;
 using GraphManipulation.Commands.Helpers;
+using GraphManipulation.Logging;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
 using GraphManipulation.Models.Interfaces;
@@ -452,6 +454,31 @@ public class TestResources
         var command = $"{CommandNamer.VacuumingRulesName} {CommandNamer.RemovePurpose} " +
                        $"{OptionNamer.Name} {vacuumingRule.GetName()} " +
                        $"{OptionNamer.PurposeList} {string.Join(" ", purposes.Select(p => p.GetName()))}";
+        testProcess.GiveInput(command);
+    }
+
+    protected static void ListLogs(TestProcess testProcess, LogConstraints constraints)
+    {
+        // ReSharper disable once StringLiteralTypo
+        const string dateTimeFormat = "yyyy/MM/dd'T'HH:mm:ss";
+        var dateTimeStart = constraints.LogTimeRange.Start.ToString(dateTimeFormat, CultureInfo.InvariantCulture);
+        var dateTimeEnd = constraints.LogTimeRange.End.ToString(dateTimeFormat, CultureInfo.InvariantCulture);
+        
+        var command = $"{CommandNamer.LoggingName} {CommandNamer.List} " +
+                      $"{OptionNamer.Limit} {constraints.Limit} " +
+                      $"{OptionNamer.Numbers} {constraints.LogNumbersRange.Start} {constraints.LogNumbersRange.End} " +
+                      $"{OptionNamer.DateTimes} {dateTimeStart} {dateTimeEnd} " +
+                      $"{OptionNamer.LogTypes} {string.Join(" ", constraints.LogTypes.Select(lt => lt.ToString()))} " +
+                      $"{OptionNamer.LogFormats} {string.Join(" ", constraints.LogMessageFormats.Select(lf => lf.ToString()))} " +
+                      (constraints.Subjects.Any()
+                          ? $"{OptionNamer.Subjects} {string.Join(" ", constraints.Subjects.Select(s => $"\"{s}\""))}"
+                          : "");
+        testProcess.GiveInput(command);
+    }
+
+    protected static void AddLogEntryOrigin(TestProcess testProcess, string name)
+    {
+        var command = $"{CommandNamer.OriginsName} {CommandNamer.Add} {OptionNamer.Name} {name}";
         testProcess.GiveInput(command);
     }
 }

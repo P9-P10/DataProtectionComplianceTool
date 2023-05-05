@@ -9,7 +9,7 @@ public class LogConstraints : ILogConstraints
         IEnumerable<string>? subjects = null,
         IEnumerable<LogMessageFormat>? logMessageFormats = null, int limit = 100)
     {
-        LogNumbersRange = logNumberRange ?? new NumberRange(int.MinValue, int.MaxValue);
+        LogNumbersRange = logNumberRange ?? new NumberRange(0, int.MaxValue);
         LogTimeRange = timeRange ?? new TimeRange(DateTime.MinValue, DateTime.MaxValue);
         LogTypes = logTypes ?? Enum.GetValues<LogType>().ToList();
         Subjects = subjects ?? Array.Empty<string>();
@@ -17,12 +17,12 @@ public class LogConstraints : ILogConstraints
         Limit = limit;
     }
 
-    private NumberRange LogNumbersRange { get; }
-    private TimeRange LogTimeRange { get; }
-    private IEnumerable<LogType> LogTypes { get; }
-    private IEnumerable<string> Subjects { get; }
-    private IEnumerable<LogMessageFormat> LogMessageFormats { get; }
-    private int Limit { get; }
+    public NumberRange LogNumbersRange { get; }
+    public TimeRange LogTimeRange { get; }
+    public IEnumerable<LogType> LogTypes { get; }
+    public IEnumerable<string> Subjects { get; }
+    public IEnumerable<LogMessageFormat> LogMessageFormats { get; }
+    public int Limit { get; }
 
     public IEnumerable<ILog> ApplyConstraintsToLogs(IEnumerable<ILog> logs)
     {
@@ -33,7 +33,7 @@ public class LogConstraints : ILogConstraints
                           (!Subjects.Any() || Subjects.Contains(log.Subject)) &&
                           LogMessageFormats.Contains(log.LogMessageFormat))
             .OrderBy(log => log.LogNumber)
-            .Take(Limit);
+            .TakeLast(Limit);
     }
 
     public bool Equals(LogConstraints other)

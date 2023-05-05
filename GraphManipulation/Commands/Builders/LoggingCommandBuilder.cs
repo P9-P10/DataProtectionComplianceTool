@@ -43,7 +43,7 @@ public static class LoggingCommandBuilder
 
                 var result = logger.Read(constraints).ToList();
                 console.Write(string.Join("\n", result));
-                console.WriteLine("\nShowing " + (result.Count < limit ? $"all {result.Count}" : $"first {limit}")  + " log entries");
+                console.WriteLine("\nShowing " + (result.Count < limit ? $"all {result.Count}" : $"newest {limit}")  + " log entries");
             });
     }
 
