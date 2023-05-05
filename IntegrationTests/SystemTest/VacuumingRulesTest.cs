@@ -164,7 +164,7 @@ public class VacuumingRulesTest : TestResources
             s.Contains(
                 $"{VeryNewTestPurpose.GetName()} successfully removed from {TestVacuumingRule.ToListingIdentifier()}"));
     }
-
+    
     [Fact]
     public void VacuumingRulesCanBeExecuted()
     {
@@ -186,4 +186,6 @@ public class VacuumingRulesTest : TestResources
             s.Contains(
                 $"Successfully executed {TestVacuumingRule.ToListingIdentifier()} vacuuming rule"));
     }
+    
+    // TODO: Test vacuuming executions effekt på databasen (bliver ting faktisk slettet)
 }
