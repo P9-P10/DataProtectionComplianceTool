@@ -6,7 +6,9 @@ namespace IntegrationTests.SystemTest;
 [Collection("SystemTestSequential")]
 public class ProcessingTests : TestResources
 {
-    private TestProcess InitiateProcessForProcessing()
+
+    [Fact]
+    public void TestAdd_Prints_Correct_Message()
     {
         TestProcess process = Tools.SystemTest.CreateTestProcess();
         process.Start();
@@ -14,13 +16,6 @@ public class ProcessingTests : TestResources
         AddPurpose(process,TestPurpose);
         AddPersonalData(process,TestPersonalDataColumn);
         AddProcessing(process, TestProcessing);
-        return process;
-    }
-    
-    [Fact]
-    public void TestAdd_Prints_Correct_Message()
-    {
-        using TestProcess process = InitiateProcessForProcessing();
 
         List<string> result = process.GetLastOutput();
         result.First().Should().Contain("ProcessingDescription");
@@ -31,7 +26,12 @@ public class ProcessingTests : TestResources
     [Fact]
     public void TestAdd_Processing_Stored_Correctly()
     {
-        using TestProcess process = InitiateProcessForProcessing();
+        TestProcess process = Tools.SystemTest.CreateTestProcess();
+        process.Start();
+        
+        AddPurpose(process,TestPurpose);
+        AddPersonalData(process,TestPersonalDataColumn);
+        AddProcessing(process, TestProcessing);
 
         ListProcessing(process);
         List<string> result = process.GetLastOutput();
@@ -42,7 +42,12 @@ public class ProcessingTests : TestResources
     [Fact]
     public void TestUpdate_Prints_Correct_Message()
     {
-        using TestProcess process = InitiateProcessForProcessing();
+        TestProcess process = Tools.SystemTest.CreateTestProcess();
+        process.Start();
+        
+        AddPurpose(process,TestPurpose);
+        AddPersonalData(process,TestPersonalDataColumn);
+        AddProcessing(process, TestProcessing);
         
         UpdateProcessing(process,TestProcessing,NewTestProcessing);
         
@@ -56,7 +61,12 @@ public class ProcessingTests : TestResources
     [Fact]
     public void TestUpdate_Processing_Stored_Correctly()
     {
-        using TestProcess process = InitiateProcessForProcessing();
+        TestProcess process = Tools.SystemTest.CreateTestProcess();
+        process.Start();
+        
+        AddPurpose(process,TestPurpose);
+        AddPersonalData(process,TestPersonalDataColumn);
+        AddProcessing(process, TestProcessing);
         
         UpdateProcessing(process,TestProcessing,NewTestProcessing);
         
@@ -69,7 +79,12 @@ public class ProcessingTests : TestResources
     [Fact]
     public void TestDelete_Prints_Correct_Message()
     {
-        using TestProcess process = InitiateProcessForProcessing();
+        TestProcess process = Tools.SystemTest.CreateTestProcess();
+        process.Start();
+        
+        AddPurpose(process,TestPurpose);
+        AddPersonalData(process,TestPersonalDataColumn);
+        AddProcessing(process, TestProcessing);
         
         DeleteProcessing(process,TestProcessing);
 
@@ -82,7 +97,12 @@ public class ProcessingTests : TestResources
     [Fact]
     public void TestDelete_Removes_Processing_From_System()
     {
-        using TestProcess process = InitiateProcessForProcessing();
+        TestProcess process = Tools.SystemTest.CreateTestProcess();
+        process.Start();
+        
+        AddPurpose(process,TestPurpose);
+        AddPersonalData(process,TestPersonalDataColumn);
+        AddProcessing(process, TestProcessing);
         
         DeleteProcessing(process,TestProcessing);
         
@@ -95,7 +115,12 @@ public class ProcessingTests : TestResources
     [Fact]
     public void TestShow_Returns_Correct_Value()
     {
-        using TestProcess process = InitiateProcessForProcessing();
+        TestProcess process = Tools.SystemTest.CreateTestProcess();
+        process.Start();
+        
+        AddPurpose(process,TestPurpose);
+        AddPersonalData(process,TestPersonalDataColumn);
+        AddProcessing(process, TestProcessing);
 
         ShowProcessing(process,TestProcessing);
         List<string> result = process.GetLastOutput();
