@@ -137,20 +137,20 @@ public static class Program
             }
             catch (AggregateException e)
             {
-                Console.WriteLine(e.Message);
+                Console.Error.WriteLine(e.Message);
                 
                 foreach (var innerException in e.InnerExceptions)
                 {
-                    Console.WriteLine(innerException.Message);
+                    Console.Error.WriteLine(innerException.Message);
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.Error.WriteLine(e.Message);
 
                 if (e.InnerException is not null)
                 {
-                    Console.WriteLine(e.InnerException.Message);
+                    Console.Error.WriteLine(e.InnerException.Message);
                 }
             }
         }
