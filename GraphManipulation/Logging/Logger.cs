@@ -26,7 +26,7 @@ public abstract class Logger : ILogger
         AppendLogToFile(log);
     }
 
-    public abstract IOrderedEnumerable<ILog> Read(ILogConstraints constraints);
+    public abstract IEnumerable<ILog> Read(ILogConstraints constraints);
     protected abstract void AppendLogToFile(ILog log);
     protected abstract ILog CreateLog(IMutableLog mutableLog);
     protected abstract ILog CreateLog(LogType logType, string subject, LogMessageFormat logMessageFormat, string message);

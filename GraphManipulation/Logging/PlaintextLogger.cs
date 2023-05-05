@@ -27,7 +27,7 @@ public class PlaintextLogger : Logger
         writer.Close();
     }
 
-    public override IOrderedEnumerable<ILog> Read(ILogConstraints constraints)
+    public override IEnumerable<ILog> Read(ILogConstraints constraints)
     {
         var logs = File.ReadLines(GetLogFilePath()).Select(s => new Log(s));
         return constraints.ApplyConstraintsToLogs(logs);

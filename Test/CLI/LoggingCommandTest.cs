@@ -162,11 +162,52 @@ public class LoggingCommandTest : CommandTest
             }
         }
 
+        public class Subjects
+        {
+            [Fact]
+            public void SubjectsOptionParses()
+            {
+                VerifyCommand(BuildCli(out _, out _),
+                    $"{CommandName} " +
+                    "--subjects \"TestSubject1\"" +
+                    "--subjects \"TestSubject2\"" );
+            }
+            
+            [Fact]
+            public void SubjectsOptionWithAliasesParses()
+            {
+                VerifyCommand(BuildCli(out _, out _),
+                    $"{CommandName} " +
+                    "-s \"TestSubject1\" \"TestSubject2\"");
+            }
+        }
+
+        public class Limit
+        {
+            [Fact]
+            public void LimitOptionParses()
+            {
+                VerifyCommand(BuildCli(out _, out _),
+                    $"{CommandName} " +
+                    $"--limit 10");
+            }
+            
+            [Fact]
+            public void LimitOptionAliasParses()
+            {
+                VerifyCommand(BuildCli(out _, out _),
+                    $"{CommandName} " +
+                    $"-li 10");
+            }
+        }
+
         [Fact]
         public void AllOptionsParses()
         {
             VerifyCommand(BuildCli(out _, out _), 
                 $"{CommandName} " +
+                "--limit 10 " +
+                "--subjects \"TestSubject1\" --subjects \"TestSubject2\" " +
                 "--numbers 3 --numbers 5 " +
                 "--date-times 2000/04/12T12:34:56 --date-times 3000/06/15T09:38:12 " +
                 $"--log-types {LogType.Vacuuming} --log-types {LogType.Metadata} " +
@@ -178,6 +219,8 @@ public class LoggingCommandTest : CommandTest
         {
             VerifyCommand(BuildCli(out _, out _), 
                 $"{CommandName} " +
+                "-li 10 " +
+                "-s \"TestSubject1\" \"TestSubject2\"" +
                 "-n 3 5 " +
                 "-d 2000/04/12 3000/06/15T09:38 " +
                 $"-lt {LogType.Vacuuming} {LogType.Metadata} " +
@@ -189,19 +232,23 @@ public class LoggingCommandTest : CommandTest
         {
             BuildCli(out var loggerMock, out _)
                 .Invoke($"{CommandName} " +
+                        "-li 10 " +
+                        "-s \"TestSubject1\" \"TestSubject2\"" +
                         "-n 3 5 " +
                         "-d 2000/04/12 3000/06/15T09:38 " +
                         $"-lt {LogType.Vacuuming} {LogType.Metadata} " +
                         $"-lf {LogMessageFormat.Plaintext} {LogMessageFormat.Json}");
 
             var expected = new LogConstraints(
+                limit: 10,
+                subjects: new List<string> { "TestSubject1", "TestSubject2" },
                 logNumberRange: new NumberRange(3, 5),
                 timeRange: new TimeRange(new DateTime(2000, 4, 12), new DateTime(3000, 6, 15, 9, 38, 0)),
                 logTypes: new List<LogType> { LogType.Vacuuming, LogType.Metadata },
                 logMessageFormats: new List<LogMessageFormat> { LogMessageFormat.Plaintext, LogMessageFormat.Json }
             );
 
-            loggerMock.Verify(logger => logger.Read(It.IsAny<LogConstraints>()));
+            loggerMock.Verify(logger => logger.Read(It.Is<LogConstraints>(constraints => constraints.Equals(expected))));
         }
     }
 }

@@ -7,13 +7,14 @@ public class LogConstraints : ILogConstraints
     public LogConstraints(NumberRange? logNumberRange = null, TimeRange? timeRange = null,
         IEnumerable<LogType>? logTypes = null,
         IEnumerable<string>? subjects = null,
-        IEnumerable<LogMessageFormat>? logMessageFormats = null)
+        IEnumerable<LogMessageFormat>? logMessageFormats = null, int limit = 100)
     {
         LogNumbersRange = logNumberRange ?? new NumberRange(int.MinValue, int.MaxValue);
         LogTimeRange = timeRange ?? new TimeRange(DateTime.MinValue, DateTime.MaxValue);
         LogTypes = logTypes ?? Enum.GetValues<LogType>().ToList();
         Subjects = subjects ?? Array.Empty<string>();
         LogMessageFormats = logMessageFormats ?? Enum.GetValues<LogMessageFormat>().ToList();
+        Limit = limit;
     }
 
     private NumberRange LogNumbersRange { get; }
@@ -21,8 +22,9 @@ public class LogConstraints : ILogConstraints
     private IEnumerable<LogType> LogTypes { get; }
     private IEnumerable<string> Subjects { get; }
     private IEnumerable<LogMessageFormat> LogMessageFormats { get; }
+    private int Limit { get; }
 
-    public IOrderedEnumerable<ILog> ApplyConstraintsToLogs(IEnumerable<ILog> logs)
+    public IEnumerable<ILog> ApplyConstraintsToLogs(IEnumerable<ILog> logs)
     {
         return logs
             .Where(log => LogNumbersRange.NumberWithinRange(log.LogNumber) &&
@@ -30,15 +32,19 @@ public class LogConstraints : ILogConstraints
                           LogTypes.Contains(log.LogType) &&
                           (!Subjects.Any() || Subjects.Contains(log.Subject)) &&
                           LogMessageFormats.Contains(log.LogMessageFormat))
-            .OrderBy(log => log.LogNumber);
+            .OrderBy(log => log.LogNumber)
+            .Take(Limit);
     }
 
     public bool Equals(LogConstraints other)
     {
-        return other.LogNumbersRange.Equals(LogNumbersRange) &&
-               other.LogTimeRange.Equals(LogTimeRange) &&
-               other.LogTypes.Equals(LogTypes) &&
-               other.Subjects.Equals(Subjects) &&
-               other.LogMessageFormats.Equals(LogMessageFormats);
+        var limitEquality = other.Limit.Equals(Limit);
+        var numberEquality = other.LogNumbersRange.Equals(LogNumbersRange);
+        var timeEquality = other.LogTimeRange.Equals(LogTimeRange);
+        var typeEquality = !other.LogTypes.Except(LogTypes).Any();
+        var subjectEquality = !other.Subjects.Except(Subjects).Any();
+        var formatEquality = !other.LogMessageFormats.Except(LogMessageFormats).Any();
+
+        return limitEquality && numberEquality && timeEquality && typeEquality && subjectEquality && formatEquality;
     }
 }

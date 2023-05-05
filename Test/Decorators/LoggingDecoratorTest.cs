@@ -23,7 +23,7 @@ public class LoggingDecoratorTest
             Log.Add(mutableLog);
         }
 
-        public IOrderedEnumerable<ILog> Read(ILogConstraints constraints)
+        public IEnumerable<ILog> Read(ILogConstraints constraints)
         {
             throw new System.NotImplementedException();
         }

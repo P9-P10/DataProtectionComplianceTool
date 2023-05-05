@@ -21,6 +21,7 @@ public static class LoggingCommandBuilder
         return CommandBuilder
             .BuildListCommand()
             .WithDescription("Lists the logs that fall within the given constraints")
+            .WithOption(out var limitOption, CreateLimitOption())
             .WithOption(out var numbersOption, CreateNumbersOption())
             .WithOption(out var dateTimesOption, CreateDateTimeOption())
             .WithOption(out var logTypesOption, CreateLogTypesOption())
@@ -30,6 +31,7 @@ public static class LoggingCommandBuilder
             .WithValidator(result => OptionBuilder.ValidateOrder<TimeRange, DateTime>(result, dateTimesOption))
             .WithHandler(context =>
             {
+                var limit = context.ParseResult.GetValueForOption(limitOption);
                 var numbers = context.ParseResult.GetValueForOption(numbersOption)!;
                 var dateTimes = context.ParseResult.GetValueForOption(dateTimesOption)!;
                 var logTypes = context.ParseResult.GetValueForOption(logTypesOption)!;
@@ -37,7 +39,7 @@ public static class LoggingCommandBuilder
                 var messageFormats = context.ParseResult.GetValueForOption(logFormatsOption)!;
 
                 var constraints = new LogConstraints(numbers, dateTimes, logTypes.ToList(), subjects,
-                    messageFormats.ToList());
+                    messageFormats.ToList(), limit);
 
                 var result = logger.Read(constraints);
                 console.Write(string.Join("\n", result));
@@ -69,11 +71,11 @@ public static class LoggingCommandBuilder
                     return new NumberRange(0, 0);
                 })
             .WithAlias(OptionNamer.NumbersAlias)
-            .WithDescription("Limits results to the specified numbers range (inclusive).\n" +
+            .WithDescription("Limits results to the specified numbers range (inclusive). " +
                              $"Must provide two numbers as range (e.g. {OptionNamer.NumbersAlias} 3 6), first minimum then maximum")
             .WithArity(ExactlyTwo)
             .WithAllowMultipleArguments(true)
-            .WithGetDefaultValue(() => new NumberRange(int.MinValue, int.MaxValue));
+            .WithGetDefaultValue(() => new NumberRange(0, int.MaxValue));
     }
 
     private static Option<TimeRange> CreateDateTimeOption()
@@ -101,7 +103,7 @@ public static class LoggingCommandBuilder
                     return new TimeRange(DateTime.Now, DateTime.Now);
                 })
             .WithAlias(OptionNamer.DateTimesAlias)
-            .WithDescription("Limits results to the specified time range (inclusive).\n" +
+            .WithDescription("Limits results to the specified time range (inclusive). " +
                              $"Must provide two date times as range (e.g. {OptionNamer.DateTimesAlias} 2000/04/28T12:34:56 3000/06/16T09:38:12), first minimum then maximum")
             .WithArity(ExactlyTwo)
             .WithAllowMultipleArguments(true)
@@ -124,7 +126,7 @@ public static class LoggingCommandBuilder
         return OptionBuilder.CreateOption<IEnumerable<string>>(OptionNamer.Subjects)
             .WithAlias(OptionNamer.SubjectsAlias)
             .WithDescription("Limits results to the specified subject(s).")
-            .WithArity(ArgumentArity.ZeroOrMore)
+            .WithArity(ArgumentArity.OneOrMore)
             .WithAllowMultipleArguments(true)
             .WithDefaultValue(Array.Empty<string>());
     }
@@ -138,5 +140,13 @@ public static class LoggingCommandBuilder
             .WithAllowMultipleArguments(true)
             .WithGetDefaultValue(Enum.GetValues<LogMessageFormat>)
             .FromAmong(Enum.GetNames<LogMessageFormat>());
+    }
+
+    private static Option<int> CreateLimitOption()
+    {
+        return OptionBuilder.CreateOption<int>(OptionNamer.Limit)
+            .WithAlias(OptionNamer.LimitAlias)
+            .WithDescription("Limits results to the number given")
+            .WithDefaultValue(100);
     }
 }

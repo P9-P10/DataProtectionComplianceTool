@@ -17,6 +17,9 @@ public static class OptionNamer
     public const string Subjects = "--subjects";
     public const string SubjectsAlias = "-s";
 
+    public const string Limit = "--limit";
+    public const string LimitAlias = "-li";
+
     public const string Origin = "--origin";
     public const string OriginAlias = "-o";
 
