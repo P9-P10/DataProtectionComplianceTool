@@ -41,8 +41,9 @@ public static class LoggingCommandBuilder
                 var constraints = new LogConstraints(numbers, dateTimes, logTypes.ToList(), subjects,
                     messageFormats.ToList(), limit);
 
-                var result = logger.Read(constraints);
+                var result = logger.Read(constraints).ToList();
                 console.Write(string.Join("\n", result));
+                console.WriteLine("\nShowing " + (result.Count < limit ? $"all {result.Count}" : $"first {limit}")  + " log entries");
             });
     }
 
