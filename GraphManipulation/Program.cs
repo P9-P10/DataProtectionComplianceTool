@@ -10,6 +10,7 @@ using Dapper;
 using GraphManipulation.Commands.Builders;
 using GraphManipulation.DataAccess;
 using GraphManipulation.DataAccess.Mappers;
+using GraphManipulation.Decorators;
 using GraphManipulation.Decorators.Managers;
 using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
@@ -79,13 +80,14 @@ public static class Program
         var personalDataMapper = new Mapper<PersonalData>(context);
 
         var vacuumer = new Vacuumer(personalDataColumnMapper, new SqliteQueryExecutor(dbConnection));
+        var loggingVacuumer = new LoggingVacuumer(vacuumer, logger);
 
         var individualsManager = new IndividualsManager(individualMapper, new Mapper<ConfigKeyValue>(context));
         var personalDataManager = new PersonalDataManager(personalDataColumnMapper, purposeMapper, originMapper,
             personalDataMapper, individualMapper);
         var purposesManager = new PurposeManager(purposeMapper, deleteConditionMapper);
         var originsManager = new OriginsManager(originMapper);
-        var vacuumingRulesManager = new VacuumingRuleManager(vacuumingRuleMapper, purposeMapper, vacuumer);
+        var vacuumingRulesManager = new VacuumingRuleManager(vacuumingRuleMapper, purposeMapper, loggingVacuumer);
         var deleteConditionsManager = new DeleteConditionsManager(deleteConditionMapper);
         var processingsManager =
             new ProcessingsManager(processingMapper, purposeMapper, personalDataColumnMapper);

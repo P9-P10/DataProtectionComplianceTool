@@ -1,4 +1,5 @@
 using GraphManipulation.Logging;
+using GraphManipulation.Managers;
 using GraphManipulation.Models;
 using GraphManipulation.Vacuuming;
 
@@ -6,8 +7,8 @@ namespace GraphManipulation.Decorators;
 
 public class LoggingVacuumer : IVacuumer
 {
-    private IVacuumer _vacuumer;
-    private ILogger _logger;
+    private readonly IVacuumer _vacuumer;
+    private readonly ILogger _logger;
 
     public LoggingVacuumer(IVacuumer vacuumer, ILogger logger)
     {
@@ -18,42 +19,40 @@ public class LoggingVacuumer : IVacuumer
 
     public IEnumerable<DeletionExecution> GenerateUpdateStatement(string predefinedExpirationDate = "")
     {
-        throw new NotImplementedException();
+        return _vacuumer.GenerateUpdateStatement(predefinedExpirationDate);
     }
 
     public IEnumerable<DeletionExecution> Execute()
     {
-        throw new NotImplementedException();
+        var executions = _vacuumer.Execute().ToList();
+
+        CreateDeletionExecutionLogs(executions).ToList().ForEach(_logger.Append);
+        
+        return executions;
     }
 
     public IEnumerable<DeletionExecution> ExecuteVacuumingRules(IEnumerable<VacuumingRule> vacuumingRules)
     {
-        throw new NotImplementedException();
+        var executions = _vacuumer.ExecuteVacuumingRules(vacuumingRules).ToList();
+
+        CreateDeletionExecutionLogs(executions).ToList().ForEach(_logger.Append);
+        
+        return executions;
     }
 
-    public void RunAllVacuumingRules()
+    private static IEnumerable<IMutableLog> CreateDeletionExecutionLogs(IEnumerable<DeletionExecution> executions)
     {
-        throw new NotImplementedException();
+        return executions.Select(execution =>
+        {
+            var subject = new TableColumnPair(execution.Table, execution.Column).ToListingIdentifier();
+            var message = CreateDeleteExecutionLogMessage(execution, subject);
+            return new MutableLog(LogType.Vacuuming, subject, LogMessageFormat.Plaintext, message);
+        });
     }
 
-    public VacuumingRule AddVacuumingRule(string ruleName, string purpose, string interval, List<Purpose>? purposes)
+    private static string CreateDeleteExecutionLogMessage(DeletionExecution execution, string subject)
     {
-        throw new NotImplementedException();
-    }
-
-    public void UpdateVacuumingRule(VacuumingRule vacuumingRule, string newName = "", string newDescription = "",
-        string newInterval = "")
-    {
-        throw new NotImplementedException();
-    }
-
-    public VacuumingRule GetVacuumingRule(int ruleId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public IEnumerable<VacuumingRule> GetAllVacuumingRules()
-    {
-        throw new NotImplementedException();
+        return $"{execution.Query} affected {subject} " +
+               $"because it is stored under: {string.Join(", ", execution.Purposes.Select(p => p.GetName()))}";
     }
 }
