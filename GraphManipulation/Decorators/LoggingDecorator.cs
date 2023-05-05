@@ -18,17 +18,17 @@ public class LoggingDecorator
         _type = type;
     }
 
-    private void AppendLogEntry(Operation operation)
+    private void AppendLogEntry(Operation operation, LogType logType = LogType.Metadata)
     {
-        _logger.Append(new MutableLog(LogType.Metadata, operation, LogMessageFormat.Plaintext, operation.ToString()));
+        _logger.Append(new MutableLog(logType, operation, LogMessageFormat.Plaintext, operation.ToString()));
     }
-
-
-    private Dictionary<string, string>? GetParameters(object? obj)
+    
+    private static Dictionary<string, string>? GetParameters(object? obj)
     {
         return obj is null ? null : AnonymousObjectToDict(obj);
     }
-    private Dictionary<string, string> AnonymousObjectToDict(object obj)
+    
+    private static Dictionary<string, string> AnonymousObjectToDict(object obj)
     {
         return obj
             .GetType()
@@ -54,5 +54,10 @@ public class LoggingDecorator
     public void LogSet(string key, object parameters)
     {
         AppendLogEntry(new Set(_type, key, GetParameters(parameters)));
+    }
+
+    public void LogExecute(string key, object parameters)
+    {
+        AppendLogEntry(new Execute(_type, key, GetParameters(parameters)));
     }
 }

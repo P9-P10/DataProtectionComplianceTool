@@ -56,6 +56,7 @@ public class VacuumingRuleManagerDecorator : LoggingDecorator, IVacuumingRulesMa
 
     public void ExecuteRule(string name)
     {
+        LogExecute(name, new {});
         _manager.ExecuteRule(name);
     }
 
