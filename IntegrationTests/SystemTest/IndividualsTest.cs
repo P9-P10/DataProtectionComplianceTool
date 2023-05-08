@@ -38,13 +38,6 @@ public class IndividualsTest : TestResources
         output.Should().ContainSingle(s => s == $"$: {IndividualsSource}");
     }
 
-    private static void InsertIndividuals(IDbConnection dbConnection)
-    {
-        dbConnection.Execute($"INSERT INTO {IndividualsTable} ({IndividualsColumn}) VALUES ({TestIndividual1.ToListing()})");
-        dbConnection.Execute($"INSERT INTO {IndividualsTable} ({IndividualsColumn}) VALUES ({TestIndividual2.ToListing()})");
-        dbConnection.Execute($"INSERT INTO {IndividualsTable} ({IndividualsColumn}) VALUES ({TestIndividual3.ToListing()})");
-    }
-
     [Fact]
     public void IndividualsCanBeListed()
     {
@@ -53,7 +46,9 @@ public class IndividualsTest : TestResources
         
         process.Nop();
 
-        InsertIndividuals(dbConnection);
+        InsertIndividual(dbConnection, TestIndividual1);
+        InsertIndividual(dbConnection, TestIndividual2);
+        InsertIndividual(dbConnection, TestIndividual3);
         
         SetIndividualsSource(process, IndividualsSource);
         ListIndividuals(process);
