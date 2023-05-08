@@ -1,6 +1,7 @@
 using System.Data;
 using Dapper;
 using FluentAssertions;
+using GraphManipulation.Logging;
 using GraphManipulation.Models.Interfaces;
 using IntegrationTests.SystemTest.Tools;
 
@@ -168,16 +169,6 @@ public class VacuumingRulesTest : TestResources
                 $"{VeryNewTestPurpose.GetName()} successfully removed from {TestVacuumingRule.ToListingIdentifier()}"));
     }
 
-    private static void CreatePersonalDataTable(IDbConnection dbConnection, IPersonalDataColumn personalDataColumn)
-    {
-        var createTable = @$"CREATE TABLE IF NOT EXISTS {personalDataColumn.GetTableColumnPair().TableName} (
-            Id INTEGER PRIMARY KEY,
-            {personalDataColumn.GetTableColumnPair().ColumnName} VARCHAR
-        );";
-
-        dbConnection.Execute(createTable);
-    }
-
     [Fact]
     public void VacuumingRulesCanBeExecuted()
     {
@@ -185,7 +176,7 @@ public class VacuumingRulesTest : TestResources
         process.Start();
         process.AwaitReady();
 
-        CreatePersonalDataTable(dbConnection, TestPersonalDataColumn);
+        SetupTestData(dbConnection);
 
         AddDeleteCondition(process, TestDeleteCondition);
         AddPurpose(process, TestPurpose);
@@ -204,14 +195,6 @@ public class VacuumingRulesTest : TestResources
         output.Should().ContainSingle(s =>
             s.Contains(
                 $"Successfully executed {TestVacuumingRule.ToListingIdentifier()} vacuuming rule"));
-    }
-
-    private static void InsertPersonalData(IDbConnection dbConnection, IPersonalDataColumn personalDataColumn, IIndividual individual, string value)
-    {
-        var query = $"INSERT INTO " +
-                    $"{personalDataColumn.GetTableColumnPair().TableName} (Id, {personalDataColumn.GetTableColumnPair().ColumnName}) " +
-                    $"VALUES ({individual.ToListing()}, '{value}')";
-        dbConnection.Execute(query);
     }
 
     [Fact]
@@ -223,24 +206,13 @@ public class VacuumingRulesTest : TestResources
 
         TestDeleteCondition.Condition = "Id = 2";
         
-        InsertIndividual(dbConnection, TestIndividual1);
-        InsertIndividual(dbConnection, TestIndividual2);
-        InsertIndividual(dbConnection, TestIndividual3);
-
-        CreatePersonalDataTable(dbConnection, TestPersonalDataColumn);
-
-        InsertPersonalData(dbConnection, TestPersonalDataColumn, TestIndividual1, $"{TestIndividual1.ToListing()}");
-        InsertPersonalData(dbConnection, TestPersonalDataColumn, TestIndividual2, $"{TestIndividual2.ToListing()}");
-        InsertPersonalData(dbConnection, TestPersonalDataColumn, TestIndividual3, $"{TestIndividual3.ToListing()}");
+        SetupTestData(dbConnection);
 
         AddDeleteCondition(process, TestDeleteCondition);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
         AddVacuumingRule(process, TestVacuumingRule);
         ExecuteVacuumingRule(process, new[] { TestVacuumingRule });
-
-        // Do something to get errors processed
-        AddDeleteCondition(process, NewTestDeleteCondition);
 
         var result = dbConnection.Query<(string id, string column)>(
             $"SELECT Id, {TestPersonalDataColumn.TableColumnPair.ColumnName} " +
@@ -250,14 +222,5 @@ public class VacuumingRulesTest : TestResources
         result.First().Should().Be(new ValueTuple<string, string>(TestIndividual1.ToListing(), TestIndividual1.ToListing()));
         result.Skip(1).First().Should().Be(new ValueTuple<string, string>(TestIndividual2.ToListing(), TestPersonalDataColumn.DefaultValue));
         result.Skip(2).First().Should().Be(new ValueTuple<string, string>(TestIndividual3.ToListing(), TestIndividual3.ToListing()));
-
-        var error = process.GetAllErrorsNoWhitespace();
-        var output = process.GetAllOutputNoWhitespace();
-
-        error.Should().BeEmpty();
-
-        output.Should().ContainSingle(s =>
-            s.Contains(
-                $"Successfully executed {TestVacuumingRule.ToListingIdentifier()} vacuuming rule"));
     }
 }

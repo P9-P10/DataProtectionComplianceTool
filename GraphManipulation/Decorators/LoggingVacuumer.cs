@@ -44,14 +44,14 @@ public class LoggingVacuumer : IVacuumer
         return executions.Select(execution =>
         {
             var subject = new TableColumnPair(execution.Table, execution.Column).ToListingIdentifier();
-            var message = CreateDeleteExecutionLogMessage(execution, subject);
+            var message = CreateDeleteExecutionLogMessage(execution);
             return new MutableLog(LogType.Vacuuming, subject, LogMessageFormat.Plaintext, message);
         });
     }
 
-    private static string CreateDeleteExecutionLogMessage(DeletionExecution execution, string subject)
+    private static string CreateDeleteExecutionLogMessage(DeletionExecution execution)
     {
-        return $"{execution.Query} affected {subject} " +
-               $"because it is stored under: {string.Join(", ", execution.Purposes.Select(p => p.GetName()))}";
+        return $"\"{execution.Query}\" affected ({execution.Table}, {execution.Column}) " +
+               $"because it is stored under the following purpose(s): {string.Join(", ", execution.Purposes.Select(p => p.GetName()))}";
     }
 }

@@ -491,4 +491,35 @@ public class TestResources
     {
         dbConnection.Execute($"INSERT INTO {IndividualsTable} ({IndividualsColumn}) VALUES ({individual.ToListing()})");
     }
+    
+    protected static void CreatePersonalDataTable(IDbConnection dbConnection, IPersonalDataColumn personalDataColumn)
+    {
+        var createTable = @$"CREATE TABLE IF NOT EXISTS {personalDataColumn.GetTableColumnPair().TableName} (
+            Id INTEGER PRIMARY KEY,
+            {personalDataColumn.GetTableColumnPair().ColumnName} VARCHAR
+        );";
+
+        dbConnection.Execute(createTable);
+    }
+    
+    protected static void InsertPersonalData(IDbConnection dbConnection, IPersonalDataColumn personalDataColumn, IIndividual individual, string value)
+    {
+        var query = $"INSERT INTO " +
+                    $"{personalDataColumn.GetTableColumnPair().TableName} (Id, {personalDataColumn.GetTableColumnPair().ColumnName}) " +
+                    $"VALUES ({individual.ToListing()}, '{value}')";
+        dbConnection.Execute(query);
+    }
+
+    protected static void SetupTestData(IDbConnection dbConnection)
+    {
+        InsertIndividual(dbConnection, TestIndividual1);
+        InsertIndividual(dbConnection, TestIndividual2);
+        InsertIndividual(dbConnection, TestIndividual3);
+
+        CreatePersonalDataTable(dbConnection, TestPersonalDataColumn);
+
+        InsertPersonalData(dbConnection, TestPersonalDataColumn, TestIndividual1, $"{TestIndividual1.ToListing()}");
+        InsertPersonalData(dbConnection, TestPersonalDataColumn, TestIndividual2, $"{TestIndividual2.ToListing()}");
+        InsertPersonalData(dbConnection, TestPersonalDataColumn, TestIndividual3, $"{TestIndividual3.ToListing()}");
+    }
 }

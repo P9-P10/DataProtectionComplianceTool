@@ -170,10 +170,9 @@ public class PersonalDataTest : TestResources
     {
         using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
-        
         process.AwaitReady();
         
-        InsertIndividual(dbConnection, TestIndividual1);
+        SetupTestData(dbConnection);
         
         SetIndividualsSource(process, IndividualsSource);
         AddDeleteCondition(process, TestDeleteCondition);
@@ -197,10 +196,9 @@ public class PersonalDataTest : TestResources
     {
         using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
-        
         process.AwaitReady();
         
-        InsertIndividual(dbConnection, TestIndividual1);
+        SetupTestData(dbConnection);
         
         SetIndividualsSource(process, IndividualsSource);
         AddDeleteCondition(process, TestDeleteCondition);

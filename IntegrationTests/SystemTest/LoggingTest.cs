@@ -153,10 +153,13 @@ public class LoggingTest : TestResources
     public class Vacuuming
     {
         [Fact]
-        public void ExecutingVacuumingRuleResultsInLogEntries()
+        public void ExecutingVacuumingRuleResultsInLogEntry()
         {
-            using var process = Tools.SystemTest.CreateTestProcess();
+            using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
             process.Start();
+            process.AwaitReady();
+            
+            SetupTestData(dbConnection);
             
             AddDeleteCondition(process, TestDeleteCondition);
             AddPurpose(process, TestPurpose);
@@ -170,6 +173,15 @@ public class LoggingTest : TestResources
 
             var error = process.GetAllErrorsNoWhitespace();
             var output = FormatOutputForLogTest(process.GetAllOutputNoWhitespace()).ToList();
+
+            error.Should().BeEmpty();
+            var logEntry = output
+                .TakeLast(2)
+                .Take(1)
+                .Select(s => new Log(s))
+                .First();
+
+            logEntry.Subject.Should().Be(TestPersonalDataColumn.ToListingIdentifier());
         }
     }
 }
