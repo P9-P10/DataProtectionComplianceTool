@@ -56,8 +56,7 @@ public class EntityTest
 
         Assert.Equal(columnA, columnB);
     }
-
-    // TODO: Denne test skal muligvis bare slettes
+    
     [Fact]
     public void EntityIdExpectedValue()
     {
