@@ -46,7 +46,7 @@ public class DeletionConditionsTest : TestResources
         
         ListDeletionConditions(process);
         List<string> result = process.GetLastOutput();
-        result[1].Should().Contain("NewName, , This is a condition");
+        result[1].Should().Contain("NewName, , TRUE");
     }
 
     [Fact]
@@ -78,7 +78,7 @@ public class DeletionConditionsTest : TestResources
             new DeleteCondition(){Name = "NewName",Condition = Condition,Description = "This is a new description"});
         ListDeletionConditions(process);
         string result = process.GetOutput();
-        result.Should().Contain("NewName, This is a new description, This is a condition");
+        result.Should().Contain("NewName, This is a new description, TRUE");
     }
     
     [Fact]
