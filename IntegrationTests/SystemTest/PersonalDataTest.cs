@@ -168,8 +168,12 @@ public class PersonalDataTest : TestResources
     [Fact]
     public void PersonalDataCanSetOriginForAnIndividual()
     {
-        using var process = Tools.SystemTest.CreateTestProcess();
+        using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
+        
+        process.Nop();
+        
+        InsertIndividual(dbConnection, TestIndividual1);
         
         SetIndividualsSource(process, IndividualsSource);
         AddDeleteCondition(process, TestDeleteCondition);
@@ -191,8 +195,12 @@ public class PersonalDataTest : TestResources
     [Fact]
     public void PersonalDataCanShowOriginForAnIndividual()
     {
-        using var process = Tools.SystemTest.CreateTestProcess();
+        using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
+        
+        process.Nop();
+        
+        InsertIndividual(dbConnection, TestIndividual1);
         
         SetIndividualsSource(process, IndividualsSource);
         AddDeleteCondition(process, TestDeleteCondition);

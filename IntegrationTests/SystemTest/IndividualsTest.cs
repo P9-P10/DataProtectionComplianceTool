@@ -1,3 +1,5 @@
+using System.Data;
+using Dapper;
 using FluentAssertions;
 using IntegrationTests.SystemTest.Tools;
 
@@ -39,8 +41,14 @@ public class IndividualsTest : TestResources
     [Fact]
     public void IndividualsCanBeListed()
     {
-        using var process = Tools.SystemTest.CreateTestProcess();
+        using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
+        
+        process.Nop();
+
+        InsertIndividual(dbConnection, TestIndividual1);
+        InsertIndividual(dbConnection, TestIndividual2);
+        InsertIndividual(dbConnection, TestIndividual3);
         
         SetIndividualsSource(process, IndividualsSource);
         ListIndividuals(process);

@@ -1,4 +1,6 @@
+using System.Data;
 using System.Globalization;
+using Dapper;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Logging;
 using GraphManipulation.Managers;
@@ -11,7 +13,10 @@ public class TestResources
 {
     protected const string Description = "This is a description";
     protected const string Condition = "This is a condition";
-    protected static readonly TableColumnPair IndividualsSource = new("sourceTable", "sourceColumn");
+    
+    protected const string IndividualsTable = "people";
+    protected const string IndividualsColumn = "Id";
+    protected static readonly TableColumnPair IndividualsSource = new(IndividualsTable, IndividualsColumn);
 
     protected static readonly DeleteCondition TestDeleteCondition = new()
     {
@@ -480,5 +485,10 @@ public class TestResources
     {
         var command = $"{CommandNamer.OriginsName} {CommandNamer.Add} {OptionNamer.Name} {name}";
         testProcess.GiveInput(command);
+    }
+
+    protected static void InsertIndividual(IDbConnection dbConnection, IIndividual individual)
+    {
+        dbConnection.Execute($"INSERT INTO {IndividualsTable} ({IndividualsColumn}) VALUES ({individual.ToListing()})");
     }
 }
