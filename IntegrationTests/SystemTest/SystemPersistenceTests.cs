@@ -8,7 +8,7 @@ public class SystemPersistenceTests : TestResources
     [Fact]
     public void TestDeleteConditionsPersisted()
     {
-        TestProcess process = Tools.SystemTest.CreateTestProcess();
+        using TestProcess process = Tools.SystemTest.CreateTestProcess();
         string configPath = process.ConfigPath;
         process.Start();
 
