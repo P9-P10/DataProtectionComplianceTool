@@ -7,17 +7,12 @@ namespace IntegrationTests.SystemTest.Tools;
 public static class SystemTest
 {
     public static string ConfigPath { get; set; } = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
-    public static string ExecutablePath { get; set; } = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Path.Combine(Directory.GetCurrentDirectory(), "GraphManipulation.exe") : Path.Combine(Directory.GetCurrentDirectory(), "GraphManipulation");
-    public static string DatabasePath { get; set; } = "system_test_db.sqlite";
+    public static string ExecutablePath { get; set; } = 
+        RuntimeInformation.IsOSPlatform(OSPlatform.Windows) 
+        ? Path.Combine(Directory.GetCurrentDirectory(), "GraphManipulation.exe") 
+        : Path.Combine(Directory.GetCurrentDirectory(), "GraphManipulation");
 
-    public static string LogPath { get; } = "system_test_log.txt";
-    
 
-    public static void CreateConfigFile(string path)
-    {
-        CreateConfigFile(path, DatabasePath, LogPath);
-    }
-    
     public static void CreateConfigFile(string path, string dbPath, string logPath)
     {
         var configValues = new Dictionary<string, string>
