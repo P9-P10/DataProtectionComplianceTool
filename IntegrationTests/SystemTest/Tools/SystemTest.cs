@@ -1,5 +1,7 @@
+using System.Data;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
 
 namespace IntegrationTests.SystemTest.Tools;
@@ -32,19 +34,64 @@ public static class SystemTest
 
     public static TestProcess CreateTestProcess([CallerMemberName] string callerName = "", [CallerFilePath] string fileName = "")
     {
+        var dbPath = SetupDatabase(callerName, fileName);
+        var logPath = SetupLog(callerName, fileName);
+        var configPath = SetupConfig(callerName, fileName, dbPath, logPath);
 
-        var configPath = Path
-            .Combine(Directory.GetCurrentDirectory(), Path.GetFileName(fileName) + callerName + ".json");
-        var dbPath = Path.Combine(Directory.GetCurrentDirectory(),
-            Path.GetFileName(fileName) + callerName + ".sqlite");
-        var logPath = Path.Combine(Directory.GetCurrentDirectory(),
-            Path.GetFileName(fileName) + callerName + ".txt");
+        return new TestProcess(ExecutablePath, configPath);
+    }
+
+    public static TestProcess CreateTestProcess(out IDbConnection dbConnection,
+        [CallerMemberName] string callerName = "", [CallerFilePath] string fileName = "")
+    {
+        var dbPath = SetupDatabase(callerName, fileName);
+        var logPath = SetupLog(callerName, fileName);
+        var configPath = SetupConfig(callerName, fileName, dbPath, logPath);
+
+        dbConnection = new SqliteConnection($"Data Source={dbPath}");
+
+        return new TestProcess(ExecutablePath, configPath);
+    }
+
+    private static string SetupDatabase(string callerName, string fileName)
+    {
+        var dbPath = CreateDatabasePath(callerName, fileName);
         DeleteDatabase(dbPath);
+        return dbPath;
+    }
+
+    private static string SetupLog(string callerName, string fileName)
+    {
+        var logPath = CreateLogPath(callerName, fileName);
         DeleteLog(logPath);
+        return logPath;
+    }
+
+    private static string SetupConfig(string callerName, string fileName, string dbPath, string logPath)
+    {
+        var configPath = CreateConfigPath(callerName, fileName);
         CreateConfigFile(configPath, dbPath, logPath);
-        
-        TestProcess process = new TestProcess(ExecutablePath, configPath);
-        return process;
+        return configPath;
+    }
+
+    private static string CreateLogPath(string callerName, string fileName)
+    {
+        return CreateFileWithExtension(callerName, fileName, ".txt");
+    }
+    
+    private static string CreateConfigPath(string callerName, string fileName)
+    {
+        return CreateFileWithExtension(callerName, fileName, ".json");
+    }
+
+    private static string CreateDatabasePath(string callerName, string fileName)
+    {
+        return CreateFileWithExtension(callerName, fileName, ".sqlite");
+    }
+    
+    private static string CreateFileWithExtension(string callerName, string fileName, string extension)
+    {
+        return Path.Combine(Directory.GetCurrentDirectory(), Path.GetFileName(fileName) + callerName + extension);
     }
     
     private static void DeleteDatabase(string dbPath)

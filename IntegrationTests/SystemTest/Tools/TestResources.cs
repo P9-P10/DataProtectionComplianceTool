@@ -11,7 +11,10 @@ public class TestResources
 {
     protected const string Description = "This is a description";
     protected const string Condition = "This is a condition";
-    protected static readonly TableColumnPair IndividualsSource = new("sourceTable", "sourceColumn");
+    
+    protected const string IndividualsTable = "people";
+    protected const string IndividualsColumn = "Id";
+    protected static readonly TableColumnPair IndividualsSource = new(IndividualsTable, IndividualsColumn);
 
     protected static readonly DeleteCondition TestDeleteCondition = new()
     {

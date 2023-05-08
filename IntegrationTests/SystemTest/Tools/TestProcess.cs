@@ -66,6 +66,11 @@ public class TestProcess : IDisposable
         Process.StandardInput.WriteLine(input);
         AwaitProcessResponse();
     }
+
+    public void Nop()
+    {
+        AwaitPrompt();
+    }
     
     public string GetOutput()
     {
@@ -141,6 +146,19 @@ public class TestProcess : IDisposable
         }
 
         return new String(chars.ToArray());
+    }
+
+    private void AwaitPrompt()
+    {
+        while (!Process.StandardOutput.EndOfStream)
+        {
+            if ((char)Process.StandardOutput.Peek() == '$')
+            {
+                return;
+            }
+
+            Process.StandardOutput.Read();
+        }
     }
 
     public void Dispose()
