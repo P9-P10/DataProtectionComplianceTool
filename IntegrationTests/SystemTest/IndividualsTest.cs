@@ -44,7 +44,7 @@ public class IndividualsTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
         
-        process.Nop();
+        process.AwaitReady();
 
         InsertIndividual(dbConnection, TestIndividual1);
         InsertIndividual(dbConnection, TestIndividual2);

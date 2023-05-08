@@ -171,7 +171,7 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
         
-        process.Nop();
+        process.AwaitReady();
         
         InsertIndividual(dbConnection, TestIndividual1);
         
@@ -198,7 +198,7 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
         
-        process.Nop();
+        process.AwaitReady();
         
         InsertIndividual(dbConnection, TestIndividual1);
         

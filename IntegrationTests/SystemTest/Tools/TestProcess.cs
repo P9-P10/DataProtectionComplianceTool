@@ -67,7 +67,7 @@ public class TestProcess : IDisposable
         AwaitProcessResponse();
     }
 
-    public void Nop()
+    public void AwaitReady()
     {
         AwaitPrompt();
     }

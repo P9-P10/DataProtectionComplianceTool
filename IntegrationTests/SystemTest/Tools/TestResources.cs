@@ -12,7 +12,7 @@ namespace IntegrationTests.SystemTest.Tools;
 public class TestResources
 {
     protected const string Description = "This is a description";
-    protected const string Condition = "This is a condition";
+    protected const string Condition = "TRUE";
     
     protected const string IndividualsTable = "people";
     protected const string IndividualsColumn = "Id";
@@ -64,9 +64,9 @@ public class TestResources
 
     protected static readonly PersonalDataColumn TestPersonalDataColumn = new()
     {
-        TableColumnPair = new TableColumnPair("Table", "Column"),
+        TableColumnPair = new TableColumnPair("TestTable", "TestColumn"),
         Purposes = new[] { TestPurpose },
-        DefaultValue = "defaultValue",
+        DefaultValue = "testDefaultValue",
         Description = Description,
         JoinCondition = "This is a join condition"
     };

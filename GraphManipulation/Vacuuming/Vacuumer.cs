@@ -51,7 +51,7 @@ public class Vacuumer : IVacuumer
     private static string CreateUpdateQuery(PersonalDataColumn personalDataColumn)
     {
         return
-            $"UPDATE {personalDataColumn.TableColumnPair.TableName} SET {personalDataColumn.TableColumnPair.ColumnName} = {personalDataColumn.DefaultValue} WHERE ";
+            $"UPDATE {personalDataColumn.TableColumnPair.TableName} SET {personalDataColumn.TableColumnPair.ColumnName} = '{personalDataColumn.DefaultValue}' WHERE ";
     }
 
     public IEnumerable<DeletionExecution> Execute()
