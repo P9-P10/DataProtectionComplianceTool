@@ -10,7 +10,7 @@ public class ProcessingTests : TestResources
     [Fact]
     public void TestAdd_Prints_Correct_Message()
     {
-        TestProcess process = Tools.SystemTest.CreateTestProcess();
+        using TestProcess process = Tools.SystemTest.CreateTestProcess();
         process.Start();
         
         AddPurpose(process,TestPurpose);
@@ -26,7 +26,7 @@ public class ProcessingTests : TestResources
     [Fact]
     public void TestAdd_Processing_Stored_Correctly()
     {
-        TestProcess process = Tools.SystemTest.CreateTestProcess();
+        using TestProcess process = Tools.SystemTest.CreateTestProcess();
         process.Start();
         
         AddPurpose(process,TestPurpose);
@@ -42,7 +42,7 @@ public class ProcessingTests : TestResources
     [Fact]
     public void TestUpdate_Prints_Correct_Message()
     {
-        TestProcess process = Tools.SystemTest.CreateTestProcess();
+        using TestProcess process = Tools.SystemTest.CreateTestProcess();
         process.Start();
         
         AddPurpose(process,TestPurpose);
@@ -61,7 +61,7 @@ public class ProcessingTests : TestResources
     [Fact]
     public void TestUpdate_Processing_Stored_Correctly()
     {
-        TestProcess process = Tools.SystemTest.CreateTestProcess();
+        using TestProcess process = Tools.SystemTest.CreateTestProcess();
         process.Start();
         
         AddPurpose(process,TestPurpose);
@@ -79,7 +79,7 @@ public class ProcessingTests : TestResources
     [Fact]
     public void TestDelete_Prints_Correct_Message()
     {
-        TestProcess process = Tools.SystemTest.CreateTestProcess();
+        using TestProcess process = Tools.SystemTest.CreateTestProcess();
         process.Start();
         
         AddPurpose(process,TestPurpose);
@@ -97,7 +97,7 @@ public class ProcessingTests : TestResources
     [Fact]
     public void TestDelete_Removes_Processing_From_System()
     {
-        TestProcess process = Tools.SystemTest.CreateTestProcess();
+        using TestProcess process = Tools.SystemTest.CreateTestProcess();
         process.Start();
         
         AddPurpose(process,TestPurpose);
@@ -115,7 +115,7 @@ public class ProcessingTests : TestResources
     [Fact]
     public void TestShow_Returns_Correct_Value()
     {
-        TestProcess process = Tools.SystemTest.CreateTestProcess();
+        using TestProcess process = Tools.SystemTest.CreateTestProcess();
         process.Start();
         
         AddPurpose(process,TestPurpose);
