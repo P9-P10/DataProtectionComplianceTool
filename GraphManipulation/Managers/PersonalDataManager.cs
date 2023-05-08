@@ -77,15 +77,23 @@ public class PersonalDataManager : IPersonalDataManager
 
     public void SetOriginOf(TableColumnPair tableColumnPair, int individualsId, string originName)
     {
-        var individual = _individualMapper.FindSingle(individual => individual.Id == individualsId);
-        var origin = _originMapper.FindSingle(origin => origin.Name == originName);
-        var column = FindByKey(tableColumnPair);
-        var personalData = new PersonalData { PersonalDataColumn = column, Origin = origin };
-
-        individual.PersonalData = individual.PersonalData is null 
-            ? new List<PersonalData> { personalData } 
-            : individual.PersonalData.Concat(new[] { personalData });
+        var individual = _individualMapper.FindSingle(individual => individual.Id == individualsId)!;
+        var origin = _originMapper.FindSingle(origin => origin.Name == originName)!;
+        var column = FindByKey(tableColumnPair)!;
         
+        var personalData = new PersonalData { PersonalDataColumn = column, Origin = origin };
+        
+        if (individual.PersonalData is null)
+        {
+            individual.PersonalData = new List<PersonalData> { personalData };
+        }
+        else
+        {
+            var personalDataList = individual.PersonalData.ToList();
+            personalDataList.Add(personalData);
+            individual.PersonalData = personalDataList;
+        }
+
         _personalDataMapper.Insert(personalData);
         _individualMapper.Update(individual);
     }

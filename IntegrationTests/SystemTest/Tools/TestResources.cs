@@ -1,4 +1,6 @@
+using System.Data;
 using System.Globalization;
+using Dapper;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Logging;
 using GraphManipulation.Managers;
@@ -483,5 +485,10 @@ public class TestResources
     {
         var command = $"{CommandNamer.OriginsName} {CommandNamer.Add} {OptionNamer.Name} {name}";
         testProcess.GiveInput(command);
+    }
+
+    protected static void InsertIndividual(IDbConnection dbConnection, IIndividual individual)
+    {
+        dbConnection.Execute($"INSERT INTO {IndividualsTable} ({IndividualsColumn}) VALUES ({individual.ToListing()})");
     }
 }
