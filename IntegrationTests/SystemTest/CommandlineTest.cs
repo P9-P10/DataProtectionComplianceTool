@@ -12,7 +12,7 @@ public class CommandlineTest
         process.Start();
 
         process.GiveInput("help");
-        string result = string.Join("", process.GetLastOutput());
+        string result = string.Join("", process.GetAllOutputNoWhitespace());
         string error = process.GetError();
         result.Should().Be(@$"Using config found at {process.ConfigPath}" +
                            "$: Description:  This is a description of the root command" +
@@ -37,7 +37,7 @@ public class CommandlineTest
         process.Start();
 
         process.GiveInput("please break");
-        string result = string.Join("", process.GetLastOutput());
+        string result = string.Join("", process.GetAllOutputNoWhitespace());
         string error = process.GetError();
         result.Should().NotBeEmpty();
         error.Should().NotBeEmpty();

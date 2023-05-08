@@ -7,7 +7,7 @@ public class PersonalDataColumn : DomainEntity, IPersonalDataColumn
 {
     public TableColumnPair TableColumnPair { get; set; }
     public string? Description { get; set; }
-    public IEnumerable<Purpose>? Purposes { get; set; }
+    public virtual IEnumerable<Purpose>? Purposes { get; set; }
 
     public string DefaultValue { get; set; } = "";
 

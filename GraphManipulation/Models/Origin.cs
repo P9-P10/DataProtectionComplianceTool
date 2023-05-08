@@ -6,7 +6,7 @@ public class Origin : DomainEntity, IOrigin
 {
     public string Name { get; set; }
     public string Description { get; set; }
-    public IEnumerable<PersonalDataColumn>? PersonalDataColumns { get; set; }
+    public virtual IEnumerable<PersonalDataColumn>? PersonalDataColumns { get; set; }
 
     public string ToListing()
     {

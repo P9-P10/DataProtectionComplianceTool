@@ -9,8 +9,8 @@ public class Processing : DomainEntity, IProcessing
 {
     public string Name { get; set; }
     public string Description { get; set; }
-    public Purpose Purpose { get; set; }
-    public PersonalDataColumn PersonalDataColumn { get; set; }
+    public virtual Purpose Purpose { get; set; }
+    public virtual PersonalDataColumn PersonalDataColumn { get; set; }
     public string ToListing()
     {
         return string.Join(", ", Name, Description, Purpose.ToListingIdentifier(), PersonalDataColumn.TableColumnPair.ToListingIdentifier());

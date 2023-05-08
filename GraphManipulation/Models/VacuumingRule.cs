@@ -11,7 +11,7 @@ public class VacuumingRule : DomainEntity, IVacuumingRule
 
     public DateTime? LastExecution { get; set; }
     
-    public IEnumerable<Purpose> Purposes { get; set; }
+    public virtual IEnumerable<Purpose> Purposes { get; set; }
 
     public string ToListing()
     {

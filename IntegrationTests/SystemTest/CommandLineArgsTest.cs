@@ -17,7 +17,7 @@ public class CommandLineArgsTest
         using TestProcess process = new TestProcess(executablePath);
         process.Start();
         process.GiveInput("");
-        string result = string.Join("", process.GetLastOutput());
+        string result = string.Join("", process.GetAllOutputNoWhitespace());
         result.Should().Be($"Using config found at {IntegrationTests.SystemTest.Tools.SystemTest.ConfigPath}$: ");
     }
 
@@ -40,7 +40,7 @@ public class CommandLineArgsTest
         using TestProcess process = new TestProcess(executablePath, configPath);
         process.Start();
         process.GiveInput("");
-        string result = string.Join("", process.GetLastOutput());
+        string result = string.Join("", process.GetAllOutputNoWhitespace());
         result.Should().Be($"Using config found at {configPath}$: ");
     }
 
@@ -54,7 +54,7 @@ public class CommandLineArgsTest
         using TestProcess process = new TestProcess(executablePath, configPath);
         process.Start();
         process.GiveInput("");
-        string result = string.Join("", process.GetLastOutput());
+        string result = string.Join("", process.GetAllOutputNoWhitespace());
         result.Should().Be($"Please fill GraphStoragePath, OntologyPath, LogPath, "+
                            $"DatabaseConnectionString, IndividualsTable in config file located at: {configPath}");
     }
@@ -65,7 +65,7 @@ public class CommandLineArgsTest
         using TestProcess process = new TestProcess(executablePath, @"too"" many arguments");
         process.Start();
         process.GiveInput("");
-        string result = string.Join("", process.GetLastOutput());
+        string result = string.Join("", process.GetAllOutputNoWhitespace());
         result.Should().Be("Received too many arguments. Only a single argument specifying the path of the configuration file expected");
     }
     
@@ -75,7 +75,7 @@ public class CommandLineArgsTest
         using TestProcess process = new TestProcess(executablePath, "Not@File||");
         process.Start();
         process.GiveInput("");
-        string result = string.Join("", process.GetLastOutput());
+        string result = string.Join("", process.GetAllOutputNoWhitespace());
         string error = string.Join("", process.GetLastError());
         result.Should().Be("The given argument is not a valid filepath");
         error.Should().BeEmpty();
@@ -92,7 +92,7 @@ public class CommandLineArgsTest
         process.ConfigPath.Should().Be(configPath);
         process.Start();
         process.GiveInput("");
-        string result = string.Join("", process.GetLastOutput());
+        string result = string.Join("", process.GetAllOutputNoWhitespace());
         result.Should().Be($"Please fill GraphStoragePath, OntologyPath, LogPath, "+
                            $"DatabaseConnectionString, IndividualsTable in config file located at: {configPath}");
     }

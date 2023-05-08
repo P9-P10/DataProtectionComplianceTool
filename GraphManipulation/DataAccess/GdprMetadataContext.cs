@@ -15,7 +15,9 @@ public class GdprMetadataContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite(_connectionString);
+        optionsBuilder
+            .UseLazyLoadingProxies()
+            .UseSqlite(_connectionString);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

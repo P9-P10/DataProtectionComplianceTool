@@ -5,11 +5,11 @@ namespace GraphManipulation.Models;
 public class Purpose : DomainEntity, IPurpose
 {
     public bool LegallyRequired { get; set; }
-    public IEnumerable<PersonalDataColumn>? PersonalDataColumns { get; set; }
-    public DeleteCondition? DeleteCondition { get; set; }
+    public virtual IEnumerable<PersonalDataColumn>? PersonalDataColumns { get; set; }
+    public virtual DeleteCondition? DeleteCondition { get; set; }
     public string? Description { get; set; }
     public string Name { get; set; }
-    public IEnumerable<VacuumingRule>? Rules { get; set; }
+    public virtual IEnumerable<VacuumingRule>? Rules { get; set; }
 
     public string ToListing()
     {
