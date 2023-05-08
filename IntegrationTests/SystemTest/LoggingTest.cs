@@ -21,9 +21,7 @@ public class LoggingTest : TestResources
         return list.Select(s => s.Replace("$:", "").Trim());
     }
 
-    public class Basic
-    {
-        [Fact]
+    [Fact]
         public void OneLogEntryOneOutput()
         {
             using var process = Tools.SystemTest.CreateTestProcess();
@@ -138,7 +136,6 @@ public class LoggingTest : TestResources
             logEntries.First().LogNumber.Should().Be(numberOfEntries - constraints.Limit + 1);
             logEntries.Last().LogNumber.Should().Be(numberOfEntries);
         }
-    }
 
     public class Metadata
     {
