@@ -6,9 +6,9 @@ namespace IntegrationTests.SystemTest;
 public class SystemPersistenceTests : TestResources
 {
     [Fact]
-    public void TestDeleteConditionsPersisted()
+    public void DeleteConditionsPersisted()
     {
-        using TestProcess process = Tools.SystemTest.CreateTestProcess();
+        var process = Tools.SystemTest.CreateTestProcess();
         string configPath = process.ConfigPath;
         process.Start();
 
@@ -18,7 +18,7 @@ public class SystemPersistenceTests : TestResources
         List<string> firstResult = process.GetLastOutput();
         process.Dispose();
 
-        using TestProcess secondProcess = new(Tools.SystemTest.ExecutablePath, configPath);
+        TestProcess secondProcess = new(Tools.SystemTest.ExecutablePath, configPath);
         secondProcess.Start();
         secondProcess.GiveInput("");
         ListPurpose(secondProcess);
@@ -30,5 +30,7 @@ public class SystemPersistenceTests : TestResources
         secondResult.FindAll(s => s.Contains(TestDeleteCondition.Name)
                                   && s.Contains(TestDeleteCondition.Description)).Should().ContainSingle();
         Assert.Equal(firstResult, secondResult);
+        
+        secondProcess.Dispose();
     }
 }
