@@ -27,6 +27,7 @@ namespace GraphManipulation;
 public static class Program
 {
     private static string configPath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
+    private static bool VerboseOutput = true;
 
     public static void Main(string[] args)
     {
@@ -139,20 +140,20 @@ public static class Program
             }
             catch (AggregateException e)
             {
-                Console.Error.WriteLine(e.Message);
+                Console.Error.WriteLine(VerboseOutput ? e.ToString() : e.Message);
                 
                 foreach (var innerException in e.InnerExceptions)
                 {
-                    Console.Error.WriteLine(innerException.Message);
+                    Console.Error.WriteLine(VerboseOutput ? innerException.ToString() : innerException.Message);
                 }
             }
             catch (Exception e)
             {
-                Console.Error.WriteLine(e.Message);
+                Console.Error.WriteLine(VerboseOutput ? e.ToString() : e.Message);
 
                 if (e.InnerException is not null)
                 {
-                    Console.Error.WriteLine(e.InnerException.Message);
+                    Console.Error.WriteLine(VerboseOutput ? e.InnerException.ToString() : e.InnerException.Message);
                 }
             }
         }
