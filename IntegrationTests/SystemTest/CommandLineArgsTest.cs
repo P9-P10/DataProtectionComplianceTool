@@ -69,7 +69,7 @@ public class CommandLineArgsTest
         result.Should().Be("Received too many arguments. Only a single argument specifying the path of the configuration file expected");
     }
     
-    [Fact]
+    [WindowsFact]
     public void PrintsErrorMessageGivenInvalidFilePath()
     {
         using TestProcess process = new TestProcess(executablePath, "Not@File||");
