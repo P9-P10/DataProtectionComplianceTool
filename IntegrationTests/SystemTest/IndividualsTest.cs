@@ -1,3 +1,5 @@
+using System.Data;
+using Dapper;
 using FluentAssertions;
 using IntegrationTests.SystemTest.Tools;
 
@@ -36,11 +38,22 @@ public class IndividualsTest : TestResources
         output.Should().ContainSingle(s => s == $"$: {IndividualsSource}");
     }
 
+    private static void InsertIndividuals(IDbConnection dbConnection)
+    {
+        dbConnection.Execute($"INSERT INTO {IndividualsTable} ({IndividualsColumn}) VALUES ({TestIndividual1.ToListing()})");
+        dbConnection.Execute($"INSERT INTO {IndividualsTable} ({IndividualsColumn}) VALUES ({TestIndividual2.ToListing()})");
+        dbConnection.Execute($"INSERT INTO {IndividualsTable} ({IndividualsColumn}) VALUES ({TestIndividual3.ToListing()})");
+    }
+
     [Fact]
     public void IndividualsCanBeListed()
     {
-        using var process = Tools.SystemTest.CreateTestProcess();
+        using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
+        
+        process.Nop();
+
+        InsertIndividuals(dbConnection);
         
         SetIndividualsSource(process, IndividualsSource);
         ListIndividuals(process);
