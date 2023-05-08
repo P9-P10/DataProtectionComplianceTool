@@ -18,7 +18,7 @@ public class SystemPersistenceTests : TestResources
         List<string> firstResult = process.GetLastOutput();
         process.Dispose();
 
-        TestProcess secondProcess = new(Tools.SystemTest.ExecutablePath, configPath);
+        using TestProcess secondProcess = new(Tools.SystemTest.ExecutablePath, configPath);
         secondProcess.Start();
         secondProcess.GiveInput("");
         ListPurpose(secondProcess);
