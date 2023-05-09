@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices.ComTypes;
-using GraphManipulation.DataAccess.Mappers;
+﻿using GraphManipulation.DataAccess.Mappers;
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
 using GraphManipulation.Models.Interfaces;
@@ -42,7 +41,7 @@ public class PurposeManager : NamedEntityManager<Purpose>, IPurposesManager
     public void SetDeleteCondition(string purposeName, string deleteConditionName)
     {
         var purpose = GetByName(purposeName);
-        purpose.DeleteCondition = _conditionsManager.FindSingle(condition => condition.Name == deleteConditionName);
+        purpose.DeleteConditions = _conditionsManager.Find(condition => condition.Name == deleteConditionName);
         _purposeMapper.Update(purpose);
     }
 }

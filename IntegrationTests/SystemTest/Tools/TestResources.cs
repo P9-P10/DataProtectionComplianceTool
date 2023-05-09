@@ -13,7 +13,7 @@ public class TestResources
 {
     protected const string Description = "This is a description";
     protected const string Condition = "TRUE";
-    
+
     protected const string IndividualsTable = "people";
     protected const string IndividualsColumn = "Id";
     protected static readonly TableColumnPair IndividualsSource = new(IndividualsTable, IndividualsColumn);
@@ -36,7 +36,7 @@ public class TestResources
     {
         Name = "purposeName",
         Description = Description,
-        DeleteCondition = TestDeleteCondition,
+        DeleteConditions = new List<DeleteCondition>() {TestDeleteCondition},
         LegallyRequired = true,
         PersonalDataColumns = new List<PersonalDataColumn>(),
         Rules = new List<VacuumingRule>()
@@ -46,7 +46,7 @@ public class TestResources
     {
         Name = TestPurpose.GetName() + "NEW",
         Description = TestPurpose.GetDescription() + "NEW",
-        DeleteCondition = NewTestDeleteCondition,
+        DeleteConditions = new List<DeleteCondition>() {NewTestDeleteCondition},
         LegallyRequired = !TestPurpose.GetLegallyRequired(),
         PersonalDataColumns = new List<PersonalDataColumn>(),
         Rules = new List<VacuumingRule>()
@@ -56,7 +56,7 @@ public class TestResources
     {
         Name = TestPurpose.GetName() + "VERY_NEW",
         Description = TestPurpose.GetDescription() + "VERY_NEW",
-        DeleteCondition = NewTestDeleteCondition,
+        DeleteConditions = new List<DeleteCondition>() {NewTestDeleteCondition},
         LegallyRequired = !NewTestPurpose.GetLegallyRequired(),
         PersonalDataColumns = new List<PersonalDataColumn>(),
         Rules = new List<VacuumingRule>()
@@ -65,10 +65,9 @@ public class TestResources
     protected static readonly PersonalDataColumn TestPersonalDataColumn = new()
     {
         TableColumnPair = new TableColumnPair("TestTable", "TestColumn"),
-        Purposes = new[] { TestPurpose },
+        Purposes = new[] {TestPurpose},
         DefaultValue = "testDefaultValue",
-        Description = Description,
-        JoinCondition = "This is a join condition"
+        Description = Description
     };
 
     protected static readonly PersonalDataColumn UpdatedTestPersonalDataColumn = new()
@@ -77,9 +76,8 @@ public class TestResources
         Purposes = TestPersonalDataColumn.Purposes,
         DefaultValue = TestPersonalDataColumn.DefaultValue + "UPDATED",
         Description = TestPersonalDataColumn.Description + "UPDATED",
-        JoinCondition = TestPersonalDataColumn.JoinCondition
     };
-    
+
     protected static readonly PersonalDataColumn NewTestPersonalDataColumn = new()
     {
         TableColumnPair = new TableColumnPair(
@@ -87,8 +85,7 @@ public class TestResources
             TestPersonalDataColumn.TableColumnPair.ColumnName + "NEW"),
         Purposes = TestPersonalDataColumn.Purposes,
         DefaultValue = TestPersonalDataColumn.DefaultValue + "NEW",
-        Description = TestPersonalDataColumn.Description + "NEW",
-        JoinCondition = TestPersonalDataColumn.JoinCondition + "NEW"
+        Description = TestPersonalDataColumn.Description + "NEW"
     };
 
     protected static readonly Processing TestProcessing = new()
@@ -97,7 +94,7 @@ public class TestResources
         PersonalDataColumn = TestPersonalDataColumn,
         Purpose = TestPurpose
     };
-    
+
     protected static readonly Processing NewTestProcessing = new()
     {
         Name = "NewProcessingName", Description = "NewProcessingDescription",
@@ -116,12 +113,12 @@ public class TestResources
     {
         Id = 1
     };
-    
+
     protected static readonly Individual TestIndividual2 = new()
     {
         Id = 2
     };
-    
+
     protected static readonly Individual TestIndividual3 = new()
     {
         Id = 3
@@ -132,7 +129,7 @@ public class TestResources
         Name = "vacuumingRule",
         Description = Description,
         Interval = "2h 4d",
-        Purposes = new List<Purpose> { TestPurpose }
+        Purposes = new List<Purpose> {TestPurpose}
     };
 
     protected static readonly VacuumingRule UpdatedTestVacuumingRule = new()
@@ -140,7 +137,7 @@ public class TestResources
         Name = TestVacuumingRule.GetName() + "UPDATED",
         Description = TestVacuumingRule.GetDescription() + "NEW",
         Interval = TestVacuumingRule.GetInterval() + "6h",
-        Purposes = new List<Purpose> { TestPurpose }
+        Purposes = new List<Purpose> {TestPurpose}
     };
 
     protected static void AddDeleteCondition(TestProcess testProcess, IDeleteCondition deleteCondition)
@@ -272,21 +269,24 @@ public class TestResources
 
     protected static void UpdateProcessing(TestProcess process, IProcessing old, IProcessing newProcess)
     {
-        string command = $"{CommandNamer.ProcessingsAlias} {CommandNamer.UpdateAlias} {OptionNamer.Name} {old.GetName()}" +
-                         $" {OptionNamer.NewNameAlias} {newProcess.GetName()}" +
-                         $" {OptionNamer.Description} {newProcess.GetDescription()}";
+        string command =
+            $"{CommandNamer.ProcessingsAlias} {CommandNamer.UpdateAlias} {OptionNamer.Name} {old.GetName()}" +
+            $" {OptionNamer.NewNameAlias} {newProcess.GetName()}" +
+            $" {OptionNamer.Description} {newProcess.GetDescription()}";
         process.GiveInput(command);
     }
 
     protected static void DeleteProcessing(TestProcess process, IProcessing processing)
     {
-        string command = $"{CommandNamer.ProcessingsAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name} {processing.GetName()}";
+        string command =
+            $"{CommandNamer.ProcessingsAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name} {processing.GetName()}";
         process.GiveInput(command);
     }
 
     protected static void ShowProcessing(TestProcess process, IProcessing processing)
     {
-        string command = $"{CommandNamer.ProcessingsAlias} {CommandNamer.ShowAlias} {OptionNamer.Name} {processing.GetName()}";
+        string command =
+            $"{CommandNamer.ProcessingsAlias} {CommandNamer.ShowAlias} {OptionNamer.Name} {processing.GetName()}";
         process.GiveInput(command);
     }
 
@@ -294,7 +294,6 @@ public class TestResources
     {
         var command = $"{CommandNamer.PersonalDataAlias} {CommandNamer.AddAlias}" +
                       $" {OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} {personalDataColumn.GetTableColumnPair().ColumnName}" +
-                      $" {OptionNamer.JoinCondition} \"{personalDataColumn.GetJoinCondition()}\"" +
                       $" {OptionNamer.DefaultValueAlias} \"{personalDataColumn.GetDefaultValue()}\"" +
                       $" {OptionNamer.Description} \"{personalDataColumn.GetDescription()}\"" +
                       $" {OptionNamer.PurposeList} {string.Join(" ", personalDataColumn.GetPurposes().Select(p => p.GetName()))}";
@@ -345,7 +344,8 @@ public class TestResources
         testProcess.GiveInput(command);
     }
 
-    protected static void RemovePurposesFromPersonalData(TestProcess testProcess, IPersonalDataColumn personalDataColumn,
+    protected static void RemovePurposesFromPersonalData(TestProcess testProcess,
+        IPersonalDataColumn personalDataColumn,
         IEnumerable<IPurpose> purposes)
     {
         var command = $"{CommandNamer.PersonalDataName} {CommandNamer.RemovePurpose} " +
@@ -457,8 +457,8 @@ public class TestResources
         IEnumerable<IPurpose> purposes)
     {
         var command = $"{CommandNamer.VacuumingRulesName} {CommandNamer.RemovePurpose} " +
-                       $"{OptionNamer.Name} {vacuumingRule.GetName()} " +
-                       $"{OptionNamer.PurposeList} {string.Join(" ", purposes.Select(p => p.GetName()))}";
+                      $"{OptionNamer.Name} {vacuumingRule.GetName()} " +
+                      $"{OptionNamer.PurposeList} {string.Join(" ", purposes.Select(p => p.GetName()))}";
         testProcess.GiveInput(command);
     }
 
@@ -468,7 +468,7 @@ public class TestResources
         const string dateTimeFormat = "yyyy/MM/dd'T'HH:mm:ss";
         var dateTimeStart = constraints.LogTimeRange.Start.ToString(dateTimeFormat, CultureInfo.InvariantCulture);
         var dateTimeEnd = constraints.LogTimeRange.End.ToString(dateTimeFormat, CultureInfo.InvariantCulture);
-        
+
         var command = $"{CommandNamer.LoggingName} {CommandNamer.List} " +
                       $"{OptionNamer.Limit} {constraints.Limit} " +
                       $"{OptionNamer.Numbers} {constraints.LogNumbersRange.Start} {constraints.LogNumbersRange.End} " +
@@ -491,7 +491,7 @@ public class TestResources
     {
         dbConnection.Execute($"INSERT INTO {IndividualsTable} ({IndividualsColumn}) VALUES ({individual.ToListing()})");
     }
-    
+
     protected static void CreatePersonalDataTable(IDbConnection dbConnection, IPersonalDataColumn personalDataColumn)
     {
         var createTable = @$"CREATE TABLE IF NOT EXISTS {personalDataColumn.GetTableColumnPair().TableName} (
@@ -501,8 +501,9 @@ public class TestResources
 
         dbConnection.Execute(createTable);
     }
-    
-    protected static void InsertPersonalData(IDbConnection dbConnection, IPersonalDataColumn personalDataColumn, IIndividual individual, string value)
+
+    protected static void InsertPersonalData(IDbConnection dbConnection, IPersonalDataColumn personalDataColumn,
+        IIndividual individual, string value)
     {
         var query = $"INSERT INTO " +
                     $"{personalDataColumn.GetTableColumnPair().TableName} (Id, {personalDataColumn.GetTableColumnPair().ColumnName}) " +

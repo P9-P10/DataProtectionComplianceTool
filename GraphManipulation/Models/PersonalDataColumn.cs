@@ -10,13 +10,12 @@ public class PersonalDataColumn : DomainEntity, IPersonalDataColumn
     public virtual IEnumerable<Purpose>? Purposes { get; set; }
 
     public string DefaultValue { get; set; } = "";
-
-    public string JoinCondition { get; set; } = "";
+    
 
 
     public string ToListing()
     {
-        return string.Join(", ", TableColumnPair.ToListingIdentifier(), JoinCondition,
+        return string.Join(", ", TableColumnPair.ToListingIdentifier(),
             Description, DefaultValue,
             "[ " + string.Join(", ",
                 Purposes == null ? new List<string>() : Purposes.Select(p => p.ToListingIdentifier())) + " ]");
@@ -55,11 +54,7 @@ public class PersonalDataColumn : DomainEntity, IPersonalDataColumn
     {
         return Purposes == null ? new List<IPurpose>() : Purposes;
     }
-
-    public string GetJoinCondition()
-    {
-        return JoinCondition;
-    }
+    
 
     public string GetDefaultValue()
     {

@@ -36,7 +36,6 @@ public class PersonalDataCommandTest : CommandTest
                 Description = Description,
                 TableColumnPair = TableColumnPair1,
                 Purposes = new List<Purpose>(),
-                JoinCondition = JoinCondition,
                 DefaultValue = DefaultValue
             });
 
@@ -227,7 +226,6 @@ public class PersonalDataCommandTest : CommandTest
 
             managerMock.Verify(manager => manager.AddPersonalData(
                 It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair3)),
-                It.Is<string>(s => s == JoinCondition),
                 It.Is<string>(s => s == Description)));
             managerMock.Verify(manager => manager.AddPurpose(
                 It.Is<TableColumnPair>(pair => pair.Equals(TableColumnPair3)),

@@ -36,10 +36,10 @@ public class PersonalDataManagerDecorator : LoggingDecorator, IPersonalDataManag
         _manager.UpdateDescription(key, description);
     }
 
-    public void AddPersonalData(TableColumnPair tableColumnPair, string joinCondition, string description)
+    public void AddPersonalData(TableColumnPair tableColumnPair, string description)
     {
-        LogAdd(tableColumnPair.ToListing(), new {JoinCondition = joinCondition, Description = description});
-        _manager.AddPersonalData(tableColumnPair, joinCondition, description);
+        LogAdd(tableColumnPair.ToListing(), new { Description = description});
+        _manager.AddPersonalData(tableColumnPair, description);
     }
 
     public void SetDefaultValue(TableColumnPair tableColumnPair, string defaultValue)

@@ -22,7 +22,7 @@ public static class VacuumingModelsMakers
                 Condition = "Condition"
             };
             purposes.Add(new Purpose()
-                {Id = 0, Name = purposeName, Description = "Description", DeleteCondition = deleteCondition});
+                {Id = 0, Name = purposeName, Description = "Description", DeleteConditions = new List<DeleteCondition>(){deleteCondition}});
         }
         else
         {
@@ -40,8 +40,8 @@ public static class VacuumingModelsMakers
                 Description = "Description",
                 Condition = "SecondCondition"
             };
-            purposes.Add(new Purpose() {Id = 0, Name = purposeName, DeleteCondition = deleteCondition});
-            purposes.Add(new Purpose() {Id = 1, Name = purposeName, DeleteCondition = deleteCondition2});
+            purposes.Add(new Purpose() {Id = 0, Name = purposeName, DeleteConditions = new List<DeleteCondition>(){deleteCondition}});
+            purposes.Add(new Purpose() {Id = 1, Name = purposeName, DeleteConditions = new List<DeleteCondition>(){deleteCondition2}});
         }
 
         PersonalDataColumn personalDataColumn = new()
@@ -85,7 +85,7 @@ public static class VacuumingModelsMakers
                 Name = "Name",
                 Description = "Description",
                 PersonalDataColumns = PersonalDataColumns(),
-                DeleteCondition = new DeleteCondition(),
+                DeleteConditions = new List<DeleteCondition>(),
                 Rules = new List<VacuumingRule>()
             }
         };

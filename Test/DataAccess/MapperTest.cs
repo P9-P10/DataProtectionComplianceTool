@@ -53,14 +53,13 @@ public class MapperTest
         {
             public static PersonalDataColumn column1 = new()
             {
-                TableColumnPair = new TableColumnPair("tableOne", "columnOne"),
-                JoinCondition = "test"
+                TableColumnPair = new TableColumnPair("tableOne", "columnOne")
+               
             };
 
             public static PersonalDataColumn column2 = new()
             {
-                TableColumnPair = new TableColumnPair("tableTwo", "columnTwo"),
-                JoinCondition = "test"
+                TableColumnPair = new TableColumnPair("tableTwo", "columnTwo")
             };
 
             public static VacuumingRule rule1 = new() {Name = "ruleOne", Interval = "2d", Description = ""};

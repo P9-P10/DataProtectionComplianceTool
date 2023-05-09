@@ -7,6 +7,5 @@ public interface IPersonalDataColumn : IDescribedEntity, IListable
 {
     public TableColumnPair GetTableColumnPair();
     public IEnumerable<IPurpose> GetPurposes();
-    public string GetJoinCondition();
     public string GetDefaultValue();
 }

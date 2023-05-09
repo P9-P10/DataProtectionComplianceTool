@@ -45,10 +45,10 @@ public class PersonalDataManager : IPersonalDataManager
         _columnMapper.Update(column);
     }
 
-    public void AddPersonalData(TableColumnPair tableColumnPair, string joinCondition, string description)
+    public void AddPersonalData(TableColumnPair tableColumnPair, string description)
     {
         _columnMapper.Insert(new PersonalDataColumn
-            { TableColumnPair = tableColumnPair, Description = description, JoinCondition = joinCondition });
+            { TableColumnPair = tableColumnPair, Description = description });
     }
 
     public void SetDefaultValue(TableColumnPair tableColumnPair, string defaultValue)

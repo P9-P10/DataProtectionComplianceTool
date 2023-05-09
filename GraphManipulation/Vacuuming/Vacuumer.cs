@@ -40,9 +40,12 @@ public class Vacuumer : IVacuumer
         string conditionalStatement = "";
         foreach (Purpose purpose in personalDataColumn.Purposes)
         {
-            conditionalStatement += $"({purpose.DeleteCondition.Condition})";
-            conditionalStatement += logicOperator;
-            deletionExecution.AddPurpose(purpose);
+            foreach (var condition in purpose.DeleteConditions)
+            {
+                conditionalStatement += $"({condition})";
+                conditionalStatement += logicOperator;
+                deletionExecution.AddPurpose(purpose);
+            }
         }
 
         return conditionalStatement;
@@ -76,7 +79,7 @@ public class Vacuumer : IVacuumer
     {
         List<DeletionExecution> executions = new List<DeletionExecution>();
 
-        List<PersonalDataColumn> personalDataColumns = _personalDataColumnMapper.Find(x=>true).ToList();
+        List<PersonalDataColumn> personalDataColumns = _personalDataColumnMapper.Find(x => true).ToList();
 
         foreach (var personalDataColumn in personalDataColumns)
         {
@@ -89,7 +92,6 @@ public class Vacuumer : IVacuumer
                 executions.Add(execution);
                 _queryExecutor.Execute(execution.Query);
             }
-           
         }
 
         return executions;
@@ -107,7 +109,7 @@ public class Vacuumer : IVacuumer
 
         return false;
     }
-    
+
     private static string ReplaceLastOccurrenceOfString(string inputString, string occurrenceToReplace,
         string replaceWith = ";")
     {

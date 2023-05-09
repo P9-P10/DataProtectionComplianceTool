@@ -23,8 +23,7 @@ public class PersonalDataTest : TestResources
         output.Should().ContainSingle(s =>
             s.Contains(
                 $"Successfully added {TestPersonalDataColumn.ToListingIdentifier()} personal data column") &&
-            s.Contains($"{TestPersonalDataColumn.GetDescription()}") &&
-            s.Contains($"{TestPersonalDataColumn.GetJoinCondition()}"));
+            s.Contains($"{TestPersonalDataColumn.GetDescription()}"));
         output.Should().ContainSingle(s =>
             s.Contains(
                 $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {TestPurpose.GetName()}"));

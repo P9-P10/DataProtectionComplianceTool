@@ -33,13 +33,6 @@ public static class PersonalDataCommandBuilder
             .WithDescription(
                 "Adds the personal data found in the given table and column to the data managed by the system")
             .WithOption(out var pairOption, BuildPairOption())
-            .WithOption(out var joinConditionOption,
-                OptionBuilder
-                    .CreateOption<string>(OptionNamer.JoinCondition)
-                    .WithAlias(OptionNamer.JoinConditionAlias)
-                    .WithDescription(
-                        "The condition under which the given table can be joined with the individuals table")
-                    .WithIsRequired(true))
             .WithOption(out var descriptionOption,
                 OptionBuilder
                     .CreateDescriptionOption()
@@ -58,7 +51,6 @@ public static class PersonalDataCommandBuilder
                     personalDataManager.AddPersonalData,
                     personalDataManager,
                     pairOption,
-                    joinConditionOption,
                     descriptionOption);
 
                 Handlers.UpdateHandlerWithKeyList(context, console,

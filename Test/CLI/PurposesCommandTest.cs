@@ -5,7 +5,6 @@ using FluentAssertions;
 using GraphManipulation.Commands.Builders;
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
-using GraphManipulation.Models.Interfaces;
 using Moq;
 using Xunit;
 
@@ -27,7 +26,7 @@ public class PurposesCommandTest : CommandTest
                 LegallyRequired = LegallyRequired,
                 PersonalDataColumns = new List<PersonalDataColumn>(),
                 Rules = new List<VacuumingRule>(),
-                DeleteCondition = DeleteCondition
+                DeleteConditions = new List<DeleteCondition>(){DeleteCondition}
             });
         
         purposeManagerMock

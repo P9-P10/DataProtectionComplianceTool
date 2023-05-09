@@ -6,7 +6,6 @@ using GraphManipulation.Commands.Builders;
 using GraphManipulation.Managers;
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
-using GraphManipulation.Models.Interfaces;
 using Moq;
 using Xunit;
 
@@ -74,8 +73,7 @@ public class ProcessingsCommandTest : CommandTest
     {
         TableColumnPair = TableColumnPair,
         Description = "This is a description of personal data",
-        Purposes = new List<Purpose>(),
-        JoinCondition = "This is a join condition"
+        Purposes = new List<Purpose>()
     };
 
     public class Add

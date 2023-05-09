@@ -55,7 +55,7 @@ public static class PurposesCommandBuilder
                     purposesManager.SetDeleteCondition,
                     purposesManager,
                     deleteConditionsManager,
-                    purpose => purpose.GetDeleteCondition(),
+                    purpose => purpose.GetDeleteCondition().First(),
                     nameOption, deleteConditionOption);
             });
     }
@@ -104,7 +104,7 @@ public static class PurposesCommandBuilder
                     purposesManager.SetDeleteCondition,
                     purposesManager,
                     deleteConditionsManager,
-                    p => p.GetDeleteCondition(),
+                    p => p.GetDeleteCondition().First(),
                     nameOption,
                     deleteConditionOption);
 
