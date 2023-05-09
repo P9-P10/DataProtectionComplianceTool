@@ -93,7 +93,7 @@ public static class VacuumingRulesCommandBuilder
                     nameOption,
                     intervalOption);
 
-                Handlers.UpdateHandler(context, console,
+                Handlers.UpdateHandlerUnique(context, console,
                     vacuumingRulesManager.UpdateName,
                     vacuumingRulesManager,
                     rule => rule.GetName(),

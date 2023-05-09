@@ -77,7 +77,7 @@ public static class ProcessingsCommandBuilder
                     nameOption,
                     descriptionOption);
 
-                Handlers.UpdateHandler(context, console,
+                Handlers.UpdateHandlerUnique(context, console,
                     processingsManager.UpdateName,
                     processingsManager,
                     p => p.GetName(),

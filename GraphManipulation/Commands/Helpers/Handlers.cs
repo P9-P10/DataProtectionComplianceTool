@@ -225,6 +225,38 @@ public static class Handlers
         console.WriteLine(SuccessMessage(key, typeof(TValue), Operations.Updated, optionValue.ToString()));
     }
 
+    public static void UpdateHandlerUnique<TKey, TValue>(InvocationContext context, IConsole console,
+        Action<TKey, TKey> updateAction, IGetter<TValue, TKey> getter, Func<TValue, TKey> getOld, Option<TKey> keyOption1,
+        Option<TKey> keyOption2)
+    {
+        var key1 = GetValueOfRequiredOption(context, keyOption1);
+        
+        if (!TryGet(getter, key1, out var keyValue1))
+        {
+            console.Error.WriteLine(FailureToFindMessage(key1, typeof(TValue)));
+            return;
+        }
+        
+        if (!TryGetValueOfOption(context, keyOption2, out var key2))
+        {
+            return;
+        }
+
+        if (TryGet(getter, key2, out var keyValue2))
+        {
+            console.Error.WriteLine(AlreadyExistsMessage(key2, typeof(TValue)));
+            return;
+        }
+        
+        if (getOld(keyValue1).Equals(keyValue2))
+        {
+            return;
+        }
+        
+        updateAction(key1, key2);
+        console.WriteLine(SuccessMessage(key1, typeof(TValue), Operations.Updated, key2.ToString()));
+    }
+
     public static void UpdateHandlerWithKey<TKey1, TValue1, TKey2, TValue2>(InvocationContext context, IConsole console,
         Action<TKey1, TKey2> updateAction,
         IGetter<TValue1, TKey1> getter1,

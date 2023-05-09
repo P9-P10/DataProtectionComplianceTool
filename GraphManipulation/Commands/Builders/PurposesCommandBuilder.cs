@@ -108,7 +108,7 @@ public static class PurposesCommandBuilder
                     nameOption,
                     deleteConditionOption);
 
-                Handlers.UpdateHandler(context, console,
+                Handlers.UpdateHandlerUnique(context, console,
                     purposesManager.UpdateName,
                     purposesManager,
                     p => p.GetName(),

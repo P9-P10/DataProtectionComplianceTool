@@ -78,7 +78,7 @@ public static class DeleteConditionsCommandBuilder
                     nameOption,
                     conditionOption);
 
-                Handlers.UpdateHandler(context, console,
+                Handlers.UpdateHandlerUnique(context, console,
                     deleteConditionsManager.UpdateName,
                     deleteConditionsManager,
                     d => d.GetName(),

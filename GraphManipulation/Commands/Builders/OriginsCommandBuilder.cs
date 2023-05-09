@@ -55,7 +55,7 @@ public static class OriginsCommandBuilder
                     origin => origin.GetDescription(),
                     nameOption, descriptionOption);
 
-                Handlers.UpdateHandler(context, console,
+                Handlers.UpdateHandlerUnique(context, console,
                     originsManager.UpdateName,
                     originsManager,
                     origin => origin.GetName(),

@@ -4,8 +4,6 @@ using IntegrationTests.SystemTest.Tools;
 
 namespace IntegrationTests.SystemTest;
 
-// TODO: Test that vacuuming executions gets logged correctly
-
 public class LoggingTest : TestResources
 {
     private static void CreateLogEntries(TestProcess testProcess, int number)
