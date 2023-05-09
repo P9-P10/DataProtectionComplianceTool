@@ -41,6 +41,6 @@ public class CommandlineTest
         string error = process.GetError();
         result.Should().NotBeEmpty();
         error.Should().NotBeEmpty();
-        error.Should().Be("Required command was not provided.\nUnrecognized command or argument 'please'.\nUnrecognized command or argument 'break'.\n");
+        error.Should().Be($"Required command was not provided.{Environment.NewLine}Unrecognized command or argument 'please'.{Environment.NewLine}Unrecognized command or argument 'break'.{Environment.NewLine}");
     }
 }

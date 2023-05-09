@@ -94,7 +94,7 @@ public class TestProcess : IDisposable
 
     public string GetError()
     {
-        return string.Join("\n", Errors);
+        return string.Join(Environment.NewLine, Errors);
     }
 
     public List<string> GetAllErrors()
