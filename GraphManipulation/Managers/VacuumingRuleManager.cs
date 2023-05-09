@@ -47,7 +47,8 @@ public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumin
     {
         var rule = base.Get(name);
         if (rule is null) return;
-
+        rule.LastExecution = DateTime.Now;
+        _ruleMapper.Update(rule);
         _vacuumer.ExecuteVacuumingRules(new[] { rule });
     }
 
