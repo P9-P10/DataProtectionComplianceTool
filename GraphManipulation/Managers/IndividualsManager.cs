@@ -29,11 +29,11 @@ public class IndividualsManager : IIndividualsManager
 
     public void SetIndividualsSource(TableColumnPair source)
     {
-        ConfigKeyValue keyValue = _keyValueMapper.FindSingle(x => x.Key == IndividualsSourceKey);
+        var keyValue = _keyValueMapper.FindSingle(x => x.Key == IndividualsSourceKey);
         if (keyValue == null)
         {
-            _keyValueMapper.Insert(new ConfigKeyValue()
-                {Key = IndividualsSourceKey, Value = $"({source.TableName},{source.ColumnName})"});
+            _keyValueMapper.Insert(new ConfigKeyValue
+                { Key = IndividualsSourceKey, Value = $"({source.TableName},{source.ColumnName})" });
         }
         else
         {
@@ -44,10 +44,10 @@ public class IndividualsManager : IIndividualsManager
 
     public TableColumnPair GetIndividualsSource()
     {
-        ConfigKeyValue? keyValue = _keyValueMapper.FindSingle(x => x.Key == IndividualsSourceKey);
-        string table = keyValue.Value.Split(",")[0].Replace("(", "");
-        string column = keyValue.Value.Split(",")[1].Replace(")", "");
-        TableColumnPair tableColumnPair = new TableColumnPair(table, column);
+        var keyValue = _keyValueMapper.FindSingle(x => x.Key == IndividualsSourceKey);
+        var table = keyValue.Value.Split(",")[0].Replace("(", "");
+        var column = keyValue.Value.Split(",")[1].Replace(")", "");
+        var tableColumnPair = new TableColumnPair(table, column);
         return tableColumnPair;
     }
 }
