@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using GraphManipulation.DataAccess;
-using GraphManipulation.DataAccess.Mappers;
 using GraphManipulation.Models;
 using GraphManipulation.Vacuuming;
 using Test.Vacuuming.TestClasses;
@@ -42,7 +40,7 @@ public class VacuumerTest
 
         var query = vacuumer.GenerateUpdateStatement();
 
-        DeletionExecution expected = DeletionExecutionMaker("UPDATE Table SET Column = Null WHERE (Condition);");
+        DeletionExecution expected = DeletionExecutionMaker("UPDATE Table SET Column = 'Null' WHERE (Condition);");
         Assert.Contains(expected, query);
     }
 
@@ -60,9 +58,9 @@ public class VacuumerTest
 
 
         var deletionExecutions = query.ToList();
-        DeletionExecution firstExpected = DeletionExecutionMaker("UPDATE Table SET Column = Null WHERE (Condition);");
+        DeletionExecution firstExpected = DeletionExecutionMaker("UPDATE Table SET Column = 'Null' WHERE (Condition);");
         DeletionExecution secondExpected =
-            DeletionExecutionMaker("UPDATE SecondTable SET SecondColumn = Null WHERE (Condition);",
+            DeletionExecutionMaker("UPDATE SecondTable SET SecondColumn = 'Null' WHERE (Condition);",
                 table: "SecondTable", column: "SecondColumn");
         Assert.Contains(firstExpected, deletionExecutions);
         Assert.Contains(secondExpected, deletionExecutions);
@@ -80,7 +78,7 @@ public class VacuumerTest
         vacuumer.Execute();
 
 
-        const string expectedQuery = "UPDATE Table SET Column = Null WHERE (Condition);";
+        const string expectedQuery = "UPDATE Table SET Column = 'Null' WHERE (Condition);";
         Assert.Contains(expectedQuery, testQueryExecutor.Query);
     }
 
@@ -97,8 +95,8 @@ public class VacuumerTest
         vacuumer.Execute();
 
 
-        const string firstQuery = "UPDATE Table SET Column = Null WHERE (Condition);";
-        const string secondQuery = "UPDATE SecondTable SET SecondColumn = Null WHERE (Condition);";
+        const string firstQuery = "UPDATE Table SET Column = 'Null' WHERE (Condition);";
+        const string secondQuery = "UPDATE SecondTable SET SecondColumn = 'Null' WHERE (Condition);";
         Assert.Contains(firstQuery, testQueryExecutor.Query);
         Assert.Contains(secondQuery, testQueryExecutor.Query);
     }
@@ -117,9 +115,9 @@ public class VacuumerTest
 
 
         var deletionExecutions = query.ToList();
-        DeletionExecution firstExpected = DeletionExecutionMaker("UPDATE Table SET Column = Null WHERE (Condition);");
+        DeletionExecution firstExpected = DeletionExecutionMaker("UPDATE Table SET Column = 'Null' WHERE (Condition);");
         DeletionExecution secondExpected =
-            DeletionExecutionMaker("UPDATE SecondTable SET SecondColumn = Null WHERE (Condition);",
+            DeletionExecutionMaker("UPDATE SecondTable SET SecondColumn = 'Null' WHERE (Condition);",
                 table: "SecondTable", column: "SecondColumn");
         Assert.Contains(firstExpected, deletionExecutions);
         Assert.Contains(secondExpected, deletionExecutions);
@@ -137,7 +135,7 @@ public class VacuumerTest
             vacuumer.ExecuteVacuumingRules(new List<VacuumingRule>() {vacuumingRule}).ToList();
 
 
-        DeletionExecution expected = DeletionExecutionMaker("UPDATE Table SET Column = Null WHERE (Condition);");
+        DeletionExecution expected = DeletionExecutionMaker("UPDATE Table SET Column = 'Null' WHERE (Condition);");
 
         Assert.Contains(expected, executions);
         Assert.True(1 == executions.Count);
@@ -158,9 +156,9 @@ public class VacuumerTest
             vacuumer.ExecuteVacuumingRules(new List<VacuumingRule>() {vacuumingRule}).ToList();
 
 
-        DeletionExecution expected = DeletionExecutionMaker("UPDATE Table SET Column = Null WHERE (Condition);");
+        DeletionExecution expected = DeletionExecutionMaker("UPDATE Table SET Column = 'Null' WHERE (Condition);");
         DeletionExecution secondExpected =
-            DeletionExecutionMaker("UPDATE Table SET AnotherColumn = Null WHERE (Condition);", column: "AnotherColumn");
+            DeletionExecutionMaker("UPDATE Table SET AnotherColumn = 'Null' WHERE (Condition);", column: "AnotherColumn");
 
         Assert.Contains(expected, executions);
         Assert.Contains(secondExpected, executions);
