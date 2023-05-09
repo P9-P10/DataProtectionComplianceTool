@@ -31,6 +31,7 @@ public static class VacuumingRulesCommandBuilder
             .WithDescription("Adds a vacuuming rule to the system")
             .WithOption(out var nameOption, BuildNameOption())
             .WithOption(out var intervalOption, BuildIntervalOption().WithIsRequired(true))
+            .WithValidator(result => OptionBuilder.ValidInterval(result, intervalOption))
             .WithOption(out var purposeOption,
                 OptionBuilder
                     .CreateOption<string>(OptionNamer.Purpose)

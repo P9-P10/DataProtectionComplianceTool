@@ -7,10 +7,26 @@ public class VacuumingRule : DomainEntity, IVacuumingRule
 {
     public string Name { get; set; }
     public string? Description { get; set; }
-    public string Interval { get; set; }
+
+    public string Interval
+    {
+        get => _interval;
+        set
+        {        if (IsValidInterval(value))
+            {
+                _interval = value;
+            }
+            else
+            {
+                throw new IntervalParseException();
+            }
+        }
+    }
+
+    private string _interval = "";
 
     public DateTime? LastExecution { get; set; }
-    
+
     public virtual IEnumerable<Purpose> Purposes { get; set; }
 
     public string ToListing()
@@ -66,6 +82,11 @@ public class VacuumingRule : DomainEntity, IVacuumingRule
         Interval = interval;
         purposes ??= new List<Purpose>();
         Purposes = purposes;
+    }
+    
+    public static bool IsValidInterval(string interval)
+    {
+        return Regex.Match(interval, @"(\d+(y|d|m|M|D|w) {0,1})+").Success;
     }
 
     public VacuumingRule(string description, string name, string interval,
@@ -174,5 +195,9 @@ public class VacuumingRule : DomainEntity, IVacuumingRule
     bool Equals(VacuumingRule? other)
     {
         return other.Interval == Interval && other.Name == Name && other.Id == Id;
+    }
+
+    public class IntervalParseException : Exception
+    {
     }
 }

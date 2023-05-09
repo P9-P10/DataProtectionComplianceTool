@@ -43,7 +43,7 @@ public class VacuumingRulesCommandTest : CommandTest
 
     private const string RuleName = "ruleName";
     private const string NewRuleName = "newRuleName";
-    private const string Interval = "This is an interval";
+    private const string Interval = "2y 5d";
     private const string NewInterval = "This is a new interval";
     private const string Description = "This is a description";
     private const string NewDescription = "This is a new description";

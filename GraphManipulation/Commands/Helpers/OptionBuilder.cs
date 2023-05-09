@@ -2,6 +2,7 @@ using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.Diagnostics;
 using GraphManipulation.Managers;
+using GraphManipulation.Models;
 
 namespace GraphManipulation.Commands.Helpers;
 
@@ -83,7 +84,7 @@ public static class OptionBuilder
             .WithArity(new ArgumentArity(2, 2))
             .WithAllowMultipleArguments(true);
     }
-    
+
     public static Option<IEnumerable<string>> CreatePurposeListOption()
     {
         return CreateOption<IEnumerable<string>>(OptionNamer.PurposeList)
@@ -100,6 +101,33 @@ public static class OptionBuilder
     public static Option<string> CreateNewNameOption()
     {
         return CreateOption<string>(OptionNamer.NewName).WithAlias(OptionNamer.NewNameAlias);
+    }
+
+    public static void ValidInterval(CommandResult commandResult, Option<string> option)
+    {
+        if (commandResult.FindResultFor(option) is null)
+        {
+            return;
+        }
+
+        try
+        {
+            string result = commandResult.GetValueForOption(option);
+            if (result == null)
+            {
+                return;
+            }
+
+            if (!VacuumingRule.IsValidInterval(result))
+            {
+                commandResult.ErrorMessage =
+                    "Please provide valid vacuuming interval (Should be of the format 2y 3m 2w)";
+            }
+        }
+        catch (InvalidOperationException e)
+        {
+            // Ignore here, is dealt with somewhere else
+        }
     }
 
     public static void ValidateOrder<TEnumerable, TValue>(CommandResult commandResult, Option<TEnumerable> option)

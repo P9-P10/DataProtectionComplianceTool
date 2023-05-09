@@ -18,10 +18,10 @@ public class TestVacuumingRule
             Interval = "2y",
             LastExecution = DateTime.Now.AddYears(-2).AddDays(-1)
         };
-        
+
         Assert.True(vacuumingRule.ShouldExecute());
     }
-    
+
     [Fact]
     public void TestShouldExecute_Returns_False_When_It_Should_Not_Execute()
     {
@@ -33,7 +33,7 @@ public class TestVacuumingRule
             Interval = "5y",
             LastExecution = DateTime.Now.AddYears(-2).AddDays(-1)
         };
-        
+
         Assert.False(vacuumingRule.ShouldExecute());
     }
 
@@ -45,7 +45,33 @@ public class TestVacuumingRule
             Name = "Name",
             Purposes = new List<Purpose>()
         };
-        
+
         Assert.Equal("Name, , , [  ]", vacuumingRule.ToListing());
+    }
+
+    [Fact]
+    public void SetInterval_Updates_Interval_If_Given_Valid_Interval()
+    {
+        VacuumingRule vacuumingRule = new()
+        {
+            Name = "Name",
+            Purposes = new List<Purpose>()
+        };
+
+        vacuumingRule.Interval = "2y 5d";
+        Assert.Equal("2y 5d", vacuumingRule.GetInterval());
+    }
+
+    [Fact]
+    public void SetInterval_Throws_Exception_On_Invalid_Interval()
+    {
+        VacuumingRule vacuumingRule = new()
+        {
+            Name = "Name",
+            Purposes = new List<Purpose>()
+        };
+
+        Assert.Throws<VacuumingRule.IntervalParseException>(()=> vacuumingRule.Interval = "Test");
+        
     }
 }

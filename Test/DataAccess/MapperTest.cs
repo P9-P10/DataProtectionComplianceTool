@@ -63,8 +63,8 @@ public class MapperTest
                 JoinCondition = "test"
             };
 
-            public static VacuumingRule rule1 = new() {Name = "ruleOne", Interval = "one", Description = ""};
-            public static VacuumingRule rule2 = new() {Name = "ruleTwo", Interval = "two", Description = ""};
+            public static VacuumingRule rule1 = new() {Name = "ruleOne", Interval = "2d", Description = ""};
+            public static VacuumingRule rule2 = new() {Name = "ruleTwo", Interval = "3d", Description = ""};
 
             public static Purpose purpose1 = new()
             {
