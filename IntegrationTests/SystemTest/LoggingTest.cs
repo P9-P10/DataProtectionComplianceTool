@@ -169,7 +169,7 @@ public class LoggingTest : TestResources
             ListLogs(process, constraints);
 
             var error = process.GetAllErrorsNoWhitespace();
-            var output = FormatOutputForLogTest(process.GetAllOutputNoWhitespace()).ToList();
+            var output = FormatOutputForLogTest(process.GetAllOutputNoWhitespace());
 
             error.Should().BeEmpty();
             var logEntry = output
@@ -179,6 +179,13 @@ public class LoggingTest : TestResources
                 .First();
 
             logEntry.Subject.Should().Be(TestPersonalDataColumn.ToListingIdentifier());
+            logEntry.LogType.Should().Be(LogType.Vacuuming);
+            logEntry.Message.Should().Contain(
+                $"\"UPDATE {TestPersonalDataColumn.TableColumnPair.TableName} " +
+                $"SET {TestPersonalDataColumn.TableColumnPair.ColumnName} = \'{TestPersonalDataColumn.DefaultValue}\' " +
+                $"WHERE ({TestDeleteCondition.Condition});\" " +
+                $"affected {TestPersonalDataColumn.ToListingIdentifier()} " +
+                $"because it is stored under the following purpose(s): {TestPurpose.ToListingIdentifier()}");
         }
     }
 }
