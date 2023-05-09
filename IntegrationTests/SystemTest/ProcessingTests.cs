@@ -3,7 +3,6 @@ using IntegrationTests.SystemTest.Tools;
 
 namespace IntegrationTests.SystemTest;
 
-[Collection("SystemTestSequential")]
 public class ProcessingTests : TestResources
 {
 
