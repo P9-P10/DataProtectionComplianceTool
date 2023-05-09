@@ -23,6 +23,11 @@ namespace GraphManipulation;
 
 // TODO: En refactor af managers, så hver manager har en Add(TKey key) i stedet for varierende interfaces ville simplificere kommandoer gevaldigt (de andre værdier kan klares med updates efterfølgende)
 
+// TODO: purposes skal have flere delete conditions, men ikke påkrævet
+// TODO: Personaldatacolumns skal ikke have join condition, og purposes skal ikke være påkrævet
+// TODO: delete conditions skal have purpose og personal data column
+// TODO: status kommando der fortæller hvad der mangler i systemet (f.eks. at der er personal data columns der ikke har et purpose)
+
 public static class Program
 {
     private static string configPath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
