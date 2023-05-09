@@ -20,7 +20,8 @@ public class SystemPersistenceTests : TestResources
 
         TestProcess secondProcess = new(Tools.SystemTest.ExecutablePath, configPath);
         secondProcess.Start();
-        secondProcess.GiveInput("");
+        secondProcess.AwaitReady();
+        
         ListPurpose(secondProcess);
 
         
