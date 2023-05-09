@@ -29,7 +29,7 @@ public class PlaintextLogger : Logger
 
     public override IEnumerable<ILog> Read(ILogConstraints constraints)
     {
-        var logs = File.ReadLines(GetLogFilePath()).Select(s => new Log(s));
+        var logs = File.ReadLines(GetLogFilePath()).Select(s => new Log(s)).ToList();
         return constraints.ApplyConstraintsToLogs(logs);
     }
 
