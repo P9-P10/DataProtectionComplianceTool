@@ -36,6 +36,6 @@ public class NamedEntityManager<T> : IGetter<T, string>, IDeleter<string>, IName
     
     protected T? GetByName(string name)
     {
-        return _mapper.FindSingle(purpose => purpose.GetName() == name);
+        return _mapper.FindSingle(namedEntity => namedEntity.GetName() == name);
     }
 }
