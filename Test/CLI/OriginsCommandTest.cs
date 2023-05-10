@@ -4,7 +4,6 @@ using System.CommandLine.IO;
 using GraphManipulation.Commands.Builders;
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
-using GraphManipulation.Models.Interfaces;
 using Moq;
 using Xunit;
 
@@ -21,7 +20,7 @@ public class OriginsCommandTest : CommandTest
             .Setup(manager => manager.Get(It.Is<string>(s => s == Name)))
             .Returns(Origin);
         
-        return OriginsCommandBuilder.Build(console, managerMock.Object);
+        return new OriginsCommandBuilder(console, managerMock.Object).Build();
     }
 
     private const string Name = "originName";
@@ -29,11 +28,17 @@ public class OriginsCommandTest : CommandTest
     private const string Description = "This is a description";
     private const string NewDescription = "This is a new description";
 
-    private static readonly IOrigin Origin = new Origin()
+    private static readonly Origin Origin = new()
     {
         Name = Name,
         Description = Description,
         PersonalDataColumns = new List<PersonalDataColumn>()
+    };
+
+    private static readonly Origin NewOrigin = new()
+    {
+        Name = NewName,
+        Description = NewDescription
     };
 
     public class Add
@@ -64,11 +69,12 @@ public class OriginsCommandTest : CommandTest
             BuildCli(out var managerMock, out _)
                 .Invoke($"{CommandName} " +
                         $"--name {NewName} " +
-                        $"--description \"{Description}\"");
+                        $"--description \"{NewDescription}\"");
             
-            managerMock.Verify(manager => manager.Add(
+            managerMock.Verify(manager => manager.Create(It.Is<string>(s => s == NewName)));
+            managerMock.Verify(manager => manager.Update(
                 It.Is<string>(s => s == NewName),
-                It.Is<string>(s => s == Description)));
+                It.Is<Origin>(o => o.Name == NewName && o.Description == NewDescription)));
         }
     }
     
@@ -105,12 +111,9 @@ public class OriginsCommandTest : CommandTest
                         $"--new-name {NewName} " +
                         $"--description \"{NewDescription}\" ");
             
-            managerMock.Verify(manager => manager.UpdateName(
-                It.Is<string>(s => s == Name),
-                It.Is<string>(s => s == NewName)));
-            managerMock.Verify(manager => manager.UpdateDescription(
-                It.Is<string>(s => s == Name),
-                It.Is<string>(s => s == NewDescription)));
+            managerMock.Verify(manager => manager.Update(
+                It.Is<string>(s => s == NewName),
+                It.Is<Origin>(o => o.Equals(NewOrigin))));
             
         }
     }

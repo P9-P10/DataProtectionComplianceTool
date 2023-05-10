@@ -1,6 +1,8 @@
 ﻿using GraphManipulation.Logging;
 using GraphManipulation.Managers.Interfaces;
+using GraphManipulation.Managers.Interfaces.Archive;
 using GraphManipulation.Models.Interfaces;
+using IOriginsManager = GraphManipulation.Managers.Interfaces.Archive.IOriginsManager;
 
 namespace GraphManipulation.Decorators.Managers;
 

@@ -1,10 +1,11 @@
 ﻿using GraphManipulation.DataAccess.Mappers;
 using GraphManipulation.Managers.Interfaces;
+using GraphManipulation.Managers.Interfaces.Archive;
 using GraphManipulation.Models;
 using GraphManipulation.Models.Interfaces;
 using GraphManipulation.Vacuuming;
 
-namespace GraphManipulation.Managers;
+namespace GraphManipulation.Managers.Archive;
 
 public class VacuumingRuleManager : NamedEntityManager<VacuumingRule>, IVacuumingRulesManager
 {

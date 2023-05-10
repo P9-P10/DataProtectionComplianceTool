@@ -15,9 +15,11 @@ using GraphManipulation.Decorators.Managers;
 using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
 using GraphManipulation.Managers;
+using GraphManipulation.Managers.Archive;
 using GraphManipulation.Models;
 using GraphManipulation.Vacuuming;
 using Microsoft.EntityFrameworkCore;
+using OriginsManager = GraphManipulation.Managers.Archive.OriginsManager;
 
 namespace GraphManipulation;
 
@@ -106,20 +108,20 @@ public static class Program
             new DeleteConditionsManagerDecorator(deleteConditionsManager, logger);
         var decoratedProcessingsManager = new ProcessingsManagerDecorator(processingsManager, logger);
 
-        var command = CommandLineInterfaceBuilder
-            .Build(
-                console, decoratedIndividualsManager, decoratedPersonalDataManager,
-                decoratedPurposesManager, decoratedOriginsManager, decoratedVacuumingRulesManager,
-                decoratedDeleteConditionsManager, decoratedProcessingsManager, logger, configManager
-            );
+        // var command = CommandLineInterfaceBuilder
+        //     .Build(
+        //         console, decoratedIndividualsManager, decoratedPersonalDataManager,
+        //         decoratedPurposesManager, decoratedOriginsManager, decoratedVacuumingRulesManager,
+        //         decoratedDeleteConditionsManager, decoratedProcessingsManager, logger, configManager
+        //     );
 
-        var cli = new CommandLineBuilder(command)
-            .UseHelp("help", "h", "?")
-            .UseTypoCorrections()
-            .UseParseErrorReporting()
-            .Build();
-
-        Run(cli);
+        // var cli = new CommandLineBuilder(command)
+        //     .UseHelp("help", "h", "?")
+        //     .UseTypoCorrections()
+        //     .UseParseErrorReporting()
+        //     .Build();
+        //
+        // Run(cli);
     }
 
     private static void AddStructureToDatabaseIfNotExists(IDbConnection connection, DbContext context)

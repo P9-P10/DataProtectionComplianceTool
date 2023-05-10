@@ -2,7 +2,7 @@
 using GraphManipulation.Managers.Interfaces.Base;
 using GraphManipulation.Models.Interfaces.Base;
 
-namespace GraphManipulation.Managers;
+namespace GraphManipulation.Managers.Archive;
 
 public class NamedEntityManager<T> : IGetter<T, string>, IDeleter<string>, INameUpdater where T : INamedEntity, IListable
 {

@@ -2,7 +2,10 @@ using System.CommandLine;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
+using GraphManipulation.Managers;
 using GraphManipulation.Managers.Interfaces;
+using GraphManipulation.Managers.Interfaces.Archive;
+using IOriginsManager = GraphManipulation.Managers.Interfaces.IOriginsManager;
 
 namespace GraphManipulation.Commands.Builders;
 
@@ -25,10 +28,10 @@ public static class CommandLineInterfaceBuilder
             .WithDescription("This is a description of the root command")
             .WithSubCommands(
                 IndividualsCommandBuilder.Build(console, individualsManager),
-                PersonalDataCommandBuilder.Build(console, personalDataManager, purposesManager,
-                    originsManager, individualsManager),
+                // PersonalDataCommandBuilder.Build(console, personalDataManager, purposesManager,
+                //     originsManager, individualsManager),
                 PurposesCommandBuilder.Build(console, purposesManager, deleteConditionsManager),
-                OriginsCommandBuilder.Build(console, originsManager),
+                new OriginsCommandBuilder(console, originsManager).Build(),
                 VacuumingRulesCommandBuilder.Build(console, vacuumingRulesManager, purposesManager),
                 DeleteConditionsCommandBuilder.Build(console, deleteConditionsManager),
                 ProcessingsCommandBuilder.Build(console, processingsManager, personalDataManager, purposesManager),

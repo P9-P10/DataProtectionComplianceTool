@@ -105,6 +105,32 @@ public static class Handlers
         console.WriteLine(SuccessMessage(key, typeof(TValue), Operations.Added));
     }
 
+    public static void UpdateHandler<TKey, TValue>(InvocationContext context, IConsole console,
+        Action<TKey, TValue> updateAction,
+        IGetter<TValue, TKey> getter, Option<TKey> keyOption, Option<TValue> valueOption)
+    {
+        var key = GetValueOfRequiredOption(context, keyOption);
+        
+        if (!TryGet(getter, key, out var keyValue))
+        {
+            console.Error.WriteLine(FailureToFindMessage(key, typeof(TValue)));
+            return;
+        }
+        
+        if (!TryGetValueOfOption(context, valueOption, out var optionValue))
+        {
+            return;
+        }
+        
+        if (keyValue.Equals(optionValue))
+        {
+            return;
+        }
+        
+        updateAction(key, optionValue);
+        console.WriteLine(SuccessMessage(key, typeof(TValue), Operations.Updated, optionValue.ToString()));
+    }
+
     public static void AddHandler<TKey, TValue, T1>(InvocationContext context, IConsole console,
         Action<TKey, T1> addAction,
         IGetter<TValue, TKey> getter,

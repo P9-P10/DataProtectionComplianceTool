@@ -5,11 +5,14 @@ using System.CommandLine.IO;
 using FluentAssertions;
 using GraphManipulation.Commands.Builders;
 using GraphManipulation.Managers;
+using GraphManipulation.Managers.Archive;
 using GraphManipulation.Managers.Interfaces;
+using GraphManipulation.Managers.Interfaces.Archive;
 using GraphManipulation.Models;
 using GraphManipulation.Models.Interfaces;
 using Moq;
 using Xunit;
+using IOriginsManager = GraphManipulation.Managers.Interfaces.Archive.IOriginsManager;
 
 namespace Test.CLI;
 

@@ -1,9 +1,11 @@
 ﻿using GraphManipulation.DataAccess.Mappers;
 using GraphManipulation.Managers.Interfaces;
+using GraphManipulation.Managers.Interfaces.Archive;
 using GraphManipulation.Models;
 using GraphManipulation.Models.Interfaces;
+using IOriginsManager = GraphManipulation.Managers.Interfaces.Archive.IOriginsManager;
 
-namespace GraphManipulation.Managers;
+namespace GraphManipulation.Managers.Archive;
 
 public class OriginsManager : NamedEntityManager<Origin>, IOriginsManager
 {

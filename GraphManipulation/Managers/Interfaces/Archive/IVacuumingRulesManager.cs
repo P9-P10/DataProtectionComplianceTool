@@ -1,7 +1,7 @@
 using GraphManipulation.Managers.Interfaces.Base;
 using GraphManipulation.Models.Interfaces;
 
-namespace GraphManipulation.Managers.Interfaces;
+namespace GraphManipulation.Managers.Interfaces.Archive;
 
 public interface IVacuumingRulesManager :
     IGetter<IVacuumingRule, string>,

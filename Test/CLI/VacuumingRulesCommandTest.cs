@@ -4,6 +4,7 @@ using System.CommandLine.IO;
 using FluentAssertions;
 using GraphManipulation.Commands.Builders;
 using GraphManipulation.Managers.Interfaces;
+using GraphManipulation.Managers.Interfaces.Archive;
 using GraphManipulation.Models;
 using Moq;
 using Xunit;

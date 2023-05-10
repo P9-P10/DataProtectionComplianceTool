@@ -1,6 +1,6 @@
 using GraphManipulation.Models.Interfaces.Base;
 
-namespace GraphManipulation.Managers;
+namespace GraphManipulation.Managers.Archive;
 
 public class TableColumnPair : IListable
 {

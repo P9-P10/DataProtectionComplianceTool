@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using GraphManipulation.Managers;
+using GraphManipulation.Managers.Archive;
 using GraphManipulation.Models;
 using Xunit;
 

@@ -1,11 +1,13 @@
+using GraphManipulation.Models.Base;
 using GraphManipulation.Models.Interfaces;
+using GraphManipulation.Models.Interfaces.Base;
 
 namespace GraphManipulation.Models;
 
-public class Origin : DomainEntity, IOrigin
+public class Origin : Entity<string>, IOrigin
 {
     public string Name { get; set; }
-    public string Description { get; set; }
+    public string? Description { get; set; }
     public virtual IEnumerable<PersonalDataColumn>? PersonalDataColumns { get; set; }
 
     public string ToListing()

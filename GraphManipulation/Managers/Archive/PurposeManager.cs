@@ -1,10 +1,10 @@
-﻿using System.Runtime.InteropServices.ComTypes;
-using GraphManipulation.DataAccess.Mappers;
+﻿using GraphManipulation.DataAccess.Mappers;
 using GraphManipulation.Managers.Interfaces;
+using GraphManipulation.Managers.Interfaces.Archive;
 using GraphManipulation.Models;
 using GraphManipulation.Models.Interfaces;
 
-namespace GraphManipulation.Managers;
+namespace GraphManipulation.Managers.Archive;
 
 public class PurposeManager : NamedEntityManager<Purpose>, IPurposesManager
 {

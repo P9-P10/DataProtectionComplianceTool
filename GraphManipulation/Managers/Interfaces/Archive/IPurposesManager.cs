@@ -1,8 +1,7 @@
 using GraphManipulation.Managers.Interfaces.Base;
-using GraphManipulation.Models;
 using GraphManipulation.Models.Interfaces;
 
-namespace GraphManipulation.Managers.Interfaces;
+namespace GraphManipulation.Managers.Interfaces.Archive;
 
 public interface IPurposesManager : 
     IGetter<IPurpose, string>, 
