@@ -140,7 +140,6 @@ public class PersonalDataCommandTest : CommandTest
                 BuildCli(out _, out _, out _),
                 $"{CommandName} " +
                 $"--table-column {TableName1} {ColumnName1} " +
-                $"--join-condition \"{JoinCondition}\" " +
                 $"--description \"{Description}\" " +
                 $"--default-value \"{DefaultValue}\" " +
                 $"--purposes {Purpose1Name} {Purpose2Name}"
@@ -154,7 +153,6 @@ public class PersonalDataCommandTest : CommandTest
                 BuildCli(out _, out _, out _),
                 $"{CommandName} " +
                 $"-tc {TableName1} {ColumnName1} " +
-                $"-jc \"{JoinCondition}\" " +
                 $"-d \"{Description}\" " +
                 $"-dv \"{DefaultValue}\" " +
                 $"-ps {Purpose1Name} {Purpose2Name}"
@@ -168,7 +166,6 @@ public class PersonalDataCommandTest : CommandTest
                 BuildCli(out _, out _, out _),
                 $"{CommandName} " +
                 $"--table-column {TableName1} {ColumnName1} " +
-                $"--join-condition \"{JoinCondition}\" " +
                 $"--description \"{Description}\" " +
                 $"--purposes {Purpose1Name} "
             );
@@ -181,24 +178,11 @@ public class PersonalDataCommandTest : CommandTest
                 BuildCli(out _, out _, out _),
                 $"{CommandName} " +
                 $"--table-column {TableName1} {ColumnName1} " +
-                $"--join-condition \"{JoinCondition}\" " +
                 $"--description \"{Description}\" ",
                 false
             );
         }
-
-        [Fact]
-        public void NoJoinConditionFails()
-        {
-            VerifyCommand(
-                BuildCli(out _, out _, out _),
-                $"{CommandName} " +
-                $"--table-column {TableName1} {ColumnName1} " +
-                $"--description \"{Description}\" " +
-                $"--purposes {Purpose1Name} {Purpose2Name}",
-                false
-            );
-        }
+        
 
         [Fact]
         public void WithoutDescriptionParses()
@@ -207,7 +191,6 @@ public class PersonalDataCommandTest : CommandTest
                 BuildCli(out _, out _, out _),
                 $"{CommandName} " +
                 $"--table-column {TableName1} {ColumnName1} " +
-                $"--join-condition \"{JoinCondition}\" " +
                 $"--purposes {Purpose1Name} {Purpose2Name}"
             );
         }
@@ -218,7 +201,6 @@ public class PersonalDataCommandTest : CommandTest
             BuildCli(out var managerMock, out _, out _)
                 .Invoke($"{CommandName} " +
                         $"--table-column {TableName3} {ColumnName3} " +
-                        $"--join-condition \"{JoinCondition}\" " +
                         $"--description \"{Description}\" " +
                         $"--default-value \"{DefaultValue}\" " +
                         $"--purposes {Purpose1Name} {Purpose2Name}"
@@ -349,7 +331,7 @@ public class PersonalDataCommandTest : CommandTest
                 .Invoke($"{CommandName} " +
                         $"--table-column {TableName1} {ColumnName1} ");
 
-            console.Out.ToString().Should().StartWith($"({TableName1}, {ColumnName1}), {JoinCondition}, {Description}");
+            console.Out.ToString().Should().StartWith($"({TableName1}, {ColumnName1}), {Description}");
         }
     }
 

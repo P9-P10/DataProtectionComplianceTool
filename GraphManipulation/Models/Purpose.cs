@@ -6,7 +6,7 @@ public class Purpose : DomainEntity, IPurpose
 {
     public bool LegallyRequired { get; set; }
     public virtual IEnumerable<PersonalDataColumn>? PersonalDataColumns { get; set; }
-    public virtual IEnumerable<DeleteCondition> DeleteConditions { get; set; }
+    public virtual IEnumerable<DeleteCondition>? DeleteConditions { get; set; }
     public string? Description { get; set; }
     public string Name { get; set; }
     public virtual IEnumerable<VacuumingRule>? Rules { get; set; }
@@ -17,9 +17,15 @@ public class Purpose : DomainEntity, IPurpose
             Name,
             Description,
             LegallyRequired,
-            "[ " + string.Join(", ", DeleteConditions.Select(r => r.ToListingIdentifier())) + " ]",
-            "[ " + string.Join(", ", PersonalDataColumns is null ? new List<string>() : PersonalDataColumns.Select(c => c.ToListingIdentifier())) + " ]",
-            "[ " + string.Join(", ", Rules is null ? new List<string>() : Rules.Select(r => r.ToListingIdentifier())) + " ]"
+            "[ " + string.Join(", ",
+                DeleteConditions is null ? new List<string>() : DeleteConditions.Select(r => r.ToListingIdentifier())) +
+            " ]",
+            "[ " + string.Join(", ",
+                PersonalDataColumns is null
+                    ? new List<string>()
+                    : PersonalDataColumns.Select(c => c.ToListingIdentifier())) + " ]",
+            "[ " + string.Join(", ", Rules is null ? new List<string>() : Rules.Select(r => r.ToListingIdentifier())) +
+            " ]"
         );
     }
 
@@ -45,7 +51,7 @@ public class Purpose : DomainEntity, IPurpose
 
     public IEnumerable<string> GetDeleteCondition()
     {
-        return DeleteConditions.Select(p => p.GetName());
+        return DeleteConditions == null ? new List<string>() : DeleteConditions.Select(p => p.GetName());
     }
 
 

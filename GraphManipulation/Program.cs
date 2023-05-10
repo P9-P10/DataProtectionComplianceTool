@@ -84,7 +84,7 @@ public static class Program
         var processingMapper = new Mapper<Processing>(context);
         var personalDataMapper = new Mapper<PersonalData>(context);
 
-        var vacuumer = new Vacuumer(personalDataColumnMapper, new SqliteQueryExecutor(dbConnection));
+        var vacuumer = new Vacuumer(purposeMapper, new SqliteQueryExecutor(dbConnection));
         var loggingVacuumer = new LoggingVacuumer(vacuumer, logger);
 
         var individualsManager = new IndividualsManager(individualMapper, new Mapper<ConfigKeyValue>(context));

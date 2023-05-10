@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
 using GraphManipulation.Vacuuming;
@@ -22,7 +23,10 @@ public static class VacuumingModelsMakers
                 Condition = "Condition"
             };
             purposes.Add(new Purpose()
-                {Id = 0, Name = purposeName, Description = "Description", DeleteConditions = new List<DeleteCondition>(){deleteCondition}});
+            {
+                Id = 0, Name = purposeName, Description = "Description",
+                DeleteConditions = new List<DeleteCondition>() {deleteCondition}
+            });
         }
         else
         {
@@ -40,8 +44,10 @@ public static class VacuumingModelsMakers
                 Description = "Description",
                 Condition = "SecondCondition"
             };
-            purposes.Add(new Purpose() {Id = 0, Name = purposeName, DeleteConditions = new List<DeleteCondition>(){deleteCondition}});
-            purposes.Add(new Purpose() {Id = 1, Name = purposeName, DeleteConditions = new List<DeleteCondition>(){deleteCondition2}});
+            purposes.Add(new Purpose()
+                {Id = 0, Name = purposeName, DeleteConditions = new List<DeleteCondition>() {deleteCondition}});
+            purposes.Add(new Purpose()
+                {Id = 1, Name = purposeName, DeleteConditions = new List<DeleteCondition>() {deleteCondition2}});
         }
 
         PersonalDataColumn personalDataColumn = new()
@@ -85,9 +91,36 @@ public static class VacuumingModelsMakers
                 Name = "Name",
                 Description = "Description",
                 PersonalDataColumns = PersonalDataColumns(),
-                DeleteConditions = new List<DeleteCondition>(),
+                DeleteConditions = new List<DeleteCondition> {DeleteConditionMaker()},
                 Rules = new List<VacuumingRule>()
             }
+        };
+    }
+
+    public static Purpose PurposeMaker(string name = "Name", int id = 0,DeleteCondition? deleteCondition = null)
+    {
+        deleteCondition ??= DeleteConditionMaker();
+
+        Purpose purpose = new()
+        {
+            Name = name,
+            DeleteConditions = new List<DeleteCondition>(),
+            Rules = new List<VacuumingRule>(),
+            Id = id,
+            PersonalDataColumns = PersonalDataColumns()
+        };
+        deleteCondition.Purpose = purpose;
+        purpose.DeleteConditions = purpose.DeleteConditions.Append(deleteCondition).ToList();
+        return purpose;
+    }
+
+    private static DeleteCondition DeleteConditionMaker()
+    {
+        return new DeleteCondition()
+        {
+            Name = "Execution",
+            Condition = "Condition",
+            PersonalDataColumn = PersonalDataColumnMaker()
         };
     }
 

@@ -51,12 +51,12 @@ public static class PurposesCommandBuilder
                     legallyRequiredOption,
                     descriptionOption);
 
-                Handlers.UpdateHandlerWithKey(context, console,
+                /*Handlers.UpdateHandlerWithKey(context, console,
                     purposesManager.SetDeleteCondition,
                     purposesManager,
                     deleteConditionsManager,
-                    purpose => purpose.GetDeleteCondition().First(),
-                    nameOption, deleteConditionOption);
+                    purpose => purpose.GetDeleteCondition(),
+                    nameOption, deleteConditionOption);*/
             });
     }
 

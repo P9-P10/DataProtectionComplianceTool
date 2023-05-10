@@ -12,7 +12,8 @@ public class PurposeTest
         Purpose purpose = new Purpose()
         {
             Name = "Name",
-            PersonalDataColumns = null
+            PersonalDataColumns = null,
+            DeleteConditions = new List<DeleteCondition>()
         };
 
         Assert.Equal("Name, , False, [  ], [  ], [  ]", purpose.ToListing());
@@ -21,10 +22,11 @@ public class PurposeTest
     [Fact]
     public void TestToListingWorks()
     {
-        Purpose purpose = new Purpose()
+        Purpose purpose = new()
         {
             Name = "Name",
-            PersonalDataColumns = new List<PersonalDataColumn>()
+            PersonalDataColumns = new List<PersonalDataColumn>(),
+            DeleteConditions = new List<DeleteCondition>()
         };
 
         Assert.Equal("Name, , False, [  ], [  ], [  ]", purpose.ToListing());

@@ -5,48 +5,47 @@ namespace GraphManipulation.Vacuuming;
 
 public class Vacuumer : IVacuumer
 {
-    private readonly IMapper<PersonalDataColumn> _personalDataColumnMapper;
+    private readonly IMapper<Purpose> _purposeMapper;
     private readonly IQueryExecutor _queryExecutor;
 
-    public Vacuumer(IMapper<PersonalDataColumn> personalDataColumnMapper, IQueryExecutor queryExecutor)
+
+    public Vacuumer(IMapper<Purpose> purposeMapper, IQueryExecutor queryExecutor)
     {
-        _personalDataColumnMapper = personalDataColumnMapper;
+        _purposeMapper = purposeMapper;
         _queryExecutor = queryExecutor;
     }
 
     public IEnumerable<DeletionExecution> GenerateUpdateStatement(string predefinedExpirationDate = "")
     {
-        return _personalDataColumnMapper.Find(_ => true).Select(CreateDeletionExecution).ToList();
+        List<DeletionExecution> output = new List<DeletionExecution>();
+        foreach (var purpose in _purposeMapper.Find(_ => true))
+        {
+            output.AddRange(CreateDeletionExecutionFromPurpose(purpose));
+        }
+
+        return output;
     }
 
-    private static DeletionExecution CreateDeletionExecution(PersonalDataColumn personalDataColumn)
+    private IEnumerable<DeletionExecution> CreateDeletionExecutionFromPurpose(Purpose purpose)
     {
-        DeletionExecution deletionExecution = new();
-        var logicOperator = " AND ";
-        string query = CreateUpdateQuery(personalDataColumn);
+        List<DeletionExecution> output = new List<DeletionExecution>();
+        foreach (var condition in purpose.DeleteConditions)
+        {
+            output.Add(CreateDeletionExecution(
+                GetAllDeleteConditionsWithSameTableColumnPair(condition.PersonalDataColumn)));
+        }
 
-        query += AppendConditions(personalDataColumn, logicOperator, deletionExecution);
-
-        deletionExecution.Column = personalDataColumn.TableColumnPair.ColumnName;
-        deletionExecution.Table = personalDataColumn.TableColumnPair.TableName;
-
-        deletionExecution.Query = ReplaceLastOccurrenceOfString(query, logicOperator);
-        return deletionExecution;
+        return output;
     }
 
-    private static string AppendConditions(PersonalDataColumn personalDataColumn, string logicOperator,
+    private static string AppendConditions(DeleteCondition condition, string logicOperator,
         DeletionExecution deletionExecution)
     {
         string conditionalStatement = "";
-        foreach (Purpose purpose in personalDataColumn.Purposes)
-        {
-            foreach (var condition in purpose.DeleteConditions)
-            {
-                conditionalStatement += $"({condition})";
-                conditionalStatement += logicOperator;
-                deletionExecution.AddPurpose(purpose);
-            }
-        }
+        conditionalStatement += $"({condition.Condition})";
+        conditionalStatement += logicOperator;
+        deletionExecution.AddPurpose(condition.Purpose);
+
 
         return conditionalStatement;
     }
@@ -79,35 +78,67 @@ public class Vacuumer : IVacuumer
     {
         List<DeletionExecution> executions = new List<DeletionExecution>();
 
-        List<PersonalDataColumn> personalDataColumns = _personalDataColumnMapper.Find(x => true).ToList();
-
-        foreach (var personalDataColumn in personalDataColumns)
+        foreach (var rule in vacuumingRules)
         {
-            foreach (var rule in vacuumingRules.ToList())
-            {
-                bool containsCorrectCondition = ContainsCorrectCondition(personalDataColumn, rule);
-                if (!containsCorrectCondition) continue;
+            executions.AddRange(ExecuteVacuumingRule(rule));
+        }
 
-                DeletionExecution execution = CreateDeletionExecution(personalDataColumn);
-                executions.Add(execution);
+        return executions;
+    }
+
+    private List<DeletionExecution> ExecuteVacuumingRule(VacuumingRule vacuumingRule)
+    {
+        List<DeletionExecution> executions = new List<DeletionExecution>();
+
+        foreach (var purpose in vacuumingRule.Purposes)
+        {
+            foreach (var condition in purpose.DeleteConditions)
+            {
+                DeletionExecution execution =
+                    CreateDeletionExecution(
+                        GetAllDeleteConditionsWithSameTableColumnPair(condition.PersonalDataColumn));
                 _queryExecutor.Execute(execution.Query);
+                executions.Add(execution);
             }
         }
 
         return executions;
     }
 
-    private static bool ContainsCorrectCondition(PersonalDataColumn personalDataColumn, VacuumingRule? rule)
+    private List<DeleteCondition> GetAllDeleteConditionsWithSameTableColumnPair(PersonalDataColumn personalDataColumn)
     {
-        foreach (var purpose in personalDataColumn.Purposes)
+        List<Purpose> purposes = GetAllPurposes();
+        List<DeleteCondition> output = new List<DeleteCondition>();
+        foreach (Purpose purpose in purposes)
         {
-            if (rule != null && rule.Purposes.Contains(purpose))
-            {
-                return true;
-            }
+            output.AddRange(purpose.DeleteConditions.Where(x =>
+                x.PersonalDataColumn.TableColumnPair.Equals(personalDataColumn.TableColumnPair)));
         }
 
-        return false;
+        return output;
+    }
+
+    private List<Purpose> GetAllPurposes()
+    {
+        return _purposeMapper.Find(x => true).ToList();
+    }
+
+    private DeletionExecution CreateDeletionExecution(List<DeleteCondition> conditions)
+    {
+        DeletionExecution deletionExecution = new();
+        var logicOperator = " AND ";
+        string query = CreateUpdateQuery(conditions.First().PersonalDataColumn);
+        foreach (var condition in conditions)
+        {
+            query += AppendConditions(condition, logicOperator, deletionExecution);
+        }
+
+
+        deletionExecution.Column = conditions.First().PersonalDataColumn.TableColumnPair.ColumnName;
+        deletionExecution.Table = conditions.First().PersonalDataColumn.TableColumnPair.TableName;
+
+        deletionExecution.Query = ReplaceLastOccurrenceOfString(query, logicOperator);
+        return deletionExecution;
     }
 
     private static string ReplaceLastOccurrenceOfString(string inputString, string occurrenceToReplace,
