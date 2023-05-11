@@ -32,14 +32,4 @@ public class TableColumnPair : IListable
     {
         return TableName == other.TableName && ColumnName == other.ColumnName;
     }
-
-    public override bool Equals(object? obj)
-    {
-        return Equals(obj as TableColumnPair);
-    }
-
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(TableName,ColumnName);
-    }
 }

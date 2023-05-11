@@ -25,7 +25,7 @@ public static class ProcessingsCommandBuilder
         IPersonalDataManager personalDataManager, IPurposesManager purposesManager)
     {
         return CommandBuilder
-            .BuildAddCommand()
+            .BuildCreateCommand()
             .WithDescription("Adds a record of processing of personal data under a given purpose to the system")
             .WithOption(out var nameOption, BuildNameOption())
             .WithOption(out var descriptionOption,

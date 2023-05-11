@@ -76,21 +76,21 @@ public class LoggingDecoratorTest
     [Fact]
     public void LogAddCreatesExpectedMessageWithNullParameters()
     {
-        decorator.LogAdd("key", null);
+        decorator.LogCreate("key", null);
 
         string message = GetMessage();
         
-        Assert.Equal("Add TestType key.", message);
+        Assert.Equal("Create TestType key.", message);
     }
 
     [Fact]
     public void LogAddCreatesExpectedMessageWithParameters()
     {
-        decorator.LogAdd("key", new { Param1 = "one", Param2 = "two" });
+        decorator.LogCreate("key", new { Param1 = "one", Param2 = "two" });
 
         string message = GetMessage();
         
-        Assert.Equal("Add TestType key. Parameters: [Param1, one], [Param2, two]", message);
+        Assert.Equal("Create TestType key. Parameters: [Param1, one], [Param2, two]", message);
     }
 
 }

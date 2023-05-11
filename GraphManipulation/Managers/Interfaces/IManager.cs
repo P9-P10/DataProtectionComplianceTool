@@ -8,7 +8,7 @@ public interface IManager<TKey, TValue> : IGetter<TValue, TKey>
     where TKey : notnull
     where TValue : Entity<TKey>, new()
 {
-    public void Create(TKey key);
-    public void Update(TKey key, TValue value);
-    public void Delete(TKey key);
+    public bool Create(TKey key);
+    public bool Update(TKey key, TValue value);
+    public bool Delete(TKey key);
 }

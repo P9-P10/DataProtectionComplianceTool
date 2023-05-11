@@ -14,7 +14,7 @@ public class OriginsTest : TestResources
 
         const string description = "This is the description";
         const string name = "OriginName";
-        Origin origin = new() {Name = name, Description = description};
+        Origin origin = new() {Key = name, Description = description};
         AddOrigin(process, origin);
         string result = process.GetOutput();
 
@@ -31,7 +31,7 @@ public class OriginsTest : TestResources
 
         const string description = "This is the description";
         const string name = "OriginName";
-        Origin origin = new() {Name = name, Description = description};
+        Origin origin = new() {Key = name, Description = description};
         AddOrigin(process, origin);
         ListOrigins(process);
         List<string> result = process.GetLastOutput();
@@ -47,11 +47,11 @@ public class OriginsTest : TestResources
 
         const string description = "This is the description";
         const string name = "OriginName";
-        Origin origin = new() {Name = name, Description = description};
+        Origin origin = new() {Key = name, Description = description};
         AddOrigin(process, origin);
 
 
-        UpdateOrigin(process, origin, new Origin() {Description = description, Name = "NewName"});
+        UpdateOrigin(process, origin, new Origin() {Description = description, Key = "NewName"});
         List<string> result = process.GetLastOutput();
 
         result.First().Should().Contain("NewName");
@@ -68,7 +68,7 @@ public class OriginsTest : TestResources
 
         const string description = "This is the description";
         const string name = "OriginName";
-        Origin origin = new() {Name = name, Description = description};
+        Origin origin = new() {Key = name, Description = description};
         AddOrigin(process, origin);
         
         DeleteOrigin(process, origin);
@@ -88,7 +88,7 @@ public class OriginsTest : TestResources
 
         const string description = "This is the description";
         const string name = "OriginName";
-        Origin origin = new() {Name = name, Description = description};
+        Origin origin = new() {Key = name, Description = description};
         AddOrigin(process, origin);
         
         DeleteOrigin(process, origin);
@@ -109,7 +109,7 @@ public class OriginsTest : TestResources
 
         const string description = "This is the description";
         const string name = "OriginName";
-        Origin origin = new() {Name = name, Description = description};
+        Origin origin = new() {Key = name, Description = description};
         AddOrigin(process, origin);
         
         ShowOrigin(process,origin);

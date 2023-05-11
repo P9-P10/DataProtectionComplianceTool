@@ -24,6 +24,16 @@ public static class CommandBuilder
         return command;
     }
 
+    public static Command WithOptions(this Command command, params Option[] options)
+    {
+        foreach (var option in options)
+        {
+            command.AddOption(option);
+        }
+
+        return command;
+    }
+
     public static Command WithArgument<T>(this Command command, out Argument<T> outputArgument,
         Argument<T> inputArgument)
     {
@@ -70,9 +80,9 @@ public static class CommandBuilder
             .WithAlias(alias + (string.IsNullOrEmpty(subject) ? "" : $"{subject.First()}"));
     }
 
-    public static Command BuildAddCommand(string subject = "")
+    public static Command BuildCreateCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject(CommandNamer.Add, CommandNamer.AddAlias, subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.Create, CommandNamer.CreateAlias, subject);
     }
 
     public static Command BuildUpdateCommand(string subject = "")

@@ -16,50 +16,26 @@ public class OriginsCommandBuilder : BaseCommandBuilder<IOriginsManager, string,
     {
         const string subject = "origin";
         const string subjects = "origins";
-        
+
+        var keyOption = BuildKeyOption();
+
+        var descriptionOption = OptionBuilder
+            .CreateDescriptionOption()
+            .WithDescription("The description of the origin");
+
+        var newKeyOption = OptionBuilder
+            .CreateNewNameOption()
+            .WithDescription("The new name of the origin");
+
         return CommandBuilder.CreateCommand(CommandNamer.OriginsName)
             .WithAlias(CommandNamer.OriginsAlias)
-            .WithSubCommands(Add(), Update(), 
+            .WithSubCommands(
+                CreateCommand(subject, keyOption, new OriginBinder(keyOption, descriptionOption), descriptionOption), 
+                UpdateCommand(subject, keyOption, new OriginBinder(newKeyOption, descriptionOption), newKeyOption, descriptionOption), 
                 DeleteCommand(subject, BuildKeyOption()),
                 ListCommand(subjects),
                 ShowCommand(subject, BuildKeyOption())
             );
-    }
-    
-    private Command Add()
-    {
-        var command = CommandBuilder
-            .BuildAddCommand()
-            .WithDescription("Adds the given origin to the system")
-            .WithOption(out var nameOption, BuildKeyOption())
-            .WithOption(out var descriptionOption,
-                OptionBuilder
-                    .CreateDescriptionOption()
-                    .WithDescription("The description of the origin")
-                    .WithGetDefaultValue(() => ""));
-
-        command.SetHandler(CreateHandler, nameOption, new OriginBinder(nameOption, descriptionOption));
-
-        return command;
-    }
-
-    private Command Update()
-    {
-        var command = CommandBuilder
-            .BuildUpdateCommand()
-            .WithDescription("Updates the given origin with the given values")
-            .WithOption(out var nameOption, BuildKeyOption())
-            .WithOption(out var newNameOption,
-                OptionBuilder
-                    .CreateNewNameOption()
-                    .WithDescription("The new name of the origin"))
-            .WithOption(out var descriptionOption,
-                OptionBuilder.CreateDescriptionOption()
-                    .WithDescription("The new description of the origin"));
-
-        command.SetHandler(UpdateHandler, nameOption, new OriginBinder(newNameOption, descriptionOption));
-
-        return command;
     }
 
     private Option<string> BuildKeyOption()

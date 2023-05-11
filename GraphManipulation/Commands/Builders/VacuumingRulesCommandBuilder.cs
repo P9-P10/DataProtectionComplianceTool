@@ -28,7 +28,7 @@ public static class VacuumingRulesCommandBuilder
         IPurposesManager purposesManager)
     {
         return CommandBuilder
-            .BuildAddCommand()
+            .BuildCreateCommand()
             .WithDescription("Adds a vacuuming rule to the system")
             .WithOption(out var nameOption, BuildNameOption())
             .WithOption(out var intervalOption, BuildIntervalOption().WithIsRequired(true))
@@ -157,7 +157,7 @@ public static class VacuumingRulesCommandBuilder
         IPurposesManager purposesManager)
     {
         return CommandBuilder
-            .BuildAddCommand("purpose")
+            .BuildCreateCommand("purpose")
             .WithDescription("Adds the given purpose(s) to the vacuuming rule")
             .WithOption(out var nameOption, BuildNameOption())
             .WithOption(out var purposeOption, BuildPurposeListOption())

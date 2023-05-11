@@ -2,6 +2,7 @@ using System.CommandLine;
 using System.CommandLine.IO;
 using FluentAssertions;
 using GraphManipulation.Commands.Builders;
+using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
 using Moq;
@@ -33,9 +34,9 @@ public class DeleteConditionsCommandTest : CommandTest
     private const string Description = "This is a description";
     private const string Condition = "This is a condition";
 
-    public class Add
+    public class Create
     {
-        private const string CommandName = "add";
+        private const string CommandName = CommandNamer.Create;
         
         [Fact]
         public void Parses()
@@ -65,7 +66,7 @@ public class DeleteConditionsCommandTest : CommandTest
     
     public class Update
     {
-        private const string CommandName = "update";
+        private const string CommandName = CommandNamer.Update;
         
         [Fact]
         public void Parses()
@@ -102,7 +103,7 @@ public class DeleteConditionsCommandTest : CommandTest
     
     public class Delete
     {
-        private const string CommandName = "delete";
+        private const string CommandName = CommandNamer.Delete;
         
         [Fact]
         public void Parses()
@@ -122,7 +123,7 @@ public class DeleteConditionsCommandTest : CommandTest
     
     public class List
     {
-        private const string CommandName = "list";
+        private const string CommandName = CommandNamer.List;
         
         [Fact]
         public void Parses()
@@ -142,7 +143,7 @@ public class DeleteConditionsCommandTest : CommandTest
     
     public class Show
     {
-        private const string CommandName = "show";
+        private const string CommandName = CommandNamer.Show;
         
         [Fact]
         public void Parses()

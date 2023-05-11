@@ -44,7 +44,7 @@ public class DeleteConditionsManagerDecorator : LoggingDecorator, IDeleteConditi
 
     public void Add(string name, string description, string condition)
     {
-        LogAdd(name, new {Description = description, Condition = condition});
+        LogCreate(name, new {Description = description, Condition = condition});
         _manager.Add(name, description, condition);
     }
 

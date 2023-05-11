@@ -16,10 +16,10 @@ using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
 using GraphManipulation.Managers;
 using GraphManipulation.Managers.Archive;
+using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
 using GraphManipulation.Vacuuming;
 using Microsoft.EntityFrameworkCore;
-using OriginsManager = GraphManipulation.Managers.Archive.OriginsManager;
 
 namespace GraphManipulation;
 
@@ -90,17 +90,17 @@ public static class Program
         var loggingVacuumer = new LoggingVacuumer(vacuumer, logger);
 
         var individualsManager = new IndividualsManager(individualMapper, new Mapper<ConfigKeyValue>(context));
-        var personalDataManager = new PersonalDataManager(personalDataColumnMapper, purposeMapper, originMapper,
-            personalDataMapper, individualMapper);
+        // var personalDataManager = new PersonalDataManager(personalDataColumnMapper, purposeMapper, originMapper,
+        //     personalDataMapper, individualMapper);
         var purposesManager = new PurposeManager(purposeMapper, deleteConditionMapper);
-        var originsManager = new OriginsManager(originMapper);
+        var originsManager = new Manager<string, Origin>(originMapper);
         var vacuumingRulesManager = new VacuumingRuleManager(vacuumingRuleMapper, purposeMapper, loggingVacuumer);
         var deleteConditionsManager = new DeleteConditionsManager(deleteConditionMapper);
         var processingsManager =
             new ProcessingsManager(processingMapper, purposeMapper, personalDataColumnMapper);
 
         var decoratedIndividualsManager = new IndividualsManagerDecorator(individualsManager, logger);
-        var decoratedPersonalDataManager = new PersonalDataManagerDecorator(personalDataManager, logger);
+        // var decoratedPersonalDataManager = new PersonalDataManagerDecorator(personalDataManager, logger);
         var decoratedPurposesManager = new PurposeManagerDecorator(purposesManager, logger);
         var decoratedOriginsManager = new OriginsManagerDecorator(originsManager, logger);
         var decoratedVacuumingRulesManager = new VacuumingRuleManagerDecorator(vacuumingRulesManager, logger);
@@ -114,7 +114,7 @@ public static class Program
         //         decoratedPurposesManager, decoratedOriginsManager, decoratedVacuumingRulesManager,
         //         decoratedDeleteConditionsManager, decoratedProcessingsManager, logger, configManager
         //     );
-
+        //
         // var cli = new CommandLineBuilder(command)
         //     .UseHelp("help", "h", "?")
         //     .UseTypoCorrections()

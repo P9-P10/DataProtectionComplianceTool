@@ -1,7 +1,7 @@
 using System.CommandLine;
+using GraphManipulation.Commands.Builders.Binders;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Managers.Interfaces;
-using GraphManipulation.Models;
 using GraphManipulation.Models.Base;
 using GraphManipulation.Models.Interfaces.Base;
 
@@ -23,21 +23,41 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
 
     protected void CreateHandler(TKey key, TValue value)
     {
-        Manager.Create(key);
-        Manager.Update(key, value);
+        if (Manager.Get(key) is not null)
+        {
+            // Can not create something that exists already
+            return;
+        }
+
+        if (Manager.Create(key))
+        {
+            Console.WriteLine($"Created entity using {key}");
+
+            UpdateHandler(key, value);
+        }
+        else
+        {
+            // Could not create entity
+        }
     }
 
     protected void UpdateHandler(TKey key, TValue value)
     {
-        if (Manager.Get(key) is null)
+        var old = Manager.Get(key);
+
+        if (old is null)
         {
+            // Can only update something that exists
             return;
         }
 
-        if (!key.Equals(value.Key) && Manager.Get(value.Key) is not null)
+        if (!key.Equals(value.Key!) && Manager.Get(value.Key!) is not null)
         {
+            // If the key is updated, it can only be updated to something that doesn't already exist
             return;
         }
+
+        old.Fill(value);
 
         Manager.Update(key, value);
     }
@@ -46,9 +66,10 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
     {
         if (Manager.Get(key) is null)
         {
+            // Can only delete something that exists
             return;
         }
-        
+
         Manager.Delete(key);
     }
 
@@ -56,9 +77,10 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
     {
         if (Manager.Get(key) is null)
         {
+            // Can only show something that exists
             return;
         }
-        
+
         Console.WriteLine(Manager.Get(key)!.ToListing());
     }
 
@@ -97,6 +119,34 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
             .WithOption(out _, keyOption);
 
         command.SetHandler(DeleteHandler, keyOption);
+
+        return command;
+    }
+
+    protected Command CreateCommand(string subject, Option<TKey> keyOption, BaseBinder<TKey, TValue> binder,
+        params Option[] options)
+    {
+        var command = CommandBuilder
+            .BuildCreateCommand()
+            .WithDescription($"Creates a new {subject} in the system")
+            .WithOption(out _, keyOption)
+            .WithOptions(options);
+
+        command.SetHandler(CreateHandler, keyOption, binder);
+
+        return command;
+    }
+
+    protected Command UpdateCommand(string subject, Option<TKey> keyOption, BaseBinder<TKey, TValue> binder,
+        params Option[] options)
+    {
+        var command = CommandBuilder
+            .BuildUpdateCommand()
+            .WithDescription($"Creates a new {subject} in the system")
+            .WithOption(out _, keyOption)
+            .WithOptions(options);
+
+        command.SetHandler(UpdateHandler, keyOption, binder);
 
         return command;
     }

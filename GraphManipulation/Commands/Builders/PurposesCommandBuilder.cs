@@ -25,7 +25,7 @@ public static class PurposesCommandBuilder
         IDeleteConditionsManager deleteConditionsManager)
     {
         return CommandBuilder
-            .BuildAddCommand()
+            .BuildCreateCommand()
             .WithDescription("Adds a purpose to the system")
             .WithOption(out var nameOption,
                 BuildNameOption()

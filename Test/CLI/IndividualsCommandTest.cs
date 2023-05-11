@@ -4,6 +4,7 @@ using System.CommandLine;
 using System.CommandLine.IO;
 using FluentAssertions;
 using GraphManipulation.Commands.Builders;
+using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Managers;
 using GraphManipulation.Managers.Archive;
 using GraphManipulation.Managers.Interfaces;
@@ -119,7 +120,7 @@ public class IndividualsCommandTest : CommandTest
 
     public class ListIndividuals
     {
-        private const string CommandName = "list";
+        private const string CommandName = CommandNamer.List;
 
         [Fact]
         public void Parses()
@@ -150,7 +151,7 @@ public class IndividualsCommandTest : CommandTest
 
     public class ShowIndividual
     {
-        private const string CommandName = "show";
+        private const string CommandName = CommandNamer.Show;
 
         [Fact]
         public void Parses()

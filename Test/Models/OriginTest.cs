@@ -10,7 +10,7 @@ public class OriginTest
     {
         Origin origin = new Origin()
         {
-            Name = "Name",
+            Key = "Name",
             PersonalDataColumns = null
         };
         

@@ -40,7 +40,7 @@ public class PersonalDataManagerDecorator : LoggingDecorator, IPersonalDataManag
 
     public void AddPersonalData(TableColumnPair tableColumnPair, string joinCondition, string description)
     {
-        LogAdd(tableColumnPair.ToListing(), new {JoinCondition = joinCondition, Description = description});
+        LogCreate(tableColumnPair.ToListing(), new {JoinCondition = joinCondition, Description = description});
         _manager.AddPersonalData(tableColumnPair, joinCondition, description);
     }
 

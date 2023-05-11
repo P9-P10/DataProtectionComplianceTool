@@ -22,7 +22,7 @@ public static class DeleteConditionsCommandBuilder
     private static Command AddDeleteCondition(IConsole console, IDeleteConditionsManager deleteConditionsManager)
     {
         return CommandBuilder
-            .BuildAddCommand()
+            .BuildCreateCommand()
             .WithDescription("Adds a delete condition to the system")
             .WithOption(out var nameOption, BuildNameOption())
             .WithOption(out var descriptionOption,

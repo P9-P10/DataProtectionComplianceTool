@@ -38,7 +38,7 @@ public class PurposeManagerDecorator : LoggingDecorator, IPurposesManager
 
     public void Add(string name, bool legallyRequired, string description)
     {
-        LogAdd(name, new {LegallyRequired = legallyRequired, Description = description});
+        LogCreate(name, new {LegallyRequired = legallyRequired, Description = description});
         _manager.Add(name, legallyRequired, description);
     }
 

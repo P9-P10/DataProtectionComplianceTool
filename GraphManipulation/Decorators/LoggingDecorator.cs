@@ -46,9 +46,9 @@ public class LoggingDecorator
         AppendLogEntry(new Update(_type, key, GetParameters(parameters)));
     }
 
-    public void LogAdd(string key, object parameters)
+    public void LogCreate(string key, object parameters)
     {
-        AppendLogEntry(new Add(_type, key, GetParameters(parameters)));
+        AppendLogEntry(new Create(_type, key, GetParameters(parameters)));
     }
 
     public void LogSet(string key, object parameters)

@@ -32,8 +32,8 @@ public static class CommandNamer
     public const string ConfigurationName = "configuration";
     public const string ConfigurationAlias = "cfg";
 
-    public const string Add = "add";
-    public const string AddAlias = "a";
+    public const string Create = "create";
+    public const string CreateAlias = "c";
 
     public const string Update = "update";
     public const string UpdateAlias = "u";

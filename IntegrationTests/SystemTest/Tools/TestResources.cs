@@ -108,7 +108,7 @@ public class TestResources
 
     protected static readonly Origin TestOrigin = new()
     {
-        Name = "originName",
+        Key = "originName",
         Description = Description,
         PersonalDataColumns = new List<PersonalDataColumn>()
     };
@@ -146,7 +146,7 @@ public class TestResources
 
     protected static void AddDeleteCondition(TestProcess testProcess, IDeleteCondition deleteCondition)
     {
-        var addDeleteConditionCommand = $"{CommandNamer.DeleteConditionName} {CommandNamer.Add} " +
+        var addDeleteConditionCommand = $"{CommandNamer.DeleteConditionName} {CommandNamer.Create} " +
                                         $"{OptionNamer.Name} {deleteCondition.GetName()} " +
                                         $"{OptionNamer.Condition} \"{deleteCondition.GetCondition()}\" " +
                                         $"{OptionNamer.Description} \"{deleteCondition.GetDescription()}\"";
@@ -156,7 +156,7 @@ public class TestResources
 
     protected static void AddPurpose(TestProcess testProcess, IPurpose purpose)
     {
-        var addPurposeCommand = $"{CommandNamer.PurposesName} {CommandNamer.Add} " +
+        var addPurposeCommand = $"{CommandNamer.PurposesName} {CommandNamer.Create} " +
                                 $"{OptionNamer.Name} {purpose.GetName()} " +
                                 $"{OptionNamer.Description} \"{purpose.GetDescription()}\" " +
                                 $"{OptionNamer.DeleteConditionName} {purpose.GetDeleteCondition()} " +
@@ -224,10 +224,10 @@ public class TestResources
             $"{CommandNamer.DeleteConditionAlias} {CommandNamer.ShowAlias} -n {deleteCondition.GetName()}");
     }
 
-    protected static void AddOrigin(TestProcess testProcess, IOrigin origin)
+    protected static void AddOrigin(TestProcess testProcess, Origin origin)
     {
         string command =
-            $"{CommandNamer.OriginsAlias} {CommandNamer.AddAlias} {OptionNamer.Name} {origin.GetName()} {OptionNamer.Description} \"{origin.GetDescription()}\"";
+            $"{CommandNamer.OriginsAlias} {CommandNamer.CreateAlias} {OptionNamer.Name} {origin.Key} {OptionNamer.Description} \"{origin.Description}\"";
         testProcess.GiveInput(command);
     }
 
@@ -236,29 +236,29 @@ public class TestResources
         process.GiveInput($"{CommandNamer.OriginsAlias} {CommandNamer.List}");
     }
 
-    protected static void UpdateOrigin(TestProcess process, IOrigin old, IOrigin newOrigin)
+    protected static void UpdateOrigin(TestProcess process, Origin old, Origin newOrigin)
     {
         string command = $"{CommandNamer.OriginsAlias} {CommandNamer.UpdateAlias} {OptionNamer.Name} " +
-                         $"{old.GetName()} {OptionNamer.NewName} {newOrigin.GetName()} {OptionNamer.Description} \"{newOrigin.GetDescription()}\"";
+                         $"{old.Key} {OptionNamer.NewName} {newOrigin.Key} {OptionNamer.Description} \"{newOrigin.Description}\"";
         process.GiveInput(command);
     }
 
-    protected static void DeleteOrigin(TestProcess process, IOrigin origin)
+    protected static void DeleteOrigin(TestProcess process, Origin origin)
     {
         process.GiveInput(
-            $"{CommandNamer.OriginsAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name} {origin.GetName()}");
+            $"{CommandNamer.OriginsAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name} {origin.Key}");
     }
 
-    protected static void ShowOrigin(TestProcess process, IOrigin origin)
+    protected static void ShowOrigin(TestProcess process, Origin origin)
     {
         process.GiveInput(
-            $"{CommandNamer.OriginsAlias} {CommandNamer.ShowAlias} {OptionNamer.Name} {origin.GetName()}");
+            $"{CommandNamer.OriginsAlias} {CommandNamer.ShowAlias} {OptionNamer.Name} {origin.Key}");
     }
 
     protected static void AddProcessing(TestProcess process, IProcessing processing)
     {
         string command =
-            $"{CommandNamer.ProcessingsName} {CommandNamer.Add} {OptionNamer.Name} {processing.GetName()}" +
+            $"{CommandNamer.ProcessingsName} {CommandNamer.Create} {OptionNamer.Name} {processing.GetName()}" +
             $" {OptionNamer.Description} {processing.GetDescription()}" +
             $" {OptionNamer.TableColumn} {processing.GetPersonalDataTableColumnPair().TableName} {processing.GetPersonalDataTableColumnPair().ColumnName}" +
             $" {OptionNamer.Purpose} {processing.GetPurpose().GetName()}";
@@ -293,7 +293,7 @@ public class TestResources
 
     protected static void AddPersonalData(TestProcess process, IPersonalDataColumn personalDataColumn)
     {
-        var command = $"{CommandNamer.PersonalDataAlias} {CommandNamer.AddAlias}" +
+        var command = $"{CommandNamer.PersonalDataAlias} {CommandNamer.CreateAlias}" +
                       $" {OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} {personalDataColumn.GetTableColumnPair().ColumnName}" +
                       $" {OptionNamer.JoinCondition} \"{personalDataColumn.GetJoinCondition()}\"" +
                       $" {OptionNamer.DefaultValueAlias} \"{personalDataColumn.GetDefaultValue()}\"" +
@@ -357,13 +357,13 @@ public class TestResources
     }
 
     protected static void SetOriginOfPersonalData(TestProcess testProcess, IPersonalDataColumn personalDataColumn,
-        IIndividual individual, IOrigin origin)
+        IIndividual individual, Origin origin)
     {
         var command = $"{CommandNamer.PersonalDataName} {CommandNamer.SetOrigin} " +
                       $"{OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} " +
                       $"{personalDataColumn.GetTableColumnPair().ColumnName} " +
                       $"{OptionNamer.Id} {individual.ToListing()} " +
-                      $"{OptionNamer.Origin} {origin.GetName()}";
+                      $"{OptionNamer.Origin} {origin.Key}";
 
         testProcess.GiveInput(command);
     }
@@ -400,7 +400,7 @@ public class TestResources
 
     protected static void AddVacuumingRule(TestProcess testProcess, IVacuumingRule vacuumingRule)
     {
-        var command = $"{CommandNamer.VacuumingRulesName} {CommandNamer.Add} " +
+        var command = $"{CommandNamer.VacuumingRulesName} {CommandNamer.Create} " +
                       $"{OptionNamer.Name} {vacuumingRule.GetName()} " +
                       $"{OptionNamer.Interval} \"{vacuumingRule.GetInterval()}\" " +
                       $"{OptionNamer.Purpose} {vacuumingRule.GetPurposes().First().ToListingIdentifier()} " +
@@ -484,7 +484,7 @@ public class TestResources
 
     protected static void AddLogEntryOrigin(TestProcess testProcess, string name)
     {
-        var command = $"{CommandNamer.OriginsName} {CommandNamer.Add} {OptionNamer.Name} {name}";
+        var command = $"{CommandNamer.OriginsName} {CommandNamer.Create} {OptionNamer.Name} {name}";
         testProcess.GiveInput(command);
     }
 

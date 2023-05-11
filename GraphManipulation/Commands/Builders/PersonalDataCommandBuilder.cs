@@ -4,7 +4,7 @@ using GraphManipulation.Managers;
 using GraphManipulation.Managers.Archive;
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Managers.Interfaces.Archive;
-using IOriginsManager = GraphManipulation.Managers.Interfaces.Archive.IOriginsManager;
+using IOriginsManager = GraphManipulation.Managers.Interfaces.IOriginsManager;
 
 namespace GraphManipulation.Commands.Builders;
 
@@ -32,7 +32,7 @@ public static class PersonalDataCommandBuilder
         IPurposesManager purposesManager)
     {
         return CommandBuilder
-            .BuildAddCommand()
+            .BuildCreateCommand()
             .WithDescription(
                 "Adds the personal data found in the given table and column to the data managed by the system")
             .WithOption(out var pairOption, BuildPairOption())
@@ -148,7 +148,7 @@ public static class PersonalDataCommandBuilder
         IPurposesManager purposesManager)
     {
         return CommandBuilder
-            .BuildAddCommand("purpose")
+            .BuildCreateCommand("purpose")
             .WithDescription("Adds the given purpose(s) to the personal data entry")
             .WithOption(out var pairOption, BuildPairOption())
             .WithOption(out var purposeOption, BuildPurposeListOption())

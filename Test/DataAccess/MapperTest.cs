@@ -163,7 +163,7 @@ public class MapperTest
         public void FindSingleTableColumnFromPersonalDataColumn()
         {
             Mapper<PersonalDataColumn> mapper = new Mapper<PersonalDataColumn>(_context);
-            var expectedColumn = new PersonalDataColumn()
+            var expectedColumn = new PersonalDataColumn
             {
                 DefaultValue = "",
                 Description = "",
@@ -172,10 +172,10 @@ public class MapperTest
             mapper.Insert(expectedColumn);
 
             PersonalDataColumn? result = mapper.FindSingle(x =>
-                x.TableColumnPair.Equals(new TableColumnPair("Table","Column")));
+                x.TableColumnPair.Equals(expectedColumn.TableColumnPair));
             var tableColumnPair = result?.TableColumnPair;
 
-            tableColumnPair.Should().Be(new TableColumnPair("Table", "Column"));
+            tableColumnPair.Should().Be(expectedColumn.TableColumnPair);
         }
 
         [Fact]

@@ -1,39 +1,27 @@
 using GraphManipulation.Models.Base;
-using GraphManipulation.Models.Interfaces;
-using GraphManipulation.Models.Interfaces.Base;
 
 namespace GraphManipulation.Models;
 
-public class Origin : Entity<string>, IOrigin
+public class Origin : Entity<string>
 {
-    public string Name { get; set; }
-    public string? Description { get; set; }
     public virtual IEnumerable<PersonalDataColumn>? PersonalDataColumns { get; set; }
 
-    public string ToListing()
+    public override string ToListing()
     {
-        return string.Join(", ", Name, Description,
+        return string.Join(", ", base.ToListing(),
             "[ " + string.Join(", ",
                 PersonalDataColumns is null ? new List<string>() : PersonalDataColumns.Select(c => c.ToListingIdentifier())) + " ]");
     }
 
-    public string ToListingIdentifier()
+    public override void Fill(object? other)
     {
-        return GetName();
-    }
-
-    public IEnumerable<IPersonalDataColumn>? GetPersonalDataColumns()
-    {
-        return PersonalDataColumns;
-    }
-
-    public string GetName()
-    {
-        return Name;
-    }
-
-    public string GetDescription()
-    {
-        return Description;
+        if (other is null || other.GetType() != typeof(Origin))
+        {
+            return;
+        }
+        
+        base.Fill(other);
+        
+        (other as Origin)!.PersonalDataColumns ??= PersonalDataColumns;
     }
 }
