@@ -14,8 +14,10 @@ public class OriginsCommandBuilder : BaseCommandBuilder<IOriginsManager, string,
 
     public Command Build()
     {
+        var baseCommand = base.Build(CommandNamer.OriginsName, CommandNamer.OriginsAlias);
+        
         var keyOption = BuildKeyOption();
-
+        
         var descriptionOption = OptionBuilder
             .CreateDescriptionOption()
             .WithDescription("The description of the origin");
@@ -24,18 +26,14 @@ public class OriginsCommandBuilder : BaseCommandBuilder<IOriginsManager, string,
             .CreateNewNameOption()
             .WithDescription("The new name of the origin");
 
-        return CommandBuilder.CreateNewCommand(CommandNamer.OriginsName)
-            .WithAlias(CommandNamer.OriginsAlias)
+        return baseCommand
             .WithSubCommands(
                 BaseCreateCommand(keyOption, new OriginBinder(keyOption, descriptionOption), descriptionOption), 
-                BaseUpdateCommand(keyOption, new OriginBinder(newKeyOption, descriptionOption), newKeyOption, descriptionOption), 
-                DeleteCommand(BuildKeyOption()),
-                ListCommand(),
-                ShowCommand(BuildKeyOption())
+                BaseUpdateCommand(keyOption, new OriginBinder(newKeyOption, descriptionOption), newKeyOption, descriptionOption) 
             );
     }
 
-    private Option<string> BuildKeyOption()
+    protected override Option<string> BuildKeyOption()
     {
         return base.BuildKeyOption(OptionNamer.Name, OptionNamer.NameAlias, "The name of the origin");
     }

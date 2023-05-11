@@ -23,6 +23,19 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
         Manager = manager;
     }
 
+    protected Command Build(string name, string alias)
+    {
+        var keyOption = BuildKeyOption();
+        
+        return CommandBuilder.CreateNewCommand(name)
+            .WithAlias(alias)
+            .WithSubCommands(
+                DeleteCommand(keyOption),
+                ListCommand(),
+                ShowCommand(keyOption)
+            );
+    }
+
     protected void CreateHandler(TKey key, TValue value)
     {
         if (Manager.Get(key) is not null)
@@ -110,7 +123,7 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
         Manager.GetAll().Select(r => r.ToListing()).ToList().ForEach(Console.WriteLine);
     }
 
-    protected Command ListCommand()
+    private Command ListCommand()
     {
         var command = CommandBuilder
             .BuildListCommand()
@@ -120,7 +133,7 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
         return command;
     }
 
-    protected Command ShowCommand(Option<TKey> keyOption)
+    private Command ShowCommand(Option<TKey> keyOption)
     {
         var command = CommandBuilder
             .BuildShowCommand()
@@ -132,7 +145,7 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
         return command;
     }
 
-    protected Command DeleteCommand(Option<TKey> keyOption)
+    private Command DeleteCommand(Option<TKey> keyOption)
     {
         var command = CommandBuilder
             .BuildDeleteCommand()
@@ -181,6 +194,8 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
             .WithIsRequired(true);
     }
 
+    protected abstract Option<TKey> BuildKeyOption();
+
     protected void WriteSuccess(TKey key, Operations operation, TValue? value = null)
     {
         Console.WriteLine(SuccessMessage(key, operation, value));
@@ -200,18 +215,18 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
     {
         Console.Error.WriteLine(CouldNotFindMessage(key));
     }
-    
-    protected static string CouldNotFindMessage(TKey key)
+
+    private static string CouldNotFindMessage(TKey key)
     {
         return $"Could not find {GetEntityType()} using {key}";
     }
 
-    protected static string AlreadyExistsMessage(TKey key)
+    private static string AlreadyExistsMessage(TKey key)
     {
         return AlreadyExistsMessage(key, typeof(TValue));
     }
 
-    protected static string AlreadyExistsMessage(TKey key, Type type)
+    private static string AlreadyExistsMessage(TKey key, Type type)
     {
         return $"Found an existing {GetEntityType(type)} using {key}";
     }
@@ -249,7 +264,7 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
         };
     }
 
-    protected static string GetEntityType()
+    private static string GetEntityType()
     {
         return GetEntityType(typeof(TValue));
     }
