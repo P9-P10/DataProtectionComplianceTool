@@ -35,6 +35,68 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
                 ShowCommand(keyOption)
             );
     }
+    
+    protected Command BaseCreateCommand(Option<TKey> keyOption, BaseBinder<TKey, TValue> binder,
+        params Option[] options)
+    {
+        var command = CommandBuilder
+            .BuildCreateCommand()
+            .WithDescription($"Creates a new {GetEntityType()} in the system")
+            .WithOption(out _, keyOption)
+            .WithOptions(options);
+
+        command.SetHandler(CreateHandler, keyOption, binder);
+
+        return command;
+    }
+
+    protected Command BaseUpdateCommand(Option<TKey> keyOption, BaseBinder<TKey, TValue> binder,
+        params Option[] options)
+    {
+        var command = CommandBuilder
+            .BuildUpdateCommand()
+            .WithDescription($"Creates the given {GetEntityType()} with the given values")
+            .WithOption(out _, keyOption)
+            .WithOptions(options);
+
+        command.SetHandler(UpdateHandler, keyOption, binder);
+
+        return command;
+    }
+
+    private Command DeleteCommand(Option<TKey> keyOption)
+    {
+        var command = CommandBuilder
+            .BuildDeleteCommand()
+            .WithDescription($"Deletes the given {GetEntityType()} from the system")
+            .WithOption(out _, keyOption);
+
+        command.SetHandler(DeleteHandler, keyOption);
+
+        return command;
+    }
+
+    private Command ShowCommand(Option<TKey> keyOption)
+    {
+        var command = CommandBuilder
+            .BuildShowCommand()
+            .WithDescription($"Shows details about the given {GetEntityType()}")
+            .WithOption(out _, keyOption);
+
+        command.SetHandler(ShowHandler, keyOption);
+
+        return command;
+    }
+    
+    private Command ListCommand()
+    {
+        var command = CommandBuilder
+            .BuildListCommand()
+            .WithDescription($"Lists the {GetEntityType()}(e)s currently in the system");
+
+        command.SetHandler(ListHandler);
+        return command;
+    }
 
     protected void CreateHandler(TKey key, TValue value)
     {
@@ -121,68 +183,6 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
     private void ListHandler()
     {
         Manager.GetAll().Select(r => r.ToListing()).ToList().ForEach(Console.WriteLine);
-    }
-
-    private Command ListCommand()
-    {
-        var command = CommandBuilder
-            .BuildListCommand()
-            .WithDescription($"Lists the {GetEntityType()}(e)s currently in the system");
-
-        command.SetHandler(ListHandler);
-        return command;
-    }
-
-    private Command ShowCommand(Option<TKey> keyOption)
-    {
-        var command = CommandBuilder
-            .BuildShowCommand()
-            .WithDescription($"Shows details about the given {GetEntityType()}")
-            .WithOption(out _, keyOption);
-
-        command.SetHandler(ShowHandler, keyOption);
-
-        return command;
-    }
-
-    private Command DeleteCommand(Option<TKey> keyOption)
-    {
-        var command = CommandBuilder
-            .BuildDeleteCommand()
-            .WithDescription($"Deletes the given {GetEntityType()} from the system")
-            .WithOption(out _, keyOption);
-
-        command.SetHandler(DeleteHandler, keyOption);
-
-        return command;
-    }
-
-    protected Command BaseCreateCommand(Option<TKey> keyOption, BaseBinder<TKey, TValue> binder,
-        params Option[] options)
-    {
-        var command = CommandBuilder
-            .BuildCreateCommand()
-            .WithDescription($"Creates a new {GetEntityType()} in the system")
-            .WithOption(out _, keyOption)
-            .WithOptions(options);
-
-        command.SetHandler(CreateHandler, keyOption, binder);
-
-        return command;
-    }
-
-    protected Command BaseUpdateCommand(Option<TKey> keyOption, BaseBinder<TKey, TValue> binder,
-        params Option[] options)
-    {
-        var command = CommandBuilder
-            .BuildUpdateCommand()
-            .WithDescription($"Creates the given {GetEntityType()} with the given values")
-            .WithOption(out _, keyOption)
-            .WithOptions(options);
-
-        command.SetHandler(UpdateHandler, keyOption, binder);
-
-        return command;
     }
 
     protected Option<TKey> BuildKeyOption(string name, string alias, string description)
