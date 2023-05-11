@@ -11,7 +11,7 @@ public static class LoggingCommandBuilder
 
     public static Command Build(IConsole console, ILogger logger)
     {
-        return CommandBuilder.CreateCommand(CommandNamer.LoggingName)
+        return CommandBuilder.CreateNewCommand(CommandNamer.LoggingName)
             .WithAlias(CommandNamer.LoggingAlias)
             .WithSubCommands(ListLog(console, logger));
     }

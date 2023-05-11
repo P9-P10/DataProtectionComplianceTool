@@ -8,7 +8,7 @@ public static class DeleteConditionsCommandBuilder
 {
     public static Command Build(IConsole console, IDeleteConditionsManager deleteConditionsManager)
     {
-        return CommandBuilder.CreateCommand(CommandNamer.DeleteConditionName)
+        return CommandBuilder.CreateNewCommand(CommandNamer.DeleteConditionName)
             .WithAlias(CommandNamer.DeleteConditionAlias)
             .WithSubCommands(
                 AddDeleteCondition(console, deleteConditionsManager),

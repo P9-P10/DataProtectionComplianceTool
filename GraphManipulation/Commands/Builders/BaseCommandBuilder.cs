@@ -28,19 +28,19 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
         if (Manager.Get(key) is not null)
         {
             // Cannot create something that exists already
-            AlreadyExists(key);
+            WriteAlreadyExists(key);
             return;
         }
 
         if (Manager.Create(key))
         {
-            Success(key, Operations.Created);
+            WriteSuccess(key, Operations.Created);
             UpdateHandler(key, value);
         }
         else
         {
             // Could not create entity
-            Failure(key, Operations.Created);
+            WriteFailure(key, Operations.Created);
         }
     }
 
@@ -51,14 +51,14 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
         if (old is null)
         {
             // Can only update something that exists
-            CouldNotFind(key);
+            WriteCouldNotFind(key);
             return;
         }
 
         if (!key.Equals(value.Key!) && Manager.Get(value.Key!) is not null)
         {
             // If the key is updated, it can only be updated to something that doesn't already exist
-            AlreadyExists(value.Key!);
+            WriteAlreadyExists(value.Key!);
             return;
         }
 
@@ -66,11 +66,11 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
 
         if (Manager.Update(key, value))
         {
-            Success(key, Operations.Updated, value);
+            WriteSuccess(key, Operations.Updated, value);
         }
         else
         {
-            Failure(key, Operations.Updated, value);
+            WriteFailure(key, Operations.Updated, value);
         }
     }
 
@@ -79,17 +79,17 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
         if (Manager.Get(key) is null)
         {
             // Can only delete something that exists
-            CouldNotFind(key);
+            WriteCouldNotFind(key);
             return;
         }
 
         if (Manager.Delete(key))
         {
-            Success(key, Operations.Deleted);
+            WriteSuccess(key, Operations.Deleted);
         }
         else
         {
-            Failure(key, Operations.Deleted);
+            WriteFailure(key, Operations.Deleted);
         }
     }
 
@@ -98,7 +98,7 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
         if (Manager.Get(key) is null)
         {
             // Can only show something that exists
-            CouldNotFind(key);
+            WriteCouldNotFind(key);
             return;
         }
 
@@ -144,7 +144,7 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
         return command;
     }
 
-    protected Command CreateCommand(Option<TKey> keyOption, BaseBinder<TKey, TValue> binder,
+    protected Command BaseCreateCommand(Option<TKey> keyOption, BaseBinder<TKey, TValue> binder,
         params Option[] options)
     {
         var command = CommandBuilder
@@ -158,12 +158,12 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
         return command;
     }
 
-    protected Command UpdateCommand(Option<TKey> keyOption, BaseBinder<TKey, TValue> binder,
+    protected Command BaseUpdateCommand(Option<TKey> keyOption, BaseBinder<TKey, TValue> binder,
         params Option[] options)
     {
         var command = CommandBuilder
             .BuildUpdateCommand()
-            .WithDescription($"Creates a new {GetEntityType()} in the system")
+            .WithDescription($"Creates the given {GetEntityType()} with the given values")
             .WithOption(out _, keyOption)
             .WithOptions(options);
 
@@ -181,22 +181,22 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
             .WithIsRequired(true);
     }
 
-    protected void Success(TKey key, Operations operation, TValue? value = null)
+    protected void WriteSuccess(TKey key, Operations operation, TValue? value = null)
     {
         Console.WriteLine(SuccessMessage(key, operation, value));
     }
 
-    protected void Failure(TKey key, Operations operation, TValue? value = null)
+    protected void WriteFailure(TKey key, Operations operation, TValue? value = null)
     {
         Console.Error.WriteLine(FailureMessage(key, operation, value));
     }
 
-    protected void AlreadyExists(TKey key)
+    protected void WriteAlreadyExists(TKey key)
     {
         Console.Error.WriteLine(AlreadyExistsMessage(key));
     }
 
-    protected void CouldNotFind(TKey key)
+    protected void WriteCouldNotFind(TKey key)
     {
         Console.Error.WriteLine(CouldNotFindMessage(key));
     }

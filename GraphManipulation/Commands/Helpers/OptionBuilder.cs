@@ -113,7 +113,7 @@ public static class OptionBuilder
 
         try
         {
-            string result = commandResult.GetValueForOption(option);
+            var result = commandResult.GetValueForOption(option);
             if (result == null)
             {
                 return;

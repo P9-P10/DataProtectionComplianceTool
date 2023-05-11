@@ -10,7 +10,7 @@ public static class ProcessingsCommandBuilder
     public static Command Build(IConsole console, IProcessingsManager processingsManager,
         IPersonalDataManager personalDataManager, IPurposesManager purposesManager)
     {
-        return CommandBuilder.CreateCommand(CommandNamer.ProcessingsName)
+        return CommandBuilder.CreateNewCommand(CommandNamer.ProcessingsName)
             .WithAlias(CommandNamer.ProcessingsAlias)
             .WithSubCommands(
                 Add(console, processingsManager, personalDataManager, purposesManager),

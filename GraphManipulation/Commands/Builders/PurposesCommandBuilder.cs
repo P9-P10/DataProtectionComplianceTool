@@ -10,7 +10,7 @@ public static class PurposesCommandBuilder
     public static Command Build(IConsole console, IPurposesManager purposesManager,
         IDeleteConditionsManager deleteConditionsManager)
     {
-        return CommandBuilder.CreateCommand(CommandNamer.PurposesName)
+        return CommandBuilder.CreateNewCommand(CommandNamer.PurposesName)
             .WithAlias(CommandNamer.PurposesAlias)
             .WithSubCommands(
                 AddPurpose(console, purposesManager, deleteConditionsManager),

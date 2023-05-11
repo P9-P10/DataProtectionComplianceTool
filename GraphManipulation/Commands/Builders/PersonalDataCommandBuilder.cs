@@ -13,7 +13,7 @@ public static class PersonalDataCommandBuilder
     public static Command Build(IConsole console, IPersonalDataManager personalDataManager,
         IPurposesManager purposesManager, IOriginsManager originsManager, IIndividualsManager individualsManager)
     {
-        return CommandBuilder.CreateCommand(CommandNamer.PersonalDataName)
+        return CommandBuilder.CreateNewCommand(CommandNamer.PersonalDataName)
             .WithAlias(CommandNamer.PersonalDataAlias)
             .WithSubCommands(
                 AddPersonalData(console, personalDataManager, purposesManager),

@@ -24,11 +24,11 @@ public class OriginsCommandBuilder : BaseCommandBuilder<IOriginsManager, string,
             .CreateNewNameOption()
             .WithDescription("The new name of the origin");
 
-        return CommandBuilder.CreateCommand(CommandNamer.OriginsName)
+        return CommandBuilder.CreateNewCommand(CommandNamer.OriginsName)
             .WithAlias(CommandNamer.OriginsAlias)
             .WithSubCommands(
-                CreateCommand(keyOption, new OriginBinder(keyOption, descriptionOption), descriptionOption), 
-                UpdateCommand(keyOption, new OriginBinder(newKeyOption, descriptionOption), newKeyOption, descriptionOption), 
+                BaseCreateCommand(keyOption, new OriginBinder(keyOption, descriptionOption), descriptionOption), 
+                BaseUpdateCommand(keyOption, new OriginBinder(newKeyOption, descriptionOption), newKeyOption, descriptionOption), 
                 DeleteCommand(BuildKeyOption()),
                 ListCommand(),
                 ShowCommand(BuildKeyOption())

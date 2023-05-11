@@ -10,7 +10,7 @@ public static class VacuumingRulesCommandBuilder
     public static Command Build(IConsole console, IVacuumingRulesManager vacuumingRulesManager,
         IPurposesManager purposesManager)
     {
-        return CommandBuilder.CreateCommand(CommandNamer.VacuumingRulesName)
+        return CommandBuilder.CreateNewCommand(CommandNamer.VacuumingRulesName)
             .WithAlias(CommandNamer.VacuumingRulesAlias)
             .WithSubCommands(
                 Add(console, vacuumingRulesManager, purposesManager),
@@ -136,7 +136,7 @@ public static class VacuumingRulesCommandBuilder
     private static Command Execute(IConsole console, IVacuumingRulesManager vacuumingRulesManager)
     {
         return CommandBuilder
-            .CreateCommand(CommandNamer.Execute)
+            .CreateNewCommand(CommandNamer.Execute)
             .WithAlias(CommandNamer.ExecuteAlias)
             .WithDescription("Executes the given vacuuming rule(s)")
             .WithOption(out var rulesOption,

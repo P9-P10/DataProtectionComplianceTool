@@ -9,7 +9,7 @@ public static class IndividualsCommandBuilder
 {
     public static Command Build(IConsole console, IIndividualsManager individualsManager)
     {
-        return CommandBuilder.CreateCommand(CommandNamer.IndividualsName)
+        return CommandBuilder.CreateNewCommand(CommandNamer.IndividualsName)
             .WithAlias(CommandNamer.IndividualsAlias)
             .WithSubCommands(
                 SetSource(console, individualsManager),

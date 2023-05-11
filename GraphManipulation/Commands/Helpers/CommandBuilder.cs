@@ -6,7 +6,7 @@ namespace GraphManipulation.Commands.Helpers;
 
 public static class CommandBuilder
 {
-    public static Command CreateCommand(string name)
+    public static Command CreateNewCommand(string name)
     {
         return new Command(name);
     }
@@ -76,7 +76,7 @@ public static class CommandBuilder
 
     private static Command BuildCommandWithNameAliasSubject(string name, string alias, string subject = "")
     {
-        return CreateCommand(name + (string.IsNullOrEmpty(subject) ? "" : $"-{subject}"))
+        return CreateNewCommand(name + (string.IsNullOrEmpty(subject) ? "" : $"-{subject}"))
             .WithAlias(alias + (string.IsNullOrEmpty(subject) ? "" : $"{subject.First()}"));
     }
 
