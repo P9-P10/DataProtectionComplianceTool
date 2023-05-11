@@ -14,9 +14,6 @@ public class OriginsCommandBuilder : BaseCommandBuilder<IOriginsManager, string,
 
     public Command Build()
     {
-        const string subject = "origin";
-        const string subjects = "origins";
-
         var keyOption = BuildKeyOption();
 
         var descriptionOption = OptionBuilder
@@ -30,11 +27,11 @@ public class OriginsCommandBuilder : BaseCommandBuilder<IOriginsManager, string,
         return CommandBuilder.CreateCommand(CommandNamer.OriginsName)
             .WithAlias(CommandNamer.OriginsAlias)
             .WithSubCommands(
-                CreateCommand(subject, keyOption, new OriginBinder(keyOption, descriptionOption), descriptionOption), 
-                UpdateCommand(subject, keyOption, new OriginBinder(newKeyOption, descriptionOption), newKeyOption, descriptionOption), 
-                DeleteCommand(subject, BuildKeyOption()),
-                ListCommand(subjects),
-                ShowCommand(subject, BuildKeyOption())
+                CreateCommand(keyOption, new OriginBinder(keyOption, descriptionOption), descriptionOption), 
+                UpdateCommand(keyOption, new OriginBinder(newKeyOption, descriptionOption), newKeyOption, descriptionOption), 
+                DeleteCommand(BuildKeyOption()),
+                ListCommand(),
+                ShowCommand(BuildKeyOption())
             );
     }
 
