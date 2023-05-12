@@ -20,7 +20,7 @@ public static class VacuumingModelsMakers
                 Id = 0,
                 Name = "Name",
                 Description = "Description",
-                Condition = "Condition"
+                Condition = "Condition",
             };
             purposes.Add(new Purpose()
             {
@@ -97,9 +97,13 @@ public static class VacuumingModelsMakers
         };
     }
 
-    public static Purpose PurposeMaker(string name = "Name", int id = 0,DeleteCondition? deleteCondition = null)
+    public static Purpose PurposeMaker(string name = "Name", int id = 0, string tableName = "Table",
+        string columnName = "Column",
+        string defaultValue = "Null", string condition = "Condition")
     {
-        deleteCondition ??= DeleteConditionMaker();
+        DeleteCondition deleteCondition = DeleteConditionMaker(tableName, columnName, defaultValue, condition);
+        List<PersonalDataColumn> personalDataColumns =
+            PersonalDataColumns(tableName, columnName, defaultValue).ToList();
 
         Purpose purpose = new()
         {
@@ -107,24 +111,34 @@ public static class VacuumingModelsMakers
             DeleteConditions = new List<DeleteCondition>(),
             Rules = new List<VacuumingRule>(),
             Id = id,
-            PersonalDataColumns = PersonalDataColumns()
+            PersonalDataColumns = personalDataColumns
         };
+        foreach (var column in personalDataColumns)
+        {
+            column.Purposes ??= new List<Purpose>();
+
+            column.Purposes = column.Purposes.Append(purpose).ToList();
+        }
+
         deleteCondition.Purpose = purpose;
         purpose.DeleteConditions = purpose.DeleteConditions.Append(deleteCondition).ToList();
         return purpose;
     }
 
-    private static DeleteCondition DeleteConditionMaker()
+    public static DeleteCondition DeleteConditionMaker(string tableName = "Table", string columnName = "Column",
+        string defaultValue = "Null", string condition = "Condition")
     {
         return new DeleteCondition()
         {
             Name = "Execution",
-            Condition = "Condition",
-            PersonalDataColumn = PersonalDataColumnMaker()
+            Condition = condition,
+            PersonalDataColumn =
+                PersonalDataColumnMaker(tableName: tableName, columnName: columnName, defaultValue: defaultValue)
         };
     }
 
-    private static IEnumerable<PersonalDataColumn> PersonalDataColumns()
+    private static IEnumerable<PersonalDataColumn> PersonalDataColumns(string table = "Table", string column = "Column",
+        string defaultValue = "Null")
     {
         return new List<PersonalDataColumn>()
         {
@@ -132,8 +146,9 @@ public static class VacuumingModelsMakers
             {
                 Id = 0,
                 Description = "Description",
+                DefaultValue = defaultValue,
                 Purposes = new List<Purpose>(),
-                TableColumnPair = new TableColumnPair("Table", "Column")
+                TableColumnPair = new TableColumnPair(table, column)
             }
         };
     }

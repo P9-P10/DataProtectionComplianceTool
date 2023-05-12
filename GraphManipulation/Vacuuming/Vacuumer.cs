@@ -1,4 +1,5 @@
 using GraphManipulation.DataAccess.Mappers;
+using GraphManipulation.Managers;
 using GraphManipulation.Models;
 
 namespace GraphManipulation.Vacuuming;
@@ -107,20 +108,20 @@ public class Vacuumer : IVacuumer
 
     private List<DeleteCondition> GetAllDeleteConditionsWithSameTableColumnPair(PersonalDataColumn personalDataColumn)
     {
-        List<Purpose> purposes = GetAllPurposes();
+        List<Purpose> purposes = GetAllPurposesWithSameTableColumnPair(personalDataColumn.TableColumnPair);
         List<DeleteCondition> output = new List<DeleteCondition>();
         foreach (Purpose purpose in purposes)
         {
-            output.AddRange(purpose.DeleteConditions.Where(x =>
-                x.PersonalDataColumn.TableColumnPair.Equals(personalDataColumn.TableColumnPair)));
+            output.AddRange(purpose.DeleteConditions);
         }
 
         return output;
     }
 
-    private List<Purpose> GetAllPurposes()
+    private List<Purpose> GetAllPurposesWithSameTableColumnPair(TableColumnPair tableColumnPair)
     {
-        return _purposeMapper.Find(x => true).ToList();
+        return _purposeMapper.Find(purpose => purpose.DeleteConditions.Any(deleteCondition =>
+            deleteCondition.PersonalDataColumn.TableColumnPair.Equals(tableColumnPair))).ToList();
     }
 
     private DeletionExecution CreateDeletionExecution(List<DeleteCondition> conditions)
