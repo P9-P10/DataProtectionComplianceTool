@@ -20,44 +20,53 @@ public class Vacuumer : IVacuumer
         List<DeletionExecution> output = new List<DeletionExecution>();
         foreach (var purpose in _purposeMapper.Find(_ => true))
         {
-            output.AddRange(CreateDeletionExecutionFromPurpose(purpose));
+            output.AddRange(CreateExecutionsFromPurpose(purpose));
         }
 
         return output;
     }
 
-    private IEnumerable<DeletionExecution> CreateDeletionExecutionFromPurpose(Purpose purpose)
+
+    private List<DeletionExecution> CreateExecutionsFromPurpose(Purpose purpose)
     {
         List<DeletionExecution> output = new List<DeletionExecution>();
         foreach (var condition in purpose.DeleteConditions)
         {
-            AddIfNotExists(output, condition);
+            AddConditionIfNotExists(output, condition);
         }
-
 
         return output;
     }
 
-    private void AddIfNotExists(List<DeletionExecution> output, DeleteCondition condition)
+    private void AddConditionIfNotExists(List<DeletionExecution> output, DeleteCondition condition)
     {
-        foreach (var execution in CreateDeletionExecutions(
-                     DeleteConditionsWithSameTableColumnPair(condition.PersonalDataColumn)))
+        foreach (DeletionExecution execution in UniqueExecutions(output, condition))
         {
-            if (output.Contains(execution)) continue;
             output.Add(execution);
         }
+    }
+
+    private IEnumerable<DeletionExecution> UniqueExecutions(List<DeletionExecution> output, DeleteCondition condition)
+    {
+        return CreateDeletionExecutions(
+            DeleteConditionsWithSameTableColumnPair(condition.PersonalDataColumn))
+            .Where(execution => !output.Contains(execution));
     }
 
 
     private static string AppendConditions(DeleteCondition condition, string logicOperator,
         DeletionExecution deletionExecution)
     {
-        string conditionalStatement = "";
-        conditionalStatement += $"({condition.Condition})";
-        conditionalStatement += logicOperator;
+        string conditionalStatement = CreateConditionalStatement(condition, logicOperator);
         deletionExecution.AddPurpose(condition.Purpose);
+        
+        return conditionalStatement;
+    }
 
-
+    private static string CreateConditionalStatement(DeleteCondition condition, string logicOperator)
+    {
+        string conditionalStatement = $"({condition.Condition})";
+        conditionalStatement += logicOperator;
         return conditionalStatement;
     }
 
@@ -98,18 +107,26 @@ public class Vacuumer : IVacuumer
         {
             executions.AddRange(ExecuteVacuumingRule(rule));
         }
+
         return executions;
     }
 
-    private List<DeletionExecution> ExecuteVacuumingRule(VacuumingRule vacuumingRule)
+    private IEnumerable<DeletionExecution> ExecuteVacuumingRule(VacuumingRule vacuumingRule)
+    {
+        var executions = CreateExecutionsFromRule(vacuumingRule);
+        ExecuteConditions(executions);
+        return executions;
+    }
+
+    private List<DeletionExecution> CreateExecutionsFromRule(VacuumingRule vacuumingRule)
     {
         List<DeletionExecution> executions = new List<DeletionExecution>();
 
         foreach (var purpose in vacuumingRule.Purposes)
         {
-            executions.AddRange(CreateDeletionExecutionFromPurpose(purpose));
+            executions.AddRange(CreateExecutionsFromPurpose(purpose));
         }
-        ExecuteConditions(executions);
+
         return executions;
     }
 
@@ -139,9 +156,7 @@ public class Vacuumer : IVacuumer
 
         foreach (DeleteCondition condition in conditions)
         {
-            DeletionExecution? execution = output.Find(deleteExecution =>
-                deleteExecution.Table == condition.PersonalDataColumn.TableColumnPair.TableName &&
-                deleteExecution.Column == condition.PersonalDataColumn.TableColumnPair.ColumnName);
+            DeletionExecution? execution = output.Find(HasSameTableColumnPair(condition));
             if (execution != null)
             {
                 UpdateExecution(execution, condition, logicOperator);
@@ -157,6 +172,13 @@ public class Vacuumer : IVacuumer
         return output;
     }
 
+    private static Predicate<DeletionExecution> HasSameTableColumnPair(DeleteCondition condition)
+    {
+        return deleteExecution =>
+            deleteExecution.Table == condition.PersonalDataColumn.TableColumnPair.TableName &&
+            deleteExecution.Column == condition.PersonalDataColumn.TableColumnPair.ColumnName;
+    }
+
     private static void UpdateExecution(DeletionExecution execution, DeleteCondition condition, string logicOperator)
     {
         execution.Query += AppendConditions(condition, logicOperator, execution);
@@ -164,10 +186,11 @@ public class Vacuumer : IVacuumer
 
     private static void AddExecution(DeleteCondition condition, string logicOperator, List<DeletionExecution> output)
     {
-        DeletionExecution execution;
-        execution = new DeletionExecution();
+        DeletionExecution execution = new();
         string updateQuery = CreateUpdateQuery(condition.PersonalDataColumn);
+
         execution.Query += updateQuery + AppendConditions(condition, logicOperator, execution);
+
         execution.Column = condition.PersonalDataColumn.TableColumnPair.ColumnName;
         execution.Table = condition.PersonalDataColumn.TableColumnPair.TableName;
         output.Add(execution);
