@@ -113,7 +113,7 @@ public class VacuumerTest
         Purpose purpose = PurposeMaker();
         purpose.DeleteConditions = purpose.DeleteConditions.Append(DeleteConditionMaker(condition: "SecondCondition"))
             .ToList();
-        purpose.DeleteConditions.ElementAt(1).Purpose = purpose;
+        purpose.DeleteConditions.ElementAt(1).Purposes = purpose.DeleteConditions.ElementAt(1).Purposes.Append(purpose);
         testPurposeMapper.Insert(purpose);
 
 
@@ -133,7 +133,7 @@ public class VacuumerTest
         Purpose purpose = PurposeMaker();
         purpose.DeleteConditions = purpose.DeleteConditions
             .Append(DeleteConditionMaker(condition: "SecondCondition", tableName: "SecondTable")).ToList();
-        purpose.DeleteConditions.ElementAt(1).Purpose = purpose;
+        purpose.DeleteConditions.ElementAt(1).Purposes = purpose.DeleteConditions.ElementAt(1).Purposes.Append(purpose);
         testPurposeMapper.Insert(purpose);
 
 
@@ -155,7 +155,7 @@ public class VacuumerTest
         Purpose newPurpose = PurposeMaker(name: "NewPurpose", tableName: "NewTable");
         purpose.DeleteConditions = purpose.DeleteConditions
             .Append(DeleteConditionMaker(condition: "SecondCondition", tableName: "SecondTable")).ToList();
-        purpose.DeleteConditions.ElementAt(1).Purpose = purpose;
+        purpose.DeleteConditions.ElementAt(1).Purposes = purpose.DeleteConditions.ElementAt(1).Purposes.Append(purpose);
         testPurposeMapper.Insert(purpose);
         testPurposeMapper.Insert(newPurpose);
 

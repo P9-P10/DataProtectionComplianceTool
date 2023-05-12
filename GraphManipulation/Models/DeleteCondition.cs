@@ -10,7 +10,7 @@ public class DeleteCondition : DomainEntity, IDeleteCondition
 
     public virtual PersonalDataColumn PersonalDataColumn { get; set; }
 
-    public virtual Purpose Purpose { get; set; }
+    public virtual IEnumerable<Purpose> Purposes { get; set; }
 
 
     public string ToListing()

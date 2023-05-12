@@ -117,8 +117,8 @@ public static class VacuumingModelsMakers
 
             column.Purposes = column.Purposes.Append(purpose).ToList();
         }
-
-        deleteCondition.Purpose = purpose;
+        
+        deleteCondition.Purposes = deleteCondition.Purposes.Append(purpose);
         purpose.DeleteConditions = purpose.DeleteConditions.Append(deleteCondition).ToList();
         return purpose;
     }
@@ -130,6 +130,7 @@ public static class VacuumingModelsMakers
         {
             Name = "Execution",
             Condition = condition,
+            Purposes = new List<Purpose>(),
             PersonalDataColumn =
                 PersonalDataColumnMaker(tableName: tableName, columnName: columnName, defaultValue: defaultValue)
         };
