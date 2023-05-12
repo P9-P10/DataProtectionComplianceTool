@@ -7,7 +7,7 @@ namespace GraphManipulation.Models;
 
 public class VacuumingRule : Entity<string>
 {
-    public string Interval
+    public string? Interval
     {
         get => _interval;
         set
@@ -22,7 +22,7 @@ public class VacuumingRule : Entity<string>
         }
     }
 
-    private string _interval = "";
+    private string? _interval;
 
     public DateTime? LastExecution { get; set; }
 
@@ -58,9 +58,9 @@ public class VacuumingRule : Entity<string>
         Purposes = purposes;
     }
     
-    public static bool IsValidInterval(string interval)
+    public static bool IsValidInterval(string? interval)
     {
-        return Regex.Match(interval, @"(\d+(y|d|m|M|D|w) {0,1})+").Success;
+        return interval is not null && Regex.Match(interval, @"(\d+(y|d|m|M|D|w) {0,1})+").Success;
     }
 
     public VacuumingRule(string description, string name, string interval,

@@ -3,19 +3,23 @@ using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Managers.Interfaces.Archive;
 using GraphManipulation.Models;
+using GraphManipulation.Vacuuming;
 
 namespace GraphManipulation.Commands.Builders;
 
 public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, VacuumingRule>
 {
     private readonly IManager<string, Purpose> _purposesManager;
+    private readonly IVacuumer _vacuumer;
     
     public VacuumingRulesCommandBuilder(
         IConsole console, 
         IManager<string, VacuumingRule> manager,
-        IManager<string, Purpose> purposesManager) : base(console, manager)
+        IManager<string, Purpose> purposesManager, 
+        IVacuumer vacuumer) : base(console, manager)
     {
         _purposesManager = purposesManager;
+        _vacuumer = vacuumer;
     }
 
     public override Command Build()
@@ -24,10 +28,14 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
             out var keyOption);
         
         var descriptionOption = BuildDescriptionOption();
-
         var newKeyOption = BuildNewNameOption();
-        
-        
+
+        var intervalOption = BuildIntervalOption();
+
+        var purposeListOption = OptionBuilder
+            .CreatePurposeListOption()
+            .WithDescription("The purpose(s) under which the personal data is stored");
+
     }
 
     protected override Option<string> BuildKeyOption()
