@@ -13,15 +13,15 @@ public class Origin : Entity<string>
                 PersonalDataColumns is null ? new List<string>() : PersonalDataColumns.Select(c => c.ToListingIdentifier())) + " ]");
     }
 
-    public override void Fill(object? other)
-    {
-        if (other is null || other.GetType() != typeof(Origin))
-        {
-            return;
-        }
-        
-        base.Fill(other);
-        
-        (other as Origin)!.PersonalDataColumns ??= PersonalDataColumns;
-    }
+    // public override void Fill(object? other)
+    // {
+    //     if (other is null || other.GetType() != typeof(Origin))
+    //     {
+    //         return;
+    //     }
+    //     
+    //     base.Fill(other);
+    //     
+    //     (other as Origin)!.PersonalDataColumns ??= PersonalDataColumns;
+    // }
 }

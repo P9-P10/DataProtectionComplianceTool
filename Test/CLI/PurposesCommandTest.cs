@@ -29,7 +29,7 @@ public class PurposesCommandTest : CommandTest
                 LegallyRequired = LegallyRequired,
                 PersonalDataColumns = new List<PersonalDataColumn>(),
                 Rules = new List<VacuumingRule>(),
-                DeleteCondition = DeleteCondition
+                DeleteConditions = DeleteCondition
             });
         
         purposeManagerMock

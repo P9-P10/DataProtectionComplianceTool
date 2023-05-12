@@ -95,6 +95,11 @@ public static class CommandBuilder
         return BuildCommandWithNameAliasSubject(CommandNamer.Delete, CommandNamer.DeleteAlias, subject);
     }
 
+    public static Command BuildAddCommand(string subject = "")
+    {
+        return BuildCommandWithNameAliasSubject(CommandNamer.Add, CommandNamer.AddAlias, subject);
+    }
+
     public static Command BuildRemoveCommand(string subject = "")
     {
         return BuildCommandWithNameAliasSubject(CommandNamer.Remove, CommandNamer.RemoveAlias, subject);

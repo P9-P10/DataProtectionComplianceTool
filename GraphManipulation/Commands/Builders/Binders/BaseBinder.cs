@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Binding;
+using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
 using GraphManipulation.Models.Base;
 
@@ -22,5 +23,29 @@ public abstract class BaseBinder<TKey, TValue> : BinderBase<TValue> where TValue
         var description = bindingContext.ParseResult.GetValueForOption(_descriptionOption)!;
 
         return new TValue { Key = key, Description = description};
+    }
+
+    protected IEnumerable<TV> HandleMustExistList<TK, TV>(IEnumerable<TK> keys, IManager<TK, TV> manager)
+    {
+        return keys.Select(key => HandleMustExist(key, manager));
+    }
+
+    protected TV HandleMustExist<TK, TV>(TK key, IManager<TK, TV> manager)
+    {
+        var value = manager.Get(key);
+        if (value is not null)
+        {
+            return value;
+        }
+        
+        throw new BindingException($"Could not bind to {key} as it does not exist in the system");
+    }
+}
+
+public class BindingException : Exception
+{
+    public BindingException(string message) : base(message)
+    {
+        
     }
 }

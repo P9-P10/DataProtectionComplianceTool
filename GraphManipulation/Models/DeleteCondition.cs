@@ -1,37 +1,16 @@
 using GraphManipulation.Models.Base;
-using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Models;
 
-public class DeleteCondition : DomainEntity, IDeleteCondition
+public class DeleteCondition : Entity<string>
 {
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public string Condition { get; set; }
+    public string? Condition { get; set; }
+    public virtual PersonalDataColumn? PersonalDataColumn { get; set; }
+    public virtual IEnumerable<Purpose>? Purposes { get; set; }
     
-
-    public string ToListing()
+    public override string ToListing()
     {
-        return string.Join(", ", Name, Description, Condition);
-    }
-
-    public string ToListingIdentifier()
-    {
-        return GetName();
-    }
-
-    public string GetCondition()
-    {
-        return Condition;
-    }
-
-    public string GetName()
-    {
-        return Name;
-    }
-
-    public string GetDescription()
-    {
-        return Description;
+        return string.Join(", ", base.ToListing(), Condition, PersonalDataColumn?.ToListingIdentifier(), 
+            "[ " + string.Join(", ", Purposes == null ? new List<string>() : Purposes.Select(p => p.ToListingIdentifier())) + " ]");
     }
 }

@@ -1,14 +1,12 @@
 using System.Text.RegularExpressions;
 using GraphManipulation.Models.Base;
 using GraphManipulation.Models.Interfaces;
+using GraphManipulation.SchemaEvolution.Models.Entity;
 
 namespace GraphManipulation.Models;
 
-public class VacuumingRule : DomainEntity, IVacuumingRule
+public class VacuumingRule : Entity<string>
 {
-    public string Name { get; set; }
-    public string? Description { get; set; }
-
     public string Interval
     {
         get => _interval;
@@ -28,37 +26,12 @@ public class VacuumingRule : DomainEntity, IVacuumingRule
 
     public DateTime? LastExecution { get; set; }
 
-    public virtual IEnumerable<Purpose> Purposes { get; set; }
+    public virtual IEnumerable<Purpose>? Purposes { get; set; }
 
-    public string ToListing()
+    public override string ToListing()
     {
-        return string.Join(", ", Name, Description, Interval,
-            "[ " + string.Join(", ", Purposes.Select(p => p.ToListingIdentifier())) + " ]");
-    }
-
-    public string ToListingIdentifier()
-    {
-        return GetName();
-    }
-
-    public string GetInterval()
-    {
-        return Interval;
-    }
-
-    public IEnumerable<IPurpose> GetPurposes()
-    {
-        return Purposes;
-    }
-
-    public string GetName()
-    {
-        return Name;
-    }
-
-    public string GetDescription()
-    {
-        return Description ?? "";
+        return string.Join(", ", base.ToListing(), Interval, LastExecution.ToString(),
+            "[ " + string.Join(", ", Purposes is null ? new List<string>() : Purposes.Select(p => p.ToListingIdentifier())) + " ]");
     }
 
     private struct ParsedInterval
@@ -79,7 +52,7 @@ public class VacuumingRule : DomainEntity, IVacuumingRule
     {
         Id = id;
         Description = description;
-        Name = name;
+        Key = name;
         Interval = interval;
         purposes ??= new List<Purpose>();
         Purposes = purposes;
@@ -94,7 +67,7 @@ public class VacuumingRule : DomainEntity, IVacuumingRule
         IEnumerable<Purpose>? purposes = null)
     {
         Description = description;
-        Name = name;
+        Key = name;
         Interval = interval;
         purposes ??= new List<Purpose>();
         Purposes = purposes;
@@ -103,21 +76,21 @@ public class VacuumingRule : DomainEntity, IVacuumingRule
     public VacuumingRule(string name, string description, string interval)
     {
         Description = description;
-        Name = name;
+        Key = name;
         Interval = interval;
         Purposes = new List<Purpose>();
     }
 
     public VacuumingRule(string name, string interval, List<Purpose> purposes)
     {
-        Name = name;
+        Key = name;
         Interval = interval;
         Purposes = purposes;
     }
 
     public VacuumingRule(string name, string interval)
     {
-        Name = name;
+        Key = name;
         Interval = interval;
     }
 
@@ -181,21 +154,6 @@ public class VacuumingRule : DomainEntity, IVacuumingRule
     private int GetTimeFromComponent(string input)
     {
         return int.Parse(Regex.Match(input, @"\d+").Value);
-    }
-
-    public override bool Equals(object? obj)
-    {
-        return Equals(obj as VacuumingRule);
-    }
-
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(Interval, Name, Id);
-    }
-
-    bool Equals(VacuumingRule? other)
-    {
-        return other.Interval == Interval && other.Name == Name && other.Id == Id;
     }
 
     public class IntervalParseException : Exception

@@ -37,7 +37,7 @@ public class TestResources
     {
         Name = "purposeName",
         Description = Description,
-        DeleteCondition = TestDeleteCondition,
+        DeleteConditions = TestDeleteCondition,
         LegallyRequired = true,
         PersonalDataColumns = new List<PersonalDataColumn>(),
         Rules = new List<VacuumingRule>()
@@ -47,7 +47,7 @@ public class TestResources
     {
         Name = TestPurpose.GetName() + "NEW",
         Description = TestPurpose.GetDescription() + "NEW",
-        DeleteCondition = NewTestDeleteCondition,
+        DeleteConditions = NewTestDeleteCondition,
         LegallyRequired = !TestPurpose.GetLegallyRequired(),
         PersonalDataColumns = new List<PersonalDataColumn>(),
         Rules = new List<VacuumingRule>()
@@ -57,7 +57,7 @@ public class TestResources
     {
         Name = TestPurpose.GetName() + "VERY_NEW",
         Description = TestPurpose.GetDescription() + "VERY_NEW",
-        DeleteCondition = NewTestDeleteCondition,
+        DeleteConditions = NewTestDeleteCondition,
         LegallyRequired = !NewTestPurpose.GetLegallyRequired(),
         PersonalDataColumns = new List<PersonalDataColumn>(),
         Rules = new List<VacuumingRule>()
@@ -146,7 +146,7 @@ public class TestResources
 
     protected static void AddDeleteCondition(TestProcess testProcess, IDeleteCondition deleteCondition)
     {
-        var addDeleteConditionCommand = $"{CommandNamer.DeleteConditionName} {CommandNamer.Create} " +
+        var addDeleteConditionCommand = $"{CommandNamer.DeleteConditionsName} {CommandNamer.Create} " +
                                         $"{OptionNamer.Name} {deleteCondition.GetName()} " +
                                         $"{OptionNamer.Condition} \"{deleteCondition.GetCondition()}\" " +
                                         $"{OptionNamer.Description} \"{deleteCondition.GetDescription()}\"";
@@ -199,14 +199,14 @@ public class TestResources
 
     protected static void ListDeletionConditions(TestProcess process)
     {
-        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.List}");
+        process.GiveInput($"{CommandNamer.DeleteConditionsAlias} {CommandNamer.List}");
     }
 
     protected static void UpdateDeletionCondition(TestProcess process, IDeleteCondition old,
         IDeleteCondition newDeletionCondition)
     {
         string command =
-            $"{CommandNamer.DeleteConditionAlias} {CommandNamer.UpdateAlias} {OptionNamer.NameAlias} {old.GetName()}  {OptionNamer.NewNameAlias}  {newDeletionCondition.GetName()}" +
+            $"{CommandNamer.DeleteConditionsAlias} {CommandNamer.UpdateAlias} {OptionNamer.NameAlias} {old.GetName()}  {OptionNamer.NewNameAlias}  {newDeletionCondition.GetName()}" +
             $" {OptionNamer.Condition} \"{newDeletionCondition.GetCondition()}\"" +
             $" {OptionNamer.Description} \"{newDeletionCondition.GetDescription()}\"";
         process.GiveInput(command);
@@ -214,14 +214,14 @@ public class TestResources
 
     protected static void DeleteDeletionCondition(TestProcess process, IDeleteCondition deleteCondition)
     {
-        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name}" +
+        process.GiveInput($"{CommandNamer.DeleteConditionsAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name}" +
                           $" {deleteCondition.GetName()}");
     }
 
     protected static void ShowDeleteCondition(TestProcess process, IDeleteCondition deleteCondition)
     {
         process.GiveInput(
-            $"{CommandNamer.DeleteConditionAlias} {CommandNamer.ShowAlias} -n {deleteCondition.GetName()}");
+            $"{CommandNamer.DeleteConditionsAlias} {CommandNamer.ShowAlias} -n {deleteCondition.GetName()}");
     }
 
     protected static void AddOrigin(TestProcess testProcess, Origin origin)

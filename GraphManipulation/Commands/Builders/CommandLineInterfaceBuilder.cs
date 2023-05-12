@@ -3,9 +3,9 @@ using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
 using GraphManipulation.Managers;
+using GraphManipulation.Managers.Archive;
 using GraphManipulation.Managers.Interfaces;
-using GraphManipulation.Managers.Interfaces.Archive;
-using IOriginsManager = GraphManipulation.Managers.Interfaces.IOriginsManager;
+using GraphManipulation.Models;
 
 namespace GraphManipulation.Commands.Builders;
 
@@ -13,13 +13,13 @@ public static class CommandLineInterfaceBuilder
 {
     public static Command Build(
         IConsole console,
-        IIndividualsManager individualsManager,
-        IPersonalDataManager personalDataManager,
-        IPurposesManager purposesManager,
-        IOriginsManager originsManager,
-        IVacuumingRulesManager vacuumingRulesManager,
-        IDeleteConditionsManager deleteConditionsManager,
-        IProcessingsManager processingsManager,
+        IManager<int, Individual> individualsManager,
+        IManager<TableColumnPair, PersonalDataColumn> personalDataColumnManager,
+        IManager<string, Purpose> purposesManager,
+        IManager<string, Origin> originsManager,
+        IManager<string, VacuumingRule> vacuumingRulesManager,
+        IManager<string, DeleteCondition> deleteConditionsManager,
+        IManager<string, Processing> processingsManager,
         ILogger logger,
         IConfigManager configManager)
     {
@@ -27,14 +27,13 @@ public static class CommandLineInterfaceBuilder
             .WithAlias(CommandNamer.RootCommandAlias)
             .WithDescription("This is a description of the root command")
             .WithSubCommands(
-                IndividualsCommandBuilder.Build(console, individualsManager),
-                // PersonalDataCommandBuilder.Build(console, personalDataManager, purposesManager,
-                //     originsManager, individualsManager),
-                PurposesCommandBuilder.Build(console, purposesManager, deleteConditionsManager),
+                // IndividualsCommandBuilder.Build(console, individualsManager),
+                new PersonalDataColumnCommandBuilder(console, personalDataColumnManager, purposesManager, originsManager, individualsManager).Build(),
+                new PurposesCommandBuilder(console, purposesManager, deleteConditionsManager).Build(),
                 new OriginsCommandBuilder(console, originsManager).Build(),
-                VacuumingRulesCommandBuilder.Build(console, vacuumingRulesManager, purposesManager),
-                DeleteConditionsCommandBuilder.Build(console, deleteConditionsManager),
-                ProcessingsCommandBuilder.Build(console, processingsManager, personalDataManager, purposesManager),
+                // VacuumingRulesCommandBuilder.Build(console, vacuumingRulesManager, purposesManager),
+                new DeleteConditionsCommandBuilder(console, deleteConditionsManager, personalDataColumnManager).Build(),
+                new ProcessingsCommandBuilder(console, processingsManager, purposesManager, personalDataColumnManager).Build(),
                 LoggingCommandBuilder.Build(console, logger),
                 ConfigurationCommandBuilder.Build(console, configManager)
             );

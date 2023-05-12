@@ -23,59 +23,7 @@
 //         _personalDataMapper = personalDataMapper;
 //         _individualMapper = individualMapper;
 //     }
-//
-//     public IEnumerable<IPersonalDataColumn> GetAll()
-//     {
-//         return _columnMapper.Find(_ => true);
-//     }
-//
-//     public IPersonalDataColumn? Get(TableColumnPair key)
-//     {
-//         return FindByKey(key);
-//     }
-//
-//     public void Delete(TableColumnPair key)
-//     {
-//         _columnMapper.Delete(FindByKey(key));
-//     }
-//
-//     public void UpdateDescription(TableColumnPair key, string description)
-//     {
-//         var column = FindByKey(key);
-//         column.Description = description;
-//         _columnMapper.Update(column);
-//     }
-//
-//     public void AddPersonalData(TableColumnPair tableColumnPair, string joinCondition, string description)
-//     {
-//         _columnMapper.Insert(new PersonalDataColumn
-//             { TableColumnPair = tableColumnPair, Description = description, JoinCondition = joinCondition });
-//     }
-//
-//     public void SetDefaultValue(TableColumnPair tableColumnPair, string defaultValue)
-//     {
-//         var column = FindByKey(tableColumnPair);
-//         column.DefaultValue = defaultValue;
-//         _columnMapper.Update(column);
-//     }
-//
-//     public void AddPurpose(TableColumnPair tableColumnPair, string purposeName)
-//     {
-//         var purpose = _purposeMapper.FindSingle(purpose => purpose.Name == purposeName);
-//         var column = FindByKey(tableColumnPair);
-//         column.AddPurpose(purpose);
-//         _columnMapper.Update(column);
-//     }
-//
-//     public void RemovePurpose(TableColumnPair tableColumnPair, string purposeName)
-//     {
-//         var purpose = _purposeMapper.FindSingle(purpose => purpose.Name == purposeName);
-//         var column = FindByKey(tableColumnPair);
-//         var purposes = column.Purposes.Where(p => !p.Equals(purpose)).ToList();
-//         column.Purposes = purposes;
-//         _columnMapper.Update(column);
-//     }
-//
+
 //     public void SetOriginOf(TableColumnPair tableColumnPair, int individualsId, string originName)
 //     {
 //         var individual = _individualMapper.FindSingle(individual => individual.Id == individualsId)!;

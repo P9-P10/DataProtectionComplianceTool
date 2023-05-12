@@ -5,8 +5,8 @@ public static class CommandNamer
     public const string RootCommandName = "!";
     public const string RootCommandAlias = "!";
 
-    public const string DeleteConditionName = "delete-conditions";
-    public const string DeleteConditionAlias = "dcs";
+    public const string DeleteConditionsName = "delete-conditions";
+    public const string DeleteConditionsAlias = "dcs";
 
     public const string IndividualsName = "individuals";
     public const string IndividualsAlias = "ids";
@@ -40,6 +40,9 @@ public static class CommandNamer
 
     public const string Delete = "delete";
     public const string DeleteAlias = "d";
+
+    public const string Add = "add";
+    public const string AddAlias = "a";
 
     public const string Remove = "remove";
     public const string RemoveAlias = "r";

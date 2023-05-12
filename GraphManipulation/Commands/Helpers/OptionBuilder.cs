@@ -81,7 +81,6 @@ public static class OptionBuilder
                     return new TableColumnPair("", "");
                 })
             .WithAlias(OptionNamer.TableColumnAlias)
-            .WithIsRequired(true)
             .WithArity(new ArgumentArity(2, 2))
             .WithAllowMultipleArguments(true);
     }

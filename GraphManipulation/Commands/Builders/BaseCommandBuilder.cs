@@ -3,29 +3,29 @@ using System.CommandLine.IO;
 using GraphManipulation.Commands.Builders.Binders;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Managers.Interfaces;
+using GraphManipulation.Managers.Interfaces.Base;
 using GraphManipulation.Models;
 using GraphManipulation.Models.Base;
 using GraphManipulation.Models.Interfaces.Base;
 
 namespace GraphManipulation.Commands.Builders;
 
-public abstract class BaseCommandBuilder<TManager, TKey, TValue>
+public abstract class BaseCommandBuilder<TKey, TValue>
     where TKey : notnull
     where TValue : Entity<TKey>, IListable, new()
-    where TManager : IManager<TKey, TValue>
 {
-    protected readonly TManager Manager;
+    protected readonly IManager<TKey, TValue> Manager;
     protected readonly IConsole Console;
 
-    protected BaseCommandBuilder(IConsole console, TManager manager)
+    protected BaseCommandBuilder(IConsole console, IManager<TKey, TValue> manager)
     {
         Console = console;
         Manager = manager;
     }
 
-    protected Command Build(string name, string alias)
+    protected Command Build(string name, string alias, out Option<TKey> keyOption)
     {
-        var keyOption = BuildKeyOption();
+        keyOption = BuildKeyOption();
         
         return CommandBuilder.CreateNewCommand(name)
             .WithAlias(alias)
@@ -35,9 +35,11 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
                 ShowCommand(keyOption)
             );
     }
+
+    public abstract Command Build();
     
-    protected Command BaseCreateCommand(Option<TKey> keyOption, BaseBinder<TKey, TValue> binder,
-        params Option[] options)
+    protected Command CreateCommand(Option<TKey> keyOption, BaseBinder<TKey, TValue> binder,
+        Option[] options)
     {
         var command = CommandBuilder
             .BuildCreateCommand()
@@ -50,8 +52,8 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
         return command;
     }
 
-    protected Command BaseUpdateCommand(Option<TKey> keyOption, BaseBinder<TKey, TValue> binder,
-        params Option[] options)
+    protected Command UpdateCommand(Option<TKey> keyOption, BaseBinder<TKey, TValue> binder,
+        Option[] options)
     {
         var command = CommandBuilder
             .BuildUpdateCommand()
@@ -98,7 +100,38 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
         return command;
     }
 
-    protected void CreateHandler(TKey key, TValue value)
+    protected Command ListChangesCommand<TK, TV>(Option<TKey> keyOption, Option<IEnumerable<TK>> listOption,
+        IManager<TK, TV> manager, bool isAdd, Func<TValue, IEnumerable<TV>> getCurrentList,
+        Action<TValue, IEnumerable<TV>> setList)
+    {
+        var otherValueType = GetEntityType(typeof(TV));
+        
+        var command = CommandBuilder
+            .BuildAddCommand(otherValueType)
+            .WithDescription($"{(isAdd ? "Adds" : "Removes")} the given {otherValueType}(e)s {(isAdd ? "to" : "from")} the {GetEntityType()}")
+            .WithOption(out _, keyOption)
+            .WithOption(out _, listOption);
+
+        command.SetHandler((key, list) =>
+        {
+            ListChangesHandler(key, list, getCurrentList, setList, isAdd, manager);
+        }, keyOption, listOption);
+        
+        return command;
+    }
+
+    protected (Command Add, Command Remove) BuildListChangesCommand<TK, TV>(Option<TKey> keyOption,
+        Option<IEnumerable<TK>> listOption,
+        IManager<TK, TV> manager, Func<TValue, IEnumerable<TV>> getCurrentList,
+        Action<TValue, IEnumerable<TV>> setList)
+    {
+        var addCommand = ListChangesCommand(keyOption, listOption, manager, true, getCurrentList, setList);
+        var removeCommand = ListChangesCommand(keyOption, listOption, manager, false, getCurrentList, setList);
+
+        return (addCommand, removeCommand);
+    }
+
+    private void CreateHandler(TKey key, TValue value)
     {
         if (Manager.Get(key) is not null)
         {
@@ -119,7 +152,7 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
         }
     }
 
-    protected void UpdateHandler(TKey key, TValue value)
+    private void UpdateHandler(TKey key, TValue value)
     {
         var old = Manager.Get(key);
 
@@ -185,6 +218,53 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
         Manager.GetAll().Select(r => r.ToListing()).ToList().ForEach(Console.WriteLine);
     }
 
+    private void ListChangesHandler<TK, TV>(
+        TKey key,
+        IEnumerable<TK> list,
+        Func<TValue, IEnumerable<TV>> getCurrentList,
+        Action<TValue, IEnumerable<TV>> setList,
+        bool isAdd,
+        IGetter<TV, TK> manager)
+    {
+        var value = Manager.Get(key);
+        if (value is null)
+        {
+            WriteCouldNotFind(key);
+            return;
+        }
+
+        var currentList = getCurrentList(value).ToList();
+        
+        foreach (var k in list)
+        {
+            var v = manager.Get(k);
+
+            if (v is null)
+            {
+                WriteCouldNotFind<TK, TV>(k);
+                return;
+            }
+
+            if (isAdd)
+            {
+                if (!currentList.Contains(v))
+                {
+                    currentList.Add(v);
+                }
+            }
+            else
+            {
+                if (currentList.Contains(v))
+                {
+                    currentList.Remove(v);
+                }
+            }
+        }
+
+        setList(value, currentList);
+        UpdateHandler(key, value);
+    }
+
     protected Option<TKey> BuildKeyOption(string name, string alias, string description)
     {
         return OptionBuilder
@@ -195,6 +275,13 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
     }
 
     protected abstract Option<TKey> BuildKeyOption();
+
+    protected Option<string> BuildDescriptionOption()
+    {
+        return OptionBuilder
+            .CreateDescriptionOption()
+            .WithDescription($"The description of the {GetEntityType()}");
+    }
 
     protected void WriteSuccess(TKey key, Operations operation, TValue? value = null)
     {
@@ -213,12 +300,17 @@ public abstract class BaseCommandBuilder<TManager, TKey, TValue>
 
     protected void WriteCouldNotFind(TKey key)
     {
-        Console.Error.WriteLine(CouldNotFindMessage(key));
+        WriteCouldNotFind<TKey, TValue>(key);
     }
 
-    private static string CouldNotFindMessage(TKey key)
+    protected void WriteCouldNotFind<TK, TV>(TK key)
     {
-        return $"Could not find {GetEntityType()} using {key}";
+        Console.Error.WriteLine(CouldNotFindMessage<TK, TV>(key));
+    }
+
+    private static string CouldNotFindMessage<TK, TV>(TK key)
+    {
+        return $"Could not find {GetEntityType(typeof(TV))} using {key}";
     }
 
     private static string AlreadyExistsMessage(TKey key)

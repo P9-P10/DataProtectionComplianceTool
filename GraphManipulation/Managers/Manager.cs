@@ -8,11 +8,11 @@ public class Manager<TKey, TValue> : IManager<TKey, TValue>
     where TKey : notnull
     where TValue : Entity<TKey>, new() 
 {
-    private readonly IMapper<TValue> _mapper;
+    protected readonly IMapper<TValue> Mapper;
 
     public Manager(IMapper<TValue> mapper)
     {
-        _mapper = mapper;
+        Mapper = mapper;
     }
 
     public bool Create(TKey key)
@@ -20,7 +20,7 @@ public class Manager<TKey, TValue> : IManager<TKey, TValue>
         var old = Get(key);
         if (old is not null) return false;
         
-        _mapper.Insert(new TValue { Key = key });
+        Mapper.Insert(new TValue { Key = key });
         return true;
     }
 
@@ -31,7 +31,7 @@ public class Manager<TKey, TValue> : IManager<TKey, TValue>
         
         old.Fill(value);
 
-        _mapper.Update(value);
+        Mapper.Update(value);
         return true;
     }
 
@@ -40,17 +40,17 @@ public class Manager<TKey, TValue> : IManager<TKey, TValue>
         var entity = Get(key);
         if (entity is null) return false;
 
-        _mapper.Delete(entity);
+        Mapper.Delete(entity);
         return true;
     }
 
     public TValue? Get(TKey key)
     {
-        return _mapper.FindSingle(entity => entity.Key!.Equals(key));
+        return Mapper.FindSingle(entity => entity.Key!.Equals(key));
     }
 
     public IEnumerable<TValue> GetAll()
     {
-        return _mapper.Find(_ => true);
+        return Mapper.Find(_ => true);
     }
 }

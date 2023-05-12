@@ -6,30 +6,35 @@ using GraphManipulation.Models;
 
 namespace GraphManipulation.Commands.Builders;
 
-public class OriginsCommandBuilder : BaseCommandBuilder<IOriginsManager, string, Origin>
+public class OriginsCommandBuilder : BaseCommandBuilder<string, Origin>
 {
-    public OriginsCommandBuilder(IConsole console, IOriginsManager manager) : base(console, manager)
+    public OriginsCommandBuilder(IConsole console, IManager<string, Origin> manager) : base(console, manager)
     {
     }
 
-    public Command Build()
+    public override Command Build()
     {
-        var baseCommand = base.Build(CommandNamer.OriginsName, CommandNamer.OriginsAlias);
-        
-        var keyOption = BuildKeyOption();
-        
-        var descriptionOption = OptionBuilder
-            .CreateDescriptionOption()
-            .WithDescription("The description of the origin");
+        var baseCommand = base.Build(CommandNamer.OriginsName, CommandNamer.OriginsAlias, out var keyOption);
+
+        var descriptionOption = BuildDescriptionOption();
 
         var newKeyOption = OptionBuilder
             .CreateNewNameOption()
             .WithDescription("The new name of the origin");
 
+        var createOriginBinder = new OriginBinder(keyOption, descriptionOption);
+        var updateOriginBinder = new OriginBinder(newKeyOption, descriptionOption);
+
         return baseCommand
             .WithSubCommands(
-                BaseCreateCommand(keyOption, new OriginBinder(keyOption, descriptionOption), descriptionOption), 
-                BaseUpdateCommand(keyOption, new OriginBinder(newKeyOption, descriptionOption), newKeyOption, descriptionOption) 
+                CreateCommand(keyOption, createOriginBinder, new Option[]
+                {
+                    descriptionOption
+                }), 
+                UpdateCommand(keyOption, updateOriginBinder, new Option[]
+                {
+                    newKeyOption, descriptionOption
+                }) 
             );
     }
 
