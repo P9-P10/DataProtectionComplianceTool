@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core;
 using System.Linq;
 using GraphManipulation.DataAccess.Mappers;
 using GraphManipulation.Models;
-using GraphManipulation.SchemaEvolution.Models.Entity;
 
 namespace Test.Vacuuming.TestClasses;
 
