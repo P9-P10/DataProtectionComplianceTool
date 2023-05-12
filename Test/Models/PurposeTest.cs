@@ -2,7 +2,7 @@
 using GraphManipulation.Models;
 using Xunit;
 
-namespace Test;
+namespace Test.Models;
 
 public class PurposeTest
 {
@@ -12,11 +12,10 @@ public class PurposeTest
         Purpose purpose = new Purpose()
         {
             Name = "Name",
-            PersonalDataColumns = null,
             DeleteConditions = new List<DeleteCondition>()
         };
 
-        Assert.Equal("Name, , False, [  ], [  ], [  ]", purpose.ToListing());
+        Assert.Equal("Name, , False, [  ], [  ]", purpose.ToListing());
     }
     
     [Fact]
@@ -25,10 +24,9 @@ public class PurposeTest
         Purpose purpose = new()
         {
             Name = "Name",
-            PersonalDataColumns = new List<PersonalDataColumn>(),
             DeleteConditions = new List<DeleteCondition>()
         };
 
-        Assert.Equal("Name, , False, [  ], [  ], [  ]", purpose.ToListing());
+        Assert.Equal("Name, , False, [  ], [  ]", purpose.ToListing());
     }
 }

@@ -64,7 +64,6 @@ public class ProcessingsCommandTest : CommandTest
     {
         Name = PurposeName,
         Description = "This is a description of a purpose",
-        PersonalDataColumns = new List<PersonalDataColumn>(),
         LegallyRequired = true,
         Rules = new List<VacuumingRule>()
     };

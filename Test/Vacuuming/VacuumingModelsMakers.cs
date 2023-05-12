@@ -90,7 +90,6 @@ public static class VacuumingModelsMakers
                 Id = 0,
                 Name = "Name",
                 Description = "Description",
-                PersonalDataColumns = PersonalDataColumns(),
                 DeleteConditions = new List<DeleteCondition> {DeleteConditionMaker()},
                 Rules = new List<VacuumingRule>()
             }
@@ -110,8 +109,7 @@ public static class VacuumingModelsMakers
             Name = name,
             DeleteConditions = new List<DeleteCondition>(),
             Rules = new List<VacuumingRule>(),
-            Id = id,
-            PersonalDataColumns = personalDataColumns
+            Id = id
         };
         foreach (var column in personalDataColumns)
         {

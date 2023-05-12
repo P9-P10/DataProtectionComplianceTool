@@ -38,7 +38,6 @@ public class TestResources
         Description = Description,
         DeleteConditions = new List<DeleteCondition>() {TestDeleteCondition},
         LegallyRequired = true,
-        PersonalDataColumns = new List<PersonalDataColumn>(),
         Rules = new List<VacuumingRule>()
     };
 
@@ -48,7 +47,6 @@ public class TestResources
         Description = TestPurpose.GetDescription() + "NEW",
         DeleteConditions = new List<DeleteCondition>() {NewTestDeleteCondition},
         LegallyRequired = !TestPurpose.GetLegallyRequired(),
-        PersonalDataColumns = new List<PersonalDataColumn>(),
         Rules = new List<VacuumingRule>()
     };
 
@@ -58,7 +56,6 @@ public class TestResources
         Description = TestPurpose.GetDescription() + "VERY_NEW",
         DeleteConditions = new List<DeleteCondition>() {NewTestDeleteCondition},
         LegallyRequired = !NewTestPurpose.GetLegallyRequired(),
-        PersonalDataColumns = new List<PersonalDataColumn>(),
         Rules = new List<VacuumingRule>()
     };
 

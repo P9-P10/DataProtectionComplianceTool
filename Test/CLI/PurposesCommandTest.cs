@@ -24,7 +24,6 @@ public class PurposesCommandTest : CommandTest
                 Name = PurposeName,
                 Description = Description,
                 LegallyRequired = LegallyRequired,
-                PersonalDataColumns = new List<PersonalDataColumn>(),
                 Rules = new List<VacuumingRule>(),
                 DeleteConditions = new List<DeleteCondition>(){DeleteCondition}
             });
@@ -37,7 +36,6 @@ public class PurposesCommandTest : CommandTest
                 Name = PurposeName,
                 Description = Description,
                 LegallyRequired = LegallyRequired,
-                PersonalDataColumns = new List<PersonalDataColumn>(),
                 Rules = new List<VacuumingRule>()
             });
 
