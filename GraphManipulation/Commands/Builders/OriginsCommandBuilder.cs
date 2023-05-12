@@ -17,10 +17,7 @@ public class OriginsCommandBuilder : BaseCommandBuilder<string, Origin>
         var baseCommand = base.Build(CommandNamer.OriginsName, CommandNamer.OriginsAlias, out var keyOption);
 
         var descriptionOption = BuildDescriptionOption();
-
-        var newKeyOption = OptionBuilder
-            .CreateNewNameOption()
-            .WithDescription("The new name of the origin");
+        var newKeyOption = BuildNewNameOption();
 
         var createOriginBinder = new OriginBinder(keyOption, descriptionOption);
         var updateOriginBinder = new OriginBinder(newKeyOption, descriptionOption);

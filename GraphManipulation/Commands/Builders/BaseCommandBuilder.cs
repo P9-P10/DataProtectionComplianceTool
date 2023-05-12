@@ -283,6 +283,13 @@ public abstract class BaseCommandBuilder<TKey, TValue>
             .WithDescription($"The description of the {GetEntityType()}");
     }
 
+    protected Option<string> BuildNewNameOption()
+    {
+        return OptionBuilder
+            .CreateNewNameOption()
+            .WithDescription($"The new name of the {GetEntityType()}");
+    }
+
     protected void WriteSuccess(TKey key, Operations operation, TValue? value = null)
     {
         Console.WriteLine(SuccessMessage(key, operation, value));

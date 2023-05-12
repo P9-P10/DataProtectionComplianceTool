@@ -25,10 +25,7 @@ public class DeleteConditionsCommandBuilder : BaseCommandBuilder<string, DeleteC
             out var keyOption);
 
         var descriptionOption = BuildDescriptionOption();
-        
-        var newKeyOption = OptionBuilder
-            .CreateNewNameOption()
-            .WithDescription("The new name of the delete condition");
+        var newKeyOption = BuildNewNameOption();
 
         var conditionOption = BuildConditionOption()
             .WithDescription("The condition that must be fulfilled for data to be deleted");

@@ -2,11 +2,39 @@ using System.CommandLine;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Managers.Interfaces.Archive;
+using GraphManipulation.Models;
 
 namespace GraphManipulation.Commands.Builders;
 
-public static class VacuumingRulesCommandBuilder
+public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, VacuumingRule>
 {
+    private readonly IManager<string, Purpose> _purposesManager;
+    
+    public VacuumingRulesCommandBuilder(
+        IConsole console, 
+        IManager<string, VacuumingRule> manager,
+        IManager<string, Purpose> purposesManager) : base(console, manager)
+    {
+        _purposesManager = purposesManager;
+    }
+
+    public override Command Build()
+    {
+        var baseCommand = base.Build(CommandNamer.VacuumingRulesName, CommandNamer.VacuumingRulesAlias,
+            out var keyOption);
+        
+        var descriptionOption = BuildDescriptionOption();
+
+        var newKeyOption = BuildNewNameOption();
+        
+        
+    }
+
+    protected override Option<string> BuildKeyOption()
+    {
+        return base.BuildKeyOption(OptionNamer.Name, OptionNamer.NameAlias, "The name of the vacuuming rule");
+    }
+    
     public static Command Build(IConsole console, IVacuumingRulesManager vacuumingRulesManager,
         IPurposesManager purposesManager)
     {

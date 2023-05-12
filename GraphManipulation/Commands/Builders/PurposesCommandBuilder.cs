@@ -24,9 +24,7 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
 
         var descriptionOption = BuildDescriptionOption();
 
-        var newKeyOption = OptionBuilder
-            .CreateNewNameOption()
-            .WithDescription("The new name of the purpose");
+        var newKeyOption = BuildNewNameOption();
 
         var legallyRequiredOption = BuildLegallyRequiredOption()
                 .WithDescription("Whether the purpose falls under any legal obligations");

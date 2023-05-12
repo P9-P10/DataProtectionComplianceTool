@@ -27,10 +27,7 @@ public class ProcessingsCommandBuilder : BaseCommandBuilder<string, Processing>
         var baseCommand = base.Build(CommandNamer.ProcessingsName, CommandNamer.ProcessingsAlias, out var keyOption);
 
         var descriptionOption = BuildDescriptionOption();
-        
-        var newKeyOption = OptionBuilder
-            .CreateNewNameOption()
-            .WithDescription("The new name of the processing");
+        var newKeyOption = BuildNewNameOption();
         
         var tableColumnOption = OptionBuilder
             .CreateTableColumnPairOption()
