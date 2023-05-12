@@ -1,6 +1,5 @@
 using GraphManipulation.Logging;
 using GraphManipulation.Managers;
-using GraphManipulation.Managers.Archive;
 using GraphManipulation.Models;
 using GraphManipulation.Vacuuming;
 
@@ -53,6 +52,6 @@ public class LoggingVacuumer : IVacuumer
     private static string CreateDeleteExecutionLogMessage(DeletionExecution execution)
     {
         return $"\"{execution.Query}\" affected ({execution.Table}, {execution.Column}) " +
-               $"because it is stored under the following purpose(s): {string.Join(", ", execution.Purposes.Select(p => p.GetName()))}";
+               $"because it is stored under the following purpose(s): {string.Join(", ", execution.Purposes.Select(p => p.ToListingIdentifier()))}";
     }
 }

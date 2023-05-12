@@ -1,4 +1,4 @@
-namespace GraphManipulation.Models.Interfaces.Base;
+namespace GraphManipulation.Models.Interfaces;
 
 public interface IListable
 {

@@ -1,8 +1,10 @@
-﻿namespace GraphManipulation.Logging.Operations;
+﻿using GraphManipulation.Models.Base;
 
-public class Delete : Operation
+namespace GraphManipulation.Logging.Operations;
+
+public class Delete<TKey, TValue> : Operation<TKey, TValue> where TValue : Entity<TKey>
 {
-    public Delete(string type, string key) : base("Delete", type, key)
+    public Delete(TKey key) : base(OperationName.Delete, key)
     {
     }
 }

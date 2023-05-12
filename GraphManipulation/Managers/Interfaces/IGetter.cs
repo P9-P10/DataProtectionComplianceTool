@@ -1,4 +1,4 @@
-namespace GraphManipulation.Managers.Interfaces.Base;
+namespace GraphManipulation.Managers.Interfaces;
 
 public interface IGetter<TValue, TKey>
 {

@@ -1,22 +1,31 @@
-﻿namespace GraphManipulation.Logging.Operations;
+﻿using GraphManipulation.Helpers;
+using GraphManipulation.Models.Base;
 
-public abstract class Operation
+namespace GraphManipulation.Logging.Operations;
+
+public abstract class Operation<TKey, TValue> where TValue : Entity<TKey>
 {
-    public string Name { get; } // The name of the operation
-    public string Type { get; } // The type being operated on
-    public string Key { get; } // The identifier of the subject
-    public Dictionary<string, string>? Parameters { get; protected set; } // The parameters of the operation
+    public OperationName Name { get; } // The name of the operation
+    public TKey Key { get; } // The identifier of the subject
+    public TValue? Value { get; protected set; }
 
-    public Operation(string name, string type, string key)
+    public Operation(OperationName operationName, TKey key, TValue? value = null)
     {
-        Name = name;
-        Type = type;
+        Name = operationName;
         Key = key;
+        Value = value;
     }
     
     public override string ToString()
     {
-        string parameters =  Parameters is null ? "" : " Parameters: " + string.Join(", ", Parameters);
-        return $"{Name} {Type} {Key}." + parameters;
+        var valueString = Value is not null ? " Value: " + Value.ToListing() : "";
+        return $"{Name} {TypeToString.GetEntityType(typeof(TValue))} {Key}." + valueString;
+    }
+    
+    public enum OperationName
+    {
+        Create,
+        Update,
+        Delete
     }
 }

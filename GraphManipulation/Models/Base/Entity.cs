@@ -1,5 +1,5 @@
 using System.Reflection;
-using GraphManipulation.Models.Interfaces.Base;
+using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Models.Base;
 

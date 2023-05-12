@@ -76,4 +76,7 @@ public static class CommandNamer
 
     public const string ShowSource = "show-source";
     public const string ShowSourceAlias = "shs";
+
+    public const string Status = "status";
+    public const string StatusAlias = "stat";
 }

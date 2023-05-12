@@ -11,24 +11,14 @@ using GraphManipulation.Commands.Builders;
 using GraphManipulation.DataAccess;
 using GraphManipulation.DataAccess.Mappers;
 using GraphManipulation.Decorators;
-using GraphManipulation.Decorators.Managers;
 using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
 using GraphManipulation.Managers;
-using GraphManipulation.Managers.Archive;
-using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
 using GraphManipulation.Vacuuming;
 using Microsoft.EntityFrameworkCore;
 
 namespace GraphManipulation;
-
-// TODO: En refactor af managers, så hver manager har en Add(TKey key) i stedet for varierende interfaces ville simplificere kommandoer gevaldigt (de andre værdier kan klares med updates efterfølgende)
-
-// TODO: purposes skal have flere delete conditions, men ikke påkrævet
-// TODO: Personaldatacolumns skal ikke have join condition, og purposes skal ikke være påkrævet
-// TODO: delete conditions skal have purpose og personal data column
-// TODO: status kommando der fortæller hvad der mangler i systemet (f.eks. at der er personal data columns der ikke har et purpose)
 
 public static class Program
 {
@@ -89,39 +79,36 @@ public static class Program
         var vacuumer = new Vacuumer(personalDataColumnMapper, new SqliteQueryExecutor(dbConnection));
         var loggingVacuumer = new LoggingVacuumer(vacuumer, logger);
 
-        var individualsManager = new IndividualsManager(individualMapper, new Mapper<ConfigKeyValue>(context));
-        // var personalDataManager = new PersonalDataManager(personalDataColumnMapper, purposeMapper, originMapper,
-        //     personalDataMapper, individualMapper);
-        var purposesManager = new PurposeManager(purposeMapper, deleteConditionMapper);
+        var individualsManager = new Manager<int, Individual>(individualMapper);
+        var personalDataManager = new Manager<TableColumnPair, PersonalDataColumn>(personalDataColumnMapper);
+        var purposesManager = new Manager<string, Purpose>(purposeMapper);
         var originsManager = new Manager<string, Origin>(originMapper);
-        var vacuumingRulesManager = new VacuumingRuleManager(vacuumingRuleMapper, purposeMapper, loggingVacuumer);
-        var deleteConditionsManager = new DeleteConditionsManager(deleteConditionMapper);
-        var processingsManager =
-            new ProcessingsManager(processingMapper, purposeMapper, personalDataColumnMapper);
+        var vacuumingRulesManager = new Manager<string, VacuumingRule>(vacuumingRuleMapper);
+        var deleteConditionsManager = new Manager<string, DeleteCondition>(deleteConditionMapper);
+        var processingsManager = new Manager<string, Processing>(processingMapper);
 
-        var decoratedIndividualsManager = new IndividualsManagerDecorator(individualsManager, logger);
-        // var decoratedPersonalDataManager = new PersonalDataManagerDecorator(personalDataManager, logger);
-        var decoratedPurposesManager = new PurposeManagerDecorator(purposesManager, logger);
-        var decoratedOriginsManager = new OriginsManagerDecorator(originsManager, logger);
-        var decoratedVacuumingRulesManager = new VacuumingRuleManagerDecorator(vacuumingRulesManager, logger);
-        var decoratedDeleteConditionsManager =
-            new DeleteConditionsManagerDecorator(deleteConditionsManager, logger);
-        var decoratedProcessingsManager = new ProcessingsManagerDecorator(processingsManager, logger);
+        var decoratedIndividualsManager = new LoggingManager<int, Individual>(individualsManager, logger);
+        var decoratedPersonalDataManager = new LoggingManager<TableColumnPair, PersonalDataColumn>(personalDataManager, logger);
+        var decoratedPurposesManager = new LoggingManager<string, Purpose>(purposesManager, logger);
+        var decoratedOriginsManager = new LoggingManager<string, Origin>(originsManager, logger);
+        var decoratedVacuumingRulesManager = new LoggingManager<string, VacuumingRule>(vacuumingRulesManager, logger);
+        var decoratedDeleteConditionsManager = new LoggingManager<string, DeleteCondition>(deleteConditionsManager, logger);
+        var decoratedProcessingsManager = new LoggingManager<string, Processing>(processingsManager, logger);
 
-        // var command = CommandLineInterfaceBuilder
-        //     .Build(
-        //         console, decoratedIndividualsManager, decoratedPersonalDataManager,
-        //         decoratedPurposesManager, decoratedOriginsManager, decoratedVacuumingRulesManager,
-        //         decoratedDeleteConditionsManager, decoratedProcessingsManager, logger, configManager
-        //     );
-        //
-        // var cli = new CommandLineBuilder(command)
-        //     .UseHelp("help", "h", "?")
-        //     .UseTypoCorrections()
-        //     .UseParseErrorReporting()
-        //     .Build();
-        //
-        // Run(cli);
+        var command = CommandLineInterfaceBuilder
+            .Build(
+                console, decoratedIndividualsManager, decoratedPersonalDataManager,
+                decoratedPurposesManager, decoratedOriginsManager, decoratedVacuumingRulesManager,
+                decoratedDeleteConditionsManager, decoratedProcessingsManager, loggingVacuumer, logger, configManager
+            );
+        
+        var cli = new CommandLineBuilder(command)
+            .UseHelp("help", "h", "?")
+            .UseTypoCorrections()
+            .UseParseErrorReporting()
+            .Build();
+        
+        Run(cli);
     }
 
     private static void AddStructureToDatabaseIfNotExists(IDbConnection connection, DbContext context)

@@ -117,13 +117,11 @@ public static class CommandBuilder
 
     public static Command BuildShowCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject(CommandNamer.Show, CommandNamer.ShowAlias,subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.Show, CommandNamer.ShowAlias, subject);
     }
-}
 
-public class CommandException : Exception
-{
-    public CommandException(string message) : base(message)
+    public static Command BuildStatusCommand(string subject = "")
     {
+        return BuildCommandWithNameAliasSubject(CommandNamer.Status, CommandNamer.StatusAlias, subject);
     }
 }

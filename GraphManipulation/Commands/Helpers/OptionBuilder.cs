@@ -2,7 +2,6 @@ using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.Diagnostics;
 using GraphManipulation.Managers;
-using GraphManipulation.Managers.Archive;
 using GraphManipulation.Models;
 
 namespace GraphManipulation.Commands.Helpers;

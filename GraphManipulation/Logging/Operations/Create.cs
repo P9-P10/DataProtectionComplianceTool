@@ -1,9 +1,10 @@
-﻿namespace GraphManipulation.Logging.Operations;
+﻿using GraphManipulation.Models.Base;
 
-public class Create : Operation
+namespace GraphManipulation.Logging.Operations;
+
+public class Create<TKey, TValue> : Operation<TKey, TValue> where TValue : Entity<TKey>
 {
-    public Create(string type, string key, Dictionary<string ,string>? parameters) : base("Create", type, key)
+    public Create(TKey key) : base(OperationName.Create, key)
     {
-        Parameters = parameters;
     }
 }

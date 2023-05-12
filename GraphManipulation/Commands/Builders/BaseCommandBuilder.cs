@@ -2,11 +2,10 @@ using System.CommandLine;
 using System.CommandLine.IO;
 using GraphManipulation.Commands.Builders.Binders;
 using GraphManipulation.Commands.Helpers;
+using GraphManipulation.Helpers;
 using GraphManipulation.Managers.Interfaces;
-using GraphManipulation.Managers.Interfaces.Base;
-using GraphManipulation.Models;
 using GraphManipulation.Models.Base;
-using GraphManipulation.Models.Interfaces.Base;
+using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Commands.Builders;
 
@@ -78,7 +77,7 @@ public abstract class BaseCommandBuilder<TKey, TValue>
         return command;
     }
 
-    private Command ShowCommand(Option<TKey> keyOption)
+    protected Command ShowCommand(Option<TKey> keyOption)
     {
         var command = CommandBuilder
             .BuildShowCommand()
@@ -90,7 +89,7 @@ public abstract class BaseCommandBuilder<TKey, TValue>
         return command;
     }
     
-    private Command ListCommand()
+    protected Command ListCommand()
     {
         var command = CommandBuilder
             .BuildListCommand()
@@ -104,10 +103,11 @@ public abstract class BaseCommandBuilder<TKey, TValue>
         IManager<TK, TV> manager, bool isAdd, Func<TValue, IEnumerable<TV>> getCurrentList,
         Action<TValue, IEnumerable<TV>> setList)
     {
-        var otherValueType = GetEntityType(typeof(TV));
+        var otherValueType = TypeToString.GetEntityType(typeof(TV));
         
-        var command = CommandBuilder
-            .BuildAddCommand(otherValueType)
+        var command = (isAdd 
+                ? CommandBuilder.BuildAddCommand(otherValueType) 
+                : CommandBuilder.BuildRemoveCommand(otherValueType)) 
             .WithDescription($"{(isAdd ? "Adds" : "Removes")} the given {otherValueType}(e)s {(isAdd ? "to" : "from")} the {GetEntityType()}")
             .WithOption(out _, keyOption)
             .WithOption(out _, listOption);
@@ -317,7 +317,7 @@ public abstract class BaseCommandBuilder<TKey, TValue>
 
     private static string CouldNotFindMessage<TK, TV>(TK key)
     {
-        return $"Could not find {GetEntityType(typeof(TV))} using {key}";
+        return $"Could not find {TypeToString.GetEntityType(typeof(TV))} using {key}";
     }
 
     private static string AlreadyExistsMessage(TKey key)
@@ -327,7 +327,7 @@ public abstract class BaseCommandBuilder<TKey, TValue>
 
     private static string AlreadyExistsMessage(TKey key, Type type)
     {
-        return $"Found an existing {GetEntityType(type)} using {key}";
+        return $"Found an existing {TypeToString.GetEntityType(type)} using {key}";
     }
 
     protected static string SuccessMessage(TKey key, Operations operation, TValue? value)
@@ -347,25 +347,9 @@ public abstract class BaseCommandBuilder<TKey, TValue>
         return operation.ToString().ToLower();
     }
 
-    protected static string GetEntityType(Type type)
-    {
-        return type switch
-        {
-            not null when type == typeof(DeleteCondition) => "delete condition",
-            not null when type == typeof(Individual) => "individual",
-            not null when type == typeof(Origin) => "origin",
-            not null when type == typeof(PersonalData) => "personal data",
-            not null when type == typeof(PersonalDataColumn) => "personal data column",
-            not null when type == typeof(Processing) => "processing",
-            not null when type == typeof(Purpose) => "purpose",
-            not null when type == typeof(VacuumingRule) => "vacuuming rule",
-            _ => "entity"
-        };
-    }
-
     private static string GetEntityType()
     {
-        return GetEntityType(typeof(TValue));
+        return TypeToString.GetEntityType(typeof(TValue));
     }
     
     protected enum Operations
