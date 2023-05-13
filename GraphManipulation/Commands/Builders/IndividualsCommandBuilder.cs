@@ -28,11 +28,17 @@ public class IndividualsCommandBuilder : BaseCommandBuilder<int, Individual>
             .WithAlias(CommandNamer.IndividualsAlias)
             .WithSubCommands(
                 ListCommand(),
-                SetOriginFor(),
-                ShowOriginFor()
+                SetOriginForCommand(),
+                ShowOriginForCommand(),
+                StatusCommand()
             );
 
         return command;
+    }
+
+    protected override void StatusReport(Individual value)
+    {
+        // TODO: Missing origin for X personal data column
     }
 
     protected override Option<int> BuildKeyOption()
@@ -40,14 +46,14 @@ public class IndividualsCommandBuilder : BaseCommandBuilder<int, Individual>
         return BuildKeyOption(OptionNamer.Id, OptionNamer.IdAlias, "The id of the individual");
     }
     
-    // TODO: Implementer SetOriginFor og ShowOriginFor
+    // TODO: Implementer SetOriginForCommand og ShowOriginForCommand
 
-    protected Command SetOriginFor()
+    protected Command SetOriginForCommand()
     {
         throw new NotImplementedException();
     }
 
-    protected Command ShowOriginFor()
+    protected Command ShowOriginForCommand()
     {
         throw new NotImplementedException();
     }

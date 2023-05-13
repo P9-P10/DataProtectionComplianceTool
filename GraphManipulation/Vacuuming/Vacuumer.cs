@@ -40,7 +40,7 @@ public class Vacuumer : IVacuumer
         string conditionalStatement = "";
         foreach (Purpose purpose in personalDataColumn.Purposes)
         {
-            conditionalStatement += $"({purpose.DeleteConditions.Condition})";
+            conditionalStatement += $"({purpose.DeleteConditions})";
             conditionalStatement += logicOperator;
             deletionExecution.AddPurpose(purpose);
         }

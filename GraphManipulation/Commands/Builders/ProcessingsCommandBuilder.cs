@@ -69,6 +69,11 @@ public class ProcessingsCommandBuilder : BaseCommandBuilder<string, Processing>
             );
     }
 
+    protected override void StatusReport(Processing value)
+    {
+        // Nothing to report on
+    }
+
     protected override Option<string> BuildKeyOption()
     {
         return base.BuildKeyOption(OptionNamer.Name, OptionNamer.NameAlias, "The name of the processing");

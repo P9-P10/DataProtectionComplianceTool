@@ -35,6 +35,11 @@ public class OriginsCommandBuilder : BaseCommandBuilder<string, Origin>
             );
     }
 
+    protected override void StatusReport(Origin value)
+    {
+        // Nothing to report on
+    }
+
     protected override Option<string> BuildKeyOption()
     {
         return base.BuildKeyOption(OptionNamer.Name, OptionNamer.NameAlias, "The name of the origin");

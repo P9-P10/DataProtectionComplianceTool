@@ -85,6 +85,19 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
     }
 
 
+    protected override void StatusReport(Purpose purpose)
+    {
+        if (purpose.Rules is null || !purpose.Rules.Any())
+        {
+            EmitMissing<VacuumingRule>(purpose.Key!);
+        }
+
+        if (purpose.DeleteConditions is null || !purpose.DeleteConditions.Any())
+        {
+            EmitMissing<DeleteCondition>(purpose.Key!);
+        }
+    }
+
     protected override Option<string> BuildKeyOption()
     {
         return base.BuildKeyOption(OptionNamer.Name, OptionNamer.NameAlias, "The name of the purpose");

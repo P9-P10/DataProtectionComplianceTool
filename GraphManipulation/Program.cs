@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.IO;
 using System.CommandLine.Parsing;
@@ -8,6 +9,7 @@ using System.Data.SQLite;
 using System.Text;
 using Dapper;
 using GraphManipulation.Commands.Builders;
+using GraphManipulation.Commands.Helpers;
 using GraphManipulation.DataAccess;
 using GraphManipulation.DataAccess.Mappers;
 using GraphManipulation.Decorators;
@@ -102,6 +104,28 @@ public static class Program
                 decoratedDeleteConditionsManager, decoratedProcessingsManager, loggingVacuumer, logger, configManager
             );
         
+        command = command.WithSubCommands(
+            CommandBuilder
+                .BuildCreateCommand()
+                .WithHandler(() =>
+                {
+                    command.Subcommands
+                        .ToList()
+                        .ForEach(subCommand =>
+                        {
+                            subCommand.Subcommands
+                                .Where(subSubCommand => subSubCommand.Name == CommandNamer.Status)
+                                .ToList()
+                                .ForEach(sub =>
+                                {
+                                    sub.Invoke(CommandNamer.Status);
+                                });
+                        });
+                })
+        );
+
+
+
         var cli = new CommandLineBuilder(command)
             .UseHelp("help", "h", "?")
             .UseTypoCorrections()

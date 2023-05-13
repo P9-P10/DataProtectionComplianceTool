@@ -63,6 +63,19 @@ public class DeleteConditionsCommandBuilder : BaseCommandBuilder<string, DeleteC
             );
     }
 
+    protected override void StatusReport(DeleteCondition condition)
+    {
+        if (condition.Condition is null)
+        {
+            EmitMissing(condition.Key!, "condition");
+        }
+
+        if (condition.PersonalDataColumn is null)
+        {
+            EmitMissing<PersonalDataColumn>(condition.Key!);
+        }
+    }
+
     protected override Option<string> BuildKeyOption()
     {
         return base.BuildKeyOption(OptionNamer.Name, OptionNamer.NameAlias, "The name of the delete condition");

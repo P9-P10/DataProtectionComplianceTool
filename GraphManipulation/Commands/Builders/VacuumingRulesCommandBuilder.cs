@@ -67,10 +67,18 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
                 {
                     newKeyOption, descriptionOption, intervalOption, purposeListOption
                 }),
-                Execute(),
+                ExecuteCommand(),
                 purposeListChangesCommands.Add,
                 purposeListChangesCommands.Remove
             );
+    }
+
+    protected override void StatusReport(VacuumingRule rule)
+    {
+        if (rule.Interval is null)
+        {
+            EmitMissing(rule.Key!, "interval");
+        }
     }
 
     protected override Option<string> BuildKeyOption()
@@ -78,7 +86,7 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
         return base.BuildKeyOption(OptionNamer.Name, OptionNamer.NameAlias, "The name of the vacuuming rule");
     }
 
-    private Command Execute()
+    private Command ExecuteCommand()
     {
         return CommandBuilder
             .CreateNewCommand(CommandNamer.Execute)
@@ -103,7 +111,7 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
                     var rule = Manager.Get(ruleName);
                     if (rule is null)
                     {
-                        WriteCouldNotFind(ruleName);
+                        EmitCouldNotFind(ruleName);
                         return;
                     }
 
@@ -113,7 +121,7 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
                 foreach (var rule in rules)
                 {
                     _vacuumer.ExecuteVacuumingRules(new[] { rule });
-                    WriteSuccess(rule.Key!, Operations.Executed, rule);
+                    EmitSuccess(rule.Key!, Operations.Executed, rule);
                 }
             });
     }

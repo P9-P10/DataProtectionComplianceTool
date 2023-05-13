@@ -72,4 +72,17 @@ public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPa
     {
         return OptionBuilder.CreateTableColumnPairOption();
     }
+
+    protected override void StatusReport(PersonalDataColumn column)
+    {
+        if (column.Purposes is null || !column.Purposes.Any())
+        {
+            EmitMissing<Purpose>(column.Key!);
+        }
+
+        if (column.DefaultValue is null)
+        {
+            EmitMissing(column.Key!, "default value");
+        }
+    }
 }

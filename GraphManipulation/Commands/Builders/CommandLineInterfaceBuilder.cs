@@ -36,8 +36,7 @@ public static class CommandLineInterfaceBuilder
                 new DeleteConditionsCommandBuilder(console, deleteConditionsManager, personalDataColumnManager).Build(),
                 new ProcessingsCommandBuilder(console, processingsManager, purposesManager, personalDataColumnManager).Build(),
                 LoggingCommandBuilder.Build(console, logger),
-                ConfigurationCommandBuilder.Build(console, configManager),
-                new StatusCommandBuilder().Build()
+                ConfigurationCommandBuilder.Build(console, configManager)
             );
     }
 }
