@@ -1,6 +1,7 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
+using GraphManipulation.Commands.Builders;
 
 namespace GraphManipulation.Commands.Helpers;
 
@@ -70,6 +71,14 @@ public static class CommandBuilder
     {
         foreach (var subCommand in subCommands)
             command.AddCommand(subCommand);
+
+        return command;
+    }
+
+    public static Command WithSubCommands(this Command command, params BaseCommandBuilder[] commandBuilders)
+    {
+        foreach (var builder in commandBuilders) 
+            command.AddCommand(builder.Build());
 
         return command;
     }

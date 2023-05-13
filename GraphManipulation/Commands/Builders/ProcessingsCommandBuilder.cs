@@ -25,8 +25,8 @@ public class ProcessingsCommandBuilder : BaseCommandBuilder<string, Processing>
     {
         var baseCommand = base.Build(CommandNamer.ProcessingsName, CommandNamer.ProcessingsAlias, out var keyOption);
 
-        var descriptionOption = BuildDescriptionOption();
-        var newKeyOption = BuildNewNameOption();
+        var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<Processing>();
+        var newKeyOption = OptionBuilder.CreateNewNameOption<Processing>();
         
         var tableColumnOption = OptionBuilder
             .CreateTableColumnPairOption()
@@ -75,6 +75,6 @@ public class ProcessingsCommandBuilder : BaseCommandBuilder<string, Processing>
 
     protected override Option<string> BuildKeyOption()
     {
-        return base.BuildKeyOption(OptionNamer.Name, OptionNamer.NameAlias, "The name of the processing");
+        return OptionBuilder.CreateKeyOption<string, Processing>(OptionNamer.Name, OptionNamer.NameAlias);
     }
 }

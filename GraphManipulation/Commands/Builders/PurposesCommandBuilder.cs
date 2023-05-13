@@ -21,9 +21,8 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
     {
         var baseCommand = base.Build(CommandNamer.PurposesName, CommandNamer.PurposesAlias, out var keyOption);
 
-        var descriptionOption = BuildDescriptionOption();
-
-        var newKeyOption = BuildNewNameOption();
+        var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<Purpose>();
+        var newKeyOption = OptionBuilder.CreateNewNameOption<Purpose>();
 
         var legallyRequiredOption = BuildLegallyRequiredOption()
                 .WithDescription("Whether the purpose falls under any legal obligations");
@@ -99,6 +98,6 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
 
     protected override Option<string> BuildKeyOption()
     {
-        return base.BuildKeyOption(OptionNamer.Name, OptionNamer.NameAlias, "The name of the purpose");
+        return OptionBuilder.CreateKeyOption<string, Purpose>(OptionNamer.Name, OptionNamer.NameAlias);
     }
 }

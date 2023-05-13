@@ -42,7 +42,7 @@ public class IndividualsCommandBuilder : BaseCommandBuilder<int, Individual>
 
     protected override Option<int> BuildKeyOption()
     {
-        return BuildKeyOption(OptionNamer.Id, OptionNamer.IdAlias, "The id of the individual");
+        return OptionBuilder.CreateKeyOption<int, Individual>(OptionNamer.Id, OptionNamer.IdAlias, "id");
     }
     
     // TODO: Implementer SetOriginForCommand og ShowOriginForCommand

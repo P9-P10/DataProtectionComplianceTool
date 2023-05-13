@@ -16,8 +16,8 @@ public class OriginsCommandBuilder : BaseCommandBuilder<string, Origin>
     {
         var baseCommand = base.Build(CommandNamer.OriginsName, CommandNamer.OriginsAlias, out var keyOption);
 
-        var descriptionOption = BuildDescriptionOption();
-        var newKeyOption = BuildNewNameOption();
+        var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<Origin>();
+        var newKeyOption = OptionBuilder.CreateNewNameOption<Origin>();
 
         var createOriginBinder = new OriginBinder(keyOption, descriptionOption);
         var updateOriginBinder = new OriginBinder(newKeyOption, descriptionOption);
@@ -42,6 +42,6 @@ public class OriginsCommandBuilder : BaseCommandBuilder<string, Origin>
 
     protected override Option<string> BuildKeyOption()
     {
-        return base.BuildKeyOption(OptionNamer.Name, OptionNamer.NameAlias, "The name of the origin");
+        return OptionBuilder.CreateKeyOption<string, Origin>(OptionNamer.Name, OptionNamer.NameAlias);
     }
 }

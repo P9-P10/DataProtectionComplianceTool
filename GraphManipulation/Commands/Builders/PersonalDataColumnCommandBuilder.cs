@@ -22,7 +22,7 @@ public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPa
     {
         var baseCommand = base.Build(CommandNamer.PersonalDataName, CommandNamer.PersonalDataAlias, out var keyOption);
 
-        var descriptionOption = BuildDescriptionOption();
+        var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<PersonalDataColumn>();
 
         var defaultValueOption = OptionBuilder
             .CreateOption<string>(OptionNamer.DefaultValue)

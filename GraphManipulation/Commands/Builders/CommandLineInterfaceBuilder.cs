@@ -27,15 +27,15 @@ public static class CommandLineInterfaceBuilder
             .WithAlias(CommandNamer.RootCommandAlias)
             .WithDescription("This is a description of the root command")
             .WithSubCommands(
-                new IndividualsCommandBuilder(individualsManager, personalDataColumnManager, originsManager).Build(),
-                new PersonalDataColumnCommandBuilder(personalDataColumnManager, purposesManager).Build(),
-                new PurposesCommandBuilder(purposesManager, deleteConditionsManager).Build(),
-                new OriginsCommandBuilder(originsManager).Build(),
-                new VacuumingRulesCommandBuilder(vacuumingRulesManager, purposesManager, vacuumer).Build(),
-                new DeleteConditionsCommandBuilder(deleteConditionsManager, personalDataColumnManager).Build(),
-                new ProcessingsCommandBuilder(processingsManager, purposesManager, personalDataColumnManager).Build(),
+                new IndividualsCommandBuilder(individualsManager, personalDataColumnManager, originsManager),
+                new PersonalDataColumnCommandBuilder(personalDataColumnManager, purposesManager),
+                new PurposesCommandBuilder(purposesManager, deleteConditionsManager),
+                new OriginsCommandBuilder(originsManager),
+                new VacuumingRulesCommandBuilder(vacuumingRulesManager, purposesManager, vacuumer),
+                new DeleteConditionsCommandBuilder(deleteConditionsManager, personalDataColumnManager),
+                new ProcessingsCommandBuilder(processingsManager, purposesManager, personalDataColumnManager))
+            .WithSubCommands(
                 LoggingCommandBuilder.Build(logger),
-                ConfigurationCommandBuilder.Build(configManager)
-            );
+                ConfigurationCommandBuilder.Build(configManager));
     }
 }

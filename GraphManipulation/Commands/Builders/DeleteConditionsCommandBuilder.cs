@@ -23,8 +23,8 @@ public class DeleteConditionsCommandBuilder : BaseCommandBuilder<string, DeleteC
         var baseCommand = base.Build(CommandNamer.DeleteConditionsName, CommandNamer.DeleteConditionsAlias,
             out var keyOption);
 
-        var descriptionOption = BuildDescriptionOption();
-        var newKeyOption = BuildNewNameOption();
+        var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<DeleteCondition>();
+        var newKeyOption = OptionBuilder.CreateNewNameOption<DeleteCondition>();
 
         var conditionOption = BuildConditionOption()
             .WithDescription("The condition that must be fulfilled for data to be deleted");
@@ -77,7 +77,7 @@ public class DeleteConditionsCommandBuilder : BaseCommandBuilder<string, DeleteC
 
     protected override Option<string> BuildKeyOption()
     {
-        return base.BuildKeyOption(OptionNamer.Name, OptionNamer.NameAlias, "The name of the delete condition");
+        return OptionBuilder.CreateKeyOption<string, DeleteCondition>(OptionNamer.Name, OptionNamer.NameAlias);
     }
 
     private static Option<string> BuildConditionOption()

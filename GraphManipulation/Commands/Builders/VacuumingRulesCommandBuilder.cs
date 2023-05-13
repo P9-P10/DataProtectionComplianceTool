@@ -26,8 +26,8 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
         var baseCommand = base.Build(CommandNamer.VacuumingRulesName, CommandNamer.VacuumingRulesAlias,
             out var keyOption);
         
-        var descriptionOption = BuildDescriptionOption();
-        var newKeyOption = BuildNewNameOption();
+        var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<VacuumingRule>();
+        var newKeyOption = OptionBuilder.CreateNewNameOption<VacuumingRule>();
 
         var intervalOption = BuildIntervalOption();
 
@@ -61,11 +61,11 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
                 CreateCommand(keyOption, createBinder, new Option[]
                 {
                     descriptionOption, intervalOption, purposeListOption
-                }),
+                }).WithValidator(result => OptionBuilder.ValidInterval(result, intervalOption)),
                 UpdateCommand(keyOption, updateBinder, new Option[]
                 {
                     newKeyOption, descriptionOption, intervalOption, purposeListOption
-                }),
+                }).WithValidator(result => OptionBuilder.ValidInterval(result, intervalOption)),
                 ExecuteCommand(),
                 purposeListChangesCommands.Add,
                 purposeListChangesCommands.Remove
@@ -82,7 +82,7 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
 
     protected override Option<string> BuildKeyOption()
     {
-        return base.BuildKeyOption(OptionNamer.Name, OptionNamer.NameAlias, "The name of the vacuuming rule");
+        return OptionBuilder.CreateKeyOption<string, VacuumingRule>(OptionNamer.Name, OptionNamer.NameAlias);
     }
 
     private Command ExecuteCommand()

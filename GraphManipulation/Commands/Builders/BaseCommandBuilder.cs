@@ -8,7 +8,12 @@ using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Commands.Builders;
 
-public abstract class BaseCommandBuilder<TKey, TValue>
+public abstract class BaseCommandBuilder
+{
+    public abstract Command Build();
+}
+
+public abstract class BaseCommandBuilder<TKey, TValue> : BaseCommandBuilder
     where TKey : notnull
     where TValue : Entity<TKey>, IListable, new()
 {
@@ -37,8 +42,6 @@ public abstract class BaseCommandBuilder<TKey, TValue>
             );
     }
 
-    public abstract Command Build();
-
     protected Command CreateCommand(Option<TKey> keyOption, BaseBinder<TKey, TValue> binder,
         Option[] options)
     {
@@ -58,7 +61,7 @@ public abstract class BaseCommandBuilder<TKey, TValue>
     {
         var command = CommandBuilder
             .BuildUpdateCommand()
-            .WithDescription($"Creates the given {GetEntityType()} with the given values")
+            .WithDescription($"Updates the given {GetEntityType()} with the given values")
             .WithOption(out _, keyOption)
             .WithOptions(options);
 
@@ -105,7 +108,7 @@ public abstract class BaseCommandBuilder<TKey, TValue>
     {
         var command = CommandBuilder
             .BuildStatusCommand()
-            .WithDescription($"Show the status(es) of the {GetEntityType()}(e)s currently in the system");
+            .WithDescription($"Shows the status(es) of the {GetEntityType()}(e)s currently in the system");
 
         command.SetHandler(() => Handler.StatusHandler());
         return command;
@@ -144,33 +147,10 @@ public abstract class BaseCommandBuilder<TKey, TValue>
         return (addCommand, removeCommand);
     }
 
-    protected Option<TKey> BuildKeyOption(string name, string alias, string description)
-    {
-        return OptionBuilder
-            .CreateOption<TKey>(name)
-            .WithAlias(alias)
-            .WithDescription(description)
-            .WithIsRequired(true);
-    }
-
     protected abstract Option<TKey> BuildKeyOption();
     
     protected abstract void StatusReport(TValue value);
 
-    protected Option<string> BuildDescriptionOption()
-    {
-        return OptionBuilder
-            .CreateDescriptionOption()
-            .WithDescription($"The description of the {GetEntityType()}");
-    }
-
-    protected Option<string> BuildNewNameOption()
-    {
-        return OptionBuilder
-            .CreateNewNameOption()
-            .WithDescription($"The new name of the {GetEntityType()}");
-    }
-    
     private static string GetEntityType()
     {
         return TypeToString.GetEntityType(typeof(TValue));
