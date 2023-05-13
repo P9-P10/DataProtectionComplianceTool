@@ -1,4 +1,4 @@
-﻿using GraphManipulation.Managers.Interfaces;
+using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models.Base;
 
 namespace GraphManipulation.Commands.Helpers;
@@ -18,8 +18,7 @@ public static class Handlers<TKey, TValue> where TValue : Entity<TKey>
         if (manager.Create(key))
         {
             feedbackEmitter.EmitSuccess(key, FeedbackEmitter<TKey, TValue>.Operations.Created);
-            var value = manager.Get(key)!;
-            UpdateHandler(key, value, manager, feedbackEmitter, statusReport);
+            statusReport(manager.Get(key)!);
         }
         else
         {
@@ -144,9 +143,9 @@ public static class Handlers<TKey, TValue> where TValue : Entity<TKey>
 
         foreach (var k in list)
         {
-            var v = manager2.Get(k);
+            var entity = manager2.Get(k);
 
-            if (v is null)
+            if (entity is null)
             {
                 feedbackEmitter2.EmitCouldNotFind(k);
                 return;
@@ -154,16 +153,16 @@ public static class Handlers<TKey, TValue> where TValue : Entity<TKey>
 
             if (isAdd)
             {
-                if (!currentList.Contains(v))
+                if (!currentList.Contains(entity))
                 {
-                    currentList.Add(v);
+                    currentList.Add(entity);
                 }
             }
             else
             {
-                if (currentList.Contains(v))
+                if (currentList.Contains(entity))
                 {
-                    currentList.Remove(v);
+                    currentList.Remove(entity);
                 }
             }
         }
