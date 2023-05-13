@@ -12,7 +12,6 @@ namespace GraphManipulation.Commands.Builders;
 public static class CommandLineInterfaceBuilder
 {
     public static Command Build(
-        IConsole console,
         IManager<int, Individual> individualsManager,
         IManager<TableColumnPair, PersonalDataColumn> personalDataColumnManager,
         IManager<string, Purpose> purposesManager,
@@ -28,15 +27,15 @@ public static class CommandLineInterfaceBuilder
             .WithAlias(CommandNamer.RootCommandAlias)
             .WithDescription("This is a description of the root command")
             .WithSubCommands(
-                new IndividualsCommandBuilder(console, individualsManager, personalDataColumnManager, originsManager).Build(),
-                new PersonalDataColumnCommandBuilder(console, personalDataColumnManager, purposesManager).Build(),
-                new PurposesCommandBuilder(console, purposesManager, deleteConditionsManager).Build(),
-                new OriginsCommandBuilder(console, originsManager).Build(),
-                new VacuumingRulesCommandBuilder(console, vacuumingRulesManager, purposesManager, vacuumer).Build(),
-                new DeleteConditionsCommandBuilder(console, deleteConditionsManager, personalDataColumnManager).Build(),
-                new ProcessingsCommandBuilder(console, processingsManager, purposesManager, personalDataColumnManager).Build(),
-                LoggingCommandBuilder.Build(console, logger),
-                ConfigurationCommandBuilder.Build(console, configManager)
+                new IndividualsCommandBuilder(individualsManager, personalDataColumnManager, originsManager).Build(),
+                new PersonalDataColumnCommandBuilder(personalDataColumnManager, purposesManager).Build(),
+                new PurposesCommandBuilder(purposesManager, deleteConditionsManager).Build(),
+                new OriginsCommandBuilder(originsManager).Build(),
+                new VacuumingRulesCommandBuilder(vacuumingRulesManager, purposesManager, vacuumer).Build(),
+                new DeleteConditionsCommandBuilder(deleteConditionsManager, personalDataColumnManager).Build(),
+                new ProcessingsCommandBuilder(processingsManager, purposesManager, personalDataColumnManager).Build(),
+                LoggingCommandBuilder.Build(logger),
+                ConfigurationCommandBuilder.Build(configManager)
             );
     }
 }

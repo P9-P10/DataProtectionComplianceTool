@@ -12,10 +12,9 @@ public class IndividualsCommandBuilder : BaseCommandBuilder<int, Individual>
     private readonly IManager<string, Origin> _originsManager;
 
     public IndividualsCommandBuilder(
-        IConsole console,
         IManager<int, Individual> manager,
         IManager<TableColumnPair, PersonalDataColumn> personalDataColumnManager,
-        IManager<string, Origin> originsManager) : base(console, manager)
+        IManager<string, Origin> originsManager) : base( manager)
     {
         _personalDataColumnManager = personalDataColumnManager;
         _originsManager = originsManager;

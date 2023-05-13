@@ -13,10 +13,9 @@ public class ProcessingsCommandBuilder : BaseCommandBuilder<string, Processing>
     private readonly IManager<TableColumnPair, PersonalDataColumn> _personalDataColumnManager;
     
     public ProcessingsCommandBuilder(
-        IConsole console, 
         IManager<string, Processing> manager, 
         IManager<string, Purpose> purposesManager, 
-        IManager<TableColumnPair, PersonalDataColumn> personalDataColumnManager) : base(console, manager)
+        IManager<TableColumnPair, PersonalDataColumn> personalDataColumnManager) : base(manager)
     {
         _purposesManager = purposesManager;
         _personalDataColumnManager = personalDataColumnManager;

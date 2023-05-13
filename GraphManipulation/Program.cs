@@ -60,9 +60,7 @@ public static class Program
         }
 
         var logger = new PlaintextLogger(configManager);
-        var console = new SystemConsole();
-
-
+        
         var connectionString = configManager.GetValue("DatabaseConnectionString");
         var context = new GdprMetadataContext(connectionString);
         var dbConnection = new SQLiteConnection(connectionString);
@@ -99,7 +97,7 @@ public static class Program
 
         var command = CommandLineInterfaceBuilder
             .Build(
-                console, decoratedIndividualsManager, decoratedPersonalDataManager,
+                decoratedIndividualsManager, decoratedPersonalDataManager,
                 decoratedPurposesManager, decoratedOriginsManager, decoratedVacuumingRulesManager,
                 decoratedDeleteConditionsManager, decoratedProcessingsManager, loggingVacuumer, logger, configManager
             );

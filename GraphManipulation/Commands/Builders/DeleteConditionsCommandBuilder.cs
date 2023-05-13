@@ -12,9 +12,8 @@ public class DeleteConditionsCommandBuilder : BaseCommandBuilder<string, DeleteC
     private readonly IManager<TableColumnPair, PersonalDataColumn> _personalDataColumnManager;
 
     public DeleteConditionsCommandBuilder(
-        IConsole console,
         IManager<string, DeleteCondition> manager,
-        IManager<TableColumnPair, PersonalDataColumn> personalDataColumnManager) : base(console, manager)
+        IManager<TableColumnPair, PersonalDataColumn> personalDataColumnManager) : base(manager)
     {
         _personalDataColumnManager = personalDataColumnManager;
     }
@@ -67,12 +66,12 @@ public class DeleteConditionsCommandBuilder : BaseCommandBuilder<string, DeleteC
     {
         if (condition.Condition is null)
         {
-            EmitMissing(condition.Key!, "condition");
+            Emitter.EmitMissing(condition.Key!, "condition");
         }
 
         if (condition.PersonalDataColumn is null)
         {
-            EmitMissing<PersonalDataColumn>(condition.Key!);
+            Emitter.EmitMissing<TableColumnPair, PersonalDataColumn>(condition.Key!);
         }
     }
 

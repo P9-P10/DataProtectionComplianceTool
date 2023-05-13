@@ -13,10 +13,9 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
     private readonly IVacuumer _vacuumer;
     
     public VacuumingRulesCommandBuilder(
-        IConsole console, 
         IManager<string, VacuumingRule> manager,
         IManager<string, Purpose> purposesManager, 
-        IVacuumer vacuumer) : base(console, manager)
+        IVacuumer vacuumer) : base(manager)
     {
         _purposesManager = purposesManager;
         _vacuumer = vacuumer;
@@ -77,7 +76,7 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
     {
         if (rule.Interval is null)
         {
-            EmitMissing(rule.Key!, "interval");
+            Emitter.EmitMissing(rule.Key!, "interval");
         }
     }
 
@@ -111,7 +110,7 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
                     var rule = Manager.Get(ruleName);
                     if (rule is null)
                     {
-                        EmitCouldNotFind(ruleName);
+                        Emitter.EmitCouldNotFind(ruleName);
                         return;
                     }
 
@@ -121,7 +120,7 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
                 foreach (var rule in rules)
                 {
                     _vacuumer.ExecuteVacuumingRules(new[] { rule });
-                    EmitSuccess(rule.Key!, Operations.Executed, rule);
+                    Emitter.EmitSuccess(rule.Key!, FeedbackEmitter<string, VacuumingRule>.Operations.Executed, rule);
                 }
             });
     }

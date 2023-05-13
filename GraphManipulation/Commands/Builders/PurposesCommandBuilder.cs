@@ -11,9 +11,8 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
     private readonly IManager<string, DeleteCondition> _deleteConditionsManager;
 
     public PurposesCommandBuilder(
-        IConsole console,
         IManager<string, Purpose> purposesManager,
-        IManager<string, DeleteCondition> deleteConditionsManager) : base(console, purposesManager)
+        IManager<string, DeleteCondition> deleteConditionsManager) : base(purposesManager)
     {
         _deleteConditionsManager = deleteConditionsManager;
     }
@@ -89,12 +88,12 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
     {
         if (purpose.Rules is null || !purpose.Rules.Any())
         {
-            EmitMissing<VacuumingRule>(purpose.Key!);
+            Emitter.EmitMissing<string, VacuumingRule>(purpose.Key!);
         }
 
         if (purpose.DeleteConditions is null || !purpose.DeleteConditions.Any())
         {
-            EmitMissing<DeleteCondition>(purpose.Key!);
+            Emitter.EmitMissing<string, DeleteCondition>(purpose.Key!);
         }
     }
 

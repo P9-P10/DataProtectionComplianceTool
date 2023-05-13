@@ -8,7 +8,7 @@ namespace GraphManipulation.Commands.Builders;
 
 public class OriginsCommandBuilder : BaseCommandBuilder<string, Origin>
 {
-    public OriginsCommandBuilder(IConsole console, IManager<string, Origin> manager) : base(console, manager)
+    public OriginsCommandBuilder(IManager<string, Origin> manager) : base(manager)
     {
     }
 

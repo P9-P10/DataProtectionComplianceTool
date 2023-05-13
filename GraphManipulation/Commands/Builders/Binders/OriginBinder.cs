@@ -5,7 +5,7 @@ namespace GraphManipulation.Commands.Builders.Binders;
 
 public class OriginBinder : BaseBinder<string, Origin>
 {
-    public OriginBinder(Option<string> nameOption, Option<string> descriptionOption) : base(nameOption, descriptionOption)
+    public OriginBinder(Option<string> keyOption, Option<string> descriptionOption) : base(keyOption, descriptionOption)
     {
     }
 }

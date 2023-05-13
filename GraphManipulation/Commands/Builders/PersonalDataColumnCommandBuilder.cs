@@ -12,9 +12,8 @@ public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPa
     private readonly IManager<string, Purpose> _purposesManager;
 
     public PersonalDataColumnCommandBuilder(
-        IConsole console,
         IManager<TableColumnPair, PersonalDataColumn> personalDataColumnManager,
-        IManager<string, Purpose> purposesManager) : base(console, personalDataColumnManager)
+        IManager<string, Purpose> purposesManager) : base(personalDataColumnManager)
     {
         _purposesManager = purposesManager;
     }
@@ -77,12 +76,12 @@ public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPa
     {
         if (column.Purposes is null || !column.Purposes.Any())
         {
-            EmitMissing<Purpose>(column.Key!);
+            Emitter.EmitMissing<string, Purpose>(column.Key!);
         }
 
         if (column.DefaultValue is null)
         {
-            EmitMissing(column.Key!, "default value");
+            Emitter.EmitMissing(column.Key!, "default value");
         }
     }
 }
