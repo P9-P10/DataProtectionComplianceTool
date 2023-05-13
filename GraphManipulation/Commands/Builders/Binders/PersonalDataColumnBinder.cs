@@ -32,7 +32,7 @@ public class PersonalDataColumnBinder : BaseBinder<TableColumnPair, PersonalData
 
         var purposes = bindingContext.ParseResult.GetValueForOption(_purposesOption)!;
 
-        pdc.Purposes = HandleMustExistList(purposes, _purposesManager);
+        pdc.Purposes = HandleMustExistListWithCreateOnDemand(purposes, _purposesManager);
 
         return pdc;
     }

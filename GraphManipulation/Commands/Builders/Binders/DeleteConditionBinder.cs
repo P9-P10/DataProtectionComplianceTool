@@ -29,7 +29,7 @@ public class DeleteConditionBinder : BaseBinder<string, DeleteCondition>
         var deleteCondition = base.GetBoundValue(bindingContext);
 
         var tableColumn = bindingContext.ParseResult.GetValueForOption(_tableColumnOption)!;
-        deleteCondition.PersonalDataColumn = HandleMustExist(tableColumn, _personalDataColumnManager);
+        deleteCondition.PersonalDataColumn = HandleMustExistWithCreateOnDemand(tableColumn, _personalDataColumnManager);
 
         deleteCondition.Condition = bindingContext.ParseResult.GetValueForOption(_conditionOption);
 

@@ -30,7 +30,7 @@ public class VacuumingRuleBinder : BaseBinder<string, VacuumingRule>
         rule.Interval = bindingContext.ParseResult.GetValueForOption(_intervalOption);
 
         var purposes = bindingContext.ParseResult.GetValueForOption(_purposesOption)!;
-        rule.Purposes = HandleMustExistList(purposes, _purposesManager);
+        rule.Purposes = HandleMustExistListWithCreateOnDemand(purposes, _purposesManager);
 
         return rule;
     }

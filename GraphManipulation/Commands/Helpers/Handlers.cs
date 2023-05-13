@@ -1,5 +1,4 @@
-﻿using GraphManipulation.Helpers;
-using GraphManipulation.Managers.Interfaces;
+﻿using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models.Base;
 
 namespace GraphManipulation.Commands.Helpers;
@@ -15,6 +14,7 @@ public static class Handlers<TKey, TValue> where TValue : Entity<TKey>
             feedbackEmitter.EmitAlreadyExists(key);
             return;
         }
+
         if (manager.Create(key))
         {
             feedbackEmitter.EmitSuccess(key, FeedbackEmitter<TKey, TValue>.Operations.Created);
@@ -27,6 +27,7 @@ public static class Handlers<TKey, TValue> where TValue : Entity<TKey>
             feedbackEmitter.EmitFailure(key, FeedbackEmitter<TKey, TValue>.Operations.Created);
         }
     }
+
     public static void CreateHandler(TKey key, TValue value, IManager<TKey, TValue> manager,
         FeedbackEmitter<TKey, TValue> feedbackEmitter, Action<TValue> statusReport)
     {
@@ -48,7 +49,7 @@ public static class Handlers<TKey, TValue> where TValue : Entity<TKey>
             feedbackEmitter.EmitFailure(key, FeedbackEmitter<TKey, TValue>.Operations.Created);
         }
     }
-    
+
     public static void UpdateHandler(TKey key, TValue value, IManager<TKey, TValue> manager,
         FeedbackEmitter<TKey, TValue> feedbackEmitter, Action<TValue> statusReport)
     {
@@ -80,8 +81,9 @@ public static class Handlers<TKey, TValue> where TValue : Entity<TKey>
             feedbackEmitter.EmitFailure(key, FeedbackEmitter<TKey, TValue>.Operations.Updated, value);
         }
     }
-    
-    public static void DeleteHandler(TKey key, IManager<TKey, TValue> manager, FeedbackEmitter<TKey, TValue> feedbackEmitter)
+
+    public static void DeleteHandler(TKey key, IManager<TKey, TValue> manager,
+        FeedbackEmitter<TKey, TValue> feedbackEmitter)
     {
         if (manager.Get(key) is null)
         {
@@ -99,8 +101,9 @@ public static class Handlers<TKey, TValue> where TValue : Entity<TKey>
             feedbackEmitter.EmitFailure(key, FeedbackEmitter<TKey, TValue>.Operations.Deleted);
         }
     }
-    
-    public static void ShowHandler(TKey key, IManager<TKey, TValue> manager, FeedbackEmitter<TKey, TValue> feedbackEmitter)
+
+    public static void ShowHandler(TKey key, IManager<TKey, TValue> manager,
+        FeedbackEmitter<TKey, TValue> feedbackEmitter)
     {
         if (manager.Get(key) is null)
         {
@@ -111,12 +114,12 @@ public static class Handlers<TKey, TValue> where TValue : Entity<TKey>
 
         Console.WriteLine(manager.Get(key)!.ToListing());
     }
-    
+
     public static void ListHandler(IManager<TKey, TValue> manager)
     {
         manager.GetAll().Select(r => r.ToListing()).ToList().ForEach(Console.WriteLine);
     }
-    
+
     public static void ListChangesHandler<TK, TV>(
         TKey key,
         IEnumerable<TK> list,
@@ -168,41 +171,9 @@ public static class Handlers<TKey, TValue> where TValue : Entity<TKey>
         setList(value, currentList);
         UpdateHandler(key, value, manger1, feedbackEmitter1, statusAction);
     }
-    
+
     public static void StatusHandler(Action<TValue> statusAction, IManager<TKey, TValue> manager)
     {
         manager.GetAll().ToList().ForEach(statusAction);
-    }
-    
-    public static void CreateNewHandlerOnDemand<TK, TV>(TK key, IManager<TK, TV> manager, Action<TV> statusReport)
-        where TV : Entity<TK>
-    { 
-        Handlers<TK, TV>.CreateHandler(key, manager, new FeedbackEmitter<TK, TV>(), statusReport);
-    }
-
-    public static bool PromptCreateNew<TK, TV>(TK key)
-    where TV : Entity<TK>
-    {
-        while (true)
-        {
-            Console.Write(
-                $"{key} {TypeToString.GetEntityType(typeof(TV))} does exist. Would you like to create one? (y/n)");
-            var reply = (Console.ReadLine() ?? "").Trim();
-            if (string.IsNullOrEmpty(reply))
-            {
-                Console.WriteLine("You must answer either 'y' or 'n'");
-            }
-            else
-                switch (reply)
-                {
-                    case "y" or "Y":
-                        return true;
-                    case "n" or "N":
-                        return false;
-                    default:
-                        Console.WriteLine($"Cannot parse '{reply}', you must either answer 'y' or 'n'");
-                        break;
-                }
-        }
     }
 }

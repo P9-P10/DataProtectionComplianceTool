@@ -31,7 +31,7 @@ public class PurposeBinder : BaseBinder<string, Purpose>
         
         var deleteConditionNames = bindingContext.ParseResult.GetValueForOption(_deleteConditionsOption)!;
 
-        purpose.DeleteConditions = HandleMustExistList(deleteConditionNames, _deleteConditionsManager);
+        purpose.DeleteConditions = HandleMustExistListWithCreateOnDemand(deleteConditionNames, _deleteConditionsManager);
 
         return purpose;
     }

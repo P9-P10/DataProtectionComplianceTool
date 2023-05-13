@@ -32,7 +32,7 @@ public class ProcessingBinder : BaseBinder<string, Processing>
         var processing = base.GetBoundValue(bindingContext);
 
         var purpose = bindingContext.ParseResult.GetValueForOption(_purposeOption)!;
-        processing.Purpose = HandleMustExist(purpose, _purposesManager);
+        processing.Purpose = HandleMustExistWithCreateOnDemand(purpose, _purposesManager);
 
         var tableColumn = bindingContext.ParseResult.GetValueForOption(_tableColumnOption)!;
         processing.PersonalDataColumn = HandleMustExist(tableColumn, _personalDataColumnManager);
