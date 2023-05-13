@@ -5,12 +5,12 @@ using GraphManipulation.Vacuuming;
 
 namespace GraphManipulation.Decorators;
 
-public class LoggingVacuumer : IVacuumer
+public class LoggingVacuumer : LoggingDecorator<string, VacuumingRule>, IVacuumer
 {
     private readonly IVacuumer _vacuumer;
     private readonly ILogger _logger;
 
-    public LoggingVacuumer(IVacuumer vacuumer, ILogger logger)
+    public LoggingVacuumer(IVacuumer vacuumer, ILogger logger) : base(logger)
     {
         _vacuumer = vacuumer;
         _logger = logger;
@@ -35,6 +35,8 @@ public class LoggingVacuumer : IVacuumer
     private IEnumerable<DeletionExecution> ExecuteAndLog(Func<IEnumerable<DeletionExecution>> executeFunc)
     {
         var executions = executeFunc().ToList();
+        executions.ForEach(execution => LogExecute(execution.VacuumingRule.Key!));
+        
         CreateDeletionExecutionLogs(executions).ToList().ForEach(_logger.Append);
         return executions;
     }

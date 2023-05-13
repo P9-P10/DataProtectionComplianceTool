@@ -11,13 +11,16 @@ public class DeletionExecution
     public string Query { get; set; }
 
     public List<Purpose> Purposes { get; set; }
+    
+    public VacuumingRule VacuumingRule { get; set; }
 
-    public DeletionExecution(List<Purpose> purposes, string column, string table, string query)
+    public DeletionExecution(List<Purpose> purposes, string column, string table, string query, VacuumingRule vacuumingRule)
     {
         Purposes = purposes;
         Column = column;
         Table = table;
         Query = query;
+        VacuumingRule = vacuumingRule;
     }
 
     public DeletionExecution()

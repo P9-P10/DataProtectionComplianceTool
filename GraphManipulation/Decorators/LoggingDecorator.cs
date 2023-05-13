@@ -17,9 +17,21 @@ public class LoggingDecorator<TKey, TValue> where TValue : Entity<TKey>
         _logger = logger;
     }
 
-    private void AppendLogEntry(Operation<TKey, TValue> operation, LogType logType = LogType.Metadata)
+    private void AppendLogEntry(
+        Operation<TKey, TValue> operation, 
+        LogType logType = LogType.Metadata, 
+        LogMessageFormat logMessageFormat = LogMessageFormat.Plaintext)
     {
-        _logger.Append(new MutableLog(logType, operation.Key!.ToString()!, LogMessageFormat.Plaintext, operation.ToString()));
+        AppendLogEntry(operation, logType, logMessageFormat, operation.ToString());
+    }
+
+    private void AppendLogEntry(
+        Operation<TKey, TValue> operation, 
+        LogType logType, 
+        LogMessageFormat logMessageFormat,
+        string message)
+    {
+        _logger.Append(new MutableLog(logType, operation.Key!.ToString()!, logMessageFormat, message));
     }
 
     public void LogDelete(TKey key)
@@ -35,5 +47,10 @@ public class LoggingDecorator<TKey, TValue> where TValue : Entity<TKey>
     public void LogCreate(TKey key)
     {
         AppendLogEntry(new Create<TKey, TValue>(key));
+    }
+
+    public void LogExecute(TKey key)
+    {
+        AppendLogEntry(new Execute<TKey, TValue>(key), LogType.Vacuuming);
     }
 }

@@ -26,6 +26,7 @@ public abstract class Operation<TKey, TValue> where TValue : Entity<TKey>
     {
         Create,
         Update,
-        Delete
+        Delete,
+        Execute
     }
 }
