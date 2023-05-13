@@ -1,10 +1,27 @@
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models.Base;
+using VDS.RDF.Web;
 
 namespace GraphManipulation.Commands.Helpers;
 
-public static class Handlers<TKey, TValue> where TValue : Entity<TKey>
+public class Handler<TKey, TValue> where TValue : Entity<TKey>
 {
+    private readonly IManager<TKey, TValue> _manager;
+    private readonly FeedbackEmitter<TKey, TValue> _feedbackEmitter;
+    private readonly Action<TValue> _statusReport;
+
+    public Handler(IManager<TKey, TValue> manager, FeedbackEmitter<TKey, TValue> feedbackEmitter, Action<TValue> statusReport)
+    {
+        _feedbackEmitter = feedbackEmitter;
+        _statusReport = statusReport;
+        _manager = manager;
+    }
+
+    public void CreateHandler(TKey key)
+    {
+        CreateHandler(key, _manager, _feedbackEmitter, _statusReport);
+    }
+    
     public static void CreateHandler(TKey key, IManager<TKey, TValue> manager,
         FeedbackEmitter<TKey, TValue> feedbackEmitter, Action<TValue> statusReport)
     {
@@ -27,6 +44,11 @@ public static class Handlers<TKey, TValue> where TValue : Entity<TKey>
         }
     }
 
+    public void CreateHandler(TKey key, TValue value)
+    {
+        CreateHandler(key, value, _manager, _feedbackEmitter, _statusReport);
+    }
+
     public static void CreateHandler(TKey key, TValue value, IManager<TKey, TValue> manager,
         FeedbackEmitter<TKey, TValue> feedbackEmitter, Action<TValue> statusReport)
     {
@@ -47,6 +69,11 @@ public static class Handlers<TKey, TValue> where TValue : Entity<TKey>
             // Could not create entity
             feedbackEmitter.EmitFailure(key, FeedbackEmitter<TKey, TValue>.Operations.Created);
         }
+    }
+
+    public void UpdateHandler(TKey key, TValue value)
+    {
+        UpdateHandler(key, value, _manager, _feedbackEmitter, _statusReport);
     }
 
     public static void UpdateHandler(TKey key, TValue value, IManager<TKey, TValue> manager,
@@ -81,6 +108,11 @@ public static class Handlers<TKey, TValue> where TValue : Entity<TKey>
         }
     }
 
+    public void DeleteHandler(TKey key)
+    {
+        DeleteHandler(key, _manager, _feedbackEmitter);
+    }
+
     public static void DeleteHandler(TKey key, IManager<TKey, TValue> manager,
         FeedbackEmitter<TKey, TValue> feedbackEmitter)
     {
@@ -101,6 +133,11 @@ public static class Handlers<TKey, TValue> where TValue : Entity<TKey>
         }
     }
 
+    public void ShowHandler(TKey key)
+    {
+        ShowHandler(key, _manager, _feedbackEmitter);
+    }
+
     public static void ShowHandler(TKey key, IManager<TKey, TValue> manager,
         FeedbackEmitter<TKey, TValue> feedbackEmitter)
     {
@@ -114,9 +151,37 @@ public static class Handlers<TKey, TValue> where TValue : Entity<TKey>
         Console.WriteLine(manager.Get(key)!.ToListing());
     }
 
+    public void ListHandler()
+    {
+        ListHandler(_manager);
+    }
+
     public static void ListHandler(IManager<TKey, TValue> manager)
     {
         manager.GetAll().Select(r => r.ToListing()).ToList().ForEach(Console.WriteLine);
+    }
+
+    public void StatusHandler()
+    {
+        StatusHandler(_statusReport, _manager);
+    }
+    
+    public static void StatusHandler(Action<TValue> statusAction, IManager<TKey, TValue> manager)
+    {
+        manager.GetAll().ToList().ForEach(statusAction);
+    }
+    
+    public void ListChangesHandler<TK, TV>(
+        TKey key,
+        IEnumerable<TK> list,
+        Func<TValue, IEnumerable<TV>> getCurrentList,
+        Action<TValue, IEnumerable<TV>> setList,
+        bool isAdd,
+        IGetter<TV, TK> manager)
+        where TV : Entity<TK>
+    {
+        ListChangesHandler(key, list, getCurrentList, setList, isAdd, _manager, manager, _feedbackEmitter,
+            new FeedbackEmitter<TK, TV>(), _statusReport);
     }
 
     public static void ListChangesHandler<TK, TV>(
@@ -169,10 +234,5 @@ public static class Handlers<TKey, TValue> where TValue : Entity<TKey>
 
         setList(value, currentList);
         UpdateHandler(key, value, manger1, feedbackEmitter1, statusAction);
-    }
-
-    public static void StatusHandler(Action<TValue> statusAction, IManager<TKey, TValue> manager)
-    {
-        manager.GetAll().ToList().ForEach(statusAction);
     }
 }

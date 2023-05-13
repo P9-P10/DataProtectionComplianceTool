@@ -63,7 +63,7 @@ public abstract class BaseBinder<TKey, TValue> : BinderBase<TValue> where TValue
                 throw;
             }
 
-            Handlers<TK, TV>.CreateHandler(key, manager, new FeedbackEmitter<TK, TV>(),
+            Handler<TK, TV>.CreateHandler(key, manager, new FeedbackEmitter<TK, TV>(),
                 _ => Console.WriteLine("Not reporting status when creating on demand"));
             return manager.Get(key)!;
         }

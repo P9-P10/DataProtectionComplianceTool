@@ -14,11 +14,13 @@ public abstract class BaseCommandBuilder<TKey, TValue>
 {
     protected readonly IManager<TKey, TValue> Manager;
     protected readonly FeedbackEmitter<TKey, TValue> Emitter;
+    protected readonly Handler<TKey, TValue> Handler;
 
     protected BaseCommandBuilder(IManager<TKey, TValue> manager)
     {
         Manager = manager;
         Emitter = new FeedbackEmitter<TKey, TValue>();
+        Handler = new Handler<TKey, TValue>(Manager, Emitter, StatusReport);
     }
 
     protected Command Build(string name, string alias, out Option<TKey> keyOption)
@@ -46,7 +48,7 @@ public abstract class BaseCommandBuilder<TKey, TValue>
             .WithOption(out _, keyOption)
             .WithOptions(options);
 
-        command.SetHandler(CreateHandler, keyOption, binder);
+        command.SetHandler(Handler.CreateHandler, keyOption, binder);
 
         return command;
     }
@@ -60,7 +62,7 @@ public abstract class BaseCommandBuilder<TKey, TValue>
             .WithOption(out _, keyOption)
             .WithOptions(options);
 
-        command.SetHandler(UpdateHandler, keyOption, binder);
+        command.SetHandler(Handler.UpdateHandler, keyOption, binder);
 
         return command;
     }
@@ -72,7 +74,7 @@ public abstract class BaseCommandBuilder<TKey, TValue>
             .WithDescription($"Deletes the given {GetEntityType()} from the system")
             .WithOption(out _, keyOption);
 
-        command.SetHandler(DeleteHandler, keyOption);
+        command.SetHandler(Handler.DeleteHandler, keyOption);
 
         return command;
     }
@@ -84,7 +86,7 @@ public abstract class BaseCommandBuilder<TKey, TValue>
             .WithDescription($"Shows details about the given {GetEntityType()}")
             .WithOption(out _, keyOption);
 
-        command.SetHandler(ShowHandler, keyOption);
+        command.SetHandler(Handler.ShowHandler, keyOption);
 
         return command;
     }
@@ -95,7 +97,7 @@ public abstract class BaseCommandBuilder<TKey, TValue>
             .BuildListCommand()
             .WithDescription($"Lists the {GetEntityType()}(e)s currently in the system");
 
-        command.SetHandler(ListHandler);
+        command.SetHandler(Handler.ListHandler);
         return command;
     }
 
@@ -105,7 +107,7 @@ public abstract class BaseCommandBuilder<TKey, TValue>
             .BuildStatusCommand()
             .WithDescription($"Show the status(es) of the {GetEntityType()}(e)s currently in the system");
 
-        command.SetHandler(() => StatusHandler(StatusReport));
+        command.SetHandler(() => Handler.StatusHandler());
         return command;
     }
 
@@ -124,7 +126,7 @@ public abstract class BaseCommandBuilder<TKey, TValue>
             .WithOption(out _, keyOption)
             .WithOption(out _, listOption);
 
-        command.SetHandler((key, list) => { ListChangesHandler(key, list, getCurrentList, setList, isAdd, manager); },
+        command.SetHandler((key, list) => { Handler.ListChangesHandler(key, list, getCurrentList, setList, isAdd, manager); },
             keyOption, listOption);
 
         return command;
@@ -140,49 +142,6 @@ public abstract class BaseCommandBuilder<TKey, TValue>
         var removeCommand = ListChangesCommand(keyOption, listOption, manager, false, getCurrentList, setList);
 
         return (addCommand, removeCommand);
-    }
-
-    private void CreateHandler(TKey key, TValue value)
-    {
-        Handlers<TKey, TValue>.CreateHandler(key, value, Manager, Emitter, StatusReport);
-    }
-    
-    private void UpdateHandler(TKey key, TValue value)
-    {
-        Handlers<TKey, TValue>.UpdateHandler(key, value, Manager, Emitter, StatusReport);
-    }
-    
-    private void DeleteHandler(TKey key)
-    {
-        Handlers<TKey, TValue>.DeleteHandler(key, Manager, Emitter);
-    }
-    
-    private void ShowHandler(TKey key)
-    {
-        Handlers<TKey, TValue>.ShowHandler(key, Manager, Emitter);
-    }
-    
-    private void ListHandler()
-    {
-        Handlers<TKey, TValue>.ListHandler(Manager);
-    }
-
-    private void StatusHandler(Action<TValue> statusAction)
-    {
-        Handlers<TKey, TValue>.StatusHandler(statusAction, Manager);
-    }
-    
-    private void ListChangesHandler<TK, TV>(
-        TKey key,
-        IEnumerable<TK> list,
-        Func<TValue, IEnumerable<TV>> getCurrentList,
-        Action<TValue, IEnumerable<TV>> setList,
-        bool isAdd,
-        IGetter<TV, TK> manager)
-        where TV : Entity<TK>
-    {
-        Handlers<TKey, TValue>.ListChangesHandler(key, list, getCurrentList, setList, isAdd, Manager, manager, Emitter,
-            new FeedbackEmitter<TK, TV>(), StatusReport);
     }
 
     protected Option<TKey> BuildKeyOption(string name, string alias, string description)
