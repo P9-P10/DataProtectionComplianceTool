@@ -13,6 +13,7 @@ public static class CommandLineInterfaceBuilder
 {
     public static Command Build(
         IManager<int, Individual> individualsManager,
+        IManager<int, PersonalDataOrigin> personalDataOriginsManager,
         IManager<TableColumnPair, PersonalDataColumn> personalDataColumnManager,
         IManager<string, Purpose> purposesManager,
         IManager<string, Origin> originsManager,
@@ -27,7 +28,8 @@ public static class CommandLineInterfaceBuilder
             .WithAlias(CommandNamer.RootCommandAlias)
             .WithDescription("This is a description of the root command")
             .WithSubCommands(
-                new IndividualsCommandBuilder(individualsManager, personalDataColumnManager, originsManager),
+                new IndividualsCommandBuilder(individualsManager),
+                new PersonalDataOriginCommandBuilder(personalDataOriginsManager, individualsManager, personalDataColumnManager, originsManager),
                 new PersonalDataColumnCommandBuilder(personalDataColumnManager, purposesManager),
                 new PurposesCommandBuilder(purposesManager, deleteConditionsManager),
                 new OriginsCommandBuilder(originsManager),

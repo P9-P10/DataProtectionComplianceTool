@@ -64,4 +64,7 @@ public static class OptionNamer
 
     public const string DefaultValue = "--default-value";
     public const string DefaultValueAlias = "-dv";
+
+    public const string Individual = "--individual";
+    public const string IndividualAlias = "-i";
 }

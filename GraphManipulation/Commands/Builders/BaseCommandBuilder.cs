@@ -119,7 +119,7 @@ public abstract class BaseCommandBuilder<TKey, TValue> : BaseCommandBuilder
         Action<TValue, IEnumerable<TV>> setList)
         where TV : Entity<TK>
     {
-        var otherValueType = TypeToString.GetEntityType(typeof(TV));
+        var otherValueType = TypeToString.GetEntityType(typeof(TV)).Replace(" ", "-");
 
         var command = (isAdd
                 ? CommandBuilder.BuildAddCommand(otherValueType)

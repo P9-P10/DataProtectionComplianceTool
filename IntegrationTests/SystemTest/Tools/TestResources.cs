@@ -293,7 +293,7 @@ public class TestResources
 
     protected static void AddPersonalData(TestProcess process, IPersonalDataColumn personalDataColumn)
     {
-        var command = $"{CommandNamer.PersonalDataAlias} {CommandNamer.CreateAlias}" +
+        var command = $"{CommandNamer.PersonalDataColumnsAlias} {CommandNamer.CreateAlias}" +
                       $" {OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} {personalDataColumn.GetTableColumnPair().ColumnName}" +
                       $" {OptionNamer.JoinCondition} \"{personalDataColumn.GetJoinCondition()}\"" +
                       $" {OptionNamer.DefaultValueAlias} \"{personalDataColumn.GetDefaultValue()}\"" +
@@ -305,7 +305,7 @@ public class TestResources
     protected static void UpdatePersonalData(TestProcess testProcess, IPersonalDataColumn old,
         IPersonalDataColumn updated)
     {
-        var command = $"{CommandNamer.PersonalDataName} {CommandNamer.Update} " +
+        var command = $"{CommandNamer.PersonalDataColumnsName} {CommandNamer.Update} " +
                       $"{OptionNamer.TableColumn} {old.GetTableColumnPair().TableName} {old.GetTableColumnPair().ColumnName} " +
                       $"{OptionNamer.DefaultValue} \"{updated.GetDefaultValue()}\" " +
                       $"{OptionNamer.Description} \"{updated.GetDescription()}\" ";
@@ -315,7 +315,7 @@ public class TestResources
 
     protected static void ShowPersonalData(TestProcess testProcess, IPersonalDataColumn personalDataColumn)
     {
-        var command = $"{CommandNamer.PersonalDataName} {CommandNamer.Show} " +
+        var command = $"{CommandNamer.PersonalDataColumnsName} {CommandNamer.Show} " +
                       $"{OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} " +
                       $"{personalDataColumn.GetTableColumnPair().ColumnName} ";
 
@@ -324,13 +324,13 @@ public class TestResources
 
     protected static void ListPersonalData(TestProcess testProcess)
     {
-        var command = $"{CommandNamer.PersonalDataName} {CommandNamer.List}";
+        var command = $"{CommandNamer.PersonalDataColumnsName} {CommandNamer.List}";
         testProcess.GiveInput(command);
     }
 
     protected static void DeletePersonalData(TestProcess testProcess, IPersonalDataColumn personalDataColumn)
     {
-        var command = $"{CommandNamer.PersonalDataName} {CommandNamer.Delete} " +
+        var command = $"{CommandNamer.PersonalDataColumnsName} {CommandNamer.Delete} " +
                       $"{OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} " +
                       $"{personalDataColumn.GetTableColumnPair().ColumnName} ";
         testProcess.GiveInput(command);
@@ -339,7 +339,7 @@ public class TestResources
     protected static void AddPurposesToPersonalData(TestProcess testProcess, IPersonalDataColumn personalDataColumn,
         IEnumerable<IPurpose> purposes)
     {
-        var command = $"{CommandNamer.PersonalDataName} {CommandNamer.AddPurpose} " +
+        var command = $"{CommandNamer.PersonalDataColumnsName} {CommandNamer.AddPurpose} " +
                       $"{OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} " +
                       $"{personalDataColumn.GetTableColumnPair().ColumnName} " +
                       $"{OptionNamer.PurposeList} {string.Join(" ", purposes.Select(p => p.GetName()))}";
@@ -349,7 +349,7 @@ public class TestResources
     protected static void RemovePurposesFromPersonalData(TestProcess testProcess, IPersonalDataColumn personalDataColumn,
         IEnumerable<IPurpose> purposes)
     {
-        var command = $"{CommandNamer.PersonalDataName} {CommandNamer.RemovePurpose} " +
+        var command = $"{CommandNamer.PersonalDataColumnsName} {CommandNamer.RemovePurpose} " +
                       $"{OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} " +
                       $"{personalDataColumn.GetTableColumnPair().ColumnName} " +
                       $"{OptionNamer.PurposeList} {string.Join(" ", purposes.Select(p => p.GetName()))}";
@@ -359,7 +359,7 @@ public class TestResources
     protected static void SetOriginOfPersonalData(TestProcess testProcess, IPersonalDataColumn personalDataColumn,
         IIndividual individual, Origin origin)
     {
-        var command = $"{CommandNamer.PersonalDataName} {CommandNamer.SetOrigin} " +
+        var command = $"{CommandNamer.PersonalDataColumnsName} {CommandNamer.SetOrigin} " +
                       $"{OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} " +
                       $"{personalDataColumn.GetTableColumnPair().ColumnName} " +
                       $"{OptionNamer.Id} {individual.ToListing()} " +
@@ -371,7 +371,7 @@ public class TestResources
     protected static void ShowOriginOfPersonalData(TestProcess testProcess, IPersonalDataColumn personalDataColumn,
         IIndividual individual)
     {
-        var command = $"{CommandNamer.PersonalDataName} {CommandNamer.ShowOrigin} " +
+        var command = $"{CommandNamer.PersonalDataColumnsName} {CommandNamer.ShowOrigin} " +
                       $"{OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} " +
                       $"{personalDataColumn.GetTableColumnPair().ColumnName} " +
                       $"{OptionNamer.Id} {individual.ToListing()} ";

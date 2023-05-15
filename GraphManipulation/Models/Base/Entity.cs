@@ -8,28 +8,24 @@ public abstract class Entity<TKey> : DomainEntity, IListable
     public TKey? Key { get; set; }
     public string? Description { get; set; }
 
-    public void Fill(object? other)
+    public void UpdateUsing(object? other)
     {
         if (other is null)
         {
             return;
         }
 
-        foreach (var property in other.GetType().GetProperties().Where(p => p.CanWrite))
+        var properties = other.GetType().GetProperties().Where(p => p.CanWrite);
+
+        foreach (var property in properties)
         {
-            property.SetValue(other, property.GetValue(this, null), null);
+            var value = property.GetValue(other, null);
+
+            if (value is not null)
+            {
+                property.SetValue(this, value, null);
+            }
         }
-        
-        // if (other is null || (other.GetType() != typeof(Entity<TKey>) && !other.GetType().IsSubclassOf(typeof(Entity<TKey>))))
-        // {
-        //     return;
-        // }
-        //
-        // var otherEntity = (other as Entity<TKey>)!;
-        //
-        // otherEntity.Id ??= Id;
-        // otherEntity.Key ??= Key;
-        // otherEntity.Description ??= Description;
     }
 
     public bool Equals(Entity<TKey> other)
@@ -47,7 +43,7 @@ public abstract class Entity<TKey> : DomainEntity, IListable
         return string.Join(", ", Key?.ToString() ?? "No key found", Description);
     }
 
-    public string ToListingIdentifier()
+    public virtual string ToListingIdentifier()
     {
         return Key?.ToString() ?? "No key found";
     }

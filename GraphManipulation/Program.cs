@@ -74,13 +74,14 @@ public static class Program
         var vacuumingRuleMapper = new Mapper<VacuumingRule>(context);
         var deleteConditionMapper = new Mapper<DeleteCondition>(context);
         var processingMapper = new Mapper<Processing>(context);
-        var personalDataMapper = new Mapper<PersonalData>(context);
+        var personalDataOriginMapper = new Mapper<PersonalDataOrigin>(context);
 
         var vacuumer = new Vacuumer(personalDataColumnMapper, new SqliteQueryExecutor(dbConnection));
         var loggingVacuumer = new LoggingVacuumer(vacuumer, logger);
 
         var individualsManager = new Manager<int, Individual>(individualMapper);
-        var personalDataManager = new Manager<TableColumnPair, PersonalDataColumn>(personalDataColumnMapper);
+        var personalDataOriginsManager = new Manager<int, PersonalDataOrigin>(personalDataOriginMapper);
+        var personalDataColumnsManager = new Manager<TableColumnPair, PersonalDataColumn>(personalDataColumnMapper);
         var purposesManager = new Manager<string, Purpose>(purposeMapper);
         var originsManager = new Manager<string, Origin>(originMapper);
         var vacuumingRulesManager = new Manager<string, VacuumingRule>(vacuumingRuleMapper);
@@ -88,7 +89,8 @@ public static class Program
         var processingsManager = new Manager<string, Processing>(processingMapper);
 
         var decoratedIndividualsManager = new LoggingManager<int, Individual>(individualsManager, logger);
-        var decoratedPersonalDataManager = new LoggingManager<TableColumnPair, PersonalDataColumn>(personalDataManager, logger);
+        var decoratedPersonalDataOriginsManager = new LoggingManager<int, PersonalDataOrigin>(personalDataOriginsManager, logger);
+        var decoratedPersonalDataColumnsManager = new LoggingManager<TableColumnPair, PersonalDataColumn>(personalDataColumnsManager, logger);
         var decoratedPurposesManager = new LoggingManager<string, Purpose>(purposesManager, logger);
         var decoratedOriginsManager = new LoggingManager<string, Origin>(originsManager, logger);
         var decoratedVacuumingRulesManager = new LoggingManager<string, VacuumingRule>(vacuumingRulesManager, logger);
@@ -97,14 +99,14 @@ public static class Program
 
         var command = CommandLineInterfaceBuilder
             .Build(
-                decoratedIndividualsManager, decoratedPersonalDataManager,
+                decoratedIndividualsManager, decoratedPersonalDataOriginsManager, decoratedPersonalDataColumnsManager,
                 decoratedPurposesManager, decoratedOriginsManager, decoratedVacuumingRulesManager,
                 decoratedDeleteConditionsManager, decoratedProcessingsManager, loggingVacuumer, logger, configManager
             );
         
         command = command.WithSubCommands(
             CommandBuilder
-                .BuildCreateCommand()
+                .BuildStatusCommand()
                 .WithHandler(() =>
                 {
                     command.Subcommands

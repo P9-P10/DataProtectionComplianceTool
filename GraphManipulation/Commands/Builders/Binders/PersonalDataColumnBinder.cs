@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Binding;
+using System.CommandLine.Parsing;
 using GraphManipulation.Managers;
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
@@ -11,12 +12,12 @@ public class PersonalDataColumnBinder : BaseBinder<TableColumnPair, PersonalData
     private readonly Option<IEnumerable<string>> _purposesOption;
     private readonly Option<string> _defaultValueOption;
     private readonly IManager<string, Purpose> _purposesManager;
-    
+
     public PersonalDataColumnBinder(
-        Option<TableColumnPair> keyOption, 
-        Option<string> descriptionOption, 
-        Option<IEnumerable<string>> purposesOption, 
-        Option<string> defaultValueOption, 
+        Option<TableColumnPair> keyOption,
+        Option<string> descriptionOption,
+        Option<IEnumerable<string>> purposesOption,
+        Option<string> defaultValueOption,
         IManager<string, Purpose> purposesManager) : base(keyOption, descriptionOption)
     {
         _purposesOption = purposesOption;
@@ -28,11 +29,17 @@ public class PersonalDataColumnBinder : BaseBinder<TableColumnPair, PersonalData
     {
         var pdc = base.GetBoundValue(bindingContext);
 
-        pdc.DefaultValue = bindingContext.ParseResult.GetValueForOption(_defaultValueOption);
+        if (bindingContext.ParseResult.HasOption(_defaultValueOption))
+        {
+            pdc.DefaultValue = bindingContext.ParseResult.GetValueForOption(_defaultValueOption);
+        }
 
-        var purposes = bindingContext.ParseResult.GetValueForOption(_purposesOption)!;
+        if (bindingContext.ParseResult.HasOption(_purposesOption))
+        {
+            var purposes = bindingContext.ParseResult.GetValueForOption(_purposesOption);
 
-        pdc.Purposes = HandleMustExistListWithCreateOnDemand(purposes, _purposesManager);
+            pdc.Purposes = purposes is null ? null : HandleMustExistListWithCreateOnDemand(purposes, _purposesManager);
+        }
 
         return pdc;
     }

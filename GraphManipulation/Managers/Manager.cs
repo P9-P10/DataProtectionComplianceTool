@@ -29,9 +29,9 @@ public class Manager<TKey, TValue> : IManager<TKey, TValue>
         var old = Get(key);
         if (old is null) return false;
         
-        old.Fill(value);
+        old.UpdateUsing(value);
 
-        Mapper.Update(value);
+        Mapper.Update(old);
         return true;
     }
 

@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Binding;
+using System.CommandLine.Parsing;
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
 
@@ -27,10 +28,16 @@ public class VacuumingRuleBinder : BaseBinder<string, VacuumingRule>
     {
         var rule = base.GetBoundValue(bindingContext);
 
-        rule.Interval = bindingContext.ParseResult.GetValueForOption(_intervalOption);
-
-        var purposes = bindingContext.ParseResult.GetValueForOption(_purposesOption)!;
-        rule.Purposes = HandleMustExistListWithCreateOnDemand(purposes, _purposesManager);
+        if (bindingContext.ParseResult.HasOption(_intervalOption))
+        {
+            rule.Interval = bindingContext.ParseResult.GetValueForOption(_intervalOption);
+        }
+        
+        if (bindingContext.ParseResult.HasOption(_purposesOption))
+        {
+            var purposes = bindingContext.ParseResult.GetValueForOption(_purposesOption);
+            rule.Purposes = purposes is null ? null : HandleMustExistListWithCreateOnDemand(purposes, _purposesManager);
+        }
 
         return rule;
     }

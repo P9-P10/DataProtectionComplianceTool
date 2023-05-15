@@ -59,7 +59,7 @@ public class ProcessingsCommandBuilder : BaseCommandBuilder<string, Processing>
             .WithSubCommands(
                 CreateCommand(keyOption, createBinder, new Option[]
                 {
-                    descriptionOption, purposeOption.WithIsRequired(true), tableColumnOption.WithIsRequired(true)
+                    descriptionOption, purposeOption, tableColumnOption
                 }),
                 UpdateCommand(keyOption, updateBinder, new Option[]
                 {

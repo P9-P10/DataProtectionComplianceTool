@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Binding;
+using System.CommandLine.Parsing;
 using GraphManipulation.Managers;
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
@@ -31,11 +32,17 @@ public class ProcessingBinder : BaseBinder<string, Processing>
     {
         var processing = base.GetBoundValue(bindingContext);
 
-        var purpose = bindingContext.ParseResult.GetValueForOption(_purposeOption)!;
-        processing.Purpose = HandleMustExistWithCreateOnDemand(purpose, _purposesManager);
+        if (bindingContext.ParseResult.HasOption(_purposeOption))
+        {
+            var purpose = bindingContext.ParseResult.GetValueForOption(_purposeOption);
+            processing.Purpose = purpose is null ? null : HandleMustExistWithCreateOnDemand(purpose, _purposesManager);
+        }
 
-        var tableColumn = bindingContext.ParseResult.GetValueForOption(_tableColumnOption)!;
-        processing.PersonalDataColumn = HandleMustExist(tableColumn, _personalDataColumnManager);
+        if (bindingContext.ParseResult.HasOption(_tableColumnOption))
+        {
+            var tableColumn = bindingContext.ParseResult.GetValueForOption(_tableColumnOption);
+            processing.PersonalDataColumn = tableColumn is null ? null : HandleMustExist(tableColumn, _personalDataColumnManager);
+        }
 
         return processing;
     }

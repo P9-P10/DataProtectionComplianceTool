@@ -11,11 +11,11 @@
 //     private IMapper<PersonalDataColumn> _columnMapper;
 //     private IMapper<Purpose> _purposeMapper;
 //     private IMapper<Origin> _originMapper;
-//     private IMapper<PersonalData> _personalDataMapper;
+//     private IMapper<PersonalDataOrigin> _personalDataMapper;
 //     private IMapper<Individual> _individualMapper;
 //
 //     public PersonalDataManager(IMapper<PersonalDataColumn> columnMapper, IMapper<Purpose> purposeMapper,
-//         IMapper<Origin> originMapper, IMapper<PersonalData> personalDataMapper, IMapper<Individual> individualMapper)
+//         IMapper<Origin> originMapper, IMapper<PersonalDataOrigin> personalDataMapper, IMapper<Individual> individualMapper)
 //     {
 //         _columnMapper = columnMapper;
 //         _purposeMapper = purposeMapper;
@@ -30,17 +30,17 @@
 //         var origin = _originMapper.FindSingle(origin => origin.Name == originName)!;
 //         var column = FindByKey(tableColumnPair)!;
 //         
-//         var personalData = new PersonalData { PersonalDataColumn = column, Origin = origin };
+//         var personalData = new PersonalDataOrigin { PersonalDataColumn = column, Origin = origin };
 //         
-//         if (individual.PersonalData is null)
+//         if (individual.PersonalDataOrigin is null)
 //         {
-//             individual.PersonalData = new List<PersonalData> { personalData };
+//             individual.PersonalDataOrigin = new List<PersonalDataOrigin> { personalData };
 //         }
 //         else
 //         {
-//             var personalDataList = individual.PersonalData.ToList();
+//             var personalDataList = individual.PersonalDataOrigin.ToList();
 //             personalDataList.Add(personalData);
-//             individual.PersonalData = personalDataList;
+//             individual.PersonalDataOrigin = personalDataList;
 //         }
 //
 //         _personalDataMapper.Insert(personalData);
@@ -51,7 +51,7 @@
 //     {
 //         var individual = _individualMapper.FindSingle(individual => individual.Id == individualsId);
 //         var personalData =
-//             individual?.PersonalData?.FirstOrDefault(data =>
+//             individual?.PersonalDataOrigin?.FirstOrDefault(data =>
 //                 data.PersonalDataColumn.TableColumnPair.Equals(tableColumnPair));
 //         return personalData?.Origin;
 //     }

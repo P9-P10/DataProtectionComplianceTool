@@ -22,7 +22,7 @@ public class GdprMetadataContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<PersonalDataColumn>().OwnsOne(p => p.TableColumnPair);
+        modelBuilder.Entity<PersonalDataColumn>().OwnsOne(p => p.Key);
     }
 
     public DbSet<PersonalDataColumn> columns { get; set; }
@@ -33,7 +33,7 @@ public class GdprMetadataContext : DbContext
     public DbSet<ConfigKeyValue> IndividualsSourceStores { get; set; }
     public DbSet<Purpose> purposes { get; set; }
     public DbSet<Origin> origins { get; set; }
-    public DbSet<PersonalData> personalDatas { get; set; }
+    public DbSet<PersonalDataOrigin> personalDatas { get; set; }
 
     public IDbConnection Connection => Database.GetDbConnection();
 }
