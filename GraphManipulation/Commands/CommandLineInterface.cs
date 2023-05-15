@@ -141,7 +141,7 @@ public class CommandLineInterface
         _componentFactory = componentFactory;
         // Create subcommands
         _command = Build(componentFactory);
-        AddSuperStatusCommand();
+        AddAllStatusCommand();
         CreateCommandParser();
     }
 
@@ -168,28 +168,19 @@ public class CommandLineInterface
                 ConfigurationCommandBuilder.Build(factory.CreateConfigManager()));
     }
 
-    private void AddSuperStatusCommand()
+    private void AddAllStatusCommand()
     {
+        var subCommands = _command.Subcommands;
+        var statusCommands =
+            subCommands.Select(subCommand => subCommand.Subcommands.First(c => c.Name == CommandNamer.Status));
+
         // What the heck is going on here?
-        _command = _command.WithSubCommands(
-            CommandBuilder
-                .BuildCreateCommand()
-                .WithHandler(() =>
-                {
-                    _command.Subcommands
-                        .ToList()
-                        .ForEach(subCommand =>
-                        {
-                            subCommand.Subcommands
-                                .Where(subSubCommand => subSubCommand.Name == CommandNamer.Status)
-                                .ToList()
-                                .ForEach(sub =>
-                                {
-                                    sub.Invoke(CommandNamer.Status);
-                                });
-                        });
-                })
-        );
+        var allStatusCommand = CommandBuilder
+            .BuildStatusCommand()
+            .WithDescription("Shows the status of all entities in the system")
+            .WithHandler(() => statusCommands.ToList().ForEach(statusCommand => statusCommand.Invoke(CommandNamer.Status)));
+
+        _command = _command.WithSubCommands(allStatusCommand);
     }
 
     private void CreateCommandParser()
