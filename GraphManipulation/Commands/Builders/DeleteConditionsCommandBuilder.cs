@@ -11,11 +11,9 @@ public class DeleteConditionsCommandBuilder : BaseCommandBuilder<string, DeleteC
 {
     private readonly IManager<TableColumnPair, PersonalDataColumn> _personalDataColumnManager;
 
-    public DeleteConditionsCommandBuilder(
-        IManager<string, DeleteCondition> manager,
-        IManager<TableColumnPair, PersonalDataColumn> personalDataColumnManager) : base(manager)
+    public DeleteConditionsCommandBuilder(IHandlerFactory handlerFactory, IManagerFactory managerFactory) : base(handlerFactory)
     {
-        _personalDataColumnManager = personalDataColumnManager;
+        _personalDataColumnManager = managerFactory.CreateManager<TableColumnPair, PersonalDataColumn>();
     }
 
     public override Command Build()

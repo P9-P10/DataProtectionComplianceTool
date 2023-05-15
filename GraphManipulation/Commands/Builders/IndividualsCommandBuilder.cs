@@ -11,13 +11,10 @@ public class IndividualsCommandBuilder : BaseCommandBuilder<int, Individual>
     private readonly IManager<TableColumnPair, PersonalDataColumn> _personalDataColumnManager;
     private readonly IManager<string, Origin> _originsManager;
 
-    public IndividualsCommandBuilder(
-        IManager<int, Individual> manager,
-        IManager<TableColumnPair, PersonalDataColumn> personalDataColumnManager,
-        IManager<string, Origin> originsManager) : base( manager)
+    public IndividualsCommandBuilder(IHandlerFactory handlerFactory, IManagerFactory managerFactory) : base(handlerFactory)
     {
-        _personalDataColumnManager = personalDataColumnManager;
-        _originsManager = originsManager;
+        _personalDataColumnManager = managerFactory.CreateManager<TableColumnPair, PersonalDataColumn>();
+        _originsManager = managerFactory.CreateManager<string, Origin>();
     }
 
     public override Command Build()

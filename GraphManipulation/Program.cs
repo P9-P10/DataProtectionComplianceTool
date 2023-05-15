@@ -1,27 +1,48 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using System.CommandLine;
-using System.CommandLine.Builder;
-using System.CommandLine.IO;
-using System.CommandLine.Parsing;
 using System.Data;
 using System.Data.SQLite;
 using System.Text;
 using Dapper;
-using GraphManipulation.Commands.Builders;
-using GraphManipulation.Commands.Helpers;
+using GraphManipulation.Commands;
 using GraphManipulation.DataAccess;
 using GraphManipulation.DataAccess.Mappers;
 using GraphManipulation.Decorators;
 using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
-using GraphManipulation.Managers;
 using GraphManipulation.Models;
 using GraphManipulation.Vacuuming;
 using Microsoft.EntityFrameworkCore;
 
 namespace GraphManipulation;
 
+public class VariousFactory : IVacuumerFactory, ILoggerFactory, IConfigManagerFactory
+{
+    private readonly IVacuumer _vacuumer;
+    private readonly ILogger _logger;
+    private readonly IConfigManager _configManager;
+
+    public VariousFactory(IVacuumer vacuumer, ILogger logger, IConfigManager configManager)
+    {
+        _vacuumer = vacuumer;
+        _logger = logger;
+        _configManager = configManager;
+    }
+    public IVacuumer CreateVacuumer()
+    {
+        return _vacuumer;
+    }
+
+    public ILogger CreateLogger()
+    {
+        return _logger;
+    }
+
+    public IConfigManager CreateConfigManager()
+    {
+        return _configManager;
+    }
+}
 public static class Program
 {
     private static string configPath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
@@ -66,71 +87,18 @@ public static class Program
         var dbConnection = new SQLiteConnection(connectionString);
 
         AddStructureToDatabaseIfNotExists(dbConnection, context);
-
-        var individualMapper = new Mapper<Individual>(context);
+        
         var personalDataColumnMapper = new Mapper<PersonalDataColumn>(context);
-        var purposeMapper = new Mapper<Purpose>(context);
-        var originMapper = new Mapper<Origin>(context);
-        var vacuumingRuleMapper = new Mapper<VacuumingRule>(context);
-        var deleteConditionMapper = new Mapper<DeleteCondition>(context);
-        var processingMapper = new Mapper<Processing>(context);
-        var personalDataMapper = new Mapper<PersonalData>(context);
 
         var vacuumer = new Vacuumer(personalDataColumnMapper, new SqliteQueryExecutor(dbConnection));
         var loggingVacuumer = new LoggingVacuumer(vacuumer, logger);
 
-        var individualsManager = new Manager<int, Individual>(individualMapper);
-        var personalDataManager = new Manager<TableColumnPair, PersonalDataColumn>(personalDataColumnMapper);
-        var purposesManager = new Manager<string, Purpose>(purposeMapper);
-        var originsManager = new Manager<string, Origin>(originMapper);
-        var vacuumingRulesManager = new Manager<string, VacuumingRule>(vacuumingRuleMapper);
-        var deleteConditionsManager = new Manager<string, DeleteCondition>(deleteConditionMapper);
-        var processingsManager = new Manager<string, Processing>(processingMapper);
-
-        var decoratedIndividualsManager = new LoggingManager<int, Individual>(individualsManager, logger);
-        var decoratedPersonalDataManager = new LoggingManager<TableColumnPair, PersonalDataColumn>(personalDataManager, logger);
-        var decoratedPurposesManager = new LoggingManager<string, Purpose>(purposesManager, logger);
-        var decoratedOriginsManager = new LoggingManager<string, Origin>(originsManager, logger);
-        var decoratedVacuumingRulesManager = new LoggingManager<string, VacuumingRule>(vacuumingRulesManager, logger);
-        var decoratedDeleteConditionsManager = new LoggingManager<string, DeleteCondition>(deleteConditionsManager, logger);
-        var decoratedProcessingsManager = new LoggingManager<string, Processing>(processingsManager, logger);
-
-        var command = CommandLineInterfaceBuilder
-            .Build(
-                decoratedIndividualsManager, decoratedPersonalDataManager,
-                decoratedPurposesManager, decoratedOriginsManager, decoratedVacuumingRulesManager,
-                decoratedDeleteConditionsManager, decoratedProcessingsManager, loggingVacuumer, logger, configManager
-            );
-        
-        command = command.WithSubCommands(
-            CommandBuilder
-                .BuildCreateCommand()
-                .WithHandler(() =>
-                {
-                    command.Subcommands
-                        .ToList()
-                        .ForEach(subCommand =>
-                        {
-                            subCommand.Subcommands
-                                .Where(subSubCommand => subSubCommand.Name == CommandNamer.Status)
-                                .ToList()
-                                .ForEach(sub =>
-                                {
-                                    sub.Invoke(CommandNamer.Status);
-                                });
-                        });
-                })
-        );
-
-
-
-        var cli = new CommandLineBuilder(command)
-            .UseHelp("help", "h", "?")
-            .UseTypoCorrections()
-            .UseParseErrorReporting()
-            .Build();
-        
-        Run(cli);
+        VariousFactory variousFactory = new VariousFactory(loggingVacuumer, logger, configManager);
+        IManagerFactory managerFactory = new LoggingManagerFactory(new ManagerFactory(context), logger);
+        ComponentFactory componentFactory =
+            new ComponentFactory(managerFactory, variousFactory, variousFactory, variousFactory);
+        CommandLineInterface commandLineInterface = new CommandLineInterface(componentFactory);
+        Run(commandLineInterface);
     }
 
     private static void AddStructureToDatabaseIfNotExists(IDbConnection connection, DbContext context)
@@ -139,7 +107,7 @@ public static class Program
             CreateStatementManipulator.UpdateCreationScript(context.Database.GenerateCreateScript()));
     }
 
-    private static void Run(Parser cli)
+    private static void Run(CommandLineInterface cli)
     {
         while (true)
         {

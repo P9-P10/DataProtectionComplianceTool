@@ -10,11 +10,9 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
 {
     private readonly IManager<string, DeleteCondition> _deleteConditionsManager;
 
-    public PurposesCommandBuilder(
-        IManager<string, Purpose> purposesManager,
-        IManager<string, DeleteCondition> deleteConditionsManager) : base(purposesManager)
+    public PurposesCommandBuilder(IHandlerFactory handlerFactory, IManagerFactory managerFactory) : base(handlerFactory)
     {
-        _deleteConditionsManager = deleteConditionsManager;
+        _deleteConditionsManager = managerFactory.CreateManager<string, DeleteCondition>();
     }
 
     public override Command Build()

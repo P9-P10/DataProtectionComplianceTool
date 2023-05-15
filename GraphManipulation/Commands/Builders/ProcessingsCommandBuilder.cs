@@ -12,13 +12,10 @@ public class ProcessingsCommandBuilder : BaseCommandBuilder<string, Processing>
     private readonly IManager<string, Purpose> _purposesManager;
     private readonly IManager<TableColumnPair, PersonalDataColumn> _personalDataColumnManager;
     
-    public ProcessingsCommandBuilder(
-        IManager<string, Processing> manager, 
-        IManager<string, Purpose> purposesManager, 
-        IManager<TableColumnPair, PersonalDataColumn> personalDataColumnManager) : base(manager)
+    public ProcessingsCommandBuilder(IHandlerFactory handlerFactory, IManagerFactory managerFactory) : base(handlerFactory)
     {
-        _purposesManager = purposesManager;
-        _personalDataColumnManager = personalDataColumnManager;
+        _purposesManager = managerFactory.CreateManager<string, Purpose>();
+        _personalDataColumnManager = managerFactory.CreateManager<TableColumnPair, PersonalDataColumn>();
     }
 
     public override Command Build()

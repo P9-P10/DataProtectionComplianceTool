@@ -17,15 +17,13 @@ public abstract class BaseCommandBuilder<TKey, TValue> : BaseCommandBuilder
     where TKey : notnull
     where TValue : Entity<TKey>, IListable, new()
 {
-    protected readonly IManager<TKey, TValue> Manager;
-    protected readonly FeedbackEmitter<TKey, TValue> Emitter;
     protected readonly Handler<TKey, TValue> Handler;
+    protected readonly FeedbackEmitter<TKey, TValue> Emitter;
 
-    protected BaseCommandBuilder(IManager<TKey, TValue> manager)
+    protected BaseCommandBuilder(IHandlerFactory handlerFactory)
     {
-        Manager = manager;
         Emitter = new FeedbackEmitter<TKey, TValue>();
-        Handler = new Handler<TKey, TValue>(Manager, Emitter, StatusReport);
+        Handler = handlerFactory.CreateHandler<TKey, TValue>(Emitter, StatusReport);
     }
 
     protected Command Build(string name, string alias, out Option<TKey> keyOption)

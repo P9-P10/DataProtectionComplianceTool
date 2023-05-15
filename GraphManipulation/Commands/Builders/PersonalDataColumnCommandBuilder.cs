@@ -11,11 +11,9 @@ public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPa
 {
     private readonly IManager<string, Purpose> _purposesManager;
 
-    public PersonalDataColumnCommandBuilder(
-        IManager<TableColumnPair, PersonalDataColumn> personalDataColumnManager,
-        IManager<string, Purpose> purposesManager) : base(personalDataColumnManager)
+    public PersonalDataColumnCommandBuilder(IHandlerFactory handlerFactory, IManagerFactory managerFactory) : base(handlerFactory)
     {
-        _purposesManager = purposesManager;
+        _purposesManager = managerFactory.CreateManager<string, Purpose>();
     }
 
     public override Command Build()

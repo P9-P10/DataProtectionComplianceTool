@@ -11,14 +11,14 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
 {
     private readonly IManager<string, Purpose> _purposesManager;
     private readonly IVacuumer _vacuumer;
-    
-    public VacuumingRulesCommandBuilder(
-        IManager<string, VacuumingRule> manager,
-        IManager<string, Purpose> purposesManager, 
-        IVacuumer vacuumer) : base(manager)
+    private readonly IManager<string, VacuumingRule> _vacuumingRulesManager;
+
+    public VacuumingRulesCommandBuilder(IHandlerFactory handlerFactory, IManagerFactory managerFactory,
+        IVacuumer vacuumer) : base(handlerFactory)
     {
-        _purposesManager = purposesManager;
+        _purposesManager = managerFactory.CreateManager<string, Purpose>();
         _vacuumer = vacuumer;
+        _vacuumingRulesManager = managerFactory.CreateManager<string, VacuumingRule>();
     }
 
     public override Command Build()
@@ -107,7 +107,7 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
 
                 foreach (var ruleName in ruleNames)
                 {
-                    var rule = Manager.Get(ruleName);
+                    var rule =  _vacuumingRulesManager.Get(ruleName);
                     if (rule is null)
                     {
                         Emitter.EmitCouldNotFind(ruleName);

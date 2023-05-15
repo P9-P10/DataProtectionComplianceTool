@@ -1,14 +1,13 @@
 using System.CommandLine;
 using GraphManipulation.Commands.Builders.Binders;
 using GraphManipulation.Commands.Helpers;
-using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
 
 namespace GraphManipulation.Commands.Builders;
 
 public class OriginsCommandBuilder : BaseCommandBuilder<string, Origin>
 {
-    public OriginsCommandBuilder(IManager<string, Origin> manager) : base(manager)
+    public OriginsCommandBuilder(IHandlerFactory handlerFactory) : base(handlerFactory)
     {
     }
 
