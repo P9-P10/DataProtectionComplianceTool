@@ -85,6 +85,11 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
 
     protected override void StatusReport(Purpose purpose)
     {
+        if (purpose.LegallyRequired is null)
+        {
+            Emitter.EmitMissing(purpose.Key!, "legally required");
+        }
+        
         if (purpose.Rules is null || !purpose.Rules.Any())
         {
             Emitter.EmitMissing<string, VacuumingRule>(purpose.Key!);
