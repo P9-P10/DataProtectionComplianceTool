@@ -54,13 +54,13 @@ public class MapperTest
         {
             public static PersonalDataColumn column1 = new()
             {
-                TableColumnPair = new TableColumnPair("tableOne", "columnOne")
+                Key = new TableColumnPair("tableOne", "columnOne")
                
             };
 
             public static PersonalDataColumn column2 = new()
             {
-                TableColumnPair = new TableColumnPair("tableTwo", "columnTwo")
+                Key = new TableColumnPair("tableTwo", "columnTwo")
             };
 
             public static VacuumingRule rule1 = new() {Key = "ruleOne", Interval = "2d", Description = ""};
@@ -163,15 +163,15 @@ public class MapperTest
             {
                 DefaultValue = "",
                 Description = "",
-                TableColumnPair = new TableColumnPair("Table", "Column")
+                Key = new TableColumnPair("Table", "Column")
             };
             mapper.Insert(expectedColumn);
 
             PersonalDataColumn? result = mapper.FindSingle(x =>
-                x.TableColumnPair.Equals(expectedColumn.TableColumnPair));
-            var tableColumnPair = result?.TableColumnPair;
+                x.Key.Equals(expectedColumn.Key));
+            var tableColumnPair = result?.Key;
 
-            tableColumnPair.Should().Be(expectedColumn.TableColumnPair);
+            tableColumnPair.Should().Be(expectedColumn.Key);
         }
 
         [Fact]

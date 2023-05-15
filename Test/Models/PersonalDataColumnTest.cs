@@ -28,7 +28,7 @@ public class PersonalDataColumnTest
         PersonalDataColumn personalDataColumn = new()
         {
             Purposes = null,
-            TableColumnPair = new TableColumnPair("Name","ColumnName")
+            Key = new TableColumnPair("Name","ColumnName")
         };
         
         Assert.Equal("(Name, ColumnName), , , [  ]",personalDataColumn.ToListing());
