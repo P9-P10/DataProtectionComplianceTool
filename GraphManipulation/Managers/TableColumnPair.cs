@@ -28,6 +28,16 @@ public class TableColumnPair : IListable
         return ToListing();
     }
 
+    public override bool Equals(object? obj)
+    {
+        return obj is not null && Equals((obj as TableColumnPair)!);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(TableName, ColumnName);
+    }
+
     public bool Equals(TableColumnPair other)
     {
         return TableName == other.TableName && ColumnName == other.ColumnName;
