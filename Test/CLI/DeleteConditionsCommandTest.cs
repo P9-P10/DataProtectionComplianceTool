@@ -18,9 +18,9 @@ public class DeleteConditionsCommandTest : CommandTest
 
         managerMock
             .Setup(manager => manager.Get(It.Is<string>(s => s == DeleteConditionName)))
-            .Returns(new StorageRule
+            .Returns(new DeleteCondition
             {
-                InvalidationCondition = Condition,
+                Condition = Condition,
                 Description = Description,
                 Name = DeleteConditionName
             });

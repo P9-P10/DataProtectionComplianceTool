@@ -154,7 +154,7 @@ public class LoggingTest : TestResources
 
             SetupTestData(dbConnection);
 
-            AddDeleteCondition(process, TestStorageRule);
+            AddDeleteCondition(process, TestDeleteCondition);
             AddPurpose(process, TestPurpose);
             AddPersonalData(process, TestPersonalDataColumn);
             AddVacuumingRule(process, TestVacuumingRule);

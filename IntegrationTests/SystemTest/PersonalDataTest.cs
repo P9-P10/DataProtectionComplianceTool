@@ -11,7 +11,7 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestStorageRule);
+        AddDeleteCondition(process, TestDeleteCondition);
         AddPurpose(process, TestPurpose);
 
         AddPersonalData(process, TestPersonalDataColumn);
@@ -38,7 +38,7 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestStorageRule);
+        AddDeleteCondition(process, TestDeleteCondition);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
         ShowPersonalData(process, TestPersonalDataColumn);
@@ -56,7 +56,7 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestStorageRule);
+        AddDeleteCondition(process, TestDeleteCondition);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
         UpdatePersonalData(process, TestPersonalDataColumn, UpdatedTestPersonalDataColumn);
@@ -75,8 +75,8 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestStorageRule);
-        AddDeleteCondition(process, TestNewTestStorageRule);
+        AddDeleteCondition(process, TestDeleteCondition);
+        AddDeleteCondition(process, NewTestDeleteCondition);
         AddPurpose(process, TestPurpose);
         AddPurpose(process, NewTestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
@@ -97,7 +97,7 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestStorageRule);
+        AddDeleteCondition(process, TestDeleteCondition);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
         DeletePersonalData(process, TestPersonalDataColumn);
@@ -117,8 +117,8 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestStorageRule);
-        AddDeleteCondition(process, TestNewTestStorageRule);
+        AddDeleteCondition(process, TestDeleteCondition);
+        AddDeleteCondition(process, NewTestDeleteCondition);
         AddPurpose(process, TestPurpose);
         AddPurpose(process, NewTestPurpose);
         AddPurpose(process, VeryNewTestPurpose);
@@ -143,8 +143,8 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestStorageRule);
-        AddDeleteCondition(process, TestNewTestStorageRule);
+        AddDeleteCondition(process, TestDeleteCondition);
+        AddDeleteCondition(process, NewTestDeleteCondition);
         AddPurpose(process, TestPurpose);
         AddPurpose(process, NewTestPurpose);
         AddPurpose(process, VeryNewTestPurpose);
@@ -174,7 +174,7 @@ public class PersonalDataTest : TestResources
         SetupTestData(dbConnection);
         
         SetIndividualsSource(process, IndividualsSource);
-        AddDeleteCondition(process, TestStorageRule);
+        AddDeleteCondition(process, TestDeleteCondition);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
         AddOrigin(process, TestOrigin);
@@ -200,7 +200,7 @@ public class PersonalDataTest : TestResources
         SetupTestData(dbConnection);
         
         SetIndividualsSource(process, IndividualsSource);
-        AddDeleteCondition(process, TestStorageRule);
+        AddDeleteCondition(process, TestDeleteCondition);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
         AddOrigin(process, TestOrigin);

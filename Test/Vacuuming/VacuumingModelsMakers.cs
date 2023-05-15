@@ -15,39 +15,39 @@ public static class VacuumingModelsMakers
         List<Purpose> purposes = new List<Purpose>();
         if (!multipleDeleteConditions)
         {
-            StorageRule storageRule = new()
+            DeleteCondition deleteCondition = new()
             {
                 Id = 0,
                 Name = "Name",
                 Description = "Description",
-                InvalidationCondition = "Condition",
+                Condition = "Condition",
             };
             purposes.Add(new Purpose()
             {
                 Id = 0, Name = purposeName, Description = "Description",
-                DeleteConditions = new List<StorageRule>() {storageRule}
+                DeleteConditions = new List<DeleteCondition>() {deleteCondition}
             });
         }
         else
         {
-            StorageRule storageRule = new()
+            DeleteCondition deleteCondition = new()
             {
                 Id = 0,
                 Name = "Name",
                 Description = "Description",
-                InvalidationCondition = "FirstCondition"
+                Condition = "FirstCondition"
             };
-            StorageRule deleteCondition2 = new()
+            DeleteCondition deleteCondition2 = new()
             {
                 Id = 1,
                 Name = "SecondName",
                 Description = "Description",
-                InvalidationCondition = "SecondCondition"
+                Condition = "SecondCondition"
             };
             purposes.Add(new Purpose()
-                {Id = 0, Name = purposeName, DeleteConditions = new List<StorageRule>() {storageRule}});
+                {Id = 0, Name = purposeName, DeleteConditions = new List<DeleteCondition>() {deleteCondition}});
             purposes.Add(new Purpose()
-                {Id = 1, Name = purposeName, DeleteConditions = new List<StorageRule>() {deleteCondition2}});
+                {Id = 1, Name = purposeName, DeleteConditions = new List<DeleteCondition>() {deleteCondition2}});
         }
 
         PersonalDataColumn personalDataColumn = new()
@@ -90,7 +90,7 @@ public static class VacuumingModelsMakers
                 Id = 0,
                 Name = "Name",
                 Description = "Description",
-                DeleteConditions = new List<StorageRule> {DeleteConditionMaker()},
+                DeleteConditions = new List<DeleteCondition> {DeleteConditionMaker()},
                 Rules = new List<VacuumingRule>()
             }
         };
@@ -100,14 +100,14 @@ public static class VacuumingModelsMakers
         string columnName = "Column",
         string defaultValue = "Null", string condition = "Condition")
     {
-        StorageRule storageRule = DeleteConditionMaker(tableName, columnName, defaultValue, condition);
+        DeleteCondition deleteCondition = DeleteConditionMaker(tableName, columnName, defaultValue, condition);
         List<PersonalDataColumn> personalDataColumns =
             PersonalDataColumns(tableName, columnName, defaultValue).ToList();
 
         Purpose purpose = new()
         {
             Name = name,
-            DeleteConditions = new List<StorageRule>(),
+            DeleteConditions = new List<DeleteCondition>(),
             Rules = new List<VacuumingRule>(),
             Id = id
         };
@@ -118,18 +118,18 @@ public static class VacuumingModelsMakers
             column.Purposes = column.Purposes.Append(purpose).ToList();
         }
         
-        storageRule.Purposes = storageRule.Purposes.Append(purpose);
-        purpose.DeleteConditions = purpose.DeleteConditions.Append(storageRule).ToList();
+        deleteCondition.Purposes = deleteCondition.Purposes.Append(purpose);
+        purpose.DeleteConditions = purpose.DeleteConditions.Append(deleteCondition).ToList();
         return purpose;
     }
 
-    public static StorageRule DeleteConditionMaker(string tableName = "Table", string columnName = "Column",
+    public static DeleteCondition DeleteConditionMaker(string tableName = "Table", string columnName = "Column",
         string defaultValue = "Null", string condition = "Condition")
     {
-        return new StorageRule()
+        return new DeleteCondition()
         {
             Name = "Execution",
-            InvalidationCondition = condition,
+            Condition = condition,
             Purposes = new List<Purpose>(),
             PersonalDataColumn =
                 PersonalDataColumnMaker(tableName: tableName, columnName: columnName, defaultValue: defaultValue)

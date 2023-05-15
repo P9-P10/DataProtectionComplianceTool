@@ -71,7 +71,7 @@ public static class Program
         var purposeMapper = new Mapper<Purpose>(context);
         var originMapper = new Mapper<Origin>(context);
         var vacuumingRuleMapper = new Mapper<VacuumingRule>(context);
-        var deleteConditionMapper = new Mapper<StorageRule>(context);
+        var deleteConditionMapper = new Mapper<DeleteCondition>(context);
         var processingMapper = new Mapper<Processing>(context);
         var personalDataMapper = new Mapper<PersonalData>(context);
 

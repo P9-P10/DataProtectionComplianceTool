@@ -89,7 +89,7 @@ public class DeletionConditionsTest : TestResources
         StorageRule storageRule = new() {Key = "DeletionCondition", VacuumingCondition = "Condition"};
         AddDeleteCondition(process,storageRule);
 
-        DeleteDeletionCondition(process,storageRule);
+        DeleteDeletionCondition(process,deleteCondition);
         
         ListDeletionConditions(process);
         List<string> result = process.GetLastOutput();
@@ -107,7 +107,7 @@ public class DeletionConditionsTest : TestResources
         AddDeleteCondition(process,storageRule);
 
         // dcs d --name DeletionCondition
-        DeleteDeletionCondition(process,storageRule);
+        DeleteDeletionCondition(process,deleteCondition);
         List<string> result = process.GetLastOutput();
         result.First().Should().Contain("Successfully deleted DeletionCondition");
     }
@@ -120,7 +120,7 @@ public class DeletionConditionsTest : TestResources
         StorageRule storageRule = new() {Key = "DeletionCondition", VacuumingCondition = "Condition"};
         AddDeleteCondition(process,storageRule);
         
-        ShowDeleteCondition(process,storageRule);
+        ShowDeleteCondition(process,deleteCondition);
         List<string> result = process.GetLastOutput();
         result.First().Should().Contain("DeletionCondition, , Condition");
     }

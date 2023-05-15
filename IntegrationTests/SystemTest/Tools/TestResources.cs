@@ -17,14 +17,14 @@ public class TestResources
     protected const string IndividualsColumn = "Id";
     protected static readonly TableColumnPair IndividualsSource = new(IndividualsTable, IndividualsColumn);
 
-    protected static readonly StorageRule TestStorageRule = new()
+    protected static readonly DeleteCondition TestDeleteCondition = new()
     {
         Key = "deleteConditionName",
         Description = Description,
         VacuumingCondition = Condition
     };
 
-    protected static readonly StorageRule TestNewTestStorageRule = new()
+    protected static readonly DeleteCondition NewTestDeleteCondition = new()
     {
         Key= TestStorageRule.Key + "NEW",
         Description = TestStorageRule.Description + "NEW",
@@ -35,7 +35,7 @@ public class TestResources
     {
         Key= "purposeName",
         Description = Description,
-        DeleteConditions = new List<StorageRule>() {TestStorageRule},
+        DeleteConditions = new List<DeleteCondition>() {TestDeleteCondition},
         LegallyRequired = true,
         Rules = new List<VacuumingRule>()
     };

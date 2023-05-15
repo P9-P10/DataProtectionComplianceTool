@@ -12,7 +12,7 @@ public class SystemPersistenceTests : TestResources
         string configPath = process.ConfigPath;
         process.Start();
 
-        AddDeleteCondition(process, TestStorageRule);
+        AddDeleteCondition(process, TestDeleteCondition);
         AddPurpose(process, TestPurpose);
         ListPurpose(process);
         List<string> firstResult = process.GetLastOutput();
