@@ -64,7 +64,7 @@ public class DeleteConditionsCommandBuilder : BaseCommandBuilder<string, Storage
 
     protected override void StatusReport(StorageRule condition)
     {
-        if (condition.Condition is null)
+        if (condition.VacuumingCondition is null)
         {
             Emitter.EmitMissing(condition.Key!, "condition");
         }

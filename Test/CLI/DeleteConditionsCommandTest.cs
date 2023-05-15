@@ -20,7 +20,7 @@ public class DeleteConditionsCommandTest : CommandTest
             .Setup(manager => manager.Get(It.Is<string>(s => s == DeleteConditionName)))
             .Returns(new StorageRule
             {
-                Condition = Condition,
+                InvalidationCondition = Condition,
                 Description = Description,
                 Name = DeleteConditionName
             });

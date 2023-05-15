@@ -66,7 +66,7 @@ public class Vacuumer : IVacuumer
 
     private static string CreateConditionalStatement(StorageRule condition, string logicOperator)
     {
-        string conditionalStatement = $"({condition.Condition})";
+        string conditionalStatement = $"({condition.VacuumingCondition})";
         conditionalStatement += logicOperator;
         return conditionalStatement;
     }

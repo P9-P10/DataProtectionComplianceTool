@@ -21,14 +21,14 @@ public class TestResources
     {
         Key = "deleteConditionName",
         Description = Description,
-        Condition = Condition
+        VacuumingCondition = Condition
     };
 
     protected static readonly StorageRule TestNewTestStorageRule = new()
     {
         Key= TestStorageRule.Key + "NEW",
         Description = TestStorageRule.Description + "NEW",
-        Condition = TestStorageRule.Condition + "NEW"
+        VacuumingCondition = TestStorageRule.VacuumingCondition + "NEW"
     };
 
     protected static readonly Purpose TestPurpose = new()
@@ -140,7 +140,7 @@ public class TestResources
     {
         var addDeleteConditionCommand = $"{CommandNamer.DeleteConditionsName} {CommandNamer.Create} " +
                                         $"{OptionNamer.Name} {storageRule.Key} " +
-                                        $"{OptionNamer.Condition} \"{storageRule.Condition}\" " +
+                                        $"{OptionNamer.Condition} \"{storageRule.VacuumingCondition}\" " +
                                         $"{OptionNamer.Description} \"{storageRule.Description}\"";
 
         testProcess.GiveInput(addDeleteConditionCommand);
@@ -199,7 +199,7 @@ public class TestResources
     {
         string command =
             $"{CommandNamer.DeleteConditionsAlias} {CommandNamer.UpdateAlias} {OptionNamer.NameAlias} {old.Key}  {OptionNamer.NewNameAlias}  {newDeletionCondition.Key}" +
-            $" {OptionNamer.Condition} \"{newDeletionCondition.Condition}\"" +
+            $" {OptionNamer.Condition} \"{newDeletionCondition.VacuumingCondition}\"" +
             $" {OptionNamer.Description} \"{newDeletionCondition.Description}\"";
         process.GiveInput(command);
     }

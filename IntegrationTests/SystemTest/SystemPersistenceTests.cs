@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using IntegrationTests.SystemTest.Tools;
 
 namespace IntegrationTests.SystemTest;

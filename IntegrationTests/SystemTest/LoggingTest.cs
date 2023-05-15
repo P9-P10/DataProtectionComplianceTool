@@ -179,7 +179,7 @@ public class LoggingTest : TestResources
             logEntry.Message.Should().Contain(
                 $"\"UPDATE {TestPersonalDataColumn.TableColumnPair.TableName} " +
                 $"SET {TestPersonalDataColumn.TableColumnPair.ColumnName} = \'{TestPersonalDataColumn.DefaultValue}\' " +
-                $"WHERE ({TestStorageRule.Condition});\" " +
+                $"WHERE ({TestStorageRule.VacuumingCondition});\" " +
                 $"affected {TestPersonalDataColumn.ToListingIdentifier()} " +
                 $"because it is stored under the following purpose(s): {TestPurpose.ToListingIdentifier()}");
         }

@@ -12,7 +12,7 @@ namespace Test.CLI;
 
 public class PurposesCommandTest : CommandTest
 {
-    private static Command BuildCli(out Mock<IPurposesManager> purposeManagerMock, out Mock<IDeleteConditionsManager> deleteConditionsManagerMock, out IConsole console)
+    private static Command BuildCli(out Mock<IPurposesManager> purposeManagerMock, out Mock<IStorageRuleManager> deleteConditionsManagerMock, out IConsole console)
     {
         console = new TestConsole();
         purposeManagerMock = new Mock<IPurposesManager>();
@@ -39,7 +39,7 @@ public class PurposesCommandTest : CommandTest
                 Rules = new List<VacuumingRule>()
             });
 
-        deleteConditionsManagerMock = new Mock<IDeleteConditionsManager>();
+        deleteConditionsManagerMock = new Mock<IStorageRuleManager>();
 
         deleteConditionsManagerMock
             .Setup(manager => manager.Get(It.Is<string>(s => s == StorageRule.GetName())))
@@ -59,14 +59,14 @@ public class PurposesCommandTest : CommandTest
 
     private static readonly StorageRule StorageRule = new()
     {
-        Condition = "This is a condition",
+        InvalidationCondition = "This is a condition",
         Name = "deleteCondition",
         Description = "This is a description"
     };
 
     private static readonly StorageRule NewStorageRule = new()
     {
-        Condition = "This is a new condition",
+        InvalidationCondition = "This is a new condition",
         Name = "newDeleteCondition",
         Description = "This is a new description"
     };

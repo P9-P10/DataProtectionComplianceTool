@@ -13,7 +13,7 @@ public class DeletionConditionsTest : TestResources
         using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process,new StorageRule(){Key = "DeletionCondition",Condition = "Condition"});
+        AddDeleteCondition(process,new StorageRule(){Key = "DeletionCondition",VacuumingCondition = "Condition"});
         string result = process.GetOutput();
 
         result.Should().Contain("Successfully added DeletionCondition delete condition with , Condition");
@@ -25,7 +25,7 @@ public class DeletionConditionsTest : TestResources
         using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process,new StorageRule(){Key = "DeletionCondition",Condition = "Condition"});
+        AddDeleteCondition(process,new StorageRule(){Key = "DeletionCondition",VacuumingCondition = "Condition"});
         ListDeletionConditions(process);
         string result = process.GetOutput();
 
@@ -38,11 +38,11 @@ public class DeletionConditionsTest : TestResources
     {
         using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
-        StorageRule storageRule = new() {Key = "DeletionCondition", Condition = "Condition"};
+        StorageRule storageRule = new() {Key = "DeletionCondition", VacuumingCondition = "Condition"};
         AddDeleteCondition(process,storageRule);
 
     
-        UpdateDeletionCondition(process,storageRule,new StorageRule(){Key = "NewName",Condition = Condition});
+        UpdateDeletionCondition(process,storageRule,new StorageRule(){Key = "NewName",VacuumingCondition = Condition});
         
         ListDeletionConditions(process);
         List<string> result = process.GetLastOutput();
@@ -54,11 +54,11 @@ public class DeletionConditionsTest : TestResources
     {
         using TestProcess process = Tools.SystemTest.CreateTestProcess();
         process.Start();
-        StorageRule storageRule = new() {Key = "DeletionCondition", Condition = "Condition"};
+        StorageRule storageRule = new() {Key = "DeletionCondition", VacuumingCondition = "Condition"};
         AddDeleteCondition(process,storageRule);
 
     
-        UpdateDeletionCondition(process,storageRule,new StorageRule(){Key = "NewName",Condition = "Condition",
+        UpdateDeletionCondition(process,storageRule,new StorageRule(){Key = "NewName",VacuumingCondition = "Condition",
             Description = "This is the new description"});
         ListDeletionConditions(process);
         
@@ -71,11 +71,11 @@ public class DeletionConditionsTest : TestResources
     {
         using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
-        StorageRule storageRule = new() {Key = "DeletionCondition", Condition = "Condition"};
+        StorageRule storageRule = new() {Key = "DeletionCondition", VacuumingCondition = "Condition"};
         AddDeleteCondition(process,storageRule);
 
         UpdateDeletionCondition(process,storageRule,
-            new StorageRule(){Key = "NewName",Condition = Condition,Description = "This is a new description"});
+            new StorageRule(){Key = "NewName",VacuumingCondition = Condition,Description = "This is a new description"});
         ListDeletionConditions(process);
         string result = process.GetOutput();
         result.Should().Contain("NewName, This is a new description, TRUE");
@@ -86,7 +86,7 @@ public class DeletionConditionsTest : TestResources
     {
         using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
-        StorageRule storageRule = new() {Key = "DeletionCondition", Condition = "Condition"};
+        StorageRule storageRule = new() {Key = "DeletionCondition", VacuumingCondition = "Condition"};
         AddDeleteCondition(process,storageRule);
 
         DeleteDeletionCondition(process,storageRule);
@@ -103,7 +103,7 @@ public class DeletionConditionsTest : TestResources
         process.Start();
         
         // dcs add --name DeletionCondition -c "Condition"
-        StorageRule storageRule = new() {Key = "DeletionCondition", Condition = "Condition"};
+        StorageRule storageRule = new() {Key = "DeletionCondition", VacuumingCondition = "Condition"};
         AddDeleteCondition(process,storageRule);
 
         // dcs d --name DeletionCondition
@@ -117,7 +117,7 @@ public class DeletionConditionsTest : TestResources
     {
         using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
-        StorageRule storageRule = new() {Key = "DeletionCondition", Condition = "Condition"};
+        StorageRule storageRule = new() {Key = "DeletionCondition", VacuumingCondition = "Condition"};
         AddDeleteCondition(process,storageRule);
         
         ShowDeleteCondition(process,storageRule);

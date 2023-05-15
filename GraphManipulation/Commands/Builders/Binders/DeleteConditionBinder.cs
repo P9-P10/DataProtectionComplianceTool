@@ -31,7 +31,7 @@ public class DeleteConditionBinder : BaseBinder<string, StorageRule>
         var tableColumn = bindingContext.ParseResult.GetValueForOption(_tableColumnOption)!;
         deleteCondition.PersonalDataColumn = HandleMustExistWithCreateOnDemand(tableColumn, _personalDataColumnManager);
 
-        deleteCondition.Condition = bindingContext.ParseResult.GetValueForOption(_conditionOption);
+        deleteCondition.VacuumingCondition = bindingContext.ParseResult.GetValueForOption(_conditionOption);
 
         return deleteCondition;
     }

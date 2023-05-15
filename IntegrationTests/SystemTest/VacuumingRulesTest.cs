@@ -201,7 +201,7 @@ public class VacuumingRulesTest : TestResources
         process.Start();
         process.AwaitReady();
 
-        TestStorageRule.Condition = "Id = 2";
+        TestStorageRule.VacuumingCondition = "Id = 2";
         
         SetupTestData(dbConnection);
 

@@ -20,7 +20,7 @@ public static class VacuumingModelsMakers
                 Id = 0,
                 Name = "Name",
                 Description = "Description",
-                Condition = "Condition",
+                InvalidationCondition = "Condition",
             };
             purposes.Add(new Purpose()
             {
@@ -35,14 +35,14 @@ public static class VacuumingModelsMakers
                 Id = 0,
                 Name = "Name",
                 Description = "Description",
-                Condition = "FirstCondition"
+                InvalidationCondition = "FirstCondition"
             };
             StorageRule deleteCondition2 = new()
             {
                 Id = 1,
                 Name = "SecondName",
                 Description = "Description",
-                Condition = "SecondCondition"
+                InvalidationCondition = "SecondCondition"
             };
             purposes.Add(new Purpose()
                 {Id = 0, Name = purposeName, DeleteConditions = new List<StorageRule>() {storageRule}});
@@ -129,7 +129,7 @@ public static class VacuumingModelsMakers
         return new StorageRule()
         {
             Name = "Execution",
-            Condition = condition,
+            InvalidationCondition = condition,
             Purposes = new List<Purpose>(),
             PersonalDataColumn =
                 PersonalDataColumnMaker(tableName: tableName, columnName: columnName, defaultValue: defaultValue)
