@@ -141,7 +141,7 @@ public class CommandLineInterface
         _componentFactory = componentFactory;
         // Create subcommands
         _command = Build(componentFactory);
-        AddStatusCommands();
+        AddSuperStatusCommand();
         CreateCommandParser();
     }
 
@@ -168,7 +168,7 @@ public class CommandLineInterface
                 ConfigurationCommandBuilder.Build(factory.CreateConfigManager()));
     }
 
-    private void AddStatusCommands()
+    private void AddSuperStatusCommand()
     {
         // What the heck is going on here?
         _command = _command.WithSubCommands(
