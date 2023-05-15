@@ -5,16 +5,15 @@ namespace GraphManipulation.Models;
 
 public class Individual : Entity<int>
 {
-    
-    public virtual IEnumerable<PersonalData>? PersonalData { get; set; }
-    
-    public new string ToListing()
-    {
-        return Id == null ? "Unknown" : Id.ToString();
-    }
+    public virtual IEnumerable<PersonalDataOrigin>? PersonalDataOrigins { get; set; }
 
-    public new string ToListingIdentifier()
+    public override string ToListing()
     {
-        return ToListing();
+        return string.Join(", ", Id is null ? "Unknown" : Id.ToString(), 
+            "[ " + 
+            string.Join(", ", PersonalDataOrigins is null 
+                ? new List<PersonalDataOrigin>() 
+                : PersonalDataOrigins.Select(pdo => pdo.ToListingIdentifier())) 
+            + " ]");
     }
 }

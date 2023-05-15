@@ -95,8 +95,6 @@ public class Handler<TKey, TValue> where TValue : Entity<TKey>
             return;
         }
 
-        old.Fill(value);
-
         if (manager.Update(key, value))
         {
             feedbackEmitter.EmitSuccess(key, FeedbackEmitter<TKey, TValue>.Operations.Updated, value);

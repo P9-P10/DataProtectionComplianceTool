@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Binding;
+using System.CommandLine.Parsing;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Helpers;
 using GraphManipulation.Managers.Interfaces;
@@ -22,14 +23,19 @@ public abstract class BaseBinder<TKey, TValue> : BinderBase<TValue> where TValue
     protected override TValue GetBoundValue(BindingContext bindingContext)
     {
         var key = bindingContext.ParseResult.GetValueForOption(_keyOption)!;
-        var description = bindingContext.ParseResult.GetValueForOption(_descriptionOption)!;
+        string? description = null;
 
+        if (bindingContext.ParseResult.HasOption(_descriptionOption))
+        {
+            description = bindingContext.ParseResult.GetValueForOption(_descriptionOption);
+        }
+        
         return new TValue { Key = key, Description = description };
     }
 
     protected IEnumerable<TV> HandleMustExistList<TK, TV>(IEnumerable<TK> keys, IManager<TK, TV> manager)
     {
-        return keys.Select(key => HandleMustExist(key, manager));
+        return keys.Select(key => HandleMustExist(key, manager)).ToList();
     }
 
     protected TV HandleMustExist<TK, TV>(TK key, IManager<TK, TV> manager)
@@ -46,7 +52,7 @@ public abstract class BaseBinder<TKey, TValue> : BinderBase<TValue> where TValue
     protected IEnumerable<TV> HandleMustExistListWithCreateOnDemand<TK, TV>(IEnumerable<TK> keys,
         IManager<TK, TV> manager) where TV : Entity<TK>
     {
-        return keys.Select(key => HandleMustExistWithCreateOnDemand(key, manager));
+        return keys.Select(key => HandleMustExistWithCreateOnDemand(key, manager)).ToList();
     }
 
     protected TV HandleMustExistWithCreateOnDemand<TK, TV>(TK key, IManager<TK, TV> manager)
@@ -65,7 +71,8 @@ public abstract class BaseBinder<TKey, TValue> : BinderBase<TValue> where TValue
 
             Handler<TK, TV>.CreateHandler(key, manager, new FeedbackEmitter<TK, TV>(),
                 _ => Console.WriteLine("Not reporting status when creating on demand"));
-            return manager.Get(key)!;
+            var value = manager.Get(key);
+            return value!;
         }
     }
 

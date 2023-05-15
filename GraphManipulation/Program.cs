@@ -89,6 +89,12 @@ public static class Program
         AddStructureToDatabaseIfNotExists(dbConnection, context);
         
         var personalDataColumnMapper = new Mapper<PersonalDataColumn>(context);
+        var purposeMapper = new Mapper<Purpose>(context);
+        var originMapper = new Mapper<Origin>(context);
+        var vacuumingRuleMapper = new Mapper<VacuumingRule>(context);
+        var deleteConditionMapper = new Mapper<DeleteCondition>(context);
+        var processingMapper = new Mapper<Processing>(context);
+        var personalDataOriginMapper = new Mapper<PersonalDataOrigin>(context);
 
         var vacuumer = new Vacuumer(personalDataColumnMapper, new SqliteQueryExecutor(dbConnection));
         var loggingVacuumer = new LoggingVacuumer(vacuumer, logger);
@@ -99,6 +105,62 @@ public static class Program
             new ComponentFactory(managerFactory, variousFactory, variousFactory, variousFactory);
         CommandLineInterface commandLineInterface = new CommandLineInterface(componentFactory);
         Run(commandLineInterface);
+
+        var individualsManager = new Manager<int, Individual>(individualMapper);
+        var personalDataOriginsManager = new Manager<int, PersonalDataOrigin>(personalDataOriginMapper);
+        var personalDataColumnsManager = new Manager<TableColumnPair, PersonalDataColumn>(personalDataColumnMapper);
+        var purposesManager = new Manager<string, Purpose>(purposeMapper);
+        var originsManager = new Manager<string, Origin>(originMapper);
+        var vacuumingRulesManager = new Manager<string, VacuumingRule>(vacuumingRuleMapper);
+        var deleteConditionsManager = new Manager<string, DeleteCondition>(deleteConditionMapper);
+        var processingsManager = new Manager<string, Processing>(processingMapper);
+
+        var decoratedIndividualsManager = new LoggingManager<int, Individual>(individualsManager, logger);
+        var decoratedPersonalDataOriginsManager = new LoggingManager<int, PersonalDataOrigin>(personalDataOriginsManager, logger);
+        var decoratedPersonalDataColumnsManager = new LoggingManager<TableColumnPair, PersonalDataColumn>(personalDataColumnsManager, logger);
+        var decoratedPurposesManager = new LoggingManager<string, Purpose>(purposesManager, logger);
+        var decoratedOriginsManager = new LoggingManager<string, Origin>(originsManager, logger);
+        var decoratedVacuumingRulesManager = new LoggingManager<string, VacuumingRule>(vacuumingRulesManager, logger);
+        var decoratedDeleteConditionsManager = new LoggingManager<string, DeleteCondition>(deleteConditionsManager, logger);
+        var decoratedProcessingsManager = new LoggingManager<string, Processing>(processingsManager, logger);
+
+        var command = CommandLineInterfaceBuilder
+            .Build(
+                decoratedIndividualsManager, decoratedPersonalDataOriginsManager, decoratedPersonalDataColumnsManager,
+                decoratedPurposesManager, decoratedOriginsManager, decoratedVacuumingRulesManager,
+                decoratedDeleteConditionsManager, decoratedProcessingsManager, loggingVacuumer, logger, configManager
+            );
+        
+        command = command.WithSubCommands(
+            CommandBuilder
+                .BuildStatusCommand()
+                .WithHandler(() =>
+                {
+                    command.Subcommands
+                        .ToList()
+                        .ForEach(subCommand =>
+                        {
+                            subCommand.Subcommands
+                                .Where(subSubCommand => subSubCommand.Name == CommandNamer.Status)
+                                .ToList()
+                                .ForEach(sub =>
+                                {
+                                    sub.Invoke(CommandNamer.Status);
+                                });
+                        });
+                })
+        );
+
+
+
+        var cli = new CommandLineBuilder(command)
+            .UseHelp("help", "h", "?")
+            .UseTypoCorrections()
+            .UseParseErrorReporting()
+            .Build();
+        
+        Run(cli);
+
     }
 
     private static void AddStructureToDatabaseIfNotExists(IDbConnection connection, DbContext context)

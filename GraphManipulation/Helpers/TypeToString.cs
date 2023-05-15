@@ -11,7 +11,7 @@ public static class TypeToString
             not null when type == typeof(DeleteCondition) => "delete condition",
             not null when type == typeof(Individual) => "individual",
             not null when type == typeof(Origin) => "origin",
-            not null when type == typeof(PersonalData) => "personal data",
+            not null when type == typeof(PersonalDataOrigin) => "personal data origin",
             not null when type == typeof(PersonalDataColumn) => "personal data column",
             not null when type == typeof(Processing) => "processing",
             not null when type == typeof(Purpose) => "purpose",

@@ -51,7 +51,7 @@ public class DeleteConditionsCommandBuilder : BaseCommandBuilder<string, DeleteC
             .WithSubCommands(
                 CreateCommand(keyOption, createBinder, new Option[]
                 {
-                    descriptionOption, conditionOption.WithIsRequired(true), tableColumnOption.WithIsRequired(true)
+                    descriptionOption, conditionOption, tableColumnOption
                 }),
                 UpdateCommand(keyOption, updateBinder, new Option[]
                 {

@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Binding;
+using System.CommandLine.Parsing;
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
 
@@ -12,9 +13,9 @@ public class PurposeBinder : BaseBinder<string, Purpose>
     private readonly IManager<string, DeleteCondition> _deleteConditionsManager;
 
     public PurposeBinder(
-        Option<string> keyOption, 
-        Option<string> descriptionOption, 
-        Option<bool> legallyRequiredOption, 
+        Option<string> keyOption,
+        Option<string> descriptionOption,
+        Option<bool> legallyRequiredOption,
         Option<IEnumerable<string>> deleteConditionsOption,
         IManager<string, DeleteCondition> deleteConditionsManager) : base(keyOption, descriptionOption)
     {
@@ -27,11 +28,16 @@ public class PurposeBinder : BaseBinder<string, Purpose>
     {
         var purpose = base.GetBoundValue(bindingContext);
 
-        purpose.LegallyRequired = bindingContext.ParseResult.GetValueForOption(_legallyRequiredOption);
-        
-        var deleteConditionNames = bindingContext.ParseResult.GetValueForOption(_deleteConditionsOption)!;
+        if (bindingContext.ParseResult.HasOption(_legallyRequiredOption))
+        {
+            purpose.LegallyRequired = bindingContext.ParseResult.GetValueForOption(_legallyRequiredOption);
+        }
 
-        purpose.DeleteConditions = HandleMustExistListWithCreateOnDemand(deleteConditionNames, _deleteConditionsManager);
+        if (bindingContext.ParseResult.HasOption(_deleteConditionsOption))
+        {
+            var deleteConditionNames = bindingContext.ParseResult.GetValueForOption(_deleteConditionsOption)!;
+            purpose.DeleteConditions = HandleMustExistListWithCreateOnDemand(deleteConditionNames, _deleteConditionsManager);
+        }
 
         return purpose;
     }

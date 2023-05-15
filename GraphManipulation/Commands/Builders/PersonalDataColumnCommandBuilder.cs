@@ -18,7 +18,7 @@ public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPa
 
     public override Command Build()
     {
-        var baseCommand = base.Build(CommandNamer.PersonalDataName, CommandNamer.PersonalDataAlias, out var keyOption);
+        var baseCommand = base.Build(CommandNamer.PersonalDataColumnsName, CommandNamer.PersonalDataColumnsAlias, out var keyOption);
 
         var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<PersonalDataColumn>();
 

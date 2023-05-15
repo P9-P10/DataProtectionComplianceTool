@@ -56,7 +56,7 @@ public class ProcessingsCommandBuilder : BaseCommandBuilder<string, Processing>
             .WithSubCommands(
                 CreateCommand(keyOption, createBinder, new Option[]
                 {
-                    descriptionOption, purposeOption.WithIsRequired(true), tableColumnOption.WithIsRequired(true)
+                    descriptionOption, purposeOption, tableColumnOption
                 }),
                 UpdateCommand(keyOption, updateBinder, new Option[]
                 {
@@ -65,9 +65,17 @@ public class ProcessingsCommandBuilder : BaseCommandBuilder<string, Processing>
             );
     }
 
-    protected override void StatusReport(Processing value)
+    protected override void StatusReport(Processing processing)
     {
-        // Nothing to report on
+        if (processing.Purpose is null)
+        {
+            Emitter.EmitMissing<string, Purpose>(processing.Key!);
+        }
+
+        if (processing.PersonalDataColumn is null)
+        {
+            Emitter.EmitMissing<TableColumnPair, PersonalDataColumn>(processing.Key!);
+        }
     }
 
     protected override Option<string> BuildKeyOption()

@@ -8,8 +8,6 @@ namespace GraphManipulation.Commands.Builders;
 
 public class IndividualsCommandBuilder : BaseCommandBuilder<int, Individual>
 {
-    private readonly IManager<TableColumnPair, PersonalDataColumn> _personalDataColumnManager;
-    private readonly IManager<string, Origin> _originsManager;
 
     public IndividualsCommandBuilder(IHandlerFactory handlerFactory, IManagerFactory managerFactory) : base(handlerFactory)
     {
@@ -19,13 +17,14 @@ public class IndividualsCommandBuilder : BaseCommandBuilder<int, Individual>
 
     public override Command Build()
     {
+        var keyOption = BuildKeyOption();
+     
         var command = CommandBuilder
             .CreateNewCommand(CommandNamer.IndividualsName)
             .WithAlias(CommandNamer.IndividualsAlias)
             .WithSubCommands(
                 ListCommand(),
-                SetOriginForCommand(),
-                ShowOriginForCommand(),
+                ShowCommand(keyOption),
                 StatusCommand()
             );
 
@@ -40,17 +39,5 @@ public class IndividualsCommandBuilder : BaseCommandBuilder<int, Individual>
     protected override Option<int> BuildKeyOption()
     {
         return OptionBuilder.CreateKeyOption<int, Individual>(OptionNamer.Id, OptionNamer.IdAlias, "id");
-    }
-    
-    // TODO: Implementer SetOriginForCommand og ShowOriginForCommand
-
-    protected Command SetOriginForCommand()
-    {
-        throw new NotImplementedException();
-    }
-
-    protected Command ShowOriginForCommand()
-    {
-        throw new NotImplementedException();
     }
 }
