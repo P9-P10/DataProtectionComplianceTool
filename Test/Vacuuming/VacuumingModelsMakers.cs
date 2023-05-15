@@ -70,7 +70,7 @@ public static class VacuumingModelsMakers
                 Description = "Description"
             }
         };
-        DeletionExecution deletionExecution = new(purposes, column, table, query,VacuumingRuleMaker());
+        DeletionExecution deletionExecution = new(purposes, column, table, query,new VacuumingRule());
         return deletionExecution;
     }
 
