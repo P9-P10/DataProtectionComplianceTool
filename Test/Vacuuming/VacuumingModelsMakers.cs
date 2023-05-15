@@ -52,7 +52,7 @@ public static class VacuumingModelsMakers
 
         PersonalDataColumn personalDataColumn = new()
         {
-            TableColumnPair = new TableColumnPair(tableName, columnName),
+            Key = new TableColumnPair(tableName, columnName),
             DefaultValue = defaultValue,
             Purposes = purposes
         };
@@ -147,7 +147,7 @@ public static class VacuumingModelsMakers
                 Description = "Description",
                 DefaultValue = defaultValue,
                 Purposes = new List<Purpose>(),
-                TableColumnPair = new TableColumnPair(table, column)
+                Key = new TableColumnPair(table, column)
             }
         };
     }
