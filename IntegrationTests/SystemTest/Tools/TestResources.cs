@@ -26,14 +26,14 @@ public class TestResources
 
     protected static readonly StorageRule TestNewTestStorageRule = new()
     {
-        Key= TestStorageRule.Key + "NEW",
+        Key = TestStorageRule.Key + "NEW",
         Description = TestStorageRule.Description + "NEW",
         VacuumingCondition = TestStorageRule.VacuumingCondition + "NEW"
     };
 
     protected static readonly Purpose TestPurpose = new()
     {
-        Key= "purposeName",
+        Key = "purposeName",
         Description = Description,
         DeleteConditions = new List<StorageRule>() {TestStorageRule},
         LegallyRequired = true,
@@ -42,7 +42,7 @@ public class TestResources
 
     protected static readonly Purpose NewTestPurpose = new()
     {
-        Key= TestPurpose.Key + "NEW",
+        Key = TestPurpose.Key + "NEW",
         Description = TestPurpose.Description + "NEW",
         DeleteConditions = new List<StorageRule>() {TestNewTestStorageRule},
         LegallyRequired = !TestPurpose.LegallyRequired,
@@ -51,7 +51,7 @@ public class TestResources
 
     protected static readonly Purpose VeryNewTestPurpose = new()
     {
-        Key= TestPurpose.Key + "VERY_NEW",
+        Key = TestPurpose.Key + "VERY_NEW",
         Description = TestPurpose.Description + "VERY_NEW",
         DeleteConditions = new List<StorageRule>() {TestNewTestStorageRule},
         LegallyRequired = !NewTestPurpose.LegallyRequired,
@@ -60,7 +60,7 @@ public class TestResources
 
     protected static readonly PersonalDataColumn TestPersonalDataColumn = new()
     {
-        TableColumnPair = new TableColumnPair("TestTable", "TestColumn"),
+        Key = new TableColumnPair("TestTable", "TestColumn"),
         Purposes = new[] {TestPurpose},
         DefaultValue = "testDefaultValue",
         Description = Description
@@ -68,7 +68,7 @@ public class TestResources
 
     protected static readonly PersonalDataColumn UpdatedTestPersonalDataColumn = new()
     {
-        TableColumnPair = TestPersonalDataColumn.TableColumnPair,
+        Key = TestPersonalDataColumn.Key,
         Purposes = TestPersonalDataColumn.Purposes,
         DefaultValue = TestPersonalDataColumn.DefaultValue + "UPDATED",
         Description = TestPersonalDataColumn.Description + "UPDATED",
@@ -76,9 +76,9 @@ public class TestResources
 
     protected static readonly PersonalDataColumn NewTestPersonalDataColumn = new()
     {
-        TableColumnPair = new TableColumnPair(
-            TestPersonalDataColumn.TableColumnPair.TableName + "NEW",
-            TestPersonalDataColumn.TableColumnPair.ColumnName + "NEW"),
+        Key = new TableColumnPair(
+            TestPersonalDataColumn.Key.TableName + "NEW",
+            TestPersonalDataColumn.Key.ColumnName + "NEW"),
         Purposes = TestPersonalDataColumn.Purposes,
         DefaultValue = TestPersonalDataColumn.DefaultValue + "NEW",
         Description = TestPersonalDataColumn.Description + "NEW"
@@ -86,14 +86,14 @@ public class TestResources
 
     protected static readonly Processing TestProcessing = new()
     {
-        Key= "ProcessingName", Description = "ProcessingDescription",
+        Key = "ProcessingName", Description = "ProcessingDescription",
         PersonalDataColumn = TestPersonalDataColumn,
         Purpose = TestPurpose
     };
 
     protected static readonly Processing NewTestProcessing = new()
     {
-        Key= "NewProcessingName", Description = "NewProcessingDescription",
+        Key = "NewProcessingName", Description = "NewProcessingDescription",
         PersonalDataColumn = TestPersonalDataColumn,
         Purpose = TestPurpose
     };
@@ -122,7 +122,7 @@ public class TestResources
 
     protected static readonly VacuumingRule TestVacuumingRule = new()
     {
-        Key= "vacuumingRule",
+        Key = "vacuumingRule",
         Description = Description,
         Interval = "2h 4d",
         Purposes = new List<Purpose> {TestPurpose}
@@ -130,7 +130,7 @@ public class TestResources
 
     protected static readonly VacuumingRule UpdatedTestVacuumingRule = new()
     {
-        Key= TestVacuumingRule.Key + "UPDATED",
+        Key = TestVacuumingRule.Key + "UPDATED",
         Description = TestVacuumingRule.Description + "NEW",
         Interval = TestVacuumingRule.Interval + "6h",
         Purposes = new List<Purpose> {TestPurpose}
@@ -252,7 +252,7 @@ public class TestResources
         string command =
             $"{CommandNamer.ProcessingsName} {CommandNamer.Create} {OptionNamer.Name} {processing.Key}" +
             $" {OptionNamer.Description} {processing.Description}" +
-            $" {OptionNamer.TableColumn} {processing.PersonalDataColumn.TableColumnPair.TableName} {processing.PersonalDataColumn.TableColumnPair.ColumnName}" +
+            $" {OptionNamer.TableColumn} {processing.PersonalDataColumn.Key.TableName} {processing.PersonalDataColumn.Key.ColumnName}" +
             $" {OptionNamer.Purpose} {processing.Purpose.Key}";
         process.GiveInput(command);
     }
@@ -289,7 +289,7 @@ public class TestResources
     protected static void AddPersonalData(TestProcess process, PersonalDataColumn personalDataColumn)
     {
         var command = $"{CommandNamer.PersonalDataOriginsAlias} {CommandNamer.CreateAlias}" +
-                      $" {OptionNamer.TableColumn} {personalDataColumn.TableColumnPair.TableName} {personalDataColumn.TableColumnPair.ColumnName}" +
+                      $" {OptionNamer.TableColumn} {personalDataColumn.Key.TableName} {personalDataColumn.Key.ColumnName}" +
                       $" {OptionNamer.DefaultValueAlias} \"{personalDataColumn.DefaultValue}\"" +
                       $" {OptionNamer.Description} \"{personalDataColumn.Description}\"" +
                       $" {OptionNamer.PurposeList} {string.Join(" ", personalDataColumn.Purposes.Select(p => p.Key))}";
@@ -300,7 +300,7 @@ public class TestResources
         PersonalDataColumn updated)
     {
         var command = $"{CommandNamer.PersonalDataOriginsAlias} {CommandNamer.Update} " +
-                      $"{OptionNamer.TableColumn} {old.TableColumnPair.TableName} {old.TableColumnPair.ColumnName} " +
+                      $"{OptionNamer.TableColumn} {old.Key.TableName} {old.Key.ColumnName} " +
                       $"{OptionNamer.DefaultValue} \"{updated.DefaultValue}\" " +
                       $"{OptionNamer.Description} \"{updated.Description}\" ";
 
@@ -310,8 +310,8 @@ public class TestResources
     protected static void ShowPersonalData(TestProcess testProcess, PersonalDataColumn personalDataColumn)
     {
         var command = $"{CommandNamer.PersonalDataOriginsAlias} {CommandNamer.Show} " +
-                      $"{OptionNamer.TableColumn} {personalDataColumn.TableColumnPair.TableName} " +
-                      $"{personalDataColumn.TableColumnPair.ColumnName} ";
+                      $"{OptionNamer.TableColumn} {personalDataColumn.Key.TableName} " +
+                      $"{personalDataColumn.Key.ColumnName} ";
 
         testProcess.GiveInput(command);
     }
@@ -325,8 +325,8 @@ public class TestResources
     protected static void DeletePersonalData(TestProcess testProcess, PersonalDataColumn personalDataColumn)
     {
         var command = $"{CommandNamer.PersonalDataOriginsAlias} {CommandNamer.Delete} " +
-                      $"{OptionNamer.TableColumn} {personalDataColumn.TableColumnPair.TableName} " +
-                      $"{personalDataColumn.TableColumnPair.ColumnName} ";
+                      $"{OptionNamer.TableColumn} {personalDataColumn.Key.TableName} " +
+                      $"{personalDataColumn.Key.ColumnName} ";
         testProcess.GiveInput(command);
     }
 
@@ -334,8 +334,8 @@ public class TestResources
         IEnumerable<Purpose> purposes)
     {
         var command = $"{CommandNamer.PersonalDataOriginsAlias} {CommandNamer.AddPurpose} " +
-                      $"{OptionNamer.TableColumn} {personalDataColumn.TableColumnPair.TableName} " +
-                      $"{personalDataColumn.TableColumnPair.ColumnName} " +
+                      $"{OptionNamer.TableColumn} {personalDataColumn.Key.TableName} " +
+                      $"{personalDataColumn.Key.ColumnName} " +
                       $"{OptionNamer.PurposeList} {string.Join(" ", purposes.Select(p => p.Key))}";
         testProcess.GiveInput(command);
     }
@@ -345,8 +345,8 @@ public class TestResources
         IEnumerable<Purpose> purposes)
     {
         var command = $"{CommandNamer.PersonalDataOriginsAlias} {CommandNamer.RemovePurpose} " +
-                      $"{OptionNamer.TableColumn} {personalDataColumn.TableColumnPair.TableName} " +
-                      $"{personalDataColumn.TableColumnPair.ColumnName} " +
+                      $"{OptionNamer.TableColumn} {personalDataColumn.Key.TableName} " +
+                      $"{personalDataColumn.Key.ColumnName} " +
                       $"{OptionNamer.PurposeList} {string.Join(" ", purposes.Select(p => p.Key))}";
         testProcess.GiveInput(command);
     }
@@ -355,8 +355,8 @@ public class TestResources
         Individual individual, Origin origin)
     {
         var command = $"{CommandNamer.PersonalDataOriginsAlias} {CommandNamer.SetOrigin} " +
-                      $"{OptionNamer.TableColumn} {personalDataColumn.TableColumnPair.TableName} " +
-                      $"{personalDataColumn.TableColumnPair.ColumnName} " +
+                      $"{OptionNamer.TableColumn} {personalDataColumn.Key.TableName} " +
+                      $"{personalDataColumn.Key.ColumnName} " +
                       $"{OptionNamer.Id} {individual.ToListing()} " +
                       $"{OptionNamer.Origin} {origin.Key}";
 
@@ -367,8 +367,8 @@ public class TestResources
         Individual individual)
     {
         var command = $"{CommandNamer.PersonalDataOriginsAlias} {CommandNamer.ShowOrigin} " +
-                      $"{OptionNamer.TableColumn} {personalDataColumn.TableColumnPair.TableName} " +
-                      $"{personalDataColumn.TableColumnPair.ColumnName} " +
+                      $"{OptionNamer.TableColumn} {personalDataColumn.Key.TableName} " +
+                      $"{personalDataColumn.Key.ColumnName} " +
                       $"{OptionNamer.Id} {individual.ToListing()} ";
 
         testProcess.GiveInput(command);
@@ -490,9 +490,9 @@ public class TestResources
 
     protected static void CreatePersonalDataTable(IDbConnection dbConnection, PersonalDataColumn personalDataColumn)
     {
-        var createTable = @$"CREATE TABLE IF NOT EXISTS {personalDataColumn.TableColumnPair.TableName} (
+        var createTable = @$"CREATE TABLE IF NOT EXISTS {personalDataColumn.Key.TableName} (
             Id INTEGER PRIMARY KEY,
-            {personalDataColumn.TableColumnPair.ColumnName} VARCHAR
+            {personalDataColumn.Key.ColumnName} VARCHAR
         );";
 
         dbConnection.Execute(createTable);
@@ -502,7 +502,7 @@ public class TestResources
         Individual individual, string value)
     {
         var query = $"INSERT INTO " +
-                    $"{personalDataColumn.TableColumnPair.TableName} (Id, {personalDataColumn.TableColumnPair.ColumnName}) " +
+                    $"{personalDataColumn.Key.TableName} (Id, {personalDataColumn.Key.ColumnName}) " +
                     $"VALUES ({individual.ToListing()}, '{value}')";
         dbConnection.Execute(query);
     }

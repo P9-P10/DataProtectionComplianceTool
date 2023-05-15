@@ -7,11 +7,6 @@ public class PersonalDataColumn : Entity<TableColumnPair>
 {
     public virtual IEnumerable<Purpose>? Purposes { get; set; }
     public string? DefaultValue { get; set; } = "";
-    public TableColumnPair? TableColumnPair
-    {
-        get => Key;
-        set => Key = value;
-    }
 
     public override string ToListing()
     {
