@@ -9,10 +9,10 @@ public class Individual : Entity<int>
 
     public override string ToListing()
     {
-        return string.Join(", ", Id is null ? "Unknown" : Id.ToString(), 
+        return string.Join(", ", base.ToListing(), 
             "[ " + 
-            string.Join(", ", PersonalDataOrigins is null 
-                ? new List<PersonalDataOrigin>() 
+            string.Join(", ", PersonalDataOrigins == null 
+                ? new List<string>() 
                 : PersonalDataOrigins.Select(pdo => pdo.ToListingIdentifier())) 
             + " ]");
     }

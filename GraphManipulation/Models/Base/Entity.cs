@@ -28,6 +28,16 @@ public abstract class Entity<TKey> : DomainEntity, IListable
         }
     }
 
+    public override bool Equals(object? obj)
+    {
+        return obj is not null && Equals((obj as Entity<TKey>)!);
+    }
+
+    public override int GetHashCode()
+    {
+        return EqualityComparer<TKey?>.Default.GetHashCode(Key);
+    }
+
     public bool Equals(Entity<TKey> other)
     {
         return other.ToListing().Equals(ToListing());

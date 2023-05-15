@@ -69,11 +69,11 @@ public class PersonalDataOriginCommandBuilder : BaseCommandBuilder<int, Personal
             .WithSubCommands(
                 CreateCommand(keyOption, createBinder, new Option[]
                 {
-                    descriptionOption, tableColumnOption, originOption
+                    descriptionOption, individualOption, tableColumnOption, originOption
                 }),
                 UpdateCommand(keyOption, updateBinder, new Option[]
                 {
-                    descriptionOption, tableColumnOption, originOption
+                    descriptionOption, individualOption, tableColumnOption, originOption
                 }));
     }
 

@@ -46,7 +46,7 @@ public class Manager<TKey, TValue> : IManager<TKey, TValue>
 
     public TValue? Get(TKey key)
     {
-        return Mapper.FindSingle(entity => entity.Key!.Equals(key));
+        return Mapper.FindSingle(entity => key.Equals(entity.Key!));
     }
 
     public IEnumerable<TValue> GetAll()
