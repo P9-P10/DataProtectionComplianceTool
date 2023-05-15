@@ -74,7 +74,7 @@ public class Vacuumer : IVacuumer
     private static string CreateUpdateQuery(PersonalDataColumn personalDataColumn)
     {
         return
-            $"UPDATE {personalDataColumn.TableColumnPair.TableName} SET {personalDataColumn.TableColumnPair.ColumnName} = '{personalDataColumn.DefaultValue}' WHERE ";
+            $"UPDATE {personalDataColumn.Key.TableName} SET {personalDataColumn.Key.ColumnName} = '{personalDataColumn.DefaultValue}' WHERE ";
     }
 
     public IEnumerable<DeletionExecution> Execute()
@@ -146,7 +146,7 @@ public class Vacuumer : IVacuumer
     private List<Purpose> GetAllPurposesWithSameTableColumnPair(PersonalDataColumn personalDataColumn)
     {
         return _purposeMapper.Find(purpose => purpose.DeleteConditions.Any(deleteCondition =>
-            deleteCondition.PersonalDataColumn.TableColumnPair.Equals(personalDataColumn.TableColumnPair)
+            deleteCondition.PersonalDataColumn.Key.Equals(personalDataColumn.Key)
             && !personalDataColumn.Purposes.Contains(purpose))).ToList();
     }
 
@@ -176,8 +176,8 @@ public class Vacuumer : IVacuumer
     private static Predicate<DeletionExecution> HasSameTableColumnPair(StorageRule condition)
     {
         return deleteExecution =>
-            deleteExecution.Table == condition.PersonalDataColumn.TableColumnPair.TableName &&
-            deleteExecution.Column == condition.PersonalDataColumn.TableColumnPair.ColumnName;
+            deleteExecution.Table == condition.PersonalDataColumn.Key.TableName &&
+            deleteExecution.Column == condition.PersonalDataColumn.Key.ColumnName;
     }
 
     private static void UpdateExecution(DeletionExecution execution, StorageRule condition, string logicOperator,
@@ -194,8 +194,8 @@ public class Vacuumer : IVacuumer
 
         execution.Query += updateQuery + AppendConditions(condition, logicOperator, execution, purpose);
 
-        execution.Column = condition.PersonalDataColumn.TableColumnPair.ColumnName;
-        execution.Table = condition.PersonalDataColumn.TableColumnPair.TableName;
+        execution.Column = condition.PersonalDataColumn.Key.ColumnName;
+        execution.Table = condition.PersonalDataColumn.Key.TableName;
         output.Add(execution);
     }
 

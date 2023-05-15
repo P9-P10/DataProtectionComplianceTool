@@ -212,8 +212,8 @@ public class VacuumingRulesTest : TestResources
         ExecuteVacuumingRule(process, new[] { TestVacuumingRule });
 
         var result = dbConnection.Query<(string id, string column)>(
-            $"SELECT Id, {TestPersonalDataColumn.TableColumnPair.ColumnName} " +
-            $"FROM {TestPersonalDataColumn.TableColumnPair.TableName}")
+            $"SELECT Id, {TestPersonalDataColumn.Key.ColumnName} " +
+            $"FROM {TestPersonalDataColumn.Key.TableName}")
             .ToList();
 
         result.First().Should().Be(new ValueTuple<string, string>(TestIndividual1.ToListing(), TestIndividual1.ToListing()));

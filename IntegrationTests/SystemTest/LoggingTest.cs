@@ -177,8 +177,8 @@ public class LoggingTest : TestResources
             logEntry.Subject.Should().Be(TestPersonalDataColumn.ToListingIdentifier());
             logEntry.LogType.Should().Be(LogType.Vacuuming);
             logEntry.Message.Should().Contain(
-                $"\"UPDATE {TestPersonalDataColumn.TableColumnPair.TableName} " +
-                $"SET {TestPersonalDataColumn.TableColumnPair.ColumnName} = \'{TestPersonalDataColumn.DefaultValue}\' " +
+                $"\"UPDATE {TestPersonalDataColumn.Key.TableName} " +
+                $"SET {TestPersonalDataColumn.Key.ColumnName} = \'{TestPersonalDataColumn.DefaultValue}\' " +
                 $"WHERE ({TestStorageRule.VacuumingCondition});\" " +
                 $"affected {TestPersonalDataColumn.ToListingIdentifier()} " +
                 $"because it is stored under the following purpose(s): {TestPurpose.ToListingIdentifier()}");
