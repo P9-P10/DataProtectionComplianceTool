@@ -1,4 +1,4 @@
-using GraphManipulation.Models.Interfaces.Base;
+using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Managers;
 
@@ -31,15 +31,5 @@ public class TableColumnPair : IListable
     public bool Equals(TableColumnPair other)
     {
         return TableName == other.TableName && ColumnName == other.ColumnName;
-    }
-
-    public override bool Equals(object? obj)
-    {
-        return Equals(obj as TableColumnPair);
-    }
-
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(TableName,ColumnName);
     }
 }

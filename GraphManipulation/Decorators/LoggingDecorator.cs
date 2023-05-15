@@ -1,5 +1,6 @@
 ﻿using GraphManipulation.Logging;
 using GraphManipulation.Logging.Operations;
+using GraphManipulation.Models.Base;
 
 namespace GraphManipulation.Decorators;
 
@@ -7,57 +8,48 @@ namespace GraphManipulation.Decorators;
 /// This is a parent class for decorators responsible for logging.
 /// It provides methods for creating log messages.
 /// </summary>
-public class LoggingDecorator
+public class LoggingDecorator<TKey, TValue> where TValue : Entity<TKey>
 {
     private readonly ILogger _logger;
-    private readonly string _type;
-
-    public LoggingDecorator(ILogger logger, string type)
+    public LoggingDecorator(ILogger logger)
     {
         _logger = logger;
-        _type = type;
     }
 
-    private void AppendLogEntry(Operation operation, LogType logType = LogType.Metadata)
+    private void AppendLogEntry(
+        Operation<TKey, TValue> operation, 
+        LogType logType = LogType.Metadata, 
+        LogMessageFormat logMessageFormat = LogMessageFormat.Plaintext)
     {
-        _logger.Append(new MutableLog(logType, operation, LogMessageFormat.Plaintext, operation.ToString()));
-    }
-    
-    private static Dictionary<string, string>? GetParameters(object? obj)
-    {
-        return obj is null ? null : AnonymousObjectToDict(obj);
-    }
-    
-    private static Dictionary<string, string> AnonymousObjectToDict(object obj)
-    {
-        return obj
-            .GetType()
-            .GetProperties()
-            .ToDictionary(x => x.Name, x => x.GetValue(obj, null).ToString());
+        AppendLogEntry(operation, logType, logMessageFormat, operation.ToString());
     }
 
-    public void LogDelete(string key)
+    private void AppendLogEntry(
+        Operation<TKey, TValue> operation, 
+        LogType logType, 
+        LogMessageFormat logMessageFormat,
+        string message)
     {
-        AppendLogEntry(new Delete(_type, key));
+        _logger.Append(new MutableLog(logType, operation.Key!.ToString()!, logMessageFormat, message));
     }
 
-    public void LogUpdate(string key, object parameters)
+    public void LogDelete(TKey key)
     {
-        AppendLogEntry(new Update(_type, key, GetParameters(parameters)));
+        AppendLogEntry(new Delete<TKey, TValue>(key));
     }
 
-    public void LogAdd(string key, object parameters)
+    public void LogUpdate(TKey key, TValue value)
     {
-        AppendLogEntry(new Add(_type, key, GetParameters(parameters)));
+        AppendLogEntry(new Update<TKey, TValue>(key, value));
     }
 
-    public void LogSet(string key, object parameters)
+    public void LogCreate(TKey key)
     {
-        AppendLogEntry(new Set(_type, key, GetParameters(parameters)));
+        AppendLogEntry(new Create<TKey, TValue>(key));
     }
 
-    public void LogExecute(string key, object parameters)
+    public void LogExecute(TKey key)
     {
-        AppendLogEntry(new Execute(_type, key, GetParameters(parameters)));
+        AppendLogEntry(new Execute<TKey, TValue>(key), LogType.Vacuuming);
     }
 }

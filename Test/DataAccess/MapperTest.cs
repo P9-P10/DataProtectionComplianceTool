@@ -7,6 +7,7 @@ using GraphManipulation.DataAccess;
 using GraphManipulation.DataAccess.Mappers;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
+using GraphManipulation.Models.Base;
 using Xunit;
 
 namespace Test.DataAccess;
@@ -158,7 +159,7 @@ public class MapperTest
         public void FindSingleTableColumnFromPersonalDataColumn()
         {
             Mapper<PersonalDataColumn> mapper = new Mapper<PersonalDataColumn>(_context);
-            var expectedColumn = new PersonalDataColumn()
+            var expectedColumn = new PersonalDataColumn
             {
                 DefaultValue = "",
                 Description = "",
@@ -167,10 +168,10 @@ public class MapperTest
             mapper.Insert(expectedColumn);
 
             PersonalDataColumn? result = mapper.FindSingle(x =>
-                x.TableColumnPair.Equals(new TableColumnPair("Table","Column")));
+                x.TableColumnPair.Equals(expectedColumn.TableColumnPair));
             var tableColumnPair = result?.TableColumnPair;
 
-            tableColumnPair.Should().Be(new TableColumnPair("Table", "Column"));
+            tableColumnPair.Should().Be(expectedColumn.TableColumnPair);
         }
 
         [Fact]

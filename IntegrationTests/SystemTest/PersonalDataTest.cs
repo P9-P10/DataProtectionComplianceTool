@@ -23,13 +23,13 @@ public class PersonalDataTest : TestResources
         output.Should().ContainSingle(s =>
             s.Contains(
                 $"Successfully added {TestPersonalDataColumn.ToListingIdentifier()} personal data column") &&
-            s.Contains($"{TestPersonalDataColumn.GetDescription()}"));
+            s.Contains($"{TestPersonalDataColumn.Description}"));
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {TestPurpose.GetName()}"));
+                $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {TestPurpose.Key}"));
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {TestPersonalDataColumn.GetDefaultValue()}"));
+                $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {TestPersonalDataColumn.DefaultValue}"));
     }
 
     [Fact]
@@ -131,10 +131,10 @@ public class PersonalDataTest : TestResources
         error.Should().BeEmpty();
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {NewTestPurpose.GetName()}"));
+                $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {NewTestPurpose.Key}"));
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {VeryNewTestPurpose.GetName()}"));
+                $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {VeryNewTestPurpose.Key}"));
     }
 
     [Fact]
@@ -158,10 +158,10 @@ public class PersonalDataTest : TestResources
         error.Should().BeEmpty();
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"{NewTestPurpose.GetName()} successfully removed from {TestPersonalDataColumn.ToListingIdentifier()}"));
+                $"{NewTestPurpose.Key} successfully removed from {TestPersonalDataColumn.ToListingIdentifier()}"));
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"{VeryNewTestPurpose.GetName()} successfully removed from {TestPersonalDataColumn.ToListingIdentifier()}"));
+                $"{VeryNewTestPurpose.Key} successfully removed from {TestPersonalDataColumn.ToListingIdentifier()}"));
     }
 
     [Fact]

@@ -3,8 +3,8 @@ using System.CommandLine;
 using System.CommandLine.IO;
 using FluentAssertions;
 using GraphManipulation.Commands.Builders;
+using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Managers;
-using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
 using Moq;
 using Xunit;
@@ -75,9 +75,9 @@ public class ProcessingsCommandTest : CommandTest
         Purposes = new List<Purpose>()
     };
 
-    public class Add
+    public class Create
     {
-        private const string CommandName = "add";
+        private const string CommandName = CommandNamer.Create;
         
         [Fact]
         public void Parses()
@@ -110,7 +110,7 @@ public class ProcessingsCommandTest : CommandTest
     
     public class Update
     {
-        private const string CommandName = "update";
+        private const string CommandName = CommandNamer.Update;
         
         [Fact]
         public void Parses()
@@ -142,7 +142,7 @@ public class ProcessingsCommandTest : CommandTest
     
     public class Delete
     {
-        private const string CommandName = "delete";
+        private const string CommandName = CommandNamer.Delete;
         
         [Fact]
         public void Parses()
@@ -162,7 +162,7 @@ public class ProcessingsCommandTest : CommandTest
     
     public class List
     {
-        private const string CommandName = "list";
+        private const string CommandName = CommandNamer.List;
         
         [Fact]
         public void Parses()
@@ -182,7 +182,7 @@ public class ProcessingsCommandTest : CommandTest
     
     public class Show
     {
-        private const string CommandName = "show";
+        private const string CommandName = CommandNamer.Show;
         
         [Fact]
         public void Parses()

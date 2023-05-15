@@ -1,100 +1,47 @@
 using System.CommandLine;
+using GraphManipulation.Commands.Builders.Binders;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Managers.Interfaces;
+using GraphManipulation.Models;
 
 namespace GraphManipulation.Commands.Builders;
 
-public static class OriginsCommandBuilder
+public class OriginsCommandBuilder : BaseCommandBuilder<string, Origin>
 {
-    public static Command Build(IConsole console, IOriginsManager originsManager)
+    public OriginsCommandBuilder(IManager<string, Origin> manager) : base(manager)
     {
-        return CommandBuilder.CreateCommand(CommandNamer.OriginsName)
-            .WithAlias(CommandNamer.OriginsAlias)
+    }
+
+    public override Command Build()
+    {
+        var baseCommand = base.Build(CommandNamer.OriginsName, CommandNamer.OriginsAlias, out var keyOption);
+
+        var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<Origin>();
+        var newKeyOption = OptionBuilder.CreateNewNameOption<Origin>();
+
+        var createOriginBinder = new OriginBinder(keyOption, descriptionOption);
+        var updateOriginBinder = new OriginBinder(newKeyOption, descriptionOption);
+
+        return baseCommand
             .WithSubCommands(
-                Add(console, originsManager),
-                Update(console, originsManager),
-                Delete(console, originsManager),
-                List(console, originsManager),
-                Show(console, originsManager)
+                CreateCommand(keyOption, createOriginBinder, new Option[]
+                {
+                    descriptionOption
+                }), 
+                UpdateCommand(keyOption, updateOriginBinder, new Option[]
+                {
+                    newKeyOption, descriptionOption
+                }) 
             );
     }
 
-    private static Command Add(IConsole console, IOriginsManager originsManager)
+    protected override void StatusReport(Origin value)
     {
-        return CommandBuilder
-            .BuildAddCommand()
-            .WithDescription("Adds the given origin to the system")
-            .WithOption(out var nameOption, BuildNameOption())
-            .WithOption(out var descriptionOption,
-                OptionBuilder
-                    .CreateDescriptionOption()
-                    .WithDescription("The description of the origin")
-                    .WithGetDefaultValue(() => ""))
-            .WithHandler(context => Handlers.AddHandler(context, console,
-                originsManager.Add, originsManager, nameOption, descriptionOption));
+        // Nothing to report on
     }
 
-    private static Command Update(IConsole console, IOriginsManager originsManager)
+    protected override Option<string> BuildKeyOption()
     {
-        return CommandBuilder
-            .BuildUpdateCommand()
-            .WithDescription("Updates the given origin with the given values")
-            .WithOption(out var nameOption, BuildNameOption())
-            .WithOption(out var newNameOption,
-                OptionBuilder
-                    .CreateNewNameOption()
-                    .WithDescription("The new name of the origin"))
-            .WithOption(out var descriptionOption,
-                OptionBuilder.CreateDescriptionOption()
-                    .WithDescription("The new description of the origin"))
-            .WithHandler(context =>
-            {
-                Handlers.UpdateHandler(context, console,
-                    originsManager.UpdateDescription,
-                    originsManager,
-                    origin => origin.GetDescription(),
-                    nameOption, descriptionOption);
-
-                Handlers.UpdateHandlerUnique(context, console,
-                    originsManager.UpdateName,
-                    originsManager,
-                    origin => origin.GetName(),
-                    nameOption, newNameOption);
-            });
-    }
-
-    private static Command Delete(IConsole console, IOriginsManager originsManager)
-    {
-        return CommandBuilder
-            .BuildDeleteCommand()
-            .WithDescription("Deletes the given origin from the system")
-            .WithOption(out var nameOption, BuildNameOption())
-            .WithHandler(context => Handlers.DeleteHandler(context, console,
-                originsManager.Delete, originsManager, nameOption));
-    }
-
-    private static Command List(IConsole console, IOriginsManager originsManager)
-    {
-        return CommandBuilder
-            .BuildListCommand()
-            .WithDescription("Lists the origins currently in the system")
-            .WithHandler(() => Handlers.ListHandler(console, originsManager,CommandHeader.OriginsHeader));
-    }
-
-    private static Command Show(IConsole console, IOriginsManager originsManager)
-    {
-        return CommandBuilder
-            .BuildShowCommand()
-            .WithDescription("Shows the origin with the given name")
-            .WithOption(out var nameOption, BuildNameOption())
-            .WithHandler(context => Handlers.ShowHandler(context, console, originsManager, nameOption));
-    }
-
-    private static Option<string> BuildNameOption()
-    {
-        return OptionBuilder
-            .CreateNameOption()
-            .WithDescription("The name of the origin")
-            .WithIsRequired(true);
+        return OptionBuilder.CreateKeyOption<string, Origin>(OptionNamer.Name, OptionNamer.NameAlias);
     }
 }

@@ -26,9 +26,9 @@ public class SystemPersistenceTests : TestResources
 
         
         List<string> secondResult = secondProcess.GetLastOutput();
-        firstResult.FindAll(s => s.Contains(TestDeleteCondition.Name)
+        firstResult.FindAll(s => s.Contains(TestDeleteCondition.Key)
                                  && s.Contains(TestDeleteCondition.Description)).Should().ContainSingle();
-        secondResult.FindAll(s => s.Contains(TestDeleteCondition.Name)
+        secondResult.FindAll(s => s.Contains(TestDeleteCondition.Key)
                                   && s.Contains(TestDeleteCondition.Description)).Should().ContainSingle();
         Assert.Equal(firstResult, secondResult);
         

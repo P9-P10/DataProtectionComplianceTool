@@ -8,9 +8,9 @@ public class OriginTest
     [Fact]
     public void TestToListingWorksWithNullValues()
     {
-        Origin origin = new Origin()
+        Origin origin = new()
         {
-            Name = "Name",
+            Key = "Name",
             PersonalDataColumns = null
         };
         

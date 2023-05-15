@@ -19,12 +19,12 @@ public class PurposeTest : TestResources
 
         error.Should().BeEmpty();
         output.Should().ContainSingle(s => 
-            s.Contains($"Successfully added {TestPurpose.GetName()} purpose") &&
-            s.Contains($"{TestPurpose.GetLegallyRequired()}") && 
-            s.Contains(TestPurpose.GetDescription())
+            s.Contains($"Successfully added {TestPurpose.Key} purpose") &&
+            s.Contains($"{TestPurpose.LegallyRequired}") && 
+            s.Contains(TestPurpose.Description)
             );
         output.Should().ContainSingle(s =>
-            s.Contains($"Successfully updated {TestPurpose.GetName()} purpose with {TestDeleteCondition.GetName()}"));
+            s.Contains($"Successfully updated {TestPurpose.Key} purpose with {TestDeleteCondition.Key}"));
     }
 
     [Fact]
@@ -98,6 +98,6 @@ public class PurposeTest : TestResources
         
         error.Should().BeEmpty();
         output.Should().ContainSingle(s => 
-            s.Contains($"Successfully deleted {TestPurpose.GetName()} purpose"));
+            s.Contains($"Successfully deleted {TestPurpose.Key} purpose"));
     }
 }

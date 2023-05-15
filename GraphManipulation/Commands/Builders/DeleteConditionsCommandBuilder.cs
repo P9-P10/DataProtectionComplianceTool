@@ -1,134 +1,89 @@
 using System.CommandLine;
+using GraphManipulation.Commands.Builders.Binders;
 using GraphManipulation.Commands.Helpers;
+using GraphManipulation.Managers;
 using GraphManipulation.Managers.Interfaces;
+using GraphManipulation.Models;
 
 namespace GraphManipulation.Commands.Builders;
 
-public static class DeleteConditionsCommandBuilder
+public class DeleteConditionsCommandBuilder : BaseCommandBuilder<string, DeleteCondition>
 {
-    public static Command Build(IConsole console, IDeleteConditionsManager deleteConditionsManager)
+    private readonly IManager<TableColumnPair, PersonalDataColumn> _personalDataColumnManager;
+
+    public DeleteConditionsCommandBuilder(
+        IManager<string, DeleteCondition> manager,
+        IManager<TableColumnPair, PersonalDataColumn> personalDataColumnManager) : base(manager)
     {
-        return CommandBuilder.CreateCommand(CommandNamer.DeleteConditionName)
-            .WithAlias(CommandNamer.DeleteConditionAlias)
+        _personalDataColumnManager = personalDataColumnManager;
+    }
+
+    public override Command Build()
+    {
+        var baseCommand = base.Build(CommandNamer.DeleteConditionsName, CommandNamer.DeleteConditionsAlias,
+            out var keyOption);
+
+        var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<DeleteCondition>();
+        var newKeyOption = OptionBuilder.CreateNewNameOption<DeleteCondition>();
+
+        var conditionOption = BuildConditionOption()
+            .WithDescription("The condition that must be fulfilled for data to be deleted");
+
+        var tableColumnOption = OptionBuilder
+            .CreateTableColumnPairOption()
+            .WithDescription("The data that will be vacuumed under this condition");
+
+        var createBinder = new DeleteConditionBinder(
+            keyOption,
+            descriptionOption,
+            conditionOption,
+            tableColumnOption,
+            _personalDataColumnManager
+        );
+
+        var updateBinder = new DeleteConditionBinder(
+            newKeyOption,
+            descriptionOption,
+            conditionOption,
+            tableColumnOption,
+            _personalDataColumnManager
+        );
+
+        return baseCommand
             .WithSubCommands(
-                AddDeleteCondition(console, deleteConditionsManager),
-                UpdateDeleteCondition(console, deleteConditionsManager),
-                DeleteDeleteCondition(console, deleteConditionsManager),
-                ListDeleteConditions(console, deleteConditionsManager),
-                ShowDeleteCondition(console, deleteConditionsManager)
+                CreateCommand(keyOption, createBinder, new Option[]
+                {
+                    descriptionOption, conditionOption.WithIsRequired(true), tableColumnOption.WithIsRequired(true)
+                }),
+                UpdateCommand(keyOption, updateBinder, new Option[]
+                {
+                    newKeyOption, descriptionOption, conditionOption, tableColumnOption
+                })
             );
     }
 
-    private static Command AddDeleteCondition(IConsole console, IDeleteConditionsManager deleteConditionsManager)
+    protected override void StatusReport(DeleteCondition condition)
     {
-        return CommandBuilder
-            .BuildAddCommand()
-            .WithDescription("Adds a delete condition to the system")
-            .WithOption(out var nameOption, BuildNameOption())
-            .WithOption(out var descriptionOption,
-                OptionBuilder
-                    .CreateDescriptionOption()
-                    .WithDescription("The description of the delete condition")
-                    .WithGetDefaultValue(() => ""))
-            .WithOption(out var conditionOption,
-                BuildConditionOption<string>()
-                    .WithDescription("The delete condition itself")
-                    .WithIsRequired(true))
-            .WithHandler(context =>
-            {
-                Handlers.AddHandler(context, console,
-                    deleteConditionsManager.Add,
-                    deleteConditionsManager,
-                    nameOption,
-                    descriptionOption,
-                    conditionOption);
-            });
+        if (condition.Condition is null)
+        {
+            Emitter.EmitMissing(condition.Key!, "condition");
+        }
+
+        if (condition.PersonalDataColumn is null)
+        {
+            Emitter.EmitMissing<TableColumnPair, PersonalDataColumn>(condition.Key!);
+        }
     }
 
-    private static Command UpdateDeleteCondition(IConsole console, IDeleteConditionsManager deleteConditionsManager)
+    protected override Option<string> BuildKeyOption()
     {
-        return CommandBuilder
-            .BuildUpdateCommand()
-            .WithDescription("Updates the delete condition of the given name with the given values")
-            .WithOption(out var nameOption, BuildNameOption())
-            .WithOption(out var newNameOption,
-                OptionBuilder
-                    .CreateNewNameOption()
-                    .WithDescription("The new name of the delete condition"))
-            .WithOption(out var descriptionOption,
-                OptionBuilder
-                    .CreateDescriptionOption()
-                    .WithDescription("The new description of the delete condition"))
-            .WithOption(out var conditionOption,
-                BuildConditionOption<string>()
-                    .WithDescription("The new condition"))
-            .WithHandler(context =>
-            {
-                Handlers.UpdateHandler(context, console,
-                    deleteConditionsManager.UpdateDescription,
-                    deleteConditionsManager,
-                    d => d.GetDescription(),
-                    nameOption,
-                    descriptionOption);
-
-                Handlers.UpdateHandler(context, console,
-                    deleteConditionsManager.UpdateCondition,
-                    deleteConditionsManager,
-                    d => d.GetCondition(),
-                    nameOption,
-                    conditionOption);
-
-                Handlers.UpdateHandlerUnique(context, console,
-                    deleteConditionsManager.UpdateName,
-                    deleteConditionsManager,
-                    d => d.GetName(),
-                    nameOption,
-                    newNameOption);
-            });
-        
+        return OptionBuilder.CreateKeyOption<string, DeleteCondition>(OptionNamer.Name, OptionNamer.NameAlias);
     }
 
-    private static Command DeleteDeleteCondition(IConsole console, IDeleteConditionsManager deleteConditionsManager)
-    {
-        return CommandBuilder
-            .BuildDeleteCommand()
-            .WithDescription("Deletes the given delete condition from the system")
-            .WithOption(out var nameOption, BuildNameOption())
-            .WithHandler(context => Handlers.DeleteHandler(context, console,
-                deleteConditionsManager.Delete,
-                deleteConditionsManager,
-                nameOption));
-    }
-
-    private static Command ListDeleteConditions(IConsole console, IDeleteConditionsManager deleteConditionsManager)
-    {
-        return CommandBuilder
-            .BuildListCommand()
-            .WithDescription("Lists the delete conditions currently in the system")
-            .WithHandler(() => Handlers.ListHandler(console, deleteConditionsManager,"Name, Description, Condition"));
-    }
-
-    private static Command ShowDeleteCondition(IConsole console, IDeleteConditionsManager deleteConditionsManager)
-    {
-        return CommandBuilder
-            .BuildShowCommand()
-            .WithDescription("Shows details about the given delete condition")
-            .WithOption(out var nameOption, BuildNameOption())
-            .WithHandler(context => Handlers.ShowHandler(context, console, deleteConditionsManager, nameOption));
-    }
-
-    private static Option<string> BuildNameOption()
+    private static Option<string> BuildConditionOption()
     {
         return OptionBuilder
-            .CreateNameOption()
-            .WithDescription("The name of the delete condition")
-            .WithIsRequired(true);
-    }
-
-    private static Option<T> BuildConditionOption<T>()
-    {
-        return OptionBuilder
-            .CreateOption<T>(OptionNamer.Condition)
+            .CreateOption<string>(OptionNamer.Condition)
             .WithAlias(OptionNamer.ConditionAlias);
     }
 }

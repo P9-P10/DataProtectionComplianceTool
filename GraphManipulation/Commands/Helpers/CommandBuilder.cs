@@ -1,12 +1,13 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
+using GraphManipulation.Commands.Builders;
 
 namespace GraphManipulation.Commands.Helpers;
 
 public static class CommandBuilder
 {
-    public static Command CreateCommand(string name)
+    public static Command CreateNewCommand(string name)
     {
         return new Command(name);
     }
@@ -21,6 +22,16 @@ public static class CommandBuilder
     {
         command.AddOption(inputOption);
         outputOption = inputOption;
+        return command;
+    }
+
+    public static Command WithOptions(this Command command, params Option[] options)
+    {
+        foreach (var option in options)
+        {
+            command.AddOption(option);
+        }
+
         return command;
     }
 
@@ -64,15 +75,23 @@ public static class CommandBuilder
         return command;
     }
 
+    public static Command WithSubCommands(this Command command, params BaseCommandBuilder[] commandBuilders)
+    {
+        foreach (var builder in commandBuilders) 
+            command.AddCommand(builder.Build());
+
+        return command;
+    }
+
     private static Command BuildCommandWithNameAliasSubject(string name, string alias, string subject = "")
     {
-        return CreateCommand(name + (string.IsNullOrEmpty(subject) ? "" : $"-{subject}"))
+        return CreateNewCommand(name + (string.IsNullOrEmpty(subject) ? "" : $"-{subject}"))
             .WithAlias(alias + (string.IsNullOrEmpty(subject) ? "" : $"{subject.First()}"));
     }
 
-    public static Command BuildAddCommand(string subject = "")
+    public static Command BuildCreateCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject(CommandNamer.Add, CommandNamer.AddAlias, subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.Create, CommandNamer.CreateAlias, subject);
     }
 
     public static Command BuildUpdateCommand(string subject = "")
@@ -83,6 +102,11 @@ public static class CommandBuilder
     public static Command BuildDeleteCommand(string subject = "")
     {
         return BuildCommandWithNameAliasSubject(CommandNamer.Delete, CommandNamer.DeleteAlias, subject);
+    }
+
+    public static Command BuildAddCommand(string subject = "")
+    {
+        return BuildCommandWithNameAliasSubject(CommandNamer.Add, CommandNamer.AddAlias, subject);
     }
 
     public static Command BuildRemoveCommand(string subject = "")
@@ -102,13 +126,11 @@ public static class CommandBuilder
 
     public static Command BuildShowCommand(string subject = "")
     {
-        return BuildCommandWithNameAliasSubject(CommandNamer.Show, CommandNamer.ShowAlias,subject);
+        return BuildCommandWithNameAliasSubject(CommandNamer.Show, CommandNamer.ShowAlias, subject);
     }
-}
 
-public class CommandException : Exception
-{
-    public CommandException(string message) : base(message)
+    public static Command BuildStatusCommand(string subject = "")
     {
+        return BuildCommandWithNameAliasSubject(CommandNamer.Status, CommandNamer.StatusAlias, subject);
     }
 }

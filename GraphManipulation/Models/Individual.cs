@@ -1,17 +1,18 @@
-using GraphManipulation.Models.Interfaces;
+using GraphManipulation.Models.Base;
 
 namespace GraphManipulation.Models;
 
-public class Individual : DomainEntity, IIndividual
+public class Individual : Entity<int>
 {
     
     public virtual IEnumerable<PersonalData>? PersonalData { get; set; }
-    public string ToListing()
+    
+    public new string ToListing()
     {
         return Id == null ? "Unknown" : Id.ToString();
     }
 
-    public string ToListingIdentifier()
+    public new string ToListingIdentifier()
     {
         return ToListing();
     }

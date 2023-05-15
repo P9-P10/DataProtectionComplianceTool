@@ -1,6 +1,7 @@
 using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.Diagnostics;
+using GraphManipulation.Helpers;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
 
@@ -54,15 +55,27 @@ public static class OptionBuilder
         option.Description = description;
         return option;
     }
-
-    public static Option<int> CreateIdOption()
+    
+    public static Option<string> CreateNewNameOption<TValue>()
     {
-        return CreateOption<int>(OptionNamer.Id).WithAlias(OptionNamer.IdAlias);
+        return CreateOption<string>(OptionNamer.NewName)
+            .WithAlias(OptionNamer.NewNameAlias)
+            .WithDescription($"The new name of the {TypeToString.GetEntityType(typeof(TValue))}");
     }
 
-    public static Option<string> CreateDescriptionOption()
+    public static Option<string> CreateEntityDescriptionOption<TValue>()
     {
-        return CreateOption<string>(OptionNamer.Description).WithAlias(OptionNamer.DescriptionAlias);
+        return CreateOption<string>(OptionNamer.Description)
+            .WithAlias(OptionNamer.DescriptionAlias)
+            .WithDescription($"The description of the {TypeToString.GetEntityType(typeof(TValue))}");
+    }
+
+    public static Option<TKey> CreateKeyOption<TKey, TValue>(string name, string alias, string keyDescriptor = "name")
+    {
+        return CreateOption<TKey>(name)
+            .WithAlias(alias)
+            .WithDescription($"The {keyDescriptor} of the {TypeToString.GetEntityType(typeof(TValue))}")
+            .WithIsRequired(true);
     }
 
     public static Option<TableColumnPair> CreateTableColumnPairOption()
@@ -80,7 +93,6 @@ public static class OptionBuilder
                     return new TableColumnPair("", "");
                 })
             .WithAlias(OptionNamer.TableColumnAlias)
-            .WithIsRequired(true)
             .WithArity(new ArgumentArity(2, 2))
             .WithAllowMultipleArguments(true);
     }
@@ -93,16 +105,6 @@ public static class OptionBuilder
             .WithArity(ArgumentArity.OneOrMore);
     }
 
-    public static Option<string> CreateNameOption()
-    {
-        return CreateOption<string>(OptionNamer.Name).WithAlias(OptionNamer.NameAlias);
-    }
-
-    public static Option<string> CreateNewNameOption()
-    {
-        return CreateOption<string>(OptionNamer.NewName).WithAlias(OptionNamer.NewNameAlias);
-    }
-
     public static void ValidInterval(CommandResult commandResult, Option<string> option)
     {
         if (commandResult.FindResultFor(option) is null)
@@ -112,7 +114,7 @@ public static class OptionBuilder
 
         try
         {
-            string result = commandResult.GetValueForOption(option);
+            var result = commandResult.GetValueForOption(option);
             if (result == null)
             {
                 return;

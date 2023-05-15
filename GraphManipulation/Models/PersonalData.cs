@@ -1,4 +1,6 @@
-﻿namespace GraphManipulation.Models;
+﻿using GraphManipulation.Models.Base;
+
+namespace GraphManipulation.Models;
 
 public class PersonalData : DomainEntity
 {

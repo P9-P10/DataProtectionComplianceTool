@@ -1,0 +1,56 @@
+using GraphManipulation.DataAccess.Mappers;
+using GraphManipulation.Managers.Interfaces;
+using GraphManipulation.Models.Base;
+
+namespace GraphManipulation.Managers;
+
+public class Manager<TKey, TValue> : IManager<TKey, TValue>
+    where TKey : notnull
+    where TValue : Entity<TKey>, new() 
+{
+    protected readonly IMapper<TValue> Mapper;
+
+    public Manager(IMapper<TValue> mapper)
+    {
+        Mapper = mapper;
+    }
+
+    public bool Create(TKey key)
+    {
+        var old = Get(key);
+        if (old is not null) return false;
+        
+        Mapper.Insert(new TValue { Key = key });
+        return true;
+    }
+
+    public bool Update(TKey key, TValue value)
+    {
+        var old = Get(key);
+        if (old is null) return false;
+        
+        old.Fill(value);
+
+        Mapper.Update(value);
+        return true;
+    }
+
+    public bool Delete(TKey key)
+    {
+        var entity = Get(key);
+        if (entity is null) return false;
+
+        Mapper.Delete(entity);
+        return true;
+    }
+
+    public TValue? Get(TKey key)
+    {
+        return Mapper.FindSingle(entity => entity.Key!.Equals(key));
+    }
+
+    public IEnumerable<TValue> GetAll()
+    {
+        return Mapper.Find(_ => true);
+    }
+}

@@ -5,7 +5,6 @@ using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Logging;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
-using GraphManipulation.Models.Interfaces;
 
 namespace IntegrationTests.SystemTest.Tools;
 
@@ -20,21 +19,21 @@ public class TestResources
 
     protected static readonly DeleteCondition TestDeleteCondition = new()
     {
-        Name = "deleteConditionName",
+        Key = "deleteConditionName",
         Description = Description,
         Condition = Condition
     };
 
     protected static readonly DeleteCondition NewTestDeleteCondition = new()
     {
-        Name = TestDeleteCondition.GetName() + "NEW",
-        Description = TestDeleteCondition.GetDescription() + "NEW",
-        Condition = TestDeleteCondition.GetCondition() + "NEW"
+        Key= TestDeleteCondition.Key + "NEW",
+        Description = TestDeleteCondition.Description + "NEW",
+        Condition = TestDeleteCondition.Condition + "NEW"
     };
 
     protected static readonly Purpose TestPurpose = new()
     {
-        Name = "purposeName",
+        Key= "purposeName",
         Description = Description,
         DeleteConditions = new List<DeleteCondition>() {TestDeleteCondition},
         LegallyRequired = true,
@@ -43,19 +42,19 @@ public class TestResources
 
     protected static readonly Purpose NewTestPurpose = new()
     {
-        Name = TestPurpose.GetName() + "NEW",
-        Description = TestPurpose.GetDescription() + "NEW",
+        Key= TestPurpose.Key + "NEW",
+        Description = TestPurpose.Description + "NEW",
         DeleteConditions = new List<DeleteCondition>() {NewTestDeleteCondition},
-        LegallyRequired = !TestPurpose.GetLegallyRequired(),
+        LegallyRequired = !TestPurpose.LegallyRequired,
         Rules = new List<VacuumingRule>()
     };
 
     protected static readonly Purpose VeryNewTestPurpose = new()
     {
-        Name = TestPurpose.GetName() + "VERY_NEW",
-        Description = TestPurpose.GetDescription() + "VERY_NEW",
+        Key= TestPurpose.Key + "VERY_NEW",
+        Description = TestPurpose.Description + "VERY_NEW",
         DeleteConditions = new List<DeleteCondition>() {NewTestDeleteCondition},
-        LegallyRequired = !NewTestPurpose.GetLegallyRequired(),
+        LegallyRequired = !NewTestPurpose.LegallyRequired,
         Rules = new List<VacuumingRule>()
     };
 
@@ -87,21 +86,21 @@ public class TestResources
 
     protected static readonly Processing TestProcessing = new()
     {
-        Name = "ProcessingName", Description = "ProcessingDescription",
+        Key= "ProcessingName", Description = "ProcessingDescription",
         PersonalDataColumn = TestPersonalDataColumn,
         Purpose = TestPurpose
     };
 
     protected static readonly Processing NewTestProcessing = new()
     {
-        Name = "NewProcessingName", Description = "NewProcessingDescription",
+        Key= "NewProcessingName", Description = "NewProcessingDescription",
         PersonalDataColumn = TestPersonalDataColumn,
         Purpose = TestPurpose
     };
 
     protected static readonly Origin TestOrigin = new()
     {
-        Name = "originName",
+        Key = "originName",
         Description = Description,
         PersonalDataColumns = new List<PersonalDataColumn>()
     };
@@ -123,7 +122,7 @@ public class TestResources
 
     protected static readonly VacuumingRule TestVacuumingRule = new()
     {
-        Name = "vacuumingRule",
+        Key= "vacuumingRule",
         Description = Description,
         Interval = "2h 4d",
         Purposes = new List<Purpose> {TestPurpose}
@@ -131,49 +130,49 @@ public class TestResources
 
     protected static readonly VacuumingRule UpdatedTestVacuumingRule = new()
     {
-        Name = TestVacuumingRule.GetName() + "UPDATED",
-        Description = TestVacuumingRule.GetDescription() + "NEW",
-        Interval = TestVacuumingRule.GetInterval() + "6h",
+        Key= TestVacuumingRule.Key + "UPDATED",
+        Description = TestVacuumingRule.Description + "NEW",
+        Interval = TestVacuumingRule.Interval + "6h",
         Purposes = new List<Purpose> {TestPurpose}
     };
 
-    protected static void AddDeleteCondition(TestProcess testProcess, IDeleteCondition deleteCondition)
+    protected static void AddDeleteCondition(TestProcess testProcess, DeleteCondition deleteCondition)
     {
-        var addDeleteConditionCommand = $"{CommandNamer.DeleteConditionName} {CommandNamer.Add} " +
-                                        $"{OptionNamer.Name} {deleteCondition.GetName()} " +
-                                        $"{OptionNamer.Condition} \"{deleteCondition.GetCondition()}\" " +
-                                        $"{OptionNamer.Description} \"{deleteCondition.GetDescription()}\"";
+        var addDeleteConditionCommand = $"{CommandNamer.DeleteConditionsName} {CommandNamer.Create} " +
+                                        $"{OptionNamer.Name} {deleteCondition.Key} " +
+                                        $"{OptionNamer.Condition} \"{deleteCondition.Condition}\" " +
+                                        $"{OptionNamer.Description} \"{deleteCondition.Description}\"";
 
         testProcess.GiveInput(addDeleteConditionCommand);
     }
 
-    protected static void AddPurpose(TestProcess testProcess, IPurpose purpose)
+    protected static void AddPurpose(TestProcess testProcess, Purpose purpose)
     {
-        var addPurposeCommand = $"{CommandNamer.PurposesName} {CommandNamer.Add} " +
-                                $"{OptionNamer.Name} {purpose.GetName()} " +
-                                $"{OptionNamer.Description} \"{purpose.GetDescription()}\" " +
-                                $"{OptionNamer.DeleteConditionName} {purpose.GetDeleteCondition()} " +
-                                $"{OptionNamer.LegallyRequired} {purpose.GetLegallyRequired()} ";
+        var addPurposeCommand = $"{CommandNamer.PurposesName} {CommandNamer.Create} " +
+                                $"{OptionNamer.Name} {purpose.Key} " +
+                                $"{OptionNamer.Description} \"{purpose.Description}\" " +
+                                $"{OptionNamer.DeleteConditionName} {purpose.DeleteConditions} " +
+                                $"{OptionNamer.LegallyRequired} {purpose.LegallyRequired} ";
 
         testProcess.GiveInput(addPurposeCommand);
     }
 
-    protected static void ShowPurpose(TestProcess testProcess, IPurpose purpose)
+    protected static void ShowPurpose(TestProcess testProcess, Purpose purpose)
     {
         var showPurposeCommand = $"{CommandNamer.PurposesName} {CommandNamer.Show} " +
-                                 $"{OptionNamer.Name} {purpose.GetName()}";
+                                 $"{OptionNamer.Name} {purpose.Key}";
 
         testProcess.GiveInput(showPurposeCommand);
     }
 
-    protected static void UpdatePurpose(TestProcess testProcess, IPurpose old, IPurpose updated)
+    protected static void UpdatePurpose(TestProcess testProcess, Purpose old, Purpose updated)
     {
         var updatePurposeCommand = $"{CommandNamer.PurposesName} {CommandNamer.Update} " +
-                                   $"{OptionNamer.Name} {old.GetName()} " +
-                                   $"{OptionNamer.Description} \"{updated.GetDescription()}\" " +
-                                   $"{OptionNamer.LegallyRequired} {updated.GetLegallyRequired()} " +
-                                   $"{OptionNamer.DeleteConditionName} {updated.GetDeleteCondition()} " +
-                                   $"{OptionNamer.NewName} {updated.GetName()}";
+                                   $"{OptionNamer.Name} {old.Key} " +
+                                   $"{OptionNamer.Description} \"{updated.Description}\" " +
+                                   $"{OptionNamer.LegallyRequired} {updated.LegallyRequired} " +
+                                   $"{OptionNamer.DeleteConditionName} {updated.DeleteConditions} " +
+                                   $"{OptionNamer.NewName} {updated.Key}";
 
         testProcess.GiveInput(updatePurposeCommand);
     }
@@ -183,44 +182,44 @@ public class TestResources
         testProcess.GiveInput($"{CommandNamer.PurposesName} {CommandNamer.List}");
     }
 
-    protected static void DeletePurpose(TestProcess testProcess, IPurpose purpose)
+    protected static void DeletePurpose(TestProcess testProcess, Purpose purpose)
     {
         var deleteCommand = $"{CommandNamer.PurposesName} {CommandNamer.Delete} " +
-                            $"{OptionNamer.Name} {purpose.GetName()}";
+                            $"{OptionNamer.Name} {purpose.Key}";
         testProcess.GiveInput(deleteCommand);
     }
 
     protected static void ListDeletionConditions(TestProcess process)
     {
-        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.List}");
+        process.GiveInput($"{CommandNamer.DeleteConditionsAlias} {CommandNamer.List}");
     }
 
-    protected static void UpdateDeletionCondition(TestProcess process, IDeleteCondition old,
-        IDeleteCondition newDeletionCondition)
+    protected static void UpdateDeletionCondition(TestProcess process, DeleteCondition old,
+        DeleteCondition newDeletionCondition)
     {
         string command =
-            $"{CommandNamer.DeleteConditionAlias} {CommandNamer.UpdateAlias} {OptionNamer.NameAlias} {old.GetName()}  {OptionNamer.NewNameAlias}  {newDeletionCondition.GetName()}" +
-            $" {OptionNamer.Condition} \"{newDeletionCondition.GetCondition()}\"" +
-            $" {OptionNamer.Description} \"{newDeletionCondition.GetDescription()}\"";
+            $"{CommandNamer.DeleteConditionsAlias} {CommandNamer.UpdateAlias} {OptionNamer.NameAlias} {old.Key}  {OptionNamer.NewNameAlias}  {newDeletionCondition.Key}" +
+            $" {OptionNamer.Condition} \"{newDeletionCondition.Condition}\"" +
+            $" {OptionNamer.Description} \"{newDeletionCondition.Description}\"";
         process.GiveInput(command);
     }
 
-    protected static void DeleteDeletionCondition(TestProcess process, IDeleteCondition deleteCondition)
+    protected static void DeleteDeletionCondition(TestProcess process, DeleteCondition deleteCondition)
     {
-        process.GiveInput($"{CommandNamer.DeleteConditionAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name}" +
-                          $" {deleteCondition.GetName()}");
+        process.GiveInput($"{CommandNamer.DeleteConditionsAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name}" +
+                          $" {deleteCondition.Key}");
     }
 
-    protected static void ShowDeleteCondition(TestProcess process, IDeleteCondition deleteCondition)
+    protected static void ShowDeleteCondition(TestProcess process, DeleteCondition deleteCondition)
     {
         process.GiveInput(
-            $"{CommandNamer.DeleteConditionAlias} {CommandNamer.ShowAlias} -n {deleteCondition.GetName()}");
+            $"{CommandNamer.DeleteConditionsAlias} {CommandNamer.ShowAlias} -n {deleteCondition.Key}");
     }
 
-    protected static void AddOrigin(TestProcess testProcess, IOrigin origin)
+    protected static void AddOrigin(TestProcess testProcess, Origin origin)
     {
         string command =
-            $"{CommandNamer.OriginsAlias} {CommandNamer.AddAlias} {OptionNamer.Name} {origin.GetName()} {OptionNamer.Description} \"{origin.GetDescription()}\"";
+            $"{CommandNamer.OriginsAlias} {CommandNamer.CreateAlias} {OptionNamer.Name} {origin.Key} {OptionNamer.Description} \"{origin.Description}\"";
         testProcess.GiveInput(command);
     }
 
@@ -229,32 +228,32 @@ public class TestResources
         process.GiveInput($"{CommandNamer.OriginsAlias} {CommandNamer.List}");
     }
 
-    protected static void UpdateOrigin(TestProcess process, IOrigin old, IOrigin newOrigin)
+    protected static void UpdateOrigin(TestProcess process, Origin old, Origin newOrigin)
     {
         string command = $"{CommandNamer.OriginsAlias} {CommandNamer.UpdateAlias} {OptionNamer.Name} " +
-                         $"{old.GetName()} {OptionNamer.NewName} {newOrigin.GetName()} {OptionNamer.Description} \"{newOrigin.GetDescription()}\"";
+                         $"{old.Key} {OptionNamer.NewName} {newOrigin.Key} {OptionNamer.Description} \"{newOrigin.Description}\"";
         process.GiveInput(command);
     }
 
-    protected static void DeleteOrigin(TestProcess process, IOrigin origin)
+    protected static void DeleteOrigin(TestProcess process, Origin origin)
     {
         process.GiveInput(
-            $"{CommandNamer.OriginsAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name} {origin.GetName()}");
+            $"{CommandNamer.OriginsAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name} {origin.Key}");
     }
 
-    protected static void ShowOrigin(TestProcess process, IOrigin origin)
+    protected static void ShowOrigin(TestProcess process, Origin origin)
     {
         process.GiveInput(
-            $"{CommandNamer.OriginsAlias} {CommandNamer.ShowAlias} {OptionNamer.Name} {origin.GetName()}");
+            $"{CommandNamer.OriginsAlias} {CommandNamer.ShowAlias} {OptionNamer.Name} {origin.Key}");
     }
 
-    protected static void AddProcessing(TestProcess process, IProcessing processing)
+    protected static void AddProcessing(TestProcess process, Processing processing)
     {
         string command =
-            $"{CommandNamer.ProcessingsName} {CommandNamer.Add} {OptionNamer.Name} {processing.GetName()}" +
-            $" {OptionNamer.Description} {processing.GetDescription()}" +
-            $" {OptionNamer.TableColumn} {processing.GetPersonalDataTableColumnPair().TableName} {processing.GetPersonalDataTableColumnPair().ColumnName}" +
-            $" {OptionNamer.Purpose} {processing.GetPurpose().GetName()}";
+            $"{CommandNamer.ProcessingsName} {CommandNamer.Create} {OptionNamer.Name} {processing.Key}" +
+            $" {OptionNamer.Description} {processing.Description}" +
+            $" {OptionNamer.TableColumn} {processing.PersonalDataColumn.TableColumnPair.TableName} {processing.PersonalDataColumn.TableColumnPair.ColumnName}" +
+            $" {OptionNamer.Purpose} {processing.Purpose.Key}";
         process.GiveInput(command);
     }
 
@@ -264,55 +263,55 @@ public class TestResources
         process.GiveInput(command);
     }
 
-    protected static void UpdateProcessing(TestProcess process, IProcessing old, IProcessing newProcess)
+    protected static void UpdateProcessing(TestProcess process, Processing old, Processing newProcess)
     {
         string command =
-            $"{CommandNamer.ProcessingsAlias} {CommandNamer.UpdateAlias} {OptionNamer.Name} {old.GetName()}" +
-            $" {OptionNamer.NewNameAlias} {newProcess.GetName()}" +
-            $" {OptionNamer.Description} {newProcess.GetDescription()}";
+            $"{CommandNamer.ProcessingsAlias} {CommandNamer.UpdateAlias} {OptionNamer.Name} {old.Key}" +
+            $" {OptionNamer.NewNameAlias} {newProcess.Key}" +
+            $" {OptionNamer.Description} {newProcess.Description}";
         process.GiveInput(command);
     }
 
-    protected static void DeleteProcessing(TestProcess process, IProcessing processing)
+    protected static void DeleteProcessing(TestProcess process, Processing processing)
     {
         string command =
-            $"{CommandNamer.ProcessingsAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name} {processing.GetName()}";
+            $"{CommandNamer.ProcessingsAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name} {processing.Key}";
         process.GiveInput(command);
     }
 
-    protected static void ShowProcessing(TestProcess process, IProcessing processing)
+    protected static void ShowProcessing(TestProcess process, Processing processing)
     {
         string command =
-            $"{CommandNamer.ProcessingsAlias} {CommandNamer.ShowAlias} {OptionNamer.Name} {processing.GetName()}";
+            $"{CommandNamer.ProcessingsAlias} {CommandNamer.ShowAlias} {OptionNamer.Name} {processing.Key}";
         process.GiveInput(command);
     }
 
-    protected static void AddPersonalData(TestProcess process, IPersonalDataColumn personalDataColumn)
+    protected static void AddPersonalData(TestProcess process, PersonalDataColumn personalDataColumn)
     {
-        var command = $"{CommandNamer.PersonalDataAlias} {CommandNamer.AddAlias}" +
-                      $" {OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} {personalDataColumn.GetTableColumnPair().ColumnName}" +
-                      $" {OptionNamer.DefaultValueAlias} \"{personalDataColumn.GetDefaultValue()}\"" +
-                      $" {OptionNamer.Description} \"{personalDataColumn.GetDescription()}\"" +
-                      $" {OptionNamer.PurposeList} {string.Join(" ", personalDataColumn.GetPurposes().Select(p => p.GetName()))}";
+        var command = $"{CommandNamer.PersonalDataAlias} {CommandNamer.CreateAlias}" +
+                      $" {OptionNamer.TableColumn} {personalDataColumn.TableColumnPair.TableName} {personalDataColumn.TableColumnPair.ColumnName}" +
+                      $" {OptionNamer.DefaultValueAlias} \"{personalDataColumn.DefaultValue}\"" +
+                      $" {OptionNamer.Description} \"{personalDataColumn.Description}\"" +
+                      $" {OptionNamer.PurposeList} {string.Join(" ", personalDataColumn.Purposes.Select(p => p.Key))}";
         process.GiveInput(command);
     }
 
-    protected static void UpdatePersonalData(TestProcess testProcess, IPersonalDataColumn old,
-        IPersonalDataColumn updated)
+    protected static void UpdatePersonalData(TestProcess testProcess, PersonalDataColumn old,
+        PersonalDataColumn updated)
     {
         var command = $"{CommandNamer.PersonalDataName} {CommandNamer.Update} " +
-                      $"{OptionNamer.TableColumn} {old.GetTableColumnPair().TableName} {old.GetTableColumnPair().ColumnName} " +
-                      $"{OptionNamer.DefaultValue} \"{updated.GetDefaultValue()}\" " +
-                      $"{OptionNamer.Description} \"{updated.GetDescription()}\" ";
+                      $"{OptionNamer.TableColumn} {old.TableColumnPair.TableName} {old.TableColumnPair.ColumnName} " +
+                      $"{OptionNamer.DefaultValue} \"{updated.DefaultValue}\" " +
+                      $"{OptionNamer.Description} \"{updated.Description}\" ";
 
         testProcess.GiveInput(command);
     }
 
-    protected static void ShowPersonalData(TestProcess testProcess, IPersonalDataColumn personalDataColumn)
+    protected static void ShowPersonalData(TestProcess testProcess, PersonalDataColumn personalDataColumn)
     {
         var command = $"{CommandNamer.PersonalDataName} {CommandNamer.Show} " +
-                      $"{OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} " +
-                      $"{personalDataColumn.GetTableColumnPair().ColumnName} ";
+                      $"{OptionNamer.TableColumn} {personalDataColumn.TableColumnPair.TableName} " +
+                      $"{personalDataColumn.TableColumnPair.ColumnName} ";
 
         testProcess.GiveInput(command);
     }
@@ -323,53 +322,53 @@ public class TestResources
         testProcess.GiveInput(command);
     }
 
-    protected static void DeletePersonalData(TestProcess testProcess, IPersonalDataColumn personalDataColumn)
+    protected static void DeletePersonalData(TestProcess testProcess, PersonalDataColumn personalDataColumn)
     {
         var command = $"{CommandNamer.PersonalDataName} {CommandNamer.Delete} " +
-                      $"{OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} " +
-                      $"{personalDataColumn.GetTableColumnPair().ColumnName} ";
+                      $"{OptionNamer.TableColumn} {personalDataColumn.TableColumnPair.TableName} " +
+                      $"{personalDataColumn.TableColumnPair.ColumnName} ";
         testProcess.GiveInput(command);
     }
 
-    protected static void AddPurposesToPersonalData(TestProcess testProcess, IPersonalDataColumn personalDataColumn,
-        IEnumerable<IPurpose> purposes)
+    protected static void AddPurposesToPersonalData(TestProcess testProcess, PersonalDataColumn personalDataColumn,
+        IEnumerable<Purpose> purposes)
     {
         var command = $"{CommandNamer.PersonalDataName} {CommandNamer.AddPurpose} " +
-                      $"{OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} " +
-                      $"{personalDataColumn.GetTableColumnPair().ColumnName} " +
-                      $"{OptionNamer.PurposeList} {string.Join(" ", purposes.Select(p => p.GetName()))}";
+                      $"{OptionNamer.TableColumn} {personalDataColumn.TableColumnPair.TableName} " +
+                      $"{personalDataColumn.TableColumnPair.ColumnName} " +
+                      $"{OptionNamer.PurposeList} {string.Join(" ", purposes.Select(p => p.Key))}";
         testProcess.GiveInput(command);
     }
 
     protected static void RemovePurposesFromPersonalData(TestProcess testProcess,
-        IPersonalDataColumn personalDataColumn,
-        IEnumerable<IPurpose> purposes)
+        PersonalDataColumn personalDataColumn,
+        IEnumerable<Purpose> purposes)
     {
         var command = $"{CommandNamer.PersonalDataName} {CommandNamer.RemovePurpose} " +
-                      $"{OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} " +
-                      $"{personalDataColumn.GetTableColumnPair().ColumnName} " +
-                      $"{OptionNamer.PurposeList} {string.Join(" ", purposes.Select(p => p.GetName()))}";
+                      $"{OptionNamer.TableColumn} {personalDataColumn.TableColumnPair.TableName} " +
+                      $"{personalDataColumn.TableColumnPair.ColumnName} " +
+                      $"{OptionNamer.PurposeList} {string.Join(" ", purposes.Select(p => p.Key))}";
         testProcess.GiveInput(command);
     }
 
-    protected static void SetOriginOfPersonalData(TestProcess testProcess, IPersonalDataColumn personalDataColumn,
-        IIndividual individual, IOrigin origin)
+    protected static void SetOriginOfPersonalData(TestProcess testProcess, PersonalDataColumn personalDataColumn,
+        Individual individual, Origin origin)
     {
         var command = $"{CommandNamer.PersonalDataName} {CommandNamer.SetOrigin} " +
-                      $"{OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} " +
-                      $"{personalDataColumn.GetTableColumnPair().ColumnName} " +
+                      $"{OptionNamer.TableColumn} {personalDataColumn.TableColumnPair.TableName} " +
+                      $"{personalDataColumn.TableColumnPair.ColumnName} " +
                       $"{OptionNamer.Id} {individual.ToListing()} " +
-                      $"{OptionNamer.Origin} {origin.GetName()}";
+                      $"{OptionNamer.Origin} {origin.Key}";
 
         testProcess.GiveInput(command);
     }
 
-    protected static void ShowOriginOfPersonalData(TestProcess testProcess, IPersonalDataColumn personalDataColumn,
-        IIndividual individual)
+    protected static void ShowOriginOfPersonalData(TestProcess testProcess, PersonalDataColumn personalDataColumn,
+        Individual individual)
     {
         var command = $"{CommandNamer.PersonalDataName} {CommandNamer.ShowOrigin} " +
-                      $"{OptionNamer.TableColumn} {personalDataColumn.GetTableColumnPair().TableName} " +
-                      $"{personalDataColumn.GetTableColumnPair().ColumnName} " +
+                      $"{OptionNamer.TableColumn} {personalDataColumn.TableColumnPair.TableName} " +
+                      $"{personalDataColumn.TableColumnPair.ColumnName} " +
                       $"{OptionNamer.Id} {individual.ToListing()} ";
 
         testProcess.GiveInput(command);
@@ -394,30 +393,30 @@ public class TestResources
         testProcess.GiveInput(command);
     }
 
-    protected static void AddVacuumingRule(TestProcess testProcess, IVacuumingRule vacuumingRule)
+    protected static void AddVacuumingRule(TestProcess testProcess, VacuumingRule vacuumingRule)
     {
-        var command = $"{CommandNamer.VacuumingRulesName} {CommandNamer.Add} " +
-                      $"{OptionNamer.Name} {vacuumingRule.GetName()} " +
-                      $"{OptionNamer.Interval} \"{vacuumingRule.GetInterval()}\" " +
-                      $"{OptionNamer.Purpose} {vacuumingRule.GetPurposes().First().ToListingIdentifier()} " +
-                      $"{OptionNamer.Description} \"{vacuumingRule.GetDescription()}\"";
+        var command = $"{CommandNamer.VacuumingRulesName} {CommandNamer.Create} " +
+                      $"{OptionNamer.Name} {vacuumingRule.Key} " +
+                      $"{OptionNamer.Interval} \"{vacuumingRule.Interval}\" " +
+                      $"{OptionNamer.Purpose} {vacuumingRule.Purposes.First().ToListingIdentifier()} " +
+                      $"{OptionNamer.Description} \"{vacuumingRule.Description}\"";
         testProcess.GiveInput(command);
     }
 
-    protected static void UpdateVacuumingRule(TestProcess testProcess, IVacuumingRule old, IVacuumingRule updated)
+    protected static void UpdateVacuumingRule(TestProcess testProcess, VacuumingRule old, VacuumingRule updated)
     {
         var command = $"{CommandNamer.VacuumingRulesName} {CommandNamer.Update} " +
-                      $"{OptionNamer.Name} {old.GetName()} " +
-                      $"{OptionNamer.NewName} {updated.GetName()} " +
-                      $"{OptionNamer.Interval} \"{updated.GetInterval()}\" " +
-                      $"{OptionNamer.Description} \"{updated.GetDescription()}\"";
+                      $"{OptionNamer.Name} {old.Key} " +
+                      $"{OptionNamer.NewName} {updated.Key} " +
+                      $"{OptionNamer.Interval} \"{updated.Interval}\" " +
+                      $"{OptionNamer.Description} \"{updated.Description}\"";
         testProcess.GiveInput(command);
     }
 
-    protected static void ShowVacuumingRule(TestProcess testProcess, IVacuumingRule vacuumingRule)
+    protected static void ShowVacuumingRule(TestProcess testProcess, VacuumingRule vacuumingRule)
     {
         var command = $"{CommandNamer.VacuumingRulesName} {CommandNamer.Show} " +
-                      $"{OptionNamer.Name} {vacuumingRule.GetName()}";
+                      $"{OptionNamer.Name} {vacuumingRule.Key}";
         testProcess.GiveInput(command);
     }
 
@@ -427,35 +426,35 @@ public class TestResources
         testProcess.GiveInput(command);
     }
 
-    protected static void DeleteVacuumingRule(TestProcess testProcess, IVacuumingRule vacuumingRule)
+    protected static void DeleteVacuumingRule(TestProcess testProcess, VacuumingRule vacuumingRule)
     {
         var command = $"{CommandNamer.VacuumingRulesName} {CommandNamer.Delete} " +
-                      $"{OptionNamer.Name} {vacuumingRule.GetName()}";
+                      $"{OptionNamer.Name} {vacuumingRule.Key}";
         testProcess.GiveInput(command);
     }
 
-    protected static void ExecuteVacuumingRule(TestProcess testProcess, IEnumerable<IVacuumingRule> vacuumingRules)
+    protected static void ExecuteVacuumingRule(TestProcess testProcess, IEnumerable<VacuumingRule> vacuumingRules)
     {
         var command = $"{CommandNamer.VacuumingRulesName} {CommandNamer.Execute} " +
-                      $"{OptionNamer.Rules} {string.Join(" ", vacuumingRules.Select(p => p.GetName()))}";
+                      $"{OptionNamer.Rules} {string.Join(" ", vacuumingRules.Select(p => p.Key))}";
         testProcess.GiveInput(command);
     }
 
-    protected static void AddPurposesToVacuumingRule(TestProcess testProcess, IVacuumingRule vacuumingRule,
-        IEnumerable<IPurpose> purposes)
+    protected static void AddPurposesToVacuumingRule(TestProcess testProcess, VacuumingRule vacuumingRule,
+        IEnumerable<Purpose> purposes)
     {
         var command = $"{CommandNamer.VacuumingRulesName} {CommandNamer.AddPurpose} " +
-                      $"{OptionNamer.Name} {vacuumingRule.GetName()} " +
-                      $"{OptionNamer.PurposeList} {string.Join(" ", purposes.Select(p => p.GetName()))}";
+                      $"{OptionNamer.Name} {vacuumingRule.Key} " +
+                      $"{OptionNamer.PurposeList} {string.Join(" ", purposes.Select(p => p.Key))}";
         testProcess.GiveInput(command);
     }
 
-    protected static void RemovePurposesFromVacuumingRule(TestProcess testProcess, IVacuumingRule vacuumingRule,
-        IEnumerable<IPurpose> purposes)
+    protected static void RemovePurposesFromVacuumingRule(TestProcess testProcess, VacuumingRule vacuumingRule,
+        IEnumerable<Purpose> purposes)
     {
         var command = $"{CommandNamer.VacuumingRulesName} {CommandNamer.RemovePurpose} " +
-                      $"{OptionNamer.Name} {vacuumingRule.GetName()} " +
-                      $"{OptionNamer.PurposeList} {string.Join(" ", purposes.Select(p => p.GetName()))}";
+                      $"{OptionNamer.Name} {vacuumingRule.Key} " +
+                      $"{OptionNamer.PurposeList} {string.Join(" ", purposes.Select(p => p.Key))}";
         testProcess.GiveInput(command);
     }
 
@@ -480,30 +479,30 @@ public class TestResources
 
     protected static void AddLogEntryOrigin(TestProcess testProcess, string name)
     {
-        var command = $"{CommandNamer.OriginsName} {CommandNamer.Add} {OptionNamer.Name} {name}";
+        var command = $"{CommandNamer.OriginsName} {CommandNamer.Create} {OptionNamer.Name} {name}";
         testProcess.GiveInput(command);
     }
 
-    protected static void InsertIndividual(IDbConnection dbConnection, IIndividual individual)
+    protected static void InsertIndividual(IDbConnection dbConnection, Individual individual)
     {
         dbConnection.Execute($"INSERT INTO {IndividualsTable} ({IndividualsColumn}) VALUES ({individual.ToListing()})");
     }
 
-    protected static void CreatePersonalDataTable(IDbConnection dbConnection, IPersonalDataColumn personalDataColumn)
+    protected static void CreatePersonalDataTable(IDbConnection dbConnection, PersonalDataColumn personalDataColumn)
     {
-        var createTable = @$"CREATE TABLE IF NOT EXISTS {personalDataColumn.GetTableColumnPair().TableName} (
+        var createTable = @$"CREATE TABLE IF NOT EXISTS {personalDataColumn.TableColumnPair.TableName} (
             Id INTEGER PRIMARY KEY,
-            {personalDataColumn.GetTableColumnPair().ColumnName} VARCHAR
+            {personalDataColumn.TableColumnPair.ColumnName} VARCHAR
         );";
 
         dbConnection.Execute(createTable);
     }
 
-    protected static void InsertPersonalData(IDbConnection dbConnection, IPersonalDataColumn personalDataColumn,
-        IIndividual individual, string value)
+    protected static void InsertPersonalData(IDbConnection dbConnection, PersonalDataColumn personalDataColumn,
+        Individual individual, string value)
     {
         var query = $"INSERT INTO " +
-                    $"{personalDataColumn.GetTableColumnPair().TableName} (Id, {personalDataColumn.GetTableColumnPair().ColumnName}) " +
+                    $"{personalDataColumn.TableColumnPair.TableName} (Id, {personalDataColumn.TableColumnPair.ColumnName}) " +
                     $"VALUES ({individual.ToListing()}, '{value}')";
         dbConnection.Execute(query);
     }

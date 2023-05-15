@@ -9,14 +9,14 @@ public static class LoggingCommandBuilder
 {
     private static ArgumentArity ExactlyTwo => new(2, 2);
 
-    public static Command Build(IConsole console, ILogger logger)
+    public static Command Build(ILogger logger)
     {
-        return CommandBuilder.CreateCommand(CommandNamer.LoggingName)
+        return CommandBuilder.CreateNewCommand(CommandNamer.LoggingName)
             .WithAlias(CommandNamer.LoggingAlias)
-            .WithSubCommands(ListLog(console, logger));
+            .WithSubCommands(ListLog(logger));
     }
 
-    private static Command ListLog(IConsole console, ILogger logger)
+    private static Command ListLog(ILogger logger)
     {
         return CommandBuilder
             .BuildListCommand()
@@ -42,8 +42,8 @@ public static class LoggingCommandBuilder
                     messageFormats.ToList(), limit);
 
                  var result = logger.Read(constraints).ToList();
-                console.Write(string.Join(Environment.NewLine, result));
-                console.WriteLine($"{Environment.NewLine}Showing " + (result.Count < limit ? $"all {result.Count}" : $"newest {limit}")  + " log entries");
+                Console.Write(string.Join(Environment.NewLine, result));
+                Console.WriteLine($"{Environment.NewLine}Showing " + (result.Count < limit ? $"all {result.Count}" : $"newest {limit}")  + " log entries");
             });
     }
 

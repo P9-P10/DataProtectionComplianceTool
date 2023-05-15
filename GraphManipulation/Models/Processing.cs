@@ -1,43 +1,29 @@
-﻿using GraphManipulation.Managers;
-using GraphManipulation.Managers.Interfaces.Base;
-using GraphManipulation.Models.Interfaces;
-using GraphManipulation.Models.Interfaces.Base;
+﻿using GraphManipulation.Models.Base;
 
 namespace GraphManipulation.Models;
 
-public class Processing : DomainEntity, IProcessing
+public class Processing : Entity<string>
 {
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public virtual Purpose Purpose { get; set; }
-    public virtual PersonalDataColumn PersonalDataColumn { get; set; }
-    public string ToListing()
+    public virtual Purpose? Purpose { get; set; }
+    public virtual PersonalDataColumn? PersonalDataColumn { get; set; }
+    public override string ToListing()
     {
-        return string.Join(", ", Name, Description, Purpose.ToListingIdentifier(), PersonalDataColumn.TableColumnPair.ToListingIdentifier());
+        return string.Join(", ", base.ToListing(), Purpose?.ToListingIdentifier(),
+            PersonalDataColumn?.ToListingIdentifier());
     }
-
-    public string ToListingIdentifier()
-    {
-        return GetName();
-    }
-
-    public string GetName()
-    {
-        return Name;
-    }
-
-    public string GetDescription()
-    {
-        return Description;
-    }
-
-    public IPurpose GetPurpose()
-    {
-        return Purpose;
-    }
-
-    public TableColumnPair GetPersonalDataTableColumnPair()
-    {
-        return PersonalDataColumn.TableColumnPair;
-    }
+    
+    // public override void Fill(object? other)
+    // {
+    //     if (other is null || other.GetType() != typeof(Processing))
+    //     {
+    //         return;
+    //     }
+    //     
+    //     base.Fill(other);
+    //
+    //     var otherProcessing = (other as Processing)!;
+    //     
+    //     otherProcessing.Purpose ??= Purpose;
+    //     otherProcessing.PersonalDataColumn ??= PersonalDataColumn;
+    // }
 }

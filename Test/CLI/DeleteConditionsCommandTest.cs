@@ -2,7 +2,7 @@ using System.CommandLine;
 using System.CommandLine.IO;
 using FluentAssertions;
 using GraphManipulation.Commands.Builders;
-using GraphManipulation.Managers.Interfaces;
+using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Models;
 using Moq;
 using Xunit;
@@ -11,10 +11,10 @@ namespace Test.CLI;
 
 public class DeleteConditionsCommandTest : CommandTest
 {
-    private static Command BuildCli(out Mock<IDeleteConditionsManager> managerMock, out IConsole console)
+    private static Command BuildCli(out Mock<Manager<DeleteCondition>> managerMock, out IConsole console)
     {
         console = new TestConsole();
-        managerMock = new Mock<IDeleteConditionsManager>();
+        managerMock = new Mock<Manager<DeleteCondition>>();
 
         managerMock
             .Setup(manager => manager.Get(It.Is<string>(s => s == DeleteConditionName)))
@@ -33,9 +33,9 @@ public class DeleteConditionsCommandTest : CommandTest
     private const string Description = "This is a description";
     private const string Condition = "This is a condition";
 
-    public class Add
+    public class Create
     {
-        private const string CommandName = "add";
+        private const string CommandName = CommandNamer.Create;
         
         [Fact]
         public void Parses()
@@ -65,7 +65,7 @@ public class DeleteConditionsCommandTest : CommandTest
     
     public class Update
     {
-        private const string CommandName = "update";
+        private const string CommandName = CommandNamer.Update;
         
         [Fact]
         public void Parses()
@@ -102,7 +102,7 @@ public class DeleteConditionsCommandTest : CommandTest
     
     public class Delete
     {
-        private const string CommandName = "delete";
+        private const string CommandName = CommandNamer.Delete;
         
         [Fact]
         public void Parses()
@@ -122,7 +122,7 @@ public class DeleteConditionsCommandTest : CommandTest
     
     public class List
     {
-        private const string CommandName = "list";
+        private const string CommandName = CommandNamer.List;
         
         [Fact]
         public void Parses()
@@ -142,7 +142,7 @@ public class DeleteConditionsCommandTest : CommandTest
     
     public class Show
     {
-        private const string CommandName = "show";
+        private const string CommandName = CommandNamer.Show;
         
         [Fact]
         public void Parses()

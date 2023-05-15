@@ -1,68 +1,36 @@
-using GraphManipulation.Models.Interfaces;
+using GraphManipulation.Models.Base;
 
 namespace GraphManipulation.Models;
 
-public class Purpose : DomainEntity, IPurpose
+public class Purpose : Entity<string>
 {
     public bool LegallyRequired { get; set; }
-
+    public virtual IEnumerable<PersonalDataColumn>? PersonalDataColumns { get; set; }
     public virtual IEnumerable<DeleteCondition>? DeleteConditions { get; set; }
-    public string? Description { get; set; }
-    public string Name { get; set; }
     public virtual IEnumerable<VacuumingRule>? Rules { get; set; }
 
-    public string ToListing()
+    public override string ToListing()
     {
-        return string.Join(", ",
-            Name,
-            Description,
-            LegallyRequired,
-            "[ " + string.Join(", ",
-                DeleteConditions is null ? new List<string>() : DeleteConditions.Select(r => r.ToListingIdentifier())) +
-            " ]",
-            "[ " + string.Join(", ", Rules is null ? new List<string>() : Rules.Select(r => r.ToListingIdentifier())) +
-            " ]"
+        return string.Join(", ", base.ToListing(), LegallyRequired,
+            "[ " + string.Join(", ", DeleteConditions is null ? new List<string>() : DeleteConditions.Select(c => c.ToListingIdentifier())) + " ]",
+            "[ " + string.Join(", ", PersonalDataColumns is null ? new List<string>() : PersonalDataColumns.Select(c => c.ToListingIdentifier())) + " ]",
+            "[ " + string.Join(", ", Rules is null ? new List<string>() : Rules.Select(r => r.ToListingIdentifier())) + " ]"
         );
     }
-
-    public string ToListingIdentifier()
-    {
-        return GetName();
-    }
-
-    public string GetName()
-    {
-        return Name;
-    }
-
-    public string GetDescription()
-    {
-        return Description ?? "";
-    }
-
-    public bool GetLegallyRequired()
-    {
-        return LegallyRequired;
-    }
-
-    public IEnumerable<string> GetDeleteCondition()
-    {
-        return DeleteConditions == null ? new List<string>() : DeleteConditions.Select(p => p.GetName());
-    }
-
-
-    public override bool Equals(object? obj)
-    {
-        return Equals(obj as Purpose);
-    }
-
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(Name, Id, Description);
-    }
-
-    bool Equals(Purpose? other)
-    {
-        return other.Description == Description && other.Name == Name && other.Id == Id;
-    }
+    
+    // public override void Fill(object? other)
+    // {
+    //     if (other is null || other.GetType() != typeof(Purpose))
+    //     {
+    //         return;
+    //     }
+    //     
+    //     base.Fill(other);
+    //
+    //     var otherPurpose = (other as Purpose)!;
+    //     
+    //     otherPurpose.PersonalDataColumns ??= PersonalDataColumns;
+    //     otherPurpose.DeleteConditions ??= DeleteConditions;
+    //     otherPurpose.Rules ??= Rules;
+    // }
 }

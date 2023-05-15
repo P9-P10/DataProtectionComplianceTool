@@ -34,7 +34,7 @@ public class ProcessingTests : TestResources
 
         ListProcessing(process);
         List<string> result = process.GetLastOutput();
-        result.FindAll(s=>s.Contains(TestProcessing.Name) 
+        result.FindAll(s=>s.Contains(TestProcessing.Key) 
                           && s.Contains(TestProcessing.Description)).Should().ContainSingle();
     }
 
@@ -51,8 +51,8 @@ public class ProcessingTests : TestResources
         UpdateProcessing(process,TestProcessing,NewTestProcessing);
         
         List<string> result = process.GetLastOutput();
-        result[1].Should().Contain(TestProcessing.Name);
-        result[1].Should().Contain(NewTestProcessing.Name);
+        result[1].Should().Contain(TestProcessing.Key);
+        result[1].Should().Contain(NewTestProcessing.Key);
         result[1].Should().Contain("Successfully");
         result[1].Should().Contain("updated");
     }
@@ -71,7 +71,7 @@ public class ProcessingTests : TestResources
         
         ListProcessing(process);
         List<string> result = process.GetLastOutput();
-        result.FindAll(s=>s.Contains(NewTestProcessing.Name) 
+        result.FindAll(s=>s.Contains(NewTestProcessing.Key) 
                           && s.Contains(NewTestProcessing.Description)).Should().ContainSingle();
     }
 
@@ -89,7 +89,7 @@ public class ProcessingTests : TestResources
 
         List<string> result = process.GetLastOutput();
         result.First().Should().Contain("deleted");
-        result.First().Should().Contain(TestProcessing.Name);
+        result.First().Should().Contain(TestProcessing.Key);
 
     }
 
@@ -107,7 +107,7 @@ public class ProcessingTests : TestResources
         
         ListProcessing(process);
         List<string> result = process.GetLastOutput();
-        result.FindAll(s=>s.Contains(TestProcessing.Name) 
+        result.FindAll(s=>s.Contains(TestProcessing.Key) 
                           && s.Contains(TestProcessing.Description)).Should().BeEmpty();
     }
 
@@ -123,7 +123,7 @@ public class ProcessingTests : TestResources
 
         ShowProcessing(process,TestProcessing);
         List<string> result = process.GetLastOutput();
-        result.FindAll(s=>s.Contains(TestProcessing.Name) 
+        result.FindAll(s=>s.Contains(TestProcessing.Key) 
                           && s.Contains(TestProcessing.Description)).Should().ContainSingle();
     }
 }

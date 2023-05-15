@@ -13,7 +13,7 @@ public class DeletionConditionsTest : TestResources
         using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process,new DeleteCondition(){Name = "DeletionCondition",Condition = "Condition"});
+        AddDeleteCondition(process,new DeleteCondition(){Key = "DeletionCondition",Condition = "Condition"});
         string result = process.GetOutput();
 
         result.Should().Contain("Successfully added DeletionCondition delete condition with , Condition");
@@ -25,7 +25,7 @@ public class DeletionConditionsTest : TestResources
         using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process,new DeleteCondition(){Name = "DeletionCondition",Condition = "Condition"});
+        AddDeleteCondition(process,new DeleteCondition(){Key = "DeletionCondition",Condition = "Condition"});
         ListDeletionConditions(process);
         string result = process.GetOutput();
 
@@ -38,11 +38,11 @@ public class DeletionConditionsTest : TestResources
     {
         using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
-        DeleteCondition deleteCondition = new() {Name = "DeletionCondition", Condition = "Condition"};
+        DeleteCondition deleteCondition = new() {Key = "DeletionCondition", Condition = "Condition"};
         AddDeleteCondition(process,deleteCondition);
 
     
-        UpdateDeletionCondition(process,deleteCondition,new DeleteCondition(){Name = "NewName",Condition = Condition});
+        UpdateDeletionCondition(process,deleteCondition,new DeleteCondition(){Key = "NewName",Condition = Condition});
         
         ListDeletionConditions(process);
         List<string> result = process.GetLastOutput();
@@ -54,11 +54,11 @@ public class DeletionConditionsTest : TestResources
     {
         using TestProcess process = Tools.SystemTest.CreateTestProcess();
         process.Start();
-        DeleteCondition deleteCondition = new() {Name = "DeletionCondition", Condition = "Condition"};
+        DeleteCondition deleteCondition = new() {Key = "DeletionCondition", Condition = "Condition"};
         AddDeleteCondition(process,deleteCondition);
 
     
-        UpdateDeletionCondition(process,deleteCondition,new DeleteCondition(){Name = "NewName",Condition = "Condition",
+        UpdateDeletionCondition(process,deleteCondition,new DeleteCondition(){Key = "NewName",Condition = "Condition",
             Description = "This is the new description"});
         ListDeletionConditions(process);
         
@@ -71,11 +71,11 @@ public class DeletionConditionsTest : TestResources
     {
         using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
-        DeleteCondition deleteCondition = new() {Name = "DeletionCondition", Condition = "Condition"};
+        DeleteCondition deleteCondition = new() {Key = "DeletionCondition", Condition = "Condition"};
         AddDeleteCondition(process,deleteCondition);
 
         UpdateDeletionCondition(process,deleteCondition,
-            new DeleteCondition(){Name = "NewName",Condition = Condition,Description = "This is a new description"});
+            new DeleteCondition(){Key = "NewName",Condition = Condition,Description = "This is a new description"});
         ListDeletionConditions(process);
         string result = process.GetOutput();
         result.Should().Contain("NewName, This is a new description, TRUE");
@@ -86,7 +86,7 @@ public class DeletionConditionsTest : TestResources
     {
         using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
-        DeleteCondition deleteCondition = new() {Name = "DeletionCondition", Condition = "Condition"};
+        DeleteCondition deleteCondition = new() {Key = "DeletionCondition", Condition = "Condition"};
         AddDeleteCondition(process,deleteCondition);
 
         DeleteDeletionCondition(process,deleteCondition);
@@ -103,7 +103,7 @@ public class DeletionConditionsTest : TestResources
         process.Start();
         
         // dcs add --name DeletionCondition -c "Condition"
-        DeleteCondition deleteCondition = new() {Name = "DeletionCondition", Condition = "Condition"};
+        DeleteCondition deleteCondition = new() {Key = "DeletionCondition", Condition = "Condition"};
         AddDeleteCondition(process,deleteCondition);
 
         // dcs d --name DeletionCondition
@@ -117,7 +117,7 @@ public class DeletionConditionsTest : TestResources
     {
         using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
-        DeleteCondition deleteCondition = new() {Name = "DeletionCondition", Condition = "Condition"};
+        DeleteCondition deleteCondition = new() {Key = "DeletionCondition", Condition = "Condition"};
         AddDeleteCondition(process,deleteCondition);
         
         ShowDeleteCondition(process,deleteCondition);

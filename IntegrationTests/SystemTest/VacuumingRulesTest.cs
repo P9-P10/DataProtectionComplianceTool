@@ -1,8 +1,5 @@
-using System.Data;
 using Dapper;
 using FluentAssertions;
-using GraphManipulation.Logging;
-using GraphManipulation.Models.Interfaces;
 using IntegrationTests.SystemTest.Tools;
 
 namespace IntegrationTests.SystemTest;
@@ -26,11 +23,11 @@ public class VacuumingRulesTest : TestResources
 
         output.Should().ContainSingle(s =>
             s.Contains($"Successfully added {TestVacuumingRule.ToListingIdentifier()} vacuuming rule") &&
-            s.Contains($"{TestVacuumingRule.GetInterval()}") &&
-            s.Contains($"{TestVacuumingRule.GetPurposes().First().ToListingIdentifier()}"));
+            s.Contains($"{TestVacuumingRule.Interval}") &&
+            s.Contains($"{TestVacuumingRule.Purposes.First().ToListingIdentifier()}"));
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully updated {TestVacuumingRule.ToListingIdentifier()} vacuuming rule with {TestVacuumingRule.GetDescription()}"));
+                $"Successfully updated {TestVacuumingRule.ToListingIdentifier()} vacuuming rule with {TestVacuumingRule.Description}"));
     }
 
     [Fact]
@@ -135,10 +132,10 @@ public class VacuumingRulesTest : TestResources
 
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully updated {TestVacuumingRule.ToListingIdentifier()} vacuuming rule with {NewTestPurpose.GetName()}"));
+                $"Successfully updated {TestVacuumingRule.ToListingIdentifier()} vacuuming rule with {NewTestPurpose.Key}"));
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully updated {TestVacuumingRule.ToListingIdentifier()} vacuuming rule with {VeryNewTestPurpose.GetName()}"));
+                $"Successfully updated {TestVacuumingRule.ToListingIdentifier()} vacuuming rule with {VeryNewTestPurpose.Key}"));
     }
 
     [Fact]
@@ -163,10 +160,10 @@ public class VacuumingRulesTest : TestResources
 
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"{NewTestPurpose.GetName()} successfully removed from {TestVacuumingRule.ToListingIdentifier()}"));
+                $"{NewTestPurpose.Key} successfully removed from {TestVacuumingRule.ToListingIdentifier()}"));
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"{VeryNewTestPurpose.GetName()} successfully removed from {TestVacuumingRule.ToListingIdentifier()}"));
+                $"{VeryNewTestPurpose.Key} successfully removed from {TestVacuumingRule.ToListingIdentifier()}"));
     }
 
     [Fact]

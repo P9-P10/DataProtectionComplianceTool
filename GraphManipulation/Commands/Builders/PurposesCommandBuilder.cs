@@ -1,172 +1,103 @@
 using System.CommandLine;
+using GraphManipulation.Commands.Builders.Binders;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Managers.Interfaces;
+using GraphManipulation.Models;
 
 namespace GraphManipulation.Commands.Builders;
 
-public static class PurposesCommandBuilder
+public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
 {
-    public static Command Build(IConsole console, IPurposesManager purposesManager,
-        IDeleteConditionsManager deleteConditionsManager)
+    private readonly IManager<string, DeleteCondition> _deleteConditionsManager;
+
+    public PurposesCommandBuilder(
+        IManager<string, Purpose> purposesManager,
+        IManager<string, DeleteCondition> deleteConditionsManager) : base(purposesManager)
     {
-        return CommandBuilder.CreateCommand(CommandNamer.PurposesName)
-            .WithAlias(CommandNamer.PurposesAlias)
+        _deleteConditionsManager = deleteConditionsManager;
+    }
+
+    public override Command Build()
+    {
+        var baseCommand = base.Build(CommandNamer.PurposesName, CommandNamer.PurposesAlias, out var keyOption);
+
+        var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<Purpose>();
+        var newKeyOption = OptionBuilder.CreateNewNameOption<Purpose>();
+
+        var legallyRequiredOption = BuildLegallyRequiredOption()
+                .WithDescription("Whether the purpose falls under any legal obligations");
+
+        var deleteConditionListOption = BuildDeleteConditionListOption()
+                .WithDescription("The conditions for which personal data stored under this purpose should be deleted");
+
+        var createBinder = new PurposeBinder(
+            keyOption,
+            descriptionOption,
+            legallyRequiredOption,
+            deleteConditionListOption,
+            _deleteConditionsManager
+        );
+
+        var updateBinder = new PurposeBinder(
+            newKeyOption,
+            descriptionOption,
+            legallyRequiredOption,
+            deleteConditionListOption,
+            _deleteConditionsManager
+        );
+        
+        var deleteConditionsListChangesCommands = BuildListChangesCommand(
+            keyOption, deleteConditionListOption, _deleteConditionsManager,
+            purpose => purpose.DeleteConditions ?? new List<DeleteCondition>(),
+            (purpose, deleteConditions) => purpose.DeleteConditions = deleteConditions);
+
+        return baseCommand
             .WithSubCommands(
-                AddPurpose(console, purposesManager, deleteConditionsManager),
-                UpdatePurpose(console, purposesManager, deleteConditionsManager),
-                DeletePurpose(console, purposesManager),
-                ListPurposes(console, purposesManager),
-                ShowPurpose(console, purposesManager)
+                CreateCommand(keyOption, createBinder, new Option[]
+                {
+                    descriptionOption, legallyRequiredOption, deleteConditionListOption
+                }),
+                UpdateCommand(keyOption, updateBinder, new Option[]
+                {
+                    newKeyOption, descriptionOption, legallyRequiredOption, deleteConditionListOption
+                }),
+                deleteConditionsListChangesCommands.Add,
+                deleteConditionsListChangesCommands.Remove
             );
     }
 
-    private static Command AddPurpose(IConsole console, IPurposesManager purposesManager,
-        IDeleteConditionsManager deleteConditionsManager)
-    {
-        return CommandBuilder
-            .BuildAddCommand()
-            .WithDescription("Adds a purpose to the system")
-            .WithOption(out var nameOption,
-                BuildNameOption()
-                    .WithIsRequired(true))
-            .WithOption(out var descriptionOption,
-                OptionBuilder
-                    .CreateDescriptionOption()
-                    .WithDescription("The description of the purpose")
-                    .WithGetDefaultValue(() => ""))
-            .WithOption(out var legallyRequiredOption,
-                BuildLegallyRequiredOption<bool>()
-                    .WithDescription("Whether the purpose falls under any legal obligations")
-                    .WithGetDefaultValue(() => false))
-            .WithOption(out var deleteConditionOption,
-                BuildDeleteConditionOption()
-                    .WithDescription("The delete condition that the purpose receives")
-                    .WithIsRequired(true))
-            .WithHandler(context =>
-            {
-                Handlers.AddHandler(context, console,
-                    purposesManager.Add,
-                    purposesManager,
-                    nameOption,
-                    legallyRequiredOption,
-                    descriptionOption);
-
-                /*Handlers.UpdateHandlerWithKey(context, console,
-                    purposesManager.SetDeleteCondition,
-                    purposesManager,
-                    deleteConditionsManager,
-                    purpose => purpose.GetDeleteCondition(),
-                    nameOption, deleteConditionOption);*/
-            });
-    }
-
-    private static Command UpdatePurpose(IConsole console, IPurposesManager purposesManager,
-        IDeleteConditionsManager deleteConditionsManager)
-    {
-        return CommandBuilder
-            .BuildUpdateCommand()
-            .WithDescription("Updates the purpose of the given name with the given values")
-            .WithOption(out var nameOption,
-                BuildNameOption()
-                    .WithIsRequired(true))
-            .WithOption(out var newNameOption,
-                OptionBuilder
-                    .CreateNewNameOption()
-                    .WithDescription("The new name of the purpose"))
-            .WithOption(out var descriptionOption,
-                OptionBuilder
-                    .CreateDescriptionOption()
-                    .WithDescription(
-                        "The new description of the purpose (Multiple words should be encased with \" \")"))
-            .WithOption(out var legallyRequiredOption,
-                BuildLegallyRequiredOption<bool>()
-                    .WithDescription("The new value for if the purpose falls under any legal obligations"))
-            .WithOption(out var deleteConditionOption,
-                BuildDeleteConditionOption()
-                    .WithDescription("The new delete condition that the purpose receives"))
-            .WithHandler(context =>
-            {
-                Handlers.UpdateHandler(context, console,
-                    purposesManager.UpdateDescription,
-                    purposesManager,
-                    p => p.GetDescription(),
-                    nameOption,
-                    descriptionOption);
-
-                Handlers.UpdateHandler(context, console,
-                    purposesManager.UpdateLegallyRequired,
-                    purposesManager,
-                    p => p.GetLegallyRequired(),
-                    nameOption,
-                    legallyRequiredOption);
-
-                Handlers.UpdateHandlerWithKey(context, console,
-                    purposesManager.SetDeleteCondition,
-                    purposesManager,
-                    deleteConditionsManager,
-                    p => p.GetDeleteCondition().First(),
-                    nameOption,
-                    deleteConditionOption);
-
-                Handlers.UpdateHandlerUnique(context, console,
-                    purposesManager.UpdateName,
-                    purposesManager,
-                    p => p.GetName(),
-                    nameOption,
-                    newNameOption);
-            });
-    }
-
-    private static Command DeletePurpose(IConsole console, IPurposesManager purposesManager)
-    {
-        return CommandBuilder
-            .BuildDeleteCommand()
-            .WithDescription("Deletes the given purpose from the system")
-            .WithOption(
-                out var nameOption,
-                BuildNameOption().WithIsRequired(true))
-            .WithHandler(context => Handlers.DeleteHandler(context, console,
-                purposesManager.Delete,
-                purposesManager,
-                nameOption)
-            );
-    }
-
-    private static Command ListPurposes(IConsole console, IPurposesManager purposesManager)
-    {
-        return CommandBuilder
-            .BuildListCommand()
-            .WithDescription("Lists the purposes currently in the system")
-            .WithHandler(() => Handlers.ListHandler(console, purposesManager, CommandHeader.PurposesHeader));
-    }
-
-    private static Command ShowPurpose(IConsole console, IPurposesManager purposesManager)
-    {
-        return CommandBuilder
-            .BuildShowCommand()
-            .WithDescription("Shows details about the given purpose")
-            .WithOption(out var nameOption, BuildNameOption().WithIsRequired(true))
-            .WithHandler(context => Handlers.ShowHandler(context, console, purposesManager, nameOption));
-    }
-
-    private static Option<string> BuildNameOption()
+    private static Option<bool> BuildLegallyRequiredOption()
     {
         return OptionBuilder
-            .CreateNameOption()
-            .WithDescription("The name of the purpose");
-    }
-
-    private static Option<T> BuildLegallyRequiredOption<T>()
-    {
-        return OptionBuilder
-            .CreateOption<T>(OptionNamer.LegallyRequired)
+            .CreateOption<bool>(OptionNamer.LegallyRequired)
             .WithAlias(OptionNamer.LegallyRequiredAlias);
     }
 
-    private static Option<string> BuildDeleteConditionOption()
+    private static Option<IEnumerable<string>> BuildDeleteConditionListOption()
     {
         return OptionBuilder
-            .CreateOption<string>(OptionNamer.DeleteConditionName)
-            .WithAlias(OptionNamer.DeleteConditionNameAlias);
+            .CreateOption<IEnumerable<string>>(OptionNamer.DeleteConditionName)
+            .WithAlias(OptionNamer.DeleteConditionNameAlias)
+            .WithAllowMultipleArguments(true)
+            .WithArity(ArgumentArity.OneOrMore);
+    }
+
+
+    protected override void StatusReport(Purpose purpose)
+    {
+        if (purpose.Rules is null || !purpose.Rules.Any())
+        {
+            Emitter.EmitMissing<string, VacuumingRule>(purpose.Key!);
+        }
+
+        if (purpose.DeleteConditions is null || !purpose.DeleteConditions.Any())
+        {
+            Emitter.EmitMissing<string, DeleteCondition>(purpose.Key!);
+        }
+    }
+
+    protected override Option<string> BuildKeyOption()
+    {
+        return OptionBuilder.CreateKeyOption<string, Purpose>(OptionNamer.Name, OptionNamer.NameAlias);
     }
 }

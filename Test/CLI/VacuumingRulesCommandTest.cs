@@ -3,7 +3,7 @@ using System.CommandLine;
 using System.CommandLine.IO;
 using FluentAssertions;
 using GraphManipulation.Commands.Builders;
-using GraphManipulation.Managers.Interfaces;
+using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Models;
 using Moq;
 using Xunit;
@@ -50,9 +50,9 @@ public class VacuumingRulesCommandTest : CommandTest
     private const string PurposeName = "purposeName";
     private const string NewPurposeName = "newPurposeName";
 
-    public class Add
+    public class Create
     {
-        private const string CommandName = "add";
+        private const string CommandName = CommandNamer.Create;
 
         [Fact]
         public void Parses()
@@ -88,7 +88,7 @@ public class VacuumingRulesCommandTest : CommandTest
 
     public class Update
     {
-        private const string CommandName = "update";
+        private const string CommandName = CommandNamer.Update;
 
         [Fact]
         public void Parses()
@@ -125,7 +125,7 @@ public class VacuumingRulesCommandTest : CommandTest
 
     public class Delete
     {
-        private const string CommandName = "delete";
+        private const string CommandName = CommandNamer.Delete;
 
         [Fact]
         public void Parses()
@@ -148,7 +148,7 @@ public class VacuumingRulesCommandTest : CommandTest
 
     public class List
     {
-        private const string CommandName = "list";
+        private const string CommandName = CommandNamer.List;
 
         [Fact]
         public void Parses()
@@ -168,7 +168,7 @@ public class VacuumingRulesCommandTest : CommandTest
 
     public class Show
     {
-        private const string CommandName = "show";
+        private const string CommandName = CommandNamer.Show;
 
         [Fact]
         public void Parses()
