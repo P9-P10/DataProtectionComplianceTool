@@ -12,7 +12,7 @@ public class VacuumingRulesTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
+        AddDeleteCondition(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         AddVacuumingRule(process, TestVacuumingRule);
 
@@ -36,7 +36,7 @@ public class VacuumingRulesTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
+        AddDeleteCondition(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         AddVacuumingRule(process, TestVacuumingRule);
         ShowVacuumingRule(process, TestVacuumingRule);
@@ -55,7 +55,7 @@ public class VacuumingRulesTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
+        AddDeleteCondition(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         AddVacuumingRule(process, TestVacuumingRule);
         UpdateVacuumingRule(process, TestVacuumingRule, UpdatedTestVacuumingRule);
@@ -75,7 +75,7 @@ public class VacuumingRulesTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
+        AddDeleteCondition(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         AddVacuumingRule(process, TestVacuumingRule);
         AddVacuumingRule(process, UpdatedTestVacuumingRule);
@@ -96,7 +96,7 @@ public class VacuumingRulesTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
+        AddDeleteCondition(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         AddVacuumingRule(process, TestVacuumingRule);
         DeleteVacuumingRule(process, TestVacuumingRule);
@@ -117,8 +117,8 @@ public class VacuumingRulesTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
-        AddDeleteCondition(process, NewTestDeleteCondition);
+        AddDeleteCondition(process, TestStorageRule);
+        AddDeleteCondition(process, TestNewTestStorageRule);
         AddPurpose(process, TestPurpose);
         AddPurpose(process, NewTestPurpose);
         AddPurpose(process, VeryNewTestPurpose);
@@ -144,8 +144,8 @@ public class VacuumingRulesTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
-        AddDeleteCondition(process, NewTestDeleteCondition);
+        AddDeleteCondition(process, TestStorageRule);
+        AddDeleteCondition(process, TestNewTestStorageRule);
         AddPurpose(process, TestPurpose);
         AddPurpose(process, NewTestPurpose);
         AddPurpose(process, VeryNewTestPurpose);
@@ -175,14 +175,14 @@ public class VacuumingRulesTest : TestResources
 
         SetupTestData(dbConnection);
 
-        AddDeleteCondition(process, TestDeleteCondition);
+        AddDeleteCondition(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
         AddVacuumingRule(process, TestVacuumingRule);
         ExecuteVacuumingRule(process, new[] { TestVacuumingRule });
 
         // Do something to get errors processed
-        AddDeleteCondition(process, NewTestDeleteCondition);
+        AddDeleteCondition(process, TestNewTestStorageRule);
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetAllOutputNoWhitespace();
@@ -201,11 +201,11 @@ public class VacuumingRulesTest : TestResources
         process.Start();
         process.AwaitReady();
 
-        TestDeleteCondition.Condition = "Id = 2";
+        TestStorageRule.Condition = "Id = 2";
         
         SetupTestData(dbConnection);
 
-        AddDeleteCondition(process, TestDeleteCondition);
+        AddDeleteCondition(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
         AddVacuumingRule(process, TestVacuumingRule);

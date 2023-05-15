@@ -11,7 +11,7 @@ public class PurposeTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
+        AddDeleteCondition(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
 
         var error = process.GetAllErrorsNoWhitespace();
@@ -24,7 +24,7 @@ public class PurposeTest : TestResources
             s.Contains(TestPurpose.Description)
             );
         output.Should().ContainSingle(s =>
-            s.Contains($"Successfully updated {TestPurpose.Key} purpose with {TestDeleteCondition.Key}"));
+            s.Contains($"Successfully updated {TestPurpose.Key} purpose with {TestStorageRule.Key}"));
     }
 
     [Fact]
@@ -33,7 +33,7 @@ public class PurposeTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
+        AddDeleteCondition(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         ShowPurpose(process, TestPurpose);
         
@@ -50,8 +50,8 @@ public class PurposeTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
-        AddDeleteCondition(process, NewTestDeleteCondition);
+        AddDeleteCondition(process, TestStorageRule);
+        AddDeleteCondition(process, TestNewTestStorageRule);
         AddPurpose(process, TestPurpose);
         UpdatePurpose(process, TestPurpose, NewTestPurpose);
         ShowPurpose(process, NewTestPurpose);
@@ -69,8 +69,8 @@ public class PurposeTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
-        AddDeleteCondition(process, NewTestDeleteCondition);
+        AddDeleteCondition(process, TestStorageRule);
+        AddDeleteCondition(process, TestNewTestStorageRule);
         AddPurpose(process, TestPurpose);
         AddPurpose(process, NewTestPurpose);
         ListPurpose(process);
@@ -89,7 +89,7 @@ public class PurposeTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
+        AddDeleteCondition(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         DeletePurpose(process, TestPurpose);
         

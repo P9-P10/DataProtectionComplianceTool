@@ -2,7 +2,7 @@ using GraphManipulation.Models.Base;
 
 namespace GraphManipulation.Models;
 
-public class DeleteCondition : Entity<string>
+public class StorageRule : Entity<string>
 {
     // TODO Eventuelt omdøb Condition til VacuumingCondition
     public string? Condition { get; set; }

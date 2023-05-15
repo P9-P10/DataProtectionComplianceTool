@@ -71,7 +71,7 @@ public static class Program
         var purposeMapper = new Mapper<Purpose>(context);
         var originMapper = new Mapper<Origin>(context);
         var vacuumingRuleMapper = new Mapper<VacuumingRule>(context);
-        var deleteConditionMapper = new Mapper<DeleteCondition>(context);
+        var deleteConditionMapper = new Mapper<StorageRule>(context);
         var processingMapper = new Mapper<Processing>(context);
         var personalDataMapper = new Mapper<PersonalData>(context);
 
@@ -83,7 +83,7 @@ public static class Program
         var purposesManager = new Manager<string, Purpose>(purposeMapper);
         var originsManager = new Manager<string, Origin>(originMapper);
         var vacuumingRulesManager = new Manager<string, VacuumingRule>(vacuumingRuleMapper);
-        var deleteConditionsManager = new Manager<string, DeleteCondition>(deleteConditionMapper);
+        var deleteConditionsManager = new Manager<string, StorageRule>(deleteConditionMapper);
         var processingsManager = new Manager<string, Processing>(processingMapper);
 
         var decoratedIndividualsManager = new LoggingManager<int, Individual>(individualsManager, logger);
@@ -91,7 +91,7 @@ public static class Program
         var decoratedPurposesManager = new LoggingManager<string, Purpose>(purposesManager, logger);
         var decoratedOriginsManager = new LoggingManager<string, Origin>(originsManager, logger);
         var decoratedVacuumingRulesManager = new LoggingManager<string, VacuumingRule>(vacuumingRulesManager, logger);
-        var decoratedDeleteConditionsManager = new LoggingManager<string, DeleteCondition>(deleteConditionsManager, logger);
+        var decoratedDeleteConditionsManager = new LoggingManager<string, StorageRule>(deleteConditionsManager, logger);
         var decoratedProcessingsManager = new LoggingManager<string, Processing>(processingsManager, logger);
 
         var command = CommandLineInterfaceBuilder

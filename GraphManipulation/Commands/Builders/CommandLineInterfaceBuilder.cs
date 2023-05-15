@@ -17,7 +17,7 @@ public static class CommandLineInterfaceBuilder
         IManager<string, Purpose> purposesManager,
         IManager<string, Origin> originsManager,
         IManager<string, VacuumingRule> vacuumingRulesManager,
-        IManager<string, DeleteCondition> deleteConditionsManager,
+        IManager<string, StorageRule> deleteConditionsManager,
         IManager<string, Processing> processingsManager,
         IVacuumer vacuumer,
         ILogger logger,

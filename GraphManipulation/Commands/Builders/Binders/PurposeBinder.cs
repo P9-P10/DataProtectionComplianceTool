@@ -9,14 +9,14 @@ public class PurposeBinder : BaseBinder<string, Purpose>
 {
     private readonly Option<bool> _legallyRequiredOption;
     private readonly Option<IEnumerable<string>> _deleteConditionsOption;
-    private readonly IManager<string, DeleteCondition> _deleteConditionsManager;
+    private readonly IManager<string, StorageRule> _deleteConditionsManager;
 
     public PurposeBinder(
         Option<string> keyOption, 
         Option<string> descriptionOption, 
         Option<bool> legallyRequiredOption, 
         Option<IEnumerable<string>> deleteConditionsOption,
-        IManager<string, DeleteCondition> deleteConditionsManager) : base(keyOption, descriptionOption)
+        IManager<string, StorageRule> deleteConditionsManager) : base(keyOption, descriptionOption)
     {
         _legallyRequiredOption = legallyRequiredOption;
         _deleteConditionsOption = deleteConditionsOption;

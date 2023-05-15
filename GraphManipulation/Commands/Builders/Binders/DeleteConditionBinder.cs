@@ -6,7 +6,7 @@ using GraphManipulation.Models;
 
 namespace GraphManipulation.Commands.Builders.Binders;
 
-public class DeleteConditionBinder : BaseBinder<string, DeleteCondition>
+public class DeleteConditionBinder : BaseBinder<string, StorageRule>
 {
     private readonly Option<string> _conditionOption;
     private readonly Option<TableColumnPair> _tableColumnOption;
@@ -24,7 +24,7 @@ public class DeleteConditionBinder : BaseBinder<string, DeleteCondition>
         _conditionOption = conditionOption;
     }
 
-    protected override DeleteCondition GetBoundValue(BindingContext bindingContext)
+    protected override StorageRule GetBoundValue(BindingContext bindingContext)
     {
         var deleteCondition = base.GetBoundValue(bindingContext);
 
