@@ -64,7 +64,7 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
                 }).WithValidator(result => OptionBuilder.ValidInterval(result, intervalOption)),
                 UpdateCommand(keyOption, updateBinder, new Option[]
                 {
-                    newKeyOption, descriptionOption, intervalOption, purposeListOption
+                    newKeyOption, descriptionOption, intervalOption
                 }).WithValidator(result => OptionBuilder.ValidInterval(result, intervalOption)),
                 ExecuteCommand(),
                 purposeListChangesCommands.Add,

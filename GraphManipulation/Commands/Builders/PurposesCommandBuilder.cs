@@ -57,7 +57,7 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
                 }),
                 UpdateCommand(keyOption, updateBinder, new Option[]
                 {
-                    newKeyOption, descriptionOption, legallyRequiredOption, deleteConditionListOption
+                    newKeyOption, descriptionOption, legallyRequiredOption
                 }),
                 deleteConditionsListChangesCommands.Add,
                 deleteConditionsListChangesCommands.Remove

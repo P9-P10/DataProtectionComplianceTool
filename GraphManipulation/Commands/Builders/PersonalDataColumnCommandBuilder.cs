@@ -58,7 +58,7 @@ public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPa
                 }),
                 UpdateCommand(keyOption, updateBinder, new Option[]
                 {
-                    descriptionOption, defaultValueOption, purposeListOption
+                    descriptionOption, defaultValueOption
                 }),
                 purposeListChangesCommands.Add,
                 purposeListChangesCommands.Remove
