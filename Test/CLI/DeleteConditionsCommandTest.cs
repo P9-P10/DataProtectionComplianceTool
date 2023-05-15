@@ -11,16 +11,16 @@ namespace Test.CLI;
 
 public class DeleteConditionsCommandTest : CommandTest
 {
-    private static Command BuildCli(out Mock<Manager<DeleteCondition>> managerMock, out IConsole console)
+    private static Command BuildCli(out Mock<Manager<StorageRule>> managerMock, out IConsole console)
     {
         console = new TestConsole();
-        managerMock = new Mock<Manager<DeleteCondition>>();
+        managerMock = new Mock<Manager<StorageRule>>();
 
         managerMock
             .Setup(manager => manager.Get(It.Is<string>(s => s == DeleteConditionName)))
-            .Returns(new DeleteCondition
+            .Returns(new StorageRule
             {
-                Condition = Condition,
+                VacuumingCondition = Condition,
                 Description = Description,
                 Name = DeleteConditionName
             });

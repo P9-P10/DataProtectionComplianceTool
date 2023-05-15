@@ -8,11 +8,11 @@ namespace GraphManipulation.Commands.Builders;
 
 public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
 {
-    private readonly IManager<string, DeleteCondition> _deleteConditionsManager;
+    private readonly IManager<string, StorageRule> _deleteConditionsManager;
 
     public PurposesCommandBuilder(
         IManager<string, Purpose> purposesManager,
-        IManager<string, DeleteCondition> deleteConditionsManager) : base(purposesManager)
+        IManager<string, StorageRule> deleteConditionsManager) : base(purposesManager)
     {
         _deleteConditionsManager = deleteConditionsManager;
     }
@@ -48,7 +48,7 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
         
         var deleteConditionsListChangesCommands = BuildListChangesCommand(
             keyOption, deleteConditionListOption, _deleteConditionsManager,
-            purpose => purpose.DeleteConditions ?? new List<DeleteCondition>(),
+            purpose => purpose.DeleteConditions ?? new List<StorageRule>(),
             (purpose, deleteConditions) => purpose.DeleteConditions = deleteConditions);
 
         return baseCommand
@@ -92,7 +92,7 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
 
         if (purpose.DeleteConditions is null || !purpose.DeleteConditions.Any())
         {
-            Emitter.EmitMissing<string, DeleteCondition>(purpose.Key!);
+            Emitter.EmitMissing<string, StorageRule>(purpose.Key!);
         }
     }
 

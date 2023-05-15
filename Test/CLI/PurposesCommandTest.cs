@@ -25,7 +25,7 @@ public class PurposesCommandTest : CommandTest
                 Description = Description,
                 LegallyRequired = LegallyRequired,
                 Rules = new List<VacuumingRule>(),
-                DeleteConditions = new List<DeleteCondition>(){DeleteCondition}
+                DeleteConditions = new List<StorageRule>(){StorageRule}
             });
         
         purposeManagerMock
@@ -42,12 +42,12 @@ public class PurposesCommandTest : CommandTest
         deleteConditionsManagerMock = new Mock<IDeleteConditionsManager>();
 
         deleteConditionsManagerMock
-            .Setup(manager => manager.Get(It.Is<string>(s => s == DeleteCondition.GetName())))
-            .Returns(DeleteCondition);
+            .Setup(manager => manager.Get(It.Is<string>(s => s == StorageRule.GetName())))
+            .Returns(StorageRule);
         
         deleteConditionsManagerMock
-            .Setup(manager => manager.Get(It.Is<string>(s => s == NewDeleteCondition.GetName())))
-            .Returns(NewDeleteCondition);
+            .Setup(manager => manager.Get(It.Is<string>(s => s == NewStorageRule.GetName())))
+            .Returns(NewStorageRule);
 
         return PurposesCommandBuilder.Build(console, purposeManagerMock.Object, deleteConditionsManagerMock.Object);
     }
@@ -57,16 +57,16 @@ public class PurposesCommandTest : CommandTest
     private const string Description = "This is a description";
     private const bool LegallyRequired = true;
 
-    private static readonly DeleteCondition DeleteCondition = new()
+    private static readonly StorageRule StorageRule = new()
     {
-        Condition = "This is a condition",
+        VacuumingCondition = "This is a condition",
         Name = "deleteCondition",
         Description = "This is a description"
     };
 
-    private static readonly DeleteCondition NewDeleteCondition = new()
+    private static readonly StorageRule NewStorageRule = new()
     {
-        Condition = "This is a new condition",
+        VacuumingCondition = "This is a new condition",
         Name = "newDeleteCondition",
         Description = "This is a new description"
     };
@@ -83,7 +83,7 @@ public class PurposesCommandTest : CommandTest
                 $"--name {PurposeName} " +
                 $"--description \"{Description}\" " +
                 $"--legally-required {LegallyRequired} " +
-                $"--delete-condition-name {DeleteCondition.GetName()} "
+                $"--delete-condition-name {StorageRule.GetName()} "
             );
         }
         
@@ -93,7 +93,7 @@ public class PurposesCommandTest : CommandTest
             VerifyCommand(BuildCli(out _, out _, out _),
                 $"{CommandName} " +
                 $"--name {PurposeName} " +
-                $"--delete-condition-name {DeleteCondition.GetName()} "
+                $"--delete-condition-name {StorageRule.GetName()} "
             );
         }
 
@@ -105,7 +105,7 @@ public class PurposesCommandTest : CommandTest
                 $"-n {PurposeName} " +
                 $"-d \"{Description}\" " +
                 $"-lr {LegallyRequired} " +
-                $"-dcn {DeleteCondition.GetName()} "
+                $"-dcn {StorageRule.GetName()} "
             );
         }
 
@@ -117,7 +117,7 @@ public class PurposesCommandTest : CommandTest
                         $"-n {PurposeWithoutDeleteConditionName} " +
                         $"-d \"{Description}\" " +
                         $"-lr {LegallyRequired} " +
-                        $"-dcn {DeleteCondition.GetName()} ");
+                        $"-dcn {StorageRule.GetName()} ");
 
             purposeManagerMock.Verify(manager => manager.Add(
                 It.Is<string>(s => s == PurposeWithoutDeleteConditionName),
@@ -126,7 +126,7 @@ public class PurposesCommandTest : CommandTest
             
             purposeManagerMock.Verify(manager => manager.SetDeleteCondition(
                 It.Is<string>(s => s == PurposeWithoutDeleteConditionName),
-                It.Is<string>(s => s == DeleteCondition.GetName())));
+                It.Is<string>(s => s == StorageRule.GetName())));
         }
         
         [Fact]
@@ -135,7 +135,7 @@ public class PurposesCommandTest : CommandTest
             BuildCli(out var purposeManagerMock, out _, out _)
                 .Invoke($"{CommandName} " +
                         $"-n {PurposeWithoutDeleteConditionName} " +
-                        $"-dcn {DeleteCondition.GetName()} ");
+                        $"-dcn {StorageRule.GetName()} ");
 
             purposeManagerMock.Verify(manager => manager.Add(
                 It.Is<string>(s => s == PurposeWithoutDeleteConditionName),
@@ -144,7 +144,7 @@ public class PurposesCommandTest : CommandTest
             
             purposeManagerMock.Verify(manager => manager.SetDeleteCondition(
                 It.Is<string>(s => s == PurposeWithoutDeleteConditionName),
-                It.Is<string>(s => s == DeleteCondition.GetName())));
+                It.Is<string>(s => s == StorageRule.GetName())));
         }
     }
     
@@ -163,7 +163,7 @@ public class PurposesCommandTest : CommandTest
                 $"--new-name {PurposeName + "NEW"} " +
                 $"--description \"{Description + "NEW"}\" " +
                 $"--legally-required {!LegallyRequired} " +
-                $"--delete-condition-name {NewDeleteCondition.GetName()} " 
+                $"--delete-condition-name {NewStorageRule.GetName()} " 
             );
         }
 
@@ -176,7 +176,7 @@ public class PurposesCommandTest : CommandTest
                 $"-nn {PurposeName + "NEW"} " +
                 $"-d \"{Description + "NEW"}\" " +
                 $"-lr {!LegallyRequired} " +
-                $"-dcn {NewDeleteCondition.GetName()} "
+                $"-dcn {NewStorageRule.GetName()} "
             );
         }
 
@@ -189,7 +189,7 @@ public class PurposesCommandTest : CommandTest
                         $"-nn {PurposeName + "NEW"} " +
                         $"-d \"{Description + "NEW"}\" " +
                         $"-lr {!LegallyRequired} " +
-                        $"-dcn {NewDeleteCondition.GetName()} ");
+                        $"-dcn {NewStorageRule.GetName()} ");
 
             managerMock.Verify(manager => manager.UpdateName(
                 It.Is<string>(s => s == PurposeName),
@@ -202,7 +202,7 @@ public class PurposesCommandTest : CommandTest
                 It.Is<bool>(s => s == !LegallyRequired)));
             managerMock.Verify(manager => manager.SetDeleteCondition(
                 It.Is<string>(s => s == PurposeName),
-                It.Is<string>(s => s == NewDeleteCondition.GetName())));
+                It.Is<string>(s => s == NewStorageRule.GetName())));
         }
 
         [Fact]
@@ -224,7 +224,7 @@ public class PurposesCommandTest : CommandTest
                 It.IsAny<bool>()), Times.Never);
             managerMock.Verify(manager => manager.SetDeleteCondition(
                 It.Is<string>(s => s == PurposeName),
-                It.Is<string>(s => s == NewDeleteCondition.GetName())), Times.Never);
+                It.Is<string>(s => s == NewStorageRule.GetName())), Times.Never);
         }
 
         [Fact]
@@ -236,7 +236,7 @@ public class PurposesCommandTest : CommandTest
                         $"--new-name {PurposeName + "NEW"} " +
                         $"--description \"{Description}\" " +
                         $"--legally-required {LegallyRequired} " +
-                        $"--delete-condition-name {DeleteCondition.GetName()}");
+                        $"--delete-condition-name {StorageRule.GetName()}");
 
             managerMock.Verify(manager => manager.UpdateName(
                 It.Is<string>(s => s == PurposeName),
@@ -319,7 +319,7 @@ public class PurposesCommandTest : CommandTest
                 .Invoke($"{CommandName} --name {PurposeName}");
 
             console.Out.ToString().Should()
-                .StartWith($"{PurposeName}, {Description}, {LegallyRequired}, [ {DeleteCondition.ToListingIdentifier()} ]");
+                .StartWith($"{PurposeName}, {Description}, {LegallyRequired}, [ {StorageRule.ToListingIdentifier()} ]");
         }
     }
 }

@@ -6,7 +6,7 @@ public class Purpose : Entity<string>
 {
     public bool LegallyRequired { get; set; }
     public virtual IEnumerable<PersonalDataColumn>? PersonalDataColumns { get; set; }
-    public virtual IEnumerable<DeleteCondition>? DeleteConditions { get; set; }
+    public virtual IEnumerable<StorageRule>? DeleteConditions { get; set; }
     public virtual IEnumerable<VacuumingRule>? Rules { get; set; }
 
     public override string ToListing()

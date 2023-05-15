@@ -8,7 +8,7 @@ public static class TypeToString
     {
         return type switch
         {
-            not null when type == typeof(DeleteCondition) => "delete condition",
+            not null when type == typeof(StorageRule) => "delete condition",
             not null when type == typeof(Individual) => "individual",
             not null when type == typeof(Origin) => "origin",
             not null when type == typeof(PersonalData) => "personal data",
