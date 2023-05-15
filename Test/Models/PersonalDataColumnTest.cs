@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using GraphManipulation.Managers;
-using GraphManipulation.Managers.Archive;
 using GraphManipulation.Models;
 using Xunit;
 
@@ -14,9 +14,9 @@ public class PersonalDataColumnTest
         PersonalDataColumn personalDataColumn = new();
         Purpose purpose = new()
         {
-            Name = "Name"
+            Key = "Name"
         };
-        personalDataColumn.AddPurpose(purpose);
+        personalDataColumn.Purposes = personalDataColumn.Purposes.Append(purpose);
         
         Assert.NotNull(personalDataColumn.Purposes);
         if (personalDataColumn.Purposes != null) Assert.Contains(purpose, personalDataColumn.Purposes);
@@ -31,7 +31,7 @@ public class PersonalDataColumnTest
             TableColumnPair = new TableColumnPair("Name","ColumnName")
         };
         
-        Assert.Equal("(Name, ColumnName), , , , [  ]",personalDataColumn.ToListing());
+        Assert.Equal("(Name, ColumnName), , , [  ]",personalDataColumn.ToListing());
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class PersonalDataColumnTest
             Purposes = null
         };
         
-        Assert.Empty(personalDataColumn.GetPurposes());
+        Assert.Empty(personalDataColumn.Purposes);
     }
     
     [Fact]
@@ -50,14 +50,14 @@ public class PersonalDataColumnTest
     {
         Purpose purpose = new Purpose()
         {
-            Name = "Name"
+            Key = "Name"
         };
         PersonalDataColumn personalDataColumn = new()
         {
             Purposes = new List<Purpose>(){purpose}
         };
         
-        Assert.NotEmpty(personalDataColumn.GetPurposes());
-        Assert.Contains(purpose, personalDataColumn.GetPurposes());
+        Assert.NotEmpty(personalDataColumn.Purposes);
+        Assert.Contains(purpose, personalDataColumn.Purposes);
     }
 }

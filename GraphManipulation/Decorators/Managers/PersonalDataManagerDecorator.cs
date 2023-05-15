@@ -1,4 +1,4 @@
-﻿// using GraphManipulation.Logging;
+// using GraphManipulation.Logging;
 // using GraphManipulation.Managers;
 // using GraphManipulation.Managers.Archive;
 // using GraphManipulation.Managers.Interfaces;

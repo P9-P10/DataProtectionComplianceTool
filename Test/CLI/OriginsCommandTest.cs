@@ -3,7 +3,6 @@ using System.CommandLine;
 using System.CommandLine.IO;
 using GraphManipulation.Commands.Builders;
 using GraphManipulation.Commands.Helpers;
-using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
 using Moq;
 using Xunit;

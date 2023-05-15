@@ -7,7 +7,7 @@ using GraphManipulation.Models;
 
 namespace GraphManipulation.Commands.Builders;
 
-public class DeleteConditionsCommandBuilder : BaseCommandBuilder<string, DeleteCondition>
+public class DeleteConditionsCommandBuilder : BaseCommandBuilder<string, StorageRule>
 {
     private readonly IManager<TableColumnPair, PersonalDataColumn> _personalDataColumnManager;
 
@@ -21,8 +21,8 @@ public class DeleteConditionsCommandBuilder : BaseCommandBuilder<string, DeleteC
         var baseCommand = base.Build(CommandNamer.DeleteConditionsName, CommandNamer.DeleteConditionsAlias,
             out var keyOption);
 
-        var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<DeleteCondition>();
-        var newKeyOption = OptionBuilder.CreateNewNameOption<DeleteCondition>();
+        var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<StorageRule>();
+        var newKeyOption = OptionBuilder.CreateNewNameOption<StorageRule>();
 
         var conditionOption = BuildConditionOption()
             .WithDescription("The condition that must be fulfilled for data to be deleted");
@@ -60,9 +60,9 @@ public class DeleteConditionsCommandBuilder : BaseCommandBuilder<string, DeleteC
             );
     }
 
-    protected override void StatusReport(DeleteCondition condition)
+    protected override void StatusReport(StorageRule condition)
     {
-        if (condition.Condition is null)
+        if (condition.VacuumingCondition is null)
         {
             Emitter.EmitMissing(condition.Key!, "condition");
         }
@@ -75,7 +75,7 @@ public class DeleteConditionsCommandBuilder : BaseCommandBuilder<string, DeleteC
 
     protected override Option<string> BuildKeyOption()
     {
-        return OptionBuilder.CreateKeyOption<string, DeleteCondition>(OptionNamer.Name, OptionNamer.NameAlias);
+        return OptionBuilder.CreateKeyOption<string, StorageRule>(OptionNamer.Name, OptionNamer.NameAlias);
     }
 
     private static Option<string> BuildConditionOption()

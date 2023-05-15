@@ -1,20 +1,15 @@
-﻿// See https://aka.ms/new-console-template for more information
+// See https://aka.ms/new-console-template for more information
 
-using System.CommandLine;
-using System.CommandLine.Builder;
 using System.Data;
 using System.Data.SQLite;
 using System.Text;
 using Dapper;
 using GraphManipulation.Commands;
-using GraphManipulation.Commands.Builders;
-using GraphManipulation.Commands.Helpers;
 using GraphManipulation.DataAccess;
 using GraphManipulation.DataAccess.Mappers;
 using GraphManipulation.Decorators;
 using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
-using GraphManipulation.Managers;
 using GraphManipulation.Models;
 using GraphManipulation.Vacuuming;
 using Microsoft.EntityFrameworkCore;
@@ -97,11 +92,11 @@ public static class Program
         var purposeMapper = new Mapper<Purpose>(context);
         var originMapper = new Mapper<Origin>(context);
         var vacuumingRuleMapper = new Mapper<VacuumingRule>(context);
-        var deleteConditionMapper = new Mapper<DeleteCondition>(context);
+        var deleteConditionMapper = new Mapper<StorageRule>(context);
         var processingMapper = new Mapper<Processing>(context);
         var personalDataOriginMapper = new Mapper<PersonalDataOrigin>(context);
 
-        var vacuumer = new Vacuumer(personalDataColumnMapper, new SqliteQueryExecutor(dbConnection));
+        var vacuumer = new Vacuumer(purposeMapper, new SqliteQueryExecutor(dbConnection));
         var loggingVacuumer = new LoggingVacuumer(vacuumer, logger);
 
         VariousFactory variousFactory = new VariousFactory(loggingVacuumer, logger, configManager);

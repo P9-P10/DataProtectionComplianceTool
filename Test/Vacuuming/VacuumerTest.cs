@@ -10,10 +10,10 @@ namespace Test.Vacuuming;
 
 public class VacuumerTest
 {
-    private Vacuumer VacuumInstantiate(TestPersonalDataColumnMapper? personalDataColumnService = null,
+    private Vacuumer VacuumInstantiate(TestPurposeMapper? personalDataColumnService = null,
         IQueryExecutor? queryExecutor = null)
     {
-        personalDataColumnService ??= new TestPersonalDataColumnMapper();
+        personalDataColumnService ??= new TestPurposeMapper();
 
         queryExecutor ??= new TestQueryExecutor();
 
@@ -34,9 +34,9 @@ public class VacuumerTest
     [Fact]
     public void TestGenerateSqlQueryForDeletion_Returns_Correct_Query_When_Provided_TablePairs()
     {
-        TestPersonalDataColumnMapper? personalDataColumnService = new();
-        Vacuumer vacuumer = VacuumInstantiate(personalDataColumnService);
-        personalDataColumnService.Insert(PersonalDataColumnMaker());
+        TestPurposeMapper testPurposeMapper = new();
+        Vacuumer vacuumer = VacuumInstantiate(testPurposeMapper);
+        testPurposeMapper.Insert(PurposeMaker());
 
         var query = vacuumer.GenerateUpdateStatement();
 
@@ -46,34 +46,12 @@ public class VacuumerTest
 
 
     [Fact]
-    public void TestGenerateSqlQueryForDeletion_Returns_Correct_Query_When_Provided_Multiple_TableColumnPairs_()
-    {
-        TestPersonalDataColumnMapper? personalDataColumnService = new();
-        Vacuumer vacuumer = VacuumInstantiate(personalDataColumnService);
-        personalDataColumnService.AddColumn(PersonalDataColumnMaker());
-        personalDataColumnService.AddColumn(PersonalDataColumnMaker(tableName: "SecondTable", columnName: "SecondColumn"));
-
-
-        var query = vacuumer.GenerateUpdateStatement();
-
-
-        var deletionExecutions = query.ToList();
-        DeletionExecution firstExpected = DeletionExecutionMaker("UPDATE Table SET Column = 'Null' WHERE (Condition);");
-        DeletionExecution secondExpected =
-            DeletionExecutionMaker("UPDATE SecondTable SET SecondColumn = 'Null' WHERE (Condition);",
-                table: "SecondTable", column: "SecondColumn");
-        Assert.Contains(firstExpected, deletionExecutions);
-        Assert.Contains(secondExpected, deletionExecutions);
-    }
-
-    [Fact]
     public void TestExecuteExecutesCorrectly()
     {
-        TestPersonalDataColumnMapper? personalDataColumnService = new();
+        TestPurposeMapper testPurposeMapper = new();
         TestQueryExecutor testQueryExecutor = new();
-        Vacuumer vacuumer = VacuumInstantiate(personalDataColumnService, testQueryExecutor);
-        personalDataColumnService.AddColumn(PersonalDataColumnMaker());
-
+        Vacuumer vacuumer = VacuumInstantiate(testPurposeMapper, testQueryExecutor);
+        testPurposeMapper.Insert(PurposeMaker());
 
         vacuumer.Execute();
 
@@ -83,85 +61,111 @@ public class VacuumerTest
     }
 
     [Fact]
-    public void TestExecute_Executes_Correctly_With_Multiple_Executions()
+    public void TestExecuteExecutesCorrectlyWithMultiplePurposesOnSameTable()
     {
-        TestPersonalDataColumnMapper? personalDataColumnService = new();
-        TestQueryExecutor? testQueryExecutor = new();
-        Vacuumer vacuumer = VacuumInstantiate(personalDataColumnService, testQueryExecutor);
-        personalDataColumnService.AddColumn(PersonalDataColumnMaker());
-        personalDataColumnService.AddColumn(PersonalDataColumnMaker(tableName: "SecondTable", columnName: "SecondColumn"));
+        TestPurposeMapper testPurposeMapper = new();
+        TestQueryExecutor testQueryExecutor = new();
+        Vacuumer vacuumer = VacuumInstantiate(testPurposeMapper, testQueryExecutor);
+        string firstName = "Name";
+        string secondName = "NewName";
+        testPurposeMapper.Insert(PurposeMaker(firstName));
+        testPurposeMapper.Insert(PurposeMaker(secondName));
 
+        List<DeletionExecution> executions = vacuumer.Execute().ToList();
+        const string expectedQuery = "UPDATE Table SET Column = 'Null' WHERE (Condition) AND (Condition);";
 
-        vacuumer.Execute();
-
-
-        const string firstQuery = "UPDATE Table SET Column = 'Null' WHERE (Condition);";
-        const string secondQuery = "UPDATE SecondTable SET SecondColumn = 'Null' WHERE (Condition);";
-        Assert.Contains(firstQuery, testQueryExecutor.Query);
-        Assert.Contains(secondQuery, testQueryExecutor.Query);
+        Assert.Contains(expectedQuery, testQueryExecutor.Query);
+        Assert.Contains(executions, x => x.Purposes.Any(y => y.Key == firstName));
+        Assert.Contains(executions, x => x.Purposes.Any(y => y.Key == secondName));
+        Assert.True(executions.Count == 2);
     }
 
     [Fact]
-    public void TestExecute_Executes_Correctly_With_Multiple_Executions_Returns_Correct_DeletionExecutions()
+    public void TestExecuteExecutesCorrectlyWithMultiplePurposesOnDifferentTables()
     {
-        TestPersonalDataColumnMapper? personalDataColumnService = new();
-        TestQueryExecutor? testQueryExecutor = new();
-        Vacuumer vacuumer = VacuumInstantiate(personalDataColumnService, testQueryExecutor);
-        personalDataColumnService.AddColumn(PersonalDataColumnMaker());
-        personalDataColumnService.AddColumn(PersonalDataColumnMaker(tableName: "SecondTable", columnName: "SecondColumn"));
+        TestPurposeMapper testPurposeMapper = new();
+        TestQueryExecutor testQueryExecutor = new();
+        Vacuumer vacuumer = VacuumInstantiate(testPurposeMapper, testQueryExecutor);
+        Purpose purpose = PurposeMaker();
+
+        Purpose secondPurpose = PurposeMaker("AnotherName", tableName: "SecondTable", columnName: "SecondColumn",
+            defaultValue: "NotNull", condition: "SecondCondition");
+        testPurposeMapper.Insert(purpose);
+        testPurposeMapper.Insert(secondPurpose);
 
 
-        var query = vacuumer.Execute();
-
-
-        var deletionExecutions = query.ToList();
-        DeletionExecution firstExpected = DeletionExecutionMaker("UPDATE Table SET Column = 'Null' WHERE (Condition);");
-        DeletionExecution secondExpected =
-            DeletionExecutionMaker("UPDATE SecondTable SET SecondColumn = 'Null' WHERE (Condition);",
-                table: "SecondTable", column: "SecondColumn");
-        Assert.Contains(firstExpected, deletionExecutions);
-        Assert.Contains(secondExpected, deletionExecutions);
+        List<DeletionExecution> executions = vacuumer.Execute().ToList();
+        const string expectedQuery = "UPDATE Table SET Column = 'Null' WHERE (Condition);";
+        const string secondExpectedQuery = "UPDATE SecondTable SET SecondColumn = 'NotNull' WHERE (SecondCondition);";
+        Assert.Contains(expectedQuery, testQueryExecutor.Query);
+        Assert.Contains(secondExpectedQuery, testQueryExecutor.Query);
+        Assert.Contains(executions, x => x.Purposes.Any(y => y.Key == purpose.Key));
+        Assert.Contains(executions, x => x.Purposes.Any(y => y.Key == secondPurpose.Key));
+        Assert.True(executions.Count == 2);
     }
 
     [Fact]
-    public void TestRunVacuumingRule_Executes_Correct_Execution()
+    public void TestExecuteExecutesCorrectlyOnePurposeMultipleDeletionConditions()
     {
-        TestPersonalDataColumnMapper? personalDataColumnMapper = new();
-        personalDataColumnMapper.AddColumn(PersonalDataColumnMaker(purposeName: "Name"));
-        Vacuumer vacuumer = VacuumInstantiate(personalDataColumnService: personalDataColumnMapper);
-        VacuumingRule vacuumingRule = VacuumingRuleMaker("Name", "Description", "2d 5y");
+        TestPurposeMapper testPurposeMapper = new();
+        TestQueryExecutor testQueryExecutor = new();
+        Vacuumer vacuumer = VacuumInstantiate(testPurposeMapper, testQueryExecutor);
+        Purpose purpose = PurposeMaker();
+        purpose.DeleteConditions = purpose.DeleteConditions.Append(DeleteConditionMaker(condition: "SecondCondition"))
+            .ToList();
+        purpose.DeleteConditions.ElementAt(1).Purposes = purpose.DeleteConditions.ElementAt(1).Purposes.Append(purpose);
+        testPurposeMapper.Insert(purpose);
+
+
+        List<DeletionExecution> executions = vacuumer.Execute().ToList();
+        const string expectedQuery = "UPDATE Table SET Column = 'Null' WHERE (Condition) AND (SecondCondition);";
+        Assert.Contains(expectedQuery, testQueryExecutor.Query);
+        Assert.Contains(executions, x => x.Purposes.Any(y => y.Key == purpose.Key));
+        Assert.Single(executions);
+    }
+
+    [Fact]
+    public void TestExecuteExecutesCorrectlyOnePurposeMultipleDeleteConditionsOnDifferentTables()
+    {
+        TestPurposeMapper testPurposeMapper = new();
+        TestQueryExecutor testQueryExecutor = new();
+        Vacuumer vacuumer = VacuumInstantiate(testPurposeMapper, testQueryExecutor);
+        Purpose purpose = PurposeMaker();
+        purpose.DeleteConditions = purpose.DeleteConditions
+            .Append(DeleteConditionMaker(condition: "SecondCondition", tableName: "SecondTable")).ToList();
+        purpose.DeleteConditions.ElementAt(1).Purposes = purpose.DeleteConditions.ElementAt(1).Purposes.Append(purpose);
+        testPurposeMapper.Insert(purpose);
+
+
+        List<DeletionExecution> executions = vacuumer.Execute().ToList();
+        const string expectedQuery = "UPDATE Table SET Column = 'Null' WHERE (Condition);";
+        const string secondExpectedQuery = "UPDATE SecondTable SET Column = 'Null' WHERE (SecondCondition);";
+        Assert.Contains(expectedQuery, testQueryExecutor.Query);
+        Assert.Contains(secondExpectedQuery, testQueryExecutor.Query);
+        Assert.Contains(executions, x => x.Purposes.Any(y => y.Key == purpose.Key));
+    }
+
+    [Fact]
+    public void TestExecuteVacuumingRulesExecutesOnlyCorrectGivenPurpose()
+    {
+        TestPurposeMapper testPurposeMapper = new();
+        TestQueryExecutor testQueryExecutor = new();
+        Vacuumer vacuumer = VacuumInstantiate(testPurposeMapper, testQueryExecutor);
+        Purpose purpose = PurposeMaker();
+        Purpose newPurpose = PurposeMaker(name: "NewPurpose", tableName: "NewTable");
+        purpose.DeleteConditions = purpose.DeleteConditions
+            .Append(DeleteConditionMaker(condition: "SecondCondition", tableName: "SecondTable")).ToList();
+        purpose.DeleteConditions.ElementAt(1).Purposes = purpose.DeleteConditions.ElementAt(1).Purposes.Append(purpose);
+        testPurposeMapper.Insert(purpose);
+        testPurposeMapper.Insert(newPurpose);
 
         List<DeletionExecution> executions =
-            vacuumer.ExecuteVacuumingRules(new List<VacuumingRule>() {vacuumingRule}).ToList();
-
-
-        DeletionExecution expected = DeletionExecutionMaker("UPDATE Table SET Column = 'Null' WHERE (Condition);");
-
-        Assert.Contains(expected, executions);
-        Assert.True(1 == executions.Count);
-    }
-
-    [Fact]
-    public void TestRunVacuumingRule_Executes_Correct_Executions_Different_Executions_With_Same_Purpose()
-    {
-        TestPersonalDataColumnMapper? personalDataColumnMapper = new();
-        personalDataColumnMapper.AddColumn(PersonalDataColumnMaker(purposeName: "Name"));
-        personalDataColumnMapper.AddColumn(PersonalDataColumnMaker(purposeName: "Name",
-            columnName: "AnotherColumn"));
-        Vacuumer vacuumer = VacuumInstantiate(personalDataColumnService: personalDataColumnMapper);
-        VacuumingRule vacuumingRule = VacuumingRuleMaker("Name", "Description", "2d 5y");
-
-
-        List<DeletionExecution> executions =
-            vacuumer.ExecuteVacuumingRules(new List<VacuumingRule>() {vacuumingRule}).ToList();
-
-
-        DeletionExecution expected = DeletionExecutionMaker("UPDATE Table SET Column = 'Null' WHERE (Condition);");
-        DeletionExecution secondExpected =
-            DeletionExecutionMaker("UPDATE Table SET AnotherColumn = 'Null' WHERE (Condition);", column: "AnotherColumn");
-
-        Assert.Contains(expected, executions);
-        Assert.Contains(secondExpected, executions);
-        Assert.True(2 == executions.Count);
+            vacuumer.ExecuteVacuumingRules(new List<VacuumingRule> {VacuumingRuleMaker()}).ToList();
+        const string expectedQuery = "UPDATE Table SET Column = 'Null' WHERE (Condition);";
+        const string secondExpectedQuery = "UPDATE SecondTable SET Column = 'Null' WHERE (SecondCondition);";
+        Assert.Contains(expectedQuery, testQueryExecutor.Query);
+        Assert.Contains(secondExpectedQuery, testQueryExecutor.Query);
+        Assert.Contains(executions, x => x.Purposes.Any(y => y.Key == purpose.Key));
+        Assert.DoesNotContain(executions, x => x.Purposes.Any(y => y.Key == newPurpose.Key));
     }
 }

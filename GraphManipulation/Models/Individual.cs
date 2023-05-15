@@ -1,5 +1,4 @@
 using GraphManipulation.Models.Base;
-using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Models;
 

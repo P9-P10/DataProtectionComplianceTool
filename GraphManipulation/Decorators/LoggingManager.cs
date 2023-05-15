@@ -1,5 +1,4 @@
-﻿using GraphManipulation.Helpers;
-using GraphManipulation.Logging;
+﻿using GraphManipulation.Logging;
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models.Base;
 

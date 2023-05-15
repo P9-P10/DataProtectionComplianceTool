@@ -12,7 +12,7 @@ public class TestVacuumingRule
     {
         VacuumingRule vacuumingRule = new()
         {
-            Name = "Name",
+            Key = "Name",
             Description = "Description",
             Id = 0,
             Interval = "2y",
@@ -27,7 +27,7 @@ public class TestVacuumingRule
     {
         VacuumingRule vacuumingRule = new()
         {
-            Name = "Name",
+            Key = "Name",
             Description = "Description",
             Id = 0,
             Interval = "5y",
@@ -42,7 +42,7 @@ public class TestVacuumingRule
     {
         VacuumingRule vacuumingRule = new()
         {
-            Name = "Name",
+            Key = "Name",
             Purposes = new List<Purpose>()
         };
 
@@ -54,12 +54,12 @@ public class TestVacuumingRule
     {
         VacuumingRule vacuumingRule = new()
         {
-            Name = "Name",
+            Key = "Name",
             Purposes = new List<Purpose>()
         };
 
         vacuumingRule.Interval = "2y 5d";
-        Assert.Equal("2y 5d", vacuumingRule.GetInterval());
+        Assert.Equal("2y 5d", vacuumingRule.Interval);
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public class TestVacuumingRule
     {
         VacuumingRule vacuumingRule = new()
         {
-            Name = "Name",
+            Key = "Name",
             Purposes = new List<Purpose>()
         };
 

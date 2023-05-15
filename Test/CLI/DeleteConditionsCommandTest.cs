@@ -3,7 +3,6 @@ using System.CommandLine.IO;
 using FluentAssertions;
 using GraphManipulation.Commands.Builders;
 using GraphManipulation.Commands.Helpers;
-using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
 using Moq;
 using Xunit;
@@ -12,16 +11,16 @@ namespace Test.CLI;
 
 public class DeleteConditionsCommandTest : CommandTest
 {
-    private static Command BuildCli(out Mock<IDeleteConditionsManager> managerMock, out IConsole console)
+    private static Command BuildCli(out Mock<Manager<StorageRule>> managerMock, out IConsole console)
     {
         console = new TestConsole();
-        managerMock = new Mock<IDeleteConditionsManager>();
+        managerMock = new Mock<Manager<StorageRule>>();
 
         managerMock
             .Setup(manager => manager.Get(It.Is<string>(s => s == DeleteConditionName)))
-            .Returns(new DeleteCondition
+            .Returns(new StorageRule
             {
-                Condition = Condition,
+                VacuumingCondition = Condition,
                 Description = Description,
                 Name = DeleteConditionName
             });

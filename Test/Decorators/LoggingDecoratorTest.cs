@@ -1,10 +1,10 @@
 ﻿
 
 using System.Collections.Generic;
-using System.Linq;
 using GraphManipulation.Decorators;
-using Xunit;
 using GraphManipulation.Logging;
+using GraphManipulation.Models;
+using Xunit;
 
 namespace Test.Decorators;
 
@@ -30,12 +30,12 @@ public class LoggingDecoratorTest
     }
 
     private TestLogger logger;
-    private LoggingDecorator decorator;
+    private LoggingDecorator<string,Purpose> decorator;
 
     public LoggingDecoratorTest()
     {
         logger = new TestLogger();
-        decorator = new LoggingDecorator(logger, "TestType");
+        decorator = new LoggingDecorator<string,Purpose>(logger);
     }
 
     private string GetMessage()
@@ -66,7 +66,7 @@ public class LoggingDecoratorTest
     [Fact]
     public void LogUpdateCreatesExpectedMessageWithParameters()
     {
-        decorator.LogUpdate("key", new { Param1 = "one", Param2 = "two" });
+        decorator.LogUpdate("key",new Purpose());
 
         string message = GetMessage();
         
@@ -76,7 +76,7 @@ public class LoggingDecoratorTest
     [Fact]
     public void LogAddCreatesExpectedMessageWithNullParameters()
     {
-        decorator.LogCreate("key", null);
+        decorator.LogCreate("key");
 
         string message = GetMessage();
         
@@ -86,7 +86,7 @@ public class LoggingDecoratorTest
     [Fact]
     public void LogAddCreatesExpectedMessageWithParameters()
     {
-        decorator.LogCreate("key", new { Param1 = "one", Param2 = "two" });
+        decorator.LogCreate("key");
 
         string message = GetMessage();
         

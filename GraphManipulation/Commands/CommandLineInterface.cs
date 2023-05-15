@@ -159,8 +159,8 @@ public class CommandLineInterface
         IManager<string, Purpose> purposesManager = factory.CreateManager<string, Purpose>();
         IManager<string, Origin> originsManager = factory.CreateManager<string, Origin>();
         IManager<string, VacuumingRule> vacuumingRulesManager = factory.CreateManager<string, VacuumingRule>();
-        IManager<string, DeleteCondition> deleteConditionsManager =
-            factory.CreateManager<string, DeleteCondition>();
+        IManager<string, StorageRule> deleteConditionsManager =
+            factory.CreateManager<string, StorageRule>();
         IManager<string, Processing> processingsManager = factory.CreateManager<string, Processing>();
         
         return CommandBuilder.CreateNewCommand(CommandNamer.RootCommandName)

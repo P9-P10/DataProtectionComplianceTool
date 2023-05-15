@@ -5,11 +5,7 @@ using FluentAssertions;
 using GraphManipulation.Commands.Builders;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Managers;
-using GraphManipulation.Managers.Archive;
-using GraphManipulation.Managers.Interfaces;
-using GraphManipulation.Managers.Interfaces.Archive;
 using GraphManipulation.Models;
-using GraphManipulation.Models.Interfaces;
 using Moq;
 using Xunit;
 
@@ -68,7 +64,6 @@ public class ProcessingsCommandTest : CommandTest
     {
         Name = PurposeName,
         Description = "This is a description of a purpose",
-        PersonalDataColumns = new List<PersonalDataColumn>(),
         LegallyRequired = true,
         Rules = new List<VacuumingRule>()
     };
@@ -77,8 +72,7 @@ public class ProcessingsCommandTest : CommandTest
     {
         TableColumnPair = TableColumnPair,
         Description = "This is a description of personal data",
-        Purposes = new List<Purpose>(),
-        JoinCondition = "This is a join condition"
+        Purposes = new List<Purpose>()
     };
 
     public class Create

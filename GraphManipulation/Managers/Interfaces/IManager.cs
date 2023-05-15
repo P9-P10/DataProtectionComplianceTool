@@ -1,6 +1,3 @@
-using GraphManipulation.Models;
-using GraphManipulation.Models.Base;
-
 namespace GraphManipulation.Managers.Interfaces;
 
 public interface IManager<TKey, TValue> : IGetter<TValue, TKey> 

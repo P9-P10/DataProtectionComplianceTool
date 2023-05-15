@@ -2,15 +2,16 @@ using GraphManipulation.Models.Base;
 
 namespace GraphManipulation.Models;
 
-public class DeleteCondition : Entity<string>
+public class StorageRule : Entity<string>
 {
-    public string? Condition { get; set; }
+    // TODO Eventuelt omdøb Condition til VacuumingCondition
+    public string? VacuumingCondition { get; set; }
     public virtual PersonalDataColumn? PersonalDataColumn { get; set; }
     public virtual IEnumerable<Purpose>? Purposes { get; set; }
     
     public override string ToListing()
     {
-        return string.Join(", ", base.ToListing(), Condition, PersonalDataColumn?.ToListingIdentifier(), 
+        return string.Join(", ", base.ToListing(), VacuumingCondition, PersonalDataColumn?.ToListingIdentifier(), 
             "[ " + string.Join(", ", Purposes == null ? new List<string>() : Purposes.Select(p => p.ToListingIdentifier())) + " ]");
     }
 }

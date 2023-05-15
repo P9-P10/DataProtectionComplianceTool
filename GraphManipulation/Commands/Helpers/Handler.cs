@@ -1,6 +1,5 @@
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models.Base;
-using VDS.RDF.Web;
 
 namespace GraphManipulation.Commands.Helpers;
 

@@ -4,7 +4,6 @@ using System.CommandLine.Parsing;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Helpers;
 using GraphManipulation.Managers.Interfaces;
-using GraphManipulation.Models;
 using GraphManipulation.Models.Base;
 
 namespace GraphManipulation.Commands.Builders.Binders;

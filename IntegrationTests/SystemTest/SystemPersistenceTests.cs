@@ -12,7 +12,7 @@ public class SystemPersistenceTests : TestResources
         string configPath = process.ConfigPath;
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
+        AddDeleteCondition(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         ListPurpose(process);
         List<string> firstResult = process.GetLastOutput();
@@ -26,10 +26,10 @@ public class SystemPersistenceTests : TestResources
 
         
         List<string> secondResult = secondProcess.GetLastOutput();
-        firstResult.FindAll(s => s.Contains(TestDeleteCondition.Name)
-                                 && s.Contains(TestDeleteCondition.Description)).Should().ContainSingle();
-        secondResult.FindAll(s => s.Contains(TestDeleteCondition.Name)
-                                  && s.Contains(TestDeleteCondition.Description)).Should().ContainSingle();
+        firstResult.FindAll(s => s.Contains(TestStorageRule.Key)
+                                 && s.Contains(TestStorageRule.Description)).Should().ContainSingle();
+        secondResult.FindAll(s => s.Contains(TestStorageRule.Key)
+                                  && s.Contains(TestStorageRule.Description)).Should().ContainSingle();
         Assert.Equal(firstResult, secondResult);
         
         secondProcess.Dispose();
