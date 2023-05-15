@@ -11,8 +11,6 @@ public class IndividualsCommandBuilder : BaseCommandBuilder<int, Individual>
 
     public IndividualsCommandBuilder(IHandlerFactory handlerFactory, IManagerFactory managerFactory) : base(handlerFactory)
     {
-        _personalDataColumnManager = managerFactory.CreateManager<TableColumnPair, PersonalDataColumn>();
-        _originsManager = managerFactory.CreateManager<string, Origin>();
     }
 
     public override Command Build()

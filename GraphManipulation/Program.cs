@@ -1,15 +1,20 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using System.CommandLine;
+using System.CommandLine.Builder;
 using System.Data;
 using System.Data.SQLite;
 using System.Text;
 using Dapper;
 using GraphManipulation.Commands;
+using GraphManipulation.Commands.Builders;
+using GraphManipulation.Commands.Helpers;
 using GraphManipulation.DataAccess;
 using GraphManipulation.DataAccess.Mappers;
 using GraphManipulation.Decorators;
 using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
+using GraphManipulation.Managers;
 using GraphManipulation.Models;
 using GraphManipulation.Vacuuming;
 using Microsoft.EntityFrameworkCore;
@@ -105,61 +110,6 @@ public static class Program
             new ComponentFactory(managerFactory, variousFactory, variousFactory, variousFactory);
         CommandLineInterface commandLineInterface = new CommandLineInterface(componentFactory);
         Run(commandLineInterface);
-
-        var individualsManager = new Manager<int, Individual>(individualMapper);
-        var personalDataOriginsManager = new Manager<int, PersonalDataOrigin>(personalDataOriginMapper);
-        var personalDataColumnsManager = new Manager<TableColumnPair, PersonalDataColumn>(personalDataColumnMapper);
-        var purposesManager = new Manager<string, Purpose>(purposeMapper);
-        var originsManager = new Manager<string, Origin>(originMapper);
-        var vacuumingRulesManager = new Manager<string, VacuumingRule>(vacuumingRuleMapper);
-        var deleteConditionsManager = new Manager<string, DeleteCondition>(deleteConditionMapper);
-        var processingsManager = new Manager<string, Processing>(processingMapper);
-
-        var decoratedIndividualsManager = new LoggingManager<int, Individual>(individualsManager, logger);
-        var decoratedPersonalDataOriginsManager = new LoggingManager<int, PersonalDataOrigin>(personalDataOriginsManager, logger);
-        var decoratedPersonalDataColumnsManager = new LoggingManager<TableColumnPair, PersonalDataColumn>(personalDataColumnsManager, logger);
-        var decoratedPurposesManager = new LoggingManager<string, Purpose>(purposesManager, logger);
-        var decoratedOriginsManager = new LoggingManager<string, Origin>(originsManager, logger);
-        var decoratedVacuumingRulesManager = new LoggingManager<string, VacuumingRule>(vacuumingRulesManager, logger);
-        var decoratedDeleteConditionsManager = new LoggingManager<string, DeleteCondition>(deleteConditionsManager, logger);
-        var decoratedProcessingsManager = new LoggingManager<string, Processing>(processingsManager, logger);
-
-        var command = CommandLineInterfaceBuilder
-            .Build(
-                decoratedIndividualsManager, decoratedPersonalDataOriginsManager, decoratedPersonalDataColumnsManager,
-                decoratedPurposesManager, decoratedOriginsManager, decoratedVacuumingRulesManager,
-                decoratedDeleteConditionsManager, decoratedProcessingsManager, loggingVacuumer, logger, configManager
-            );
-        
-        command = command.WithSubCommands(
-            CommandBuilder
-                .BuildStatusCommand()
-                .WithHandler(() =>
-                {
-                    command.Subcommands
-                        .ToList()
-                        .ForEach(subCommand =>
-                        {
-                            subCommand.Subcommands
-                                .Where(subSubCommand => subSubCommand.Name == CommandNamer.Status)
-                                .ToList()
-                                .ForEach(sub =>
-                                {
-                                    sub.Invoke(CommandNamer.Status);
-                                });
-                        });
-                })
-        );
-
-
-
-        var cli = new CommandLineBuilder(command)
-            .UseHelp("help", "h", "?")
-            .UseTypoCorrections()
-            .UseParseErrorReporting()
-            .Build();
-        
-        Run(cli);
 
     }
 

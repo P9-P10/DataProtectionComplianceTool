@@ -4,7 +4,6 @@ using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Managers;
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
-
 namespace GraphManipulation.Commands.Builders;
 
 public class PersonalDataOriginCommandBuilder : BaseCommandBuilder<int, PersonalDataOrigin>
@@ -13,15 +12,11 @@ public class PersonalDataOriginCommandBuilder : BaseCommandBuilder<int, Personal
     private readonly IManager<TableColumnPair, PersonalDataColumn> _personalDataColumnManager;
     private readonly IManager<string, Origin> _originsManager;
     
-    public PersonalDataOriginCommandBuilder(
-        IManager<int, PersonalDataOrigin> manager, 
-        IManager<int, Individual> individualsManager, 
-        IManager<TableColumnPair, PersonalDataColumn> personalDataColumnManager, 
-        IManager<string, Origin> originsManager) : base(manager)
+    public PersonalDataOriginCommandBuilder(IHandlerFactory handlerFactory, IManagerFactory managerFactory) : base(handlerFactory)
     {
-        _individualsManager = individualsManager;
-        _personalDataColumnManager = personalDataColumnManager;
-        _originsManager = originsManager;
+        _individualsManager = managerFactory.CreateManager<int, Individual>();
+        _personalDataColumnManager = managerFactory.CreateManager<TableColumnPair, PersonalDataColumn>();
+        _originsManager = managerFactory.CreateManager<string, Origin>();
     }
 
     public override Command Build()
