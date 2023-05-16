@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using GraphManipulation.Commands;
 using GraphManipulation.Commands.Factories;
+using GraphManipulation.Logging;
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
 using GraphManipulation.Models.Base;
+using GraphManipulation.Vacuuming;
 using Moq;
 using Xunit;
 
@@ -39,20 +41,38 @@ public class MockManagerFactory : IManagerFactory
     }
 }
 
+public class MockLoggerFactory : ILoggerFactory
+{
+    public ILogger CreateLogger()
+    {
+        return Mock.Of<ILogger>();
+    }
+}
+
+public class MockVacuumerFactory : IVacuumerFactory
+{
+    public IVacuumer CreateVacuumer()
+    {
+        return Mock.Of<IVacuumer>();
+    }
+}
+
 public class CommandLineInterfaceTest
 {
     [Fact]
     public void DoesNotCreateAlreadyExistingEntity()
     {
-        var factory = new MockManagerFactory();
-        
+        var managerFactory = new MockManagerFactory();
+        var loggerFactory = new MockLoggerFactory();
+        var vacuumerFactory = new MockVacuumerFactory();
+
         var manager = new Mock<IManager<string, StorageRule>>();
         manager.Setup(manager => manager.Get("testname")).Returns(new StorageRule());
         
-        factory.AddMockManager<StorageRule>(manager);
+        managerFactory.AddMockManager<StorageRule>(manager);
 
-        CommandLineInterface cli = new CommandLineInterface(factory);
-        cli.Invoke($"dc c -n testname");
+        CommandLineInterface cli = new CommandLineInterface(managerFactory, loggerFactory, vacuumerFactory);
+        cli.Invoke($"sr c -n testname");
         
         manager.Verify(manager => manager.Get(
             It.Is<string>(s => s == "testname")));
@@ -62,15 +82,17 @@ public class CommandLineInterfaceTest
     [Fact]
     public void CreateCommandCreatesANewDeleteCondition()
     {
-        var factory = new MockManagerFactory();
+        var managerFactory = new MockManagerFactory();
+        var loggerFactory = new MockLoggerFactory();
+        var vacuumerFactory = new MockVacuumerFactory();
         
         var manager = new Mock<IManager<string, StorageRule>>();
         manager.Setup(manager => manager.Get("testname")).Returns((StorageRule?)null);
         
-        factory.AddMockManager<StorageRule>(manager);
+        managerFactory.AddMockManager<StorageRule>(manager);
 
-        CommandLineInterface cli = new CommandLineInterface(factory);
-        cli.Invoke($"dc c -n testname");
+        CommandLineInterface cli = new CommandLineInterface(managerFactory, loggerFactory, vacuumerFactory);
+        cli.Invoke($"sr c -n testname");
         
         manager.Verify(manager => manager.Create(It.Is<string>(s => s == "testname")));
     }
@@ -78,7 +100,9 @@ public class CommandLineInterfaceTest
     [Fact]
     public void CreatedEntityIsUpdatedWithAdditionalInformation()
     {
-        var factory = new MockManagerFactory();
+        var managerFactory = new MockManagerFactory();
+        var loggerFactory = new MockLoggerFactory();
+        var vacuumerFactory = new MockVacuumerFactory();
         
         var manager = new Mock<IManager<string, StorageRule>>();
         manager.Setup(manager => manager.Create(It.IsAny<string>())).Returns(true);
@@ -87,10 +111,10 @@ public class CommandLineInterfaceTest
             .Returns(() => null)
             .Returns(new StorageRule());
         
-        factory.AddMockManager<StorageRule>(manager);
+        managerFactory.AddMockManager<StorageRule>(manager);
 
-        CommandLineInterface cli = new CommandLineInterface(factory);
-        cli.Invoke($"dc c -n testname -d description");
+        CommandLineInterface cli = new CommandLineInterface(managerFactory, loggerFactory, vacuumerFactory);
+        cli.Invoke($"sr c -n testname -d description");
         
         manager.Verify(manager => 
             manager.Update(

@@ -35,17 +35,15 @@ public class CommandLineInterface
     private Command _command;
     private Parser _parser;
 
-    private readonly IVacuumer _vacuumer;
-    private readonly ILogger _logger;
-    private readonly IConfigManager _configManager;
-    
-    public CommandLineInterface(IManagerFactory managerFactory, ILogger logger, IVacuumer vacuumer, IConfigManager configManager)
+    private readonly IVacuumerFactory _vacuumerFactory;
+    private readonly ILoggerFactory _loggerFactory;
+
+    public CommandLineInterface(IManagerFactory managerFactory, ILoggerFactory loggerFactory, IVacuumerFactory vacuumerFactory)
     {
         _managerFactory = managerFactory;
+        _loggerFactory = loggerFactory;
+        _vacuumerFactory = vacuumerFactory;
         _handlerFactory = new HandlerFactory(managerFactory);
-        _logger = logger;
-        _vacuumer = vacuumer;
-        _configManager = configManager;
         
         // Create subcommands
         CreateCommand();
@@ -69,12 +67,11 @@ public class CommandLineInterface
                 new PersonalDataColumnCommandBuilder(_handlerFactory, _managerFactory),
                 new PurposesCommandBuilder(_handlerFactory, _managerFactory),
                 new OriginsCommandBuilder(_handlerFactory),
-                new VacuumingRulesCommandBuilder(_handlerFactory, _managerFactory, _vacuumer),
+                new VacuumingRulesCommandBuilder(_handlerFactory, _managerFactory, _vacuumerFactory),
                 new StorageRuleCommandBuilder(_handlerFactory, _managerFactory),
                 new ProcessingsCommandBuilder(_handlerFactory, _managerFactory))
             .WithSubCommands(
-                LoggingCommandBuilder.Build(_logger),
-                ConfigurationCommandBuilder.Build(_configManager));
+                LoggingCommandBuilder.Build(_loggerFactory));
     }
 
     private void AddAllStatusCommand()

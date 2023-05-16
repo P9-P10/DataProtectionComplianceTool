@@ -65,11 +65,13 @@ public static class Program
         var purposeMapper = new Mapper<Purpose>(context);
         
         var vacuumer = new Vacuumer(purposeMapper, new SqliteQueryExecutor(dbConnection));
-        var loggingVacuumer = new LoggingVacuumer(vacuumer, logger);
 
         IManagerFactory managerFactory = new LoggingManagerFactory(new ManagerFactory(context), logger);
+        IConfigManagerFactory configManagerFactory = new ConfigManagerFactory(configManager);
+        ILoggerFactory loggerFactory = new PlaintextLoggerFactory(configManagerFactory);
+        IVacuumerFactory vacuumerFactory = new LoggingVacuumerFactory(new VacuumerFactory(vacuumer), logger);
 
-        var commandLineInterface = new CommandLineInterface(managerFactory, logger, loggingVacuumer, configManager);
+        var commandLineInterface = new CommandLineInterface(managerFactory, loggerFactory, vacuumerFactory);
 
         Run(commandLineInterface);
     }
