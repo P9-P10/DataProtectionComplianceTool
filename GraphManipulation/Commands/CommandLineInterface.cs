@@ -44,8 +44,8 @@ public class CommandLineInterface
         _handlerFactory = handlerFactory;
         _managerFactory = managerFactory;
         // Create subcommands
-        _command = Build();
-        AddStatusCommands();
+        CreateCommand();
+        AddAllStatusCommand();
         CreateCommandParser();
     }
 
@@ -54,9 +54,9 @@ public class CommandLineInterface
         _parser.Invoke(command);
     }
     
-    private Command Build()
+    private void CreateCommand()
     {
-        return CommandBuilder.CreateNewCommand(CommandNamer.RootCommandName)
+        _command = CommandBuilder.CreateNewCommand(CommandNamer.RootCommandName)
             .WithAlias(CommandNamer.RootCommandAlias)
             .WithDescription("This is a description of the root command")
             .WithSubCommands(
@@ -72,28 +72,19 @@ public class CommandLineInterface
                 ConfigurationCommandBuilder.Build(ConfigManager));
     }
 
-    private void AddStatusCommands()
+    private void AddAllStatusCommand()
     {
+        var subCommands = _command.Subcommands;
+        var statusCommands =
+            subCommands.Select(subCommand => subCommand.Subcommands.First(c => c.Name == CommandNamer.Status));
+
         // What the heck is going on here?
-        _command = _command.WithSubCommands(
-            CommandBuilder
-                .BuildCreateCommand()
-                .WithHandler(() =>
-                {
-                    _command.Subcommands
-                        .ToList()
-                        .ForEach(subCommand =>
-                        {
-                            subCommand.Subcommands
-                                .Where(subSubCommand => subSubCommand.Name == CommandNamer.Status)
-                                .ToList()
-                                .ForEach(sub =>
-                                {
-                                    sub.Invoke(CommandNamer.Status);
-                                });
-                        });
-                })
-        );
+        var allStatusCommand = CommandBuilder
+            .BuildStatusCommand()
+            .WithDescription("Shows the status of all entities in the system")
+            .WithHandler(() => statusCommands.ToList().ForEach(statusCommand => statusCommand.Invoke(CommandNamer.Status)));
+
+        _command = _command.WithSubCommands(allStatusCommand);
     }
 
     private void CreateCommandParser()
