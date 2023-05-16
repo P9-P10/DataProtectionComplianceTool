@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GraphManipulation.Commands;
 using GraphManipulation.Commands.Factories;
+using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
 using GraphManipulation.Models.Base;
@@ -52,7 +53,7 @@ public class CommandLineInterfaceTest
         factory.AddMockManager<StorageRule>(manager);
 
         CommandLineInterface cli = new CommandLineInterface(factory);
-        cli.Invoke($"dc c -n testname");
+        cli.Invoke($"{CommandNamer.StorageRulesName} c -n testname");
         
         manager.Verify(manager => manager.Get(
             It.Is<string>(s => s == "testname")));
@@ -70,7 +71,7 @@ public class CommandLineInterfaceTest
         factory.AddMockManager<StorageRule>(manager);
 
         CommandLineInterface cli = new CommandLineInterface(factory);
-        cli.Invoke($"dc c -n testname");
+        cli.Invoke($"{CommandNamer.StorageRulesName} c -n testname");
         
         manager.Verify(manager => manager.Create(It.Is<string>(s => s == "testname")));
     }
@@ -90,7 +91,7 @@ public class CommandLineInterfaceTest
         factory.AddMockManager<StorageRule>(manager);
 
         CommandLineInterface cli = new CommandLineInterface(factory);
-        cli.Invoke($"dc c -n testname -d description");
+        cli.Invoke($"{CommandNamer.StorageRulesName} c -n testname -d description");
         
         manager.Verify(manager => 
             manager.Update(
