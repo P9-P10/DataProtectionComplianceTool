@@ -3,33 +3,16 @@ using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
 using GraphManipulation.Commands.Builders;
 using GraphManipulation.Factories;
+using GraphManipulation.Factories.Interfaces;
 using GraphManipulation.Logging;
-using GraphManipulation.Managers;
-using GraphManipulation.Models;
 using GraphManipulation.Utility;
 using GraphManipulation.Vacuuming;
 
 namespace GraphManipulation.Commands;
 
-public class HandlerFactory : IHandlerFactory {
-    private readonly IManagerFactory _managerFactory;
-
-    public HandlerFactory(IManagerFactory managerFactory)
-    {
-        _managerFactory = managerFactory;
-    }
-    
-    public ICommandHandler<TK, TV> CreateHandler<TK, TV>(FeedbackEmitter<TK, TV> emitter, Action<TV> statusReport) where TV : Entity<TK>, new() where TK : notnull
-    {
-        IManager<TK, TV> manager = _managerFactory.CreateManager<TK, TV>();
-        CommandHandler<TK, TV> commandHandler = new CommandHandler<TK, TV>(manager, emitter, statusReport);
-        return commandHandler;
-    }
-}
-
 public class CommandLineInterface
 {
-    private IHandlerFactory _handlerFactory;
+    private ICommandHandlerFactory _commandHandlerFactory;
     private IManagerFactory _managerFactory;
     private Command _command;
     private Parser _parser;
@@ -42,7 +25,7 @@ public class CommandLineInterface
         _managerFactory = managerFactory;
         _loggerFactory = loggerFactory;
         _vacuumerFactory = vacuumerFactory;
-        _handlerFactory = new HandlerFactory(managerFactory);
+        _commandHandlerFactory = new CommandHandlerFactory(managerFactory);
         
         // Create subcommands
         CreateCommand();
@@ -61,14 +44,14 @@ public class CommandLineInterface
             .WithAlias(CommandNamer.RootCommandAlias)
             .WithDescription("This is a description of the root command")
             .WithSubCommands(
-                new IndividualsCommandBuilder(_handlerFactory, _managerFactory),
-                new PersonalDataOriginCommandBuilder(_handlerFactory, _managerFactory),
-                new PersonalDataColumnCommandBuilder(_handlerFactory, _managerFactory),
-                new PurposesCommandBuilder(_handlerFactory, _managerFactory),
-                new OriginsCommandBuilder(_handlerFactory),
-                new VacuumingRulesCommandBuilder(_handlerFactory, _managerFactory, _vacuumerFactory),
-                new StorageRuleCommandBuilder(_handlerFactory, _managerFactory),
-                new ProcessingsCommandBuilder(_handlerFactory, _managerFactory))
+                new IndividualsCommandBuilder(_commandHandlerFactory, _managerFactory),
+                new PersonalDataOriginCommandBuilder(_commandHandlerFactory, _managerFactory),
+                new PersonalDataColumnCommandBuilder(_commandHandlerFactory, _managerFactory),
+                new PurposesCommandBuilder(_commandHandlerFactory, _managerFactory),
+                new OriginsCommandBuilder(_commandHandlerFactory),
+                new VacuumingRulesCommandBuilder(_commandHandlerFactory, _managerFactory, _vacuumerFactory),
+                new StorageRuleCommandBuilder(_commandHandlerFactory, _managerFactory),
+                new ProcessingsCommandBuilder(_commandHandlerFactory, _managerFactory))
             .WithSubCommands(
                 LoggingCommandBuilder.Build(_loggerFactory));
     }

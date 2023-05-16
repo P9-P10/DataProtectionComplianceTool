@@ -1,5 +1,6 @@
 using GraphManipulation.DataAccess;
 using GraphManipulation.Decorators;
+using GraphManipulation.Factories.Interfaces;
 using GraphManipulation.Logging;
 using GraphManipulation.Models;
 using GraphManipulation.Vacuuming;

@@ -1,6 +1,7 @@
 using System.CommandLine;
 using GraphManipulation.Commands.Binders;
 using GraphManipulation.Factories;
+using GraphManipulation.Factories.Interfaces;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
 using GraphManipulation.Utility;
@@ -14,8 +15,8 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
     private readonly IVacuumer _vacuumer;
     private readonly IManager<string, VacuumingRule> _vacuumingRulesManager;
 
-    public VacuumingRulesCommandBuilder(IHandlerFactory handlerFactory, IManagerFactory managerFactory,
-        IVacuumerFactory vacuumerFactory) : base(handlerFactory)
+    public VacuumingRulesCommandBuilder(ICommandHandlerFactory commandHandlerFactory, IManagerFactory managerFactory,
+        IVacuumerFactory vacuumerFactory) : base(commandHandlerFactory)
     {
         _purposesManager = managerFactory.CreateManager<string, Purpose>();
         _vacuumer = vacuumerFactory.CreateVacuumer();

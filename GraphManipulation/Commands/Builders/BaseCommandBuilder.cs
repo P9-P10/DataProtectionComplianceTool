@@ -1,6 +1,7 @@
 using System.CommandLine;
 using GraphManipulation.Commands.Binders;
 using GraphManipulation.Factories;
+using GraphManipulation.Factories.Interfaces;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
 using GraphManipulation.Utility;
@@ -19,10 +20,10 @@ public abstract class BaseCommandBuilder<TKey, TValue> : BaseCommandBuilder
     protected readonly ICommandHandler<TKey, TValue> CommandHandler;
     protected readonly FeedbackEmitter<TKey, TValue> FeedbackEmitter;
 
-    protected BaseCommandBuilder(IHandlerFactory handlerFactory)
+    protected BaseCommandBuilder(ICommandHandlerFactory commandHandlerFactory)
     {
         FeedbackEmitter = new FeedbackEmitter<TKey, TValue>();
-        CommandHandler = handlerFactory.CreateHandler(FeedbackEmitter, StatusReport);
+        CommandHandler = commandHandlerFactory.CreateCommandHandler(FeedbackEmitter, StatusReport);
     }
 
     protected Command Build(string name, string alias, out Option<TKey> keyOption)

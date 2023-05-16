@@ -26,9 +26,6 @@ public static class OptionNamer
     public const string Purpose = "--purpose";
     public const string PurposeAlias = "-p";
 
-    public const string JoinCondition = "--join-condition";
-    public const string JoinConditionAlias = "-jc";
-
     public const string LegallyRequired = "--legally-required";
     public const string LegallyRequiredAlias = "-lr";
 

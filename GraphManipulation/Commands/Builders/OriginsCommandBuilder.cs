@@ -1,6 +1,7 @@
 using System.CommandLine;
 using GraphManipulation.Commands.Binders;
 using GraphManipulation.Factories;
+using GraphManipulation.Factories.Interfaces;
 using GraphManipulation.Models;
 using GraphManipulation.Utility;
 
@@ -8,7 +9,7 @@ namespace GraphManipulation.Commands.Builders;
 
 public class OriginsCommandBuilder : BaseCommandBuilder<string, Origin>
 {
-    public OriginsCommandBuilder(IHandlerFactory handlerFactory) : base(handlerFactory)
+    public OriginsCommandBuilder(ICommandHandlerFactory commandHandlerFactory) : base(commandHandlerFactory)
     {
     }
 

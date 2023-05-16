@@ -1,6 +1,7 @@
 using System.CommandLine;
 using GraphManipulation.Commands.Binders;
 using GraphManipulation.Factories;
+using GraphManipulation.Factories.Interfaces;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
 using GraphManipulation.Utility;
@@ -11,7 +12,7 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
 {
     private readonly IManager<string, StorageRule> _deleteConditionsManager;
 
-    public PurposesCommandBuilder(IHandlerFactory handlerFactory, IManagerFactory managerFactory) : base(handlerFactory)
+    public PurposesCommandBuilder(ICommandHandlerFactory commandHandlerFactory, IManagerFactory managerFactory) : base(commandHandlerFactory)
     {
         _deleteConditionsManager = managerFactory.CreateManager<string, StorageRule>();
     }

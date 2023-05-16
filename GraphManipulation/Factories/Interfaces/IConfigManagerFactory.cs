@@ -1,6 +1,6 @@
 using GraphManipulation.Managers;
 
-namespace GraphManipulation.Factories;
+namespace GraphManipulation.Factories.Interfaces;
 
 public interface IConfigManagerFactory
 {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GraphManipulation.Commands;
 using GraphManipulation.Factories;
+using GraphManipulation.Factories.Interfaces;
 using GraphManipulation.Logging;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;

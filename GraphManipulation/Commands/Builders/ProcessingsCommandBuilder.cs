@@ -1,6 +1,7 @@
 using System.CommandLine;
 using GraphManipulation.Commands.Binders;
 using GraphManipulation.Factories;
+using GraphManipulation.Factories.Interfaces;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
 using GraphManipulation.Utility;
@@ -12,7 +13,7 @@ public class ProcessingsCommandBuilder : BaseCommandBuilder<string, Processing>
     private readonly IManager<string, Purpose> _purposesManager;
     private readonly IManager<TableColumnPair, PersonalDataColumn> _personalDataColumnManager;
     
-    public ProcessingsCommandBuilder(IHandlerFactory handlerFactory, IManagerFactory managerFactory) : base(handlerFactory)
+    public ProcessingsCommandBuilder(ICommandHandlerFactory commandHandlerFactory, IManagerFactory managerFactory) : base(commandHandlerFactory)
     {
         _purposesManager = managerFactory.CreateManager<string, Purpose>();
         _personalDataColumnManager = managerFactory.CreateManager<TableColumnPair, PersonalDataColumn>();

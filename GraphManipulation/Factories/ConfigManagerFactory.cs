@@ -1,3 +1,4 @@
+using GraphManipulation.Factories.Interfaces;
 using GraphManipulation.Managers;
 
 namespace GraphManipulation.Factories;

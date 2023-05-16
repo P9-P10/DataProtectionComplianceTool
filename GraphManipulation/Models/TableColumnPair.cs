@@ -1,4 +1,4 @@
-namespace GraphManipulation.Managers;
+namespace GraphManipulation.Models;
 
 public class TableColumnPair
 {

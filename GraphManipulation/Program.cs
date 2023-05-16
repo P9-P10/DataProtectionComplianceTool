@@ -8,6 +8,7 @@ using GraphManipulation.Commands;
 using GraphManipulation.DataAccess;
 using GraphManipulation.Decorators;
 using GraphManipulation.Factories;
+using GraphManipulation.Factories.Interfaces;
 using GraphManipulation.Logging;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;

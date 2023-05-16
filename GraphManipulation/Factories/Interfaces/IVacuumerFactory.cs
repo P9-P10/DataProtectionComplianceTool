@@ -1,6 +1,6 @@
 using GraphManipulation.Vacuuming;
 
-namespace GraphManipulation.Factories;
+namespace GraphManipulation.Factories.Interfaces;
 
 public interface IVacuumerFactory
 {

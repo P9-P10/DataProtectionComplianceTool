@@ -1,7 +1,7 @@
 ﻿using GraphManipulation.Managers;
 using GraphManipulation.Models;
 
-namespace GraphManipulation.Factories;
+namespace GraphManipulation.Factories.Interfaces;
 
 public interface IManagerFactory
 {
