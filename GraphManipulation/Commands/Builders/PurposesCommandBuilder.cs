@@ -86,7 +86,7 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
     {
         if (purpose.LegallyRequired is null)
         {
-            Emitter.EmitMissing(purpose.Key!, "legally required");
+            Emitter.EmitMissing(purpose.Key!, "legally required value");
         }
         
         if (purpose.Rules is null || !purpose.Rules.Any())

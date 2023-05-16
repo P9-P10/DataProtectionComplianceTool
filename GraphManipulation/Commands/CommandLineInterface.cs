@@ -76,8 +76,9 @@ public class CommandLineInterface
     private void AddAllStatusCommand()
     {
         var subCommands = _command.Subcommands;
-        var statusCommands =
-            subCommands.Select(subCommand => subCommand.Subcommands.First(c => c.Name == CommandNamer.Status));
+        var statusCommands = subCommands
+                .Select(subCommand => subCommand.Subcommands.FirstOrDefault(c => c.Name == CommandNamer.Status))
+                .Where(command => command is not null);
         
         var allStatusCommand = CommandBuilder
             .BuildStatusCommand()
