@@ -8,18 +8,18 @@ using GraphManipulation.Models;
 
 namespace GraphManipulation.Commands.Builders;
 
-public class DeleteConditionsCommandBuilder : BaseCommandBuilder<string, StorageRule>
+public class StorageRuleCommandBuilder : BaseCommandBuilder<string, StorageRule>
 {
     private readonly IManager<TableColumnPair, PersonalDataColumn> _personalDataColumnManager;
 
-    public DeleteConditionsCommandBuilder(IHandlerFactory handlerFactory, IManagerFactory managerFactory) : base(handlerFactory)
+    public StorageRuleCommandBuilder(IHandlerFactory handlerFactory, IManagerFactory managerFactory) : base(handlerFactory)
     {
         _personalDataColumnManager = managerFactory.CreateManager<TableColumnPair, PersonalDataColumn>();
     }
 
     public override Command Build()
     {
-        var baseCommand = base.Build(CommandNamer.DeleteConditionsName, CommandNamer.DeleteConditionsAlias,
+        var baseCommand = base.Build(CommandNamer.StorageRulesName, CommandNamer.StorageRulesAlias,
             out var keyOption);
 
         var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<StorageRule>();

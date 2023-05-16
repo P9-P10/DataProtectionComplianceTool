@@ -25,7 +25,7 @@ public class DeleteConditionsCommandTest : CommandTest
                 Name = DeleteConditionName
             });
         
-        return DeleteConditionsCommandBuilder.Build(console, managerMock.Object);
+        return StorageRuleCommandBuilder.Build(console, managerMock.Object);
     }
 
     private const string DeleteConditionName = "deleteConditionName";

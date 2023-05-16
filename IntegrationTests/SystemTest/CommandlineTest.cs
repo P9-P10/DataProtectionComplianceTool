@@ -35,8 +35,8 @@ public class CommandlineTest
         result.Should().Contain(CommandNamer.OriginsName);
         result.Should().Contain(CommandNamer.VacuumingRulesAlias);
         result.Should().Contain(CommandNamer.VacuumingRulesName);
-        result.Should().Contain(CommandNamer.DeleteConditionsAlias);
-        result.Should().Contain(CommandNamer.DeleteConditionsName);
+        result.Should().Contain(CommandNamer.StorageRulesName);
+        result.Should().Contain(CommandNamer.StorageRulesName);
         result.Should().Contain(CommandNamer.ProcessingsAlias);
         result.Should().Contain(CommandNamer.ProcessingsName);
         result.Should().Contain(CommandNamer.LoggingAlias);

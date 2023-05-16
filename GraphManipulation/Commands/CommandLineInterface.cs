@@ -66,7 +66,7 @@ public class CommandLineInterface
                 new PurposesCommandBuilder(_handlerFactory, _managerFactory),
                 new OriginsCommandBuilder(_handlerFactory),
                 new VacuumingRulesCommandBuilder(_handlerFactory, _managerFactory, Vacuumer),
-                new DeleteConditionsCommandBuilder(_handlerFactory, _managerFactory),
+                new StorageRuleCommandBuilder(_handlerFactory, _managerFactory),
                 new ProcessingsCommandBuilder(_handlerFactory, _managerFactory))
             .WithSubCommands(
                 LoggingCommandBuilder.Build(Logger),
