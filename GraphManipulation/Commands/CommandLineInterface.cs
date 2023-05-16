@@ -61,6 +61,7 @@ public class CommandLineInterface
             .WithDescription("This is a description of the root command")
             .WithSubCommands(
                 new IndividualsCommandBuilder(_handlerFactory, _managerFactory),
+                new PersonalDataOriginCommandBuilder(_handlerFactory, _managerFactory),
                 new PersonalDataColumnCommandBuilder(_handlerFactory, _managerFactory),
                 new PurposesCommandBuilder(_handlerFactory, _managerFactory),
                 new OriginsCommandBuilder(_handlerFactory),
@@ -77,8 +78,7 @@ public class CommandLineInterface
         var subCommands = _command.Subcommands;
         var statusCommands =
             subCommands.Select(subCommand => subCommand.Subcommands.First(c => c.Name == CommandNamer.Status));
-
-        // What the heck is going on here?
+        
         var allStatusCommand = CommandBuilder
             .BuildStatusCommand()
             .WithDescription("Shows the status of all entities in the system")

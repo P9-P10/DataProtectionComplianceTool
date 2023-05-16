@@ -118,7 +118,7 @@ public class Handler<TKey, TValue> : IHandler<TKey, TValue> where TValue : Entit
         if (manager.Update(key, value))
         {
             feedbackEmitter.EmitSuccess(key, FeedbackEmitter<TKey, TValue>.Operations.Updated, value);
-            statusReport(manager.Get(key)!);
+            statusReport(value.Key is not null ? manager.Get(value.Key)! : manager.Get(key)!);
         }
         else
         {

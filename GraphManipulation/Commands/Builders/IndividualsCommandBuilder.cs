@@ -1,4 +1,5 @@
 using System.CommandLine;
+using GraphManipulation.Commands.Builders.Binders;
 using GraphManipulation.Commands.Factories;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Managers;
@@ -16,18 +17,17 @@ public class IndividualsCommandBuilder : BaseCommandBuilder<int, Individual>
 
     public override Command Build()
     {
-        var keyOption = BuildKeyOption();
-     
-        var command = CommandBuilder
-            .CreateNewCommand(CommandNamer.IndividualsName)
-            .WithAlias(CommandNamer.IndividualsAlias)
-            .WithSubCommands(
-                ListCommand(),
-                ShowCommand(keyOption),
-                StatusCommand()
-            );
+        var baseCommand = base.Build(CommandNamer.IndividualsName, CommandNamer.IndividualsAlias, out var keyOption);
 
-        return command;
+        var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<Individual>();
+
+        return baseCommand
+            .WithSubCommands(
+                CreateCommand(keyOption, new IndividualBinder(keyOption, descriptionOption), new Option[]
+                {
+                    
+                })
+            );
     }
 
     protected override void StatusReport(Individual value)
