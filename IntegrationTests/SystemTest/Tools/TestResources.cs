@@ -49,6 +49,15 @@ public class TestResources
         Rules = new List<VacuumingRule>()
     };
 
+    protected static readonly Purpose NewTestPurposeWithOldRule = new Purpose()
+    {
+        Key = TestPurpose.Key + "NEW",
+        Description = TestPurpose.Description + "NEW",
+        StorageRules = new List<StorageRule>() {TestStorageRule},
+        LegallyRequired = !TestPurpose.LegallyRequired,
+        Rules = new List<VacuumingRule>()
+    };
+
     protected static readonly Purpose VeryNewTestPurpose = new()
     {
         Key = TestPurpose.Key + "VERY_NEW",
@@ -115,17 +124,20 @@ public class TestResources
 
     protected static readonly Individual TestIndividual1 = new()
     {
-        Id = 1
+        Id = 1,
+        Key = 1
     };
 
     protected static readonly Individual TestIndividual2 = new()
     {
-        Id = 2
+        Id = 2,
+        Key = 2
     };
 
     protected static readonly Individual TestIndividual3 = new()
     {
-        Id = 3
+        Id = 3,
+        Key = 3
     };
 
     protected static readonly VacuumingRule TestVacuumingRule = new()

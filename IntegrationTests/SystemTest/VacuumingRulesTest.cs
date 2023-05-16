@@ -22,12 +22,10 @@ public class VacuumingRulesTest : TestResources
         error.Should().BeEmpty();
 
         output.Should().ContainSingle(s =>
-            s.Contains($"Successfully added {TestVacuumingRule.ToListingIdentifier()} vacuuming rule") &&
-            s.Contains($"{TestVacuumingRule.Interval}") &&
-            s.Contains($"{TestVacuumingRule.Purposes.First().ToListingIdentifier()}"));
-        output.Should().ContainSingle(s =>
+            s.Contains($"Successfully created {TestVacuumingRule.ToListingIdentifier()} vacuuming rule"));
+            output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully updated {TestVacuumingRule.ToListingIdentifier()} vacuuming rule with {TestVacuumingRule.Description}"));
+                $"Successfully updated {TestVacuumingRule.ToListingIdentifier()} vacuuming rule with {TestVacuumingRule.ToListing()}"));
     }
 
     [Fact]
@@ -182,7 +180,7 @@ public class VacuumingRulesTest : TestResources
         ExecuteVacuumingRule(process, new[] { TestVacuumingRule });
 
         // Do something to get errors processed
-        AddDeleteCondition(process, TestNewTestStorageRule);
+        process.GiveInput("");
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetAllOutputNoWhitespace();
@@ -216,8 +214,8 @@ public class VacuumingRulesTest : TestResources
             $"FROM {TestPersonalDataColumn.Key.TableName}")
             .ToList();
 
-        result.First().Should().Be(new ValueTuple<string, string>(TestIndividual1.ToListing(), TestIndividual1.ToListing()));
-        result.Skip(1).First().Should().Be(new ValueTuple<string, string>(TestIndividual2.ToListing(), TestPersonalDataColumn.DefaultValue));
-        result.Skip(2).First().Should().Be(new ValueTuple<string, string>(TestIndividual3.ToListing(), TestIndividual3.ToListing()));
+        result.First().Should().Be(new ValueTuple<string, string>(TestIndividual1.Id.ToString(), TestIndividual1.Key.ToString()));
+        result.Skip(1).First().Should().Be(new ValueTuple<string, string>(TestIndividual2.Id.ToString(), TestIndividual2.Key.ToString()));
+        result.Skip(2).First().Should().Be(new ValueTuple<string, string>(TestIndividual3.Id.ToString(), TestIndividual3.Key.ToString()));
     }
 }

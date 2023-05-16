@@ -57,7 +57,7 @@ public class PurposeTest : TestResources
         var output = process.GetLastOutput();
         
         error.Should().BeEmpty();
-        output.Should().ContainSingle(s => s.Contains(NewTestPurpose.ToListing()));
+        output.Should().ContainSingle(s => s.Contains(NewTestPurposeWithOldRule.ToListing()));
     }
     
     [Fact]
