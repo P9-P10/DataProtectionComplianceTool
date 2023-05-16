@@ -11,7 +11,7 @@ public class ProcessingTests : TestResources
     {
         using TestProcess process = Tools.SystemTest.CreateTestProcess();
         process.Start();
-        
+
         AddPurpose(process,TestPurpose);
         AddPersonalData(process,TestPersonalDataColumn);
         AddProcessing(process, TestProcessing);

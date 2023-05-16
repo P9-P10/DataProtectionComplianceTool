@@ -111,9 +111,9 @@ public class VacuumerTest
         TestQueryExecutor testQueryExecutor = new();
         Vacuumer vacuumer = VacuumInstantiate(testPurposeMapper, testQueryExecutor);
         Purpose purpose = PurposeMaker();
-        purpose.DeleteConditions = purpose.DeleteConditions.Append(DeleteConditionMaker(condition: "SecondCondition"))
+        purpose.StorageRules = purpose.StorageRules.Append(DeleteConditionMaker(condition: "SecondCondition"))
             .ToList();
-        purpose.DeleteConditions.ElementAt(1).Purposes = purpose.DeleteConditions.ElementAt(1).Purposes.Append(purpose);
+        purpose.StorageRules.ElementAt(1).Purposes = purpose.StorageRules.ElementAt(1).Purposes.Append(purpose);
         testPurposeMapper.Insert(purpose);
 
 
@@ -131,9 +131,9 @@ public class VacuumerTest
         TestQueryExecutor testQueryExecutor = new();
         Vacuumer vacuumer = VacuumInstantiate(testPurposeMapper, testQueryExecutor);
         Purpose purpose = PurposeMaker();
-        purpose.DeleteConditions = purpose.DeleteConditions
+        purpose.StorageRules = purpose.StorageRules
             .Append(DeleteConditionMaker(condition: "SecondCondition", tableName: "SecondTable")).ToList();
-        purpose.DeleteConditions.ElementAt(1).Purposes = purpose.DeleteConditions.ElementAt(1).Purposes.Append(purpose);
+        purpose.StorageRules.ElementAt(1).Purposes = purpose.StorageRules.ElementAt(1).Purposes.Append(purpose);
         testPurposeMapper.Insert(purpose);
 
 
@@ -153,9 +153,9 @@ public class VacuumerTest
         Vacuumer vacuumer = VacuumInstantiate(testPurposeMapper, testQueryExecutor);
         Purpose purpose = PurposeMaker();
         Purpose newPurpose = PurposeMaker(name: "NewPurpose", tableName: "NewTable");
-        purpose.DeleteConditions = purpose.DeleteConditions
+        purpose.StorageRules = purpose.StorageRules
             .Append(DeleteConditionMaker(condition: "SecondCondition", tableName: "SecondTable")).ToList();
-        purpose.DeleteConditions.ElementAt(1).Purposes = purpose.DeleteConditions.ElementAt(1).Purposes.Append(purpose);
+        purpose.StorageRules.ElementAt(1).Purposes = purpose.StorageRules.ElementAt(1).Purposes.Append(purpose);
         testPurposeMapper.Insert(purpose);
         testPurposeMapper.Insert(newPurpose);
 

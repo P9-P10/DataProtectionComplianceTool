@@ -4,7 +4,6 @@ namespace GraphManipulation.Models;
 
 public class StorageRule : Entity<string>
 {
-    // TODO Eventuelt omdøb Condition til VacuumingCondition
     public string? VacuumingCondition { get; set; }
     public virtual PersonalDataColumn? PersonalDataColumn { get; set; }
     public virtual IEnumerable<Purpose>? Purposes { get; set; }

@@ -25,7 +25,7 @@ public static class VacuumingModelsMakers
             purposes.Add(new Purpose()
             {
                 Id = 0, Key = purposeName, Description = "Description",
-                DeleteConditions = new List<StorageRule>() {storageRule}
+                StorageRules = new List<StorageRule>() {storageRule}
             });
         }
         else
@@ -45,9 +45,9 @@ public static class VacuumingModelsMakers
                 VacuumingCondition = "SecondCondition"
             };
             purposes.Add(new Purpose()
-                {Id = 0, Key = purposeName, DeleteConditions = new List<StorageRule>() {storageRule}});
+                {Id = 0, Key = purposeName, StorageRules = new List<StorageRule>() {storageRule}});
             purposes.Add(new Purpose()
-                {Id = 1, Key = purposeName, DeleteConditions = new List<StorageRule>() {deleteCondition2}});
+                {Id = 1, Key = purposeName, StorageRules = new List<StorageRule>() {deleteCondition2}});
         }
 
         PersonalDataColumn personalDataColumn = new()
@@ -74,11 +74,11 @@ public static class VacuumingModelsMakers
         return deletionExecution;
     }
 
-    public static VacuumingRule VacuumingRuleMaker(string Key = "Name", string description = "Description",
+    public static VacuumingRule VacuumingRuleMaker(string name = "Name", string description = "Description",
         string interval = "2y 5d", IEnumerable<Purpose>? purposes = null)
     {
         purposes ??= PurposesMaker();
-        return new VacuumingRule(description, Key, interval, purposes) {Id = 0};
+        return new VacuumingRule(description, name, interval, purposes) {Id = 0};
     }
 
     private static IEnumerable<Purpose> PurposesMaker()
@@ -90,7 +90,7 @@ public static class VacuumingModelsMakers
                 Id = 0,
                 Key = "Name",
                 Description = "Description",
-                DeleteConditions = new List<StorageRule> {DeleteConditionMaker()},
+                StorageRules = new List<StorageRule> {DeleteConditionMaker()},
                 Rules = new List<VacuumingRule>()
             }
         };
@@ -107,7 +107,7 @@ public static class VacuumingModelsMakers
         Purpose purpose = new()
         {
             Key = name,
-            DeleteConditions = new List<StorageRule>(),
+            StorageRules = new List<StorageRule>(),
             Rules = new List<VacuumingRule>(),
             Id = id
         };
@@ -119,7 +119,7 @@ public static class VacuumingModelsMakers
         }
         
         storageRule.Purposes = storageRule.Purposes.Append(purpose);
-        purpose.DeleteConditions = purpose.DeleteConditions.Append(storageRule).ToList();
+        purpose.StorageRules = purpose.StorageRules.Append(storageRule).ToList();
         return purpose;
     }
 

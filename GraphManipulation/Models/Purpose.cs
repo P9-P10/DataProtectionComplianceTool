@@ -6,13 +6,13 @@ public class Purpose : Entity<string>
 {
     public bool? LegallyRequired { get; set; }
     public virtual IEnumerable<PersonalDataColumn>? PersonalDataColumns { get; set; }
-    public virtual IEnumerable<StorageRule>? DeleteConditions { get; set; }
+    public virtual IEnumerable<StorageRule>? StorageRules { get; set; }
     public virtual IEnumerable<VacuumingRule>? Rules { get; set; }
 
     public override string ToListing()
     {
         return string.Join(", ", base.ToListing(), LegallyRequired is null ? "" : LegallyRequired,
-            "[ " + string.Join(", ", DeleteConditions is null ? new List<string>() : DeleteConditions.Select(c => c.ToListingIdentifier())) + " ]",
+            "[ " + string.Join(", ", StorageRules is null ? new List<string>() : StorageRules.Select(c => c.ToListingIdentifier())) + " ]",
             "[ " + string.Join(", ", PersonalDataColumns is null ? new List<string>() : PersonalDataColumns.Select(c => c.ToListingIdentifier())) + " ]",
             "[ " + string.Join(", ", Rules is null ? new List<string>() : Rules.Select(r => r.ToListingIdentifier())) + " ]"
         );

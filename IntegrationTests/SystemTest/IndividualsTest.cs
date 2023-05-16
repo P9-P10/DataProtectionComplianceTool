@@ -1,5 +1,3 @@
-using System.Data;
-using Dapper;
 using FluentAssertions;
 using IntegrationTests.SystemTest.Tools;
 

@@ -46,8 +46,8 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
         
         var deleteConditionsListChangesCommands = BuildListChangesCommand(
             keyOption, deleteConditionListOption, _deleteConditionsManager,
-            purpose => purpose.DeleteConditions ?? new List<StorageRule>(),
-            (purpose, deleteConditions) => purpose.DeleteConditions = deleteConditions);
+            purpose => purpose.StorageRules ?? new List<StorageRule>(),
+            (purpose, deleteConditions) => purpose.StorageRules = deleteConditions);
 
         return baseCommand
             .WithSubCommands(
@@ -93,7 +93,7 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
             Emitter.EmitMissing<string, VacuumingRule>(purpose.Key!);
         }
 
-        if (purpose.DeleteConditions is null || !purpose.DeleteConditions.Any())
+        if (purpose.StorageRules is null || !purpose.StorageRules.Any())
         {
             Emitter.EmitMissing<string, StorageRule>(purpose.Key!);
         }

@@ -30,7 +30,7 @@ public class Vacuumer : IVacuumer
     private List<DeletionExecution> CreateExecutionsFromPurpose(Purpose purpose)
     {
         List<DeletionExecution> output = new List<DeletionExecution>();
-        foreach (var condition in purpose.DeleteConditions)
+        foreach (var condition in purpose.StorageRules)
         {
             AddConditionIfNotExists(output, condition, purpose);
         }
@@ -137,7 +137,7 @@ public class Vacuumer : IVacuumer
         List<StorageRule> output = new List<StorageRule>();
         foreach (Purpose purpose in purposes)
         {
-            output.AddRange(purpose.DeleteConditions);
+            output.AddRange(purpose.StorageRules);
         }
 
         return output;
@@ -145,7 +145,7 @@ public class Vacuumer : IVacuumer
 
     private List<Purpose> GetAllPurposesWithSameTableColumnPair(PersonalDataColumn personalDataColumn)
     {
-        return _purposeMapper.Find(purpose => purpose.DeleteConditions.Any(deleteCondition =>
+        return _purposeMapper.Find(purpose => purpose.StorageRules.Any(deleteCondition =>
             deleteCondition.PersonalDataColumn.Key.Equals(personalDataColumn.Key)
             && !personalDataColumn.Purposes.Contains(purpose))).ToList();
     }

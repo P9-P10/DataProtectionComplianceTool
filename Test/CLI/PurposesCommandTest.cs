@@ -25,7 +25,7 @@ public class PurposesCommandTest : CommandTest
                 Description = Description,
                 LegallyRequired = LegallyRequired,
                 Rules = new List<VacuumingRule>(),
-                DeleteConditions = new List<StorageRule>(){StorageRule}
+                StorageRules = new List<StorageRule>(){StorageRule}
             });
         
         purposeManagerMock

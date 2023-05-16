@@ -35,16 +35,16 @@ public class TestResources
     {
         Key = "purposeName",
         Description = Description,
-        DeleteConditions = new List<StorageRule>() {TestStorageRule},
+        StorageRules = new List<StorageRule>() {TestStorageRule},
         LegallyRequired = true,
-        Rules = new List<VacuumingRule>()
+        Rules = new List<VacuumingRule>(){}
     };
 
     protected static readonly Purpose NewTestPurpose = new()
     {
         Key = TestPurpose.Key + "NEW",
         Description = TestPurpose.Description + "NEW",
-        DeleteConditions = new List<StorageRule>() {TestNewTestStorageRule},
+        StorageRules = new List<StorageRule>() {TestNewTestStorageRule},
         LegallyRequired = !TestPurpose.LegallyRequired,
         Rules = new List<VacuumingRule>()
     };
@@ -53,7 +53,7 @@ public class TestResources
     {
         Key = TestPurpose.Key + "VERY_NEW",
         Description = TestPurpose.Description + "VERY_NEW",
-        DeleteConditions = new List<StorageRule>() {TestNewTestStorageRule},
+        StorageRules = new List<StorageRule>() {TestNewTestStorageRule},
         LegallyRequired = !NewTestPurpose.LegallyRequired,
         Rules = new List<VacuumingRule>()
     };
@@ -151,10 +151,11 @@ public class TestResources
         var addPurposeCommand = $"{CommandNamer.PurposesName} {CommandNamer.Create} " +
                                 $"{OptionNamer.Name} {purpose.Key} " +
                                 $"{OptionNamer.Description} \"{purpose.Description}\" " +
-                                $"{OptionNamer.DeleteConditionName} {purpose.DeleteConditions} " +
+                                $"{OptionNamer.DeleteConditionName} {String.Join(" ", purpose.StorageRules.Select(p => p.Key).ToList())} " +
                                 $"{OptionNamer.LegallyRequired} {purpose.LegallyRequired} ";
 
         testProcess.GiveInput(addPurposeCommand);
+
     }
 
     protected static void ShowPurpose(TestProcess testProcess, Purpose purpose)
@@ -171,7 +172,7 @@ public class TestResources
                                    $"{OptionNamer.Name} {old.Key} " +
                                    $"{OptionNamer.Description} \"{updated.Description}\" " +
                                    $"{OptionNamer.LegallyRequired} {updated.LegallyRequired} " +
-                                   $"{OptionNamer.DeleteConditionName} {updated.DeleteConditions} " +
+                                   $"{OptionNamer.DeleteConditionName} {updated.StorageRules} " +
                                    $"{OptionNamer.NewName} {updated.Key}";
 
         testProcess.GiveInput(updatePurposeCommand);
@@ -398,7 +399,7 @@ public class TestResources
         var command = $"{CommandNamer.VacuumingRulesName} {CommandNamer.Create} " +
                       $"{OptionNamer.Name} {vacuumingRule.Key} " +
                       $"{OptionNamer.Interval} \"{vacuumingRule.Interval}\" " +
-                      $"{OptionNamer.Purpose} {vacuumingRule.Purposes.First().ToListingIdentifier()} " +
+                      $"{OptionNamer.PurposeListAlias} {vacuumingRule.Purposes.First().ToListingIdentifier()} " +
                       $"{OptionNamer.Description} \"{vacuumingRule.Description}\"";
         testProcess.GiveInput(command);
     }
