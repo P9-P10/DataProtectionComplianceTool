@@ -14,9 +14,10 @@ public class DeletionConditionsTest : TestResources
         process.Start();
 
         AddDeleteCondition(process,new StorageRule(){Key = "DeletionCondition",VacuumingCondition = "Condition"});
-        string result = process.GetOutput();
+        var result = process.GetAllOutput();
 
-        result.Should().Contain("Successfully added DeletionCondition delete condition with , Condition");
+        result.Should().ContainSingle(s =>
+            s.Contains("Successfully") && s.Contains("created") && s.Contains("DeletionCondition"));
     }
 
     [Fact]
@@ -46,7 +47,7 @@ public class DeletionConditionsTest : TestResources
         
         ListDeletionConditions(process);
         List<string> result = process.GetLastOutput();
-        result[1].Should().Contain("NewName, , TRUE");
+        result.Should().ContainSingle(s=>s.Contains("NewName, , TRUE"));
     }
 
     [Fact]
@@ -63,7 +64,7 @@ public class DeletionConditionsTest : TestResources
         ListDeletionConditions(process);
         
         List<string> result = process.GetLastOutput();
-        result[1].Should().Contain("NewName, This is the new description, Condition");
+        result.Should().ContainSingle(s=>s.Contains("NewName, This is the new description, Condition"));
     }
     
     [Fact]
@@ -77,8 +78,8 @@ public class DeletionConditionsTest : TestResources
         UpdateDeletionCondition(process,storageRule,
             new StorageRule(){Key = "NewName",VacuumingCondition = Condition,Description = "This is a new description"});
         ListDeletionConditions(process);
-        string result = process.GetOutput();
-        result.Should().Contain("NewName, This is a new description, TRUE");
+        List<string> result = process.GetLastOutput();
+        result.Should().ContainSingle(s=>s.Contains($"NewName, This is a new description, {Condition}"));
     }
     
     [Fact]

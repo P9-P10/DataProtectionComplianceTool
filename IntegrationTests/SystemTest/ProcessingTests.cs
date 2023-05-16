@@ -5,21 +5,21 @@ namespace IntegrationTests.SystemTest;
 
 public class ProcessingTests : TestResources
 {
-
     [Fact]
     public void TestAdd_Prints_Correct_Message()
     {
         using TestProcess process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddPurpose(process,TestPurpose);
-        AddPersonalData(process,TestPersonalDataColumn);
+        AddPurpose(process, TestPurpose);
+        AddPersonalData(process, TestPersonalDataColumn);
         AddProcessing(process, TestProcessing);
 
         List<string> result = process.GetLastOutput();
-        result.First().Should().Contain("ProcessingDescription");
-        result.First().Should().Contain("ProcessingName");
-        result.First().Should().Contain("Successfully");
+        result.Should().ContainSingle(s =>
+            s.Contains("ProcessingName") && s.Contains("Successfully") && s.Contains("created"));
+        result.Should()
+            .ContainSingle(s => s.Contains("Successfully updated") && s.Contains(TestProcessing.ToListing()));
     }
 
     [Fact]
@@ -27,15 +27,14 @@ public class ProcessingTests : TestResources
     {
         using TestProcess process = Tools.SystemTest.CreateTestProcess();
         process.Start();
-        
-        AddPurpose(process,TestPurpose);
-        AddPersonalData(process,TestPersonalDataColumn);
+
+        AddPurpose(process, TestPurpose);
+        AddPersonalData(process, TestPersonalDataColumn);
         AddProcessing(process, TestProcessing);
 
         ListProcessing(process);
         List<string> result = process.GetLastOutput();
-        result.FindAll(s=>s.Contains(TestProcessing.Key) 
-                          && s.Contains(TestProcessing.Description)).Should().ContainSingle();
+        result.Should().ContainSingle(s => s.Contains(TestProcessing.ToListing()));
     }
 
     [Fact]
@@ -43,18 +42,16 @@ public class ProcessingTests : TestResources
     {
         using TestProcess process = Tools.SystemTest.CreateTestProcess();
         process.Start();
-        
-        AddPurpose(process,TestPurpose);
-        AddPersonalData(process,TestPersonalDataColumn);
+
+        AddPurpose(process, TestPurpose);
+        AddPersonalData(process, TestPersonalDataColumn);
         AddProcessing(process, TestProcessing);
-        
-        UpdateProcessing(process,TestProcessing,NewTestProcessing);
-        
+
+        UpdateProcessing(process, TestProcessing, NewTestProcessing);
+
         List<string> result = process.GetLastOutput();
-        result[1].Should().Contain(TestProcessing.Key);
-        result[1].Should().Contain(NewTestProcessing.Key);
-        result[1].Should().Contain("Successfully");
-        result[1].Should().Contain("updated");
+        result.Should().ContainSingle(s =>
+            s.Contains("updated") && s.Contains(NewTestProcessing.Key) && s.Contains(NewTestProcessing.Description));
     }
 
     [Fact]
@@ -62,17 +59,16 @@ public class ProcessingTests : TestResources
     {
         using TestProcess process = Tools.SystemTest.CreateTestProcess();
         process.Start();
-        
-        AddPurpose(process,TestPurpose);
-        AddPersonalData(process,TestPersonalDataColumn);
+
+        AddPurpose(process, TestPurpose);
+        AddPersonalData(process, TestPersonalDataColumn);
         AddProcessing(process, TestProcessing);
-        
-        UpdateProcessing(process,TestProcessing,NewTestProcessing);
-        
+
+        UpdateProcessing(process, TestProcessing, NewTestProcessing);
+
         ListProcessing(process);
         List<string> result = process.GetLastOutput();
-        result.FindAll(s=>s.Contains(NewTestProcessing.Key) 
-                          && s.Contains(NewTestProcessing.Description)).Should().ContainSingle();
+        result.Should().ContainSingle(s => s.Contains(NewTestProcessing.ToListing()));
     }
 
     [Fact]
@@ -80,17 +76,15 @@ public class ProcessingTests : TestResources
     {
         using TestProcess process = Tools.SystemTest.CreateTestProcess();
         process.Start();
-        
-        AddPurpose(process,TestPurpose);
-        AddPersonalData(process,TestPersonalDataColumn);
+
+        AddPurpose(process, TestPurpose);
+        AddPersonalData(process, TestPersonalDataColumn);
         AddProcessing(process, TestProcessing);
-        
-        DeleteProcessing(process,TestProcessing);
+
+        DeleteProcessing(process, TestProcessing);
 
         List<string> result = process.GetLastOutput();
-        result.First().Should().Contain("deleted");
-        result.First().Should().Contain(TestProcessing.Key);
-
+        result.Should().ContainSingle(s => s.Contains("deleted") && s.Contains(TestProcessing.Key));
     }
 
     [Fact]
@@ -98,17 +92,17 @@ public class ProcessingTests : TestResources
     {
         using TestProcess process = Tools.SystemTest.CreateTestProcess();
         process.Start();
-        
-        AddPurpose(process,TestPurpose);
-        AddPersonalData(process,TestPersonalDataColumn);
+
+        AddPurpose(process, TestPurpose);
+        AddPersonalData(process, TestPersonalDataColumn);
         AddProcessing(process, TestProcessing);
-        
-        DeleteProcessing(process,TestProcessing);
-        
+
+        DeleteProcessing(process, TestProcessing);
+
         ListProcessing(process);
         List<string> result = process.GetLastOutput();
-        result.FindAll(s=>s.Contains(TestProcessing.Key) 
-                          && s.Contains(TestProcessing.Description)).Should().BeEmpty();
+        result.FindAll(s => s.Contains(TestProcessing.Key)
+                            && s.Contains(TestProcessing.Description)).Should().BeEmpty();
     }
 
     [Fact]
@@ -116,14 +110,13 @@ public class ProcessingTests : TestResources
     {
         using TestProcess process = Tools.SystemTest.CreateTestProcess();
         process.Start();
-        
-        AddPurpose(process,TestPurpose);
-        AddPersonalData(process,TestPersonalDataColumn);
+
+        AddPurpose(process, TestPurpose);
+        AddPersonalData(process, TestPersonalDataColumn);
         AddProcessing(process, TestProcessing);
 
-        ShowProcessing(process,TestProcessing);
+        ShowProcessing(process, TestProcessing);
         List<string> result = process.GetLastOutput();
-        result.FindAll(s=>s.Contains(TestProcessing.Key) 
-                          && s.Contains(TestProcessing.Description)).Should().ContainSingle();
+        result.Should().ContainSingle(s => s.Contains(TestProcessing.ToListing()));
     }
 }

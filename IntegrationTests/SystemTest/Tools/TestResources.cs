@@ -37,7 +37,7 @@ public class TestResources
         Description = Description,
         StorageRules = new List<StorageRule>() {TestStorageRule},
         LegallyRequired = true,
-        Rules = new List<VacuumingRule>(){}
+        Rules = new List<VacuumingRule>() { }
     };
 
     protected static readonly Purpose NewTestPurpose = new()
@@ -72,6 +72,14 @@ public class TestResources
         Purposes = TestPersonalDataColumn.Purposes,
         DefaultValue = TestPersonalDataColumn.DefaultValue + "UPDATED",
         Description = TestPersonalDataColumn.Description + "UPDATED",
+    };
+
+    protected static readonly PersonalDataColumn TestPersonalDataColumnWithMorePurposes = new PersonalDataColumn()
+    {
+        Key = TestPersonalDataColumn.Key,
+        Purposes = new []{TestPurpose,NewTestPurpose,VeryNewTestPurpose},
+        Description = TestPersonalDataColumn.Description,
+        DefaultValue = TestPersonalDataColumn.DefaultValue
     };
 
     protected static readonly PersonalDataColumn NewTestPersonalDataColumn = new()
@@ -155,7 +163,6 @@ public class TestResources
                                 $"{OptionNamer.LegallyRequired} {purpose.LegallyRequired} ";
 
         testProcess.GiveInput(addPurposeCommand);
-
     }
 
     protected static void ShowPurpose(TestProcess testProcess, Purpose purpose)
@@ -172,7 +179,6 @@ public class TestResources
                                    $"{OptionNamer.Name} {old.Key} " +
                                    $"{OptionNamer.Description} \"{updated.Description}\" " +
                                    $"{OptionNamer.LegallyRequired} {updated.LegallyRequired} " +
-                                   $"{OptionNamer.DeleteConditionName} {updated.StorageRules} " +
                                    $"{OptionNamer.NewName} {updated.Key}";
 
         testProcess.GiveInput(updatePurposeCommand);
@@ -289,7 +295,7 @@ public class TestResources
 
     protected static void AddPersonalData(TestProcess process, PersonalDataColumn personalDataColumn)
     {
-        var command = $"{CommandNamer.PersonalDataOriginsAlias} {CommandNamer.CreateAlias}" +
+        var command = $"{CommandNamer.PersonalDataColumnsAlias} {CommandNamer.CreateAlias}" +
                       $" {OptionNamer.TableColumn} {personalDataColumn.Key.TableName} {personalDataColumn.Key.ColumnName}" +
                       $" {OptionNamer.DefaultValueAlias} \"{personalDataColumn.DefaultValue}\"" +
                       $" {OptionNamer.Description} \"{personalDataColumn.Description}\"" +
@@ -300,7 +306,7 @@ public class TestResources
     protected static void UpdatePersonalData(TestProcess testProcess, PersonalDataColumn old,
         PersonalDataColumn updated)
     {
-        var command = $"{CommandNamer.PersonalDataOriginsAlias} {CommandNamer.Update} " +
+        var command = $"{CommandNamer.PersonalDataColumnsAlias} {CommandNamer.Update} " +
                       $"{OptionNamer.TableColumn} {old.Key.TableName} {old.Key.ColumnName} " +
                       $"{OptionNamer.DefaultValue} \"{updated.DefaultValue}\" " +
                       $"{OptionNamer.Description} \"{updated.Description}\" ";
@@ -310,7 +316,7 @@ public class TestResources
 
     protected static void ShowPersonalData(TestProcess testProcess, PersonalDataColumn personalDataColumn)
     {
-        var command = $"{CommandNamer.PersonalDataOriginsAlias} {CommandNamer.Show} " +
+        var command = $"{CommandNamer.PersonalDataColumnsAlias} {CommandNamer.Show} " +
                       $"{OptionNamer.TableColumn} {personalDataColumn.Key.TableName} " +
                       $"{personalDataColumn.Key.ColumnName} ";
 
@@ -319,13 +325,13 @@ public class TestResources
 
     protected static void ListPersonalData(TestProcess testProcess)
     {
-        var command = $"{CommandNamer.PersonalDataColumnsName} {CommandNamer.List}";
+        var command = $"{CommandNamer.PersonalDataColumnsAlias} {CommandNamer.List}";
         testProcess.GiveInput(command);
     }
 
     protected static void DeletePersonalData(TestProcess testProcess, PersonalDataColumn personalDataColumn)
     {
-        var command = $"{CommandNamer.PersonalDataOriginsAlias} {CommandNamer.Delete} " +
+        var command = $"{CommandNamer.PersonalDataColumnsAlias} {CommandNamer.Delete} " +
                       $"{OptionNamer.TableColumn} {personalDataColumn.Key.TableName} " +
                       $"{personalDataColumn.Key.ColumnName} ";
         testProcess.GiveInput(command);
@@ -334,7 +340,7 @@ public class TestResources
     protected static void AddPurposesToPersonalData(TestProcess testProcess, PersonalDataColumn personalDataColumn,
         IEnumerable<Purpose> purposes)
     {
-        var command = $"{CommandNamer.PersonalDataOriginsAlias} {CommandNamer.AddPurpose} " +
+        var command = $"{CommandNamer.PersonalDataColumnsAlias} {CommandNamer.AddPurpose} " +
                       $"{OptionNamer.TableColumn} {personalDataColumn.Key.TableName} " +
                       $"{personalDataColumn.Key.ColumnName} " +
                       $"{OptionNamer.PurposeList} {string.Join(" ", purposes.Select(p => p.Key))}";
@@ -345,7 +351,7 @@ public class TestResources
         PersonalDataColumn personalDataColumn,
         IEnumerable<Purpose> purposes)
     {
-        var command = $"{CommandNamer.PersonalDataOriginsAlias} {CommandNamer.RemovePurpose} " +
+        var command = $"{CommandNamer.PersonalDataColumnsAlias} {CommandNamer.RemovePurpose} " +
                       $"{OptionNamer.TableColumn} {personalDataColumn.Key.TableName} " +
                       $"{personalDataColumn.Key.ColumnName} " +
                       $"{OptionNamer.PurposeList} {string.Join(" ", purposes.Select(p => p.Key))}";
@@ -355,7 +361,7 @@ public class TestResources
     protected static void SetOriginOfPersonalData(TestProcess testProcess, PersonalDataColumn personalDataColumn,
         Individual individual, Origin origin)
     {
-        var command = $"{CommandNamer.PersonalDataOriginsAlias} {CommandNamer.SetOrigin} " +
+        var command = $"{CommandNamer.PersonalDataColumnsAlias} {CommandNamer.SetOriginAlias} " +
                       $"{OptionNamer.TableColumn} {personalDataColumn.Key.TableName} " +
                       $"{personalDataColumn.Key.ColumnName} " +
                       $"{OptionNamer.Id} {individual.ToListing()} " +
@@ -367,7 +373,7 @@ public class TestResources
     protected static void ShowOriginOfPersonalData(TestProcess testProcess, PersonalDataColumn personalDataColumn,
         Individual individual)
     {
-        var command = $"{CommandNamer.PersonalDataOriginsAlias} {CommandNamer.ShowOrigin} " +
+        var command = $"{CommandNamer.PersonalDataColumnsAlias} {CommandNamer.ShowOrigin} " +
                       $"{OptionNamer.TableColumn} {personalDataColumn.Key.TableName} " +
                       $"{personalDataColumn.Key.ColumnName} " +
                       $"{OptionNamer.Id} {individual.ToListing()} ";
@@ -486,7 +492,8 @@ public class TestResources
 
     protected static void InsertIndividual(IDbConnection dbConnection, Individual individual)
     {
-        dbConnection.Execute($"INSERT INTO {IndividualsTable} ({IndividualsColumn}) VALUES ({individual.ToListing()})");
+        dbConnection.Execute(
+            $"INSERT INTO {IndividualsTable} ({IndividualsColumn}, Key) VALUES ({individual.Id}, {individual.Key})");
     }
 
     protected static void CreatePersonalDataTable(IDbConnection dbConnection, PersonalDataColumn personalDataColumn)
@@ -504,7 +511,7 @@ public class TestResources
     {
         var query = $"INSERT INTO " +
                     $"{personalDataColumn.Key.TableName} (Id, {personalDataColumn.Key.ColumnName}) " +
-                    $"VALUES ({individual.ToListing()}, '{value}')";
+                    $"VALUES ({individual.Id}, '{value}')";
         dbConnection.Execute(query);
     }
 
@@ -516,8 +523,8 @@ public class TestResources
 
         CreatePersonalDataTable(dbConnection, TestPersonalDataColumn);
 
-        InsertPersonalData(dbConnection, TestPersonalDataColumn, TestIndividual1, $"{TestIndividual1.ToListing()}");
-        InsertPersonalData(dbConnection, TestPersonalDataColumn, TestIndividual2, $"{TestIndividual2.ToListing()}");
-        InsertPersonalData(dbConnection, TestPersonalDataColumn, TestIndividual3, $"{TestIndividual3.ToListing()}");
+        InsertPersonalData(dbConnection, TestPersonalDataColumn, TestIndividual1, $"{TestIndividual1.Id}");
+        InsertPersonalData(dbConnection, TestPersonalDataColumn, TestIndividual2, $"{TestIndividual2.Id}");
+        InsertPersonalData(dbConnection, TestPersonalDataColumn, TestIndividual3, $"{TestIndividual3.Id}");
     }
 }
