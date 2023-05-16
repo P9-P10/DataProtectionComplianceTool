@@ -61,6 +61,7 @@ public class CommandLineInterface
             .WithDescription("This is a description of the root command")
             .WithSubCommands(
                 new IndividualsCommandBuilder(_handlerFactory, _managerFactory),
+                new PersonalDataOriginCommandBuilder(_handlerFactory, _managerFactory),
                 new PersonalDataColumnCommandBuilder(_handlerFactory, _managerFactory),
                 new PurposesCommandBuilder(_handlerFactory, _managerFactory),
                 new OriginsCommandBuilder(_handlerFactory),
