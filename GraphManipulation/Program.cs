@@ -26,11 +26,12 @@ public static class Program
     {
         if (args.Length > 0)
         {
-            if(args.Length == 1)
+            if (args.Length == 1)
                 configPath = args[0];
             else
             {
-                Console.WriteLine("Received too many arguments. Only a single argument specifying the path of the configuration file expected");
+                Console.WriteLine(
+                    "Received too many arguments. Only a single argument specifying the path of the configuration file expected");
                 return;
             }
         }
@@ -55,27 +56,24 @@ public static class Program
         }
 
         var logger = new PlaintextLogger(configManager);
-        
+
         var connectionString = configManager.GetValue("DatabaseConnectionString");
         var context = new GdprMetadataContext(connectionString);
         var dbConnection = new SQLiteConnection(connectionString);
 
         AddStructureToDatabaseIfNotExists(dbConnection, context);
         var purposeMapper = new Mapper<Purpose>(context);
-
-
+        
         var vacuumer = new Vacuumer(purposeMapper, new SqliteQueryExecutor(dbConnection));
-        var loggingVacuumer = new LoggingVacuumer(vacuumer, logger);
 
         IManagerFactory managerFactory = new LoggingManagerFactory(new ManagerFactory(context), logger);
+        IConfigManagerFactory configManagerFactory = new ConfigManagerFactory(configManager);
+        ILoggerFactory loggerFactory = new PlaintextLoggerFactory(configManagerFactory);
+        IVacuumerFactory vacuumerFactory = new LoggingVacuumerFactory(new VacuumerFactory(vacuumer), logger);
 
-        CommandLineInterface commandLineInterface = new CommandLineInterface(managerFactory);
-        commandLineInterface.Vacuumer = loggingVacuumer;
-        commandLineInterface.ConfigManager = configManager;
-        commandLineInterface.Logger = logger;
-        
+        var commandLineInterface = new CommandLineInterface(managerFactory, loggerFactory, vacuumerFactory);
+
         Run(commandLineInterface);
-
     }
 
     private static void AddStructureToDatabaseIfNotExists(IDbConnection connection, DbContext context)
@@ -101,7 +99,7 @@ public static class Program
             catch (AggregateException e)
             {
                 Console.Error.WriteLine(VerboseOutput ? e.ToString() : e.Message);
-                
+
                 foreach (var innerException in e.InnerExceptions)
                 {
                     Console.Error.WriteLine(VerboseOutput ? innerException.ToString() : innerException.Message);

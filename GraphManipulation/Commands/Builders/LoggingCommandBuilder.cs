@@ -1,4 +1,5 @@
 using System.CommandLine;
+using GraphManipulation.Commands.Factories;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
@@ -9,11 +10,11 @@ public static class LoggingCommandBuilder
 {
     private static ArgumentArity ExactlyTwo => new(2, 2);
 
-    public static Command Build(ILogger logger)
+    public static Command Build(ILoggerFactory loggerFactory)
     {
         return CommandBuilder.CreateNewCommand(CommandNamer.LoggingName)
             .WithAlias(CommandNamer.LoggingAlias)
-            .WithSubCommands(ListLog(logger));
+            .WithSubCommands(ListLog(loggerFactory.CreateLogger()));
     }
 
     private static Command ListLog(ILogger logger)

@@ -11,14 +11,14 @@ namespace GraphManipulation.Commands.Builders;
 public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, VacuumingRule>
 {
     private readonly IManager<string, Purpose> _purposesManager;
-    private readonly IVacuumer _vacuumer;
+    private readonly IVacuumer _vacuumerFactory;
     private readonly IManager<string, VacuumingRule> _vacuumingRulesManager;
 
     public VacuumingRulesCommandBuilder(IHandlerFactory handlerFactory, IManagerFactory managerFactory,
-        IVacuumer vacuumer) : base(handlerFactory)
+        IVacuumerFactory vacuumerFactory) : base(handlerFactory)
     {
         _purposesManager = managerFactory.CreateManager<string, Purpose>();
-        _vacuumer = vacuumer;
+        _vacuumerFactory = vacuumerFactory.CreateVacuumer();
         _vacuumingRulesManager = managerFactory.CreateManager<string, VacuumingRule>();
     }
 
@@ -119,7 +119,7 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
 
                 foreach (var rule in rules)
                 {
-                    _vacuumer.ExecuteVacuumingRules(new[] { rule });
+                    _vacuumerFactory.ExecuteVacuumingRules(new[] { rule });
                     Emitter.EmitSuccess(rule.Key!, FeedbackEmitter<string, VacuumingRule>.Operations.Executed, rule);
                 }
             });

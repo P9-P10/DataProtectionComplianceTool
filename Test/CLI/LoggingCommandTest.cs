@@ -4,6 +4,7 @@ using System.CommandLine;
 using System.CommandLine.IO;
 using System.Linq;
 using GraphManipulation.Commands.Builders;
+using GraphManipulation.Commands.Factories;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
@@ -23,7 +24,7 @@ public class LoggingCommandTest : CommandTest
             .Setup(loggerMock => loggerMock.Read(It.IsAny<ILogConstraints>()))
             .Returns(new List<ILog>().OrderBy(l => l.LogNumber));
 
-        return LoggingCommandBuilder.Build(loggerMock.Object);
+        return LoggingCommandBuilder.Build(new PlaintextLoggerFactory(loggerMock.Object));
     }
 
     public class List
