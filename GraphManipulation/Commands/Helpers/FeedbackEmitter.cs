@@ -9,7 +9,7 @@ public class FeedbackEmitter<TKey, TValue> where TValue : Entity<TKey>
     {
         Console.WriteLine(SuccessMessage(key, operation, value));
     }
-    // TODO: Switch subject and type
+    // TODO: Switch subject and type in success and failure message: Purpose 'purposeName' instead of 'purposeName' purpose
     // TODO: Value should be the complete new value instead of what is just updated
     private static string SuccessMessage(TKey key, Operations operation, TValue? value)
     {
@@ -62,7 +62,7 @@ public class FeedbackEmitter<TKey, TValue> where TValue : Entity<TKey>
     private static string MissingMessage<TK, TV>(TK subject, string obj)
         where TV : Entity<TK>
     {
-        return $"{subject} {TypeToString.GetEntityType(typeof(TV))} is missing {AOrAn(obj)} {obj}";
+        return $"{TypeToString.GetEntityType(typeof(TV)).FirstCharToUpper()} '{subject}' is missing {AOrAn(obj)} {obj}";
     }
 
     private static string AOrAn(string obj)

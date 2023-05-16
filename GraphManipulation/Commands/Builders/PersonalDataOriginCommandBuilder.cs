@@ -2,6 +2,7 @@ using System.CommandLine;
 using GraphManipulation.Commands.Builders.Binders;
 using GraphManipulation.Commands.Factories;
 using GraphManipulation.Commands.Helpers;
+using GraphManipulation.Helpers;
 using GraphManipulation.Managers;
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
@@ -86,8 +87,8 @@ public class PersonalDataOriginCommandBuilder : BaseCommandBuilder<int, Personal
         }
         if (value.PersonalDataColumn is not null && value.Origin is null)
         {
-            Emitter.EmitMissing(value.Key, $"origin for individual {value.Individual!.Key} " +
-                                           $"and personal data column {value.PersonalDataColumn.Key}");
+            Emitter.EmitMissing(value.Key, $"{TypeToString.GetEntityType(typeof(Origin))} for {TypeToString.GetEntityType(typeof(Individual))} '{value.Individual!.Key}' " +
+                                           $"and {TypeToString.GetEntityType(typeof(PersonalDataColumn))} '{value.PersonalDataColumn.Key}'");
             return;
         } 
         

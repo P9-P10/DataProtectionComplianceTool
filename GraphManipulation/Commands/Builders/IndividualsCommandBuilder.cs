@@ -45,7 +45,7 @@ public class IndividualsCommandBuilder : BaseCommandBuilder<int, Individual>
             if (!personalDataOrigins.Any() || pdo?.Origin is null)
             {
                 // There exists a personal data column, but the individual does not have a personal data origin for it
-                Emitter.EmitMissing(individual.Key, $"origin for {pdc.ToListingIdentifier()}");
+                Emitter.EmitMissing(individual.Key, $"origin for '{pdc.ToListingIdentifier()}'");
             }
         }
     }
