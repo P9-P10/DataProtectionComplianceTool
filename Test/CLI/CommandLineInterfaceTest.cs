@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GraphManipulation.Commands;
 using GraphManipulation.Commands.Factories;
 using GraphManipulation.Managers.Interfaces;
@@ -9,77 +10,64 @@ using Xunit;
 
 namespace Test.CLI;
 
-public class CommandLineInterfaceTest
+public class MockManagerFactory : IManagerFactory
 {
-    // Create a factory for creating command handlers
-    // Pass this factory to the Command Line Interface.
-    // To test the CLI, test that it behaves correctly given a command string
-    // this behaviour can include invoking handlers created by the factory
-    // which can be verified by creating a factory producing test spies
+    public Dictionary<Type, Mock> Mocks { get; set; }
 
-    protected class ManagerSpy<K,V> : IManager<K,V> where V : class
+    public MockManagerFactory()
     {
-        public IEnumerable<V> GetAll()
-        {
-            return new List<V>();
-        }
+        Mocks = new Dictionary<Type, Mock>();
+    }
 
-        public V? Get(K key)
-        {
-            return null;
-        }
+    public void AddMockManagerForType(Type type, Mock mock)
+    {
+        Mocks.Add(type, mock);
+    }
 
-        public bool Create(K key)
-        {
-            return true;
-        }
-
-        public bool Update(K key, V value)
-        {
-            return true;
-        }
-
-        public bool Delete(K key)
-        {
-            return true;
-        }
+    public void AddMockManager<T>(Mock mock)
+    {
+        AddMockManagerForType(typeof(T), mock);
     }
     
-    protected class SpyManagerFactory<K, V> : IManagerFactory
+    public IManager<TK, TV> CreateManager<TK, TV>() where TK : notnull where TV : Entity<TK>, new()
     {
-        public Mock<IManager<K, V>> ManagerMock { get; private set; }
-
-        public SpyManagerFactory(Mock<IManager<K, V>> mockManager)
-        {
-            ManagerMock = mockManager;
-        }
-        public IManager<TK, TV> CreateManager<TK, TV>() where TK : notnull where TV : Entity<TK>, new()
-        {
-            var manager = new ManagerSpy<TK, TV>();
-            if (typeof(TK) == typeof(K) && typeof(TV) == typeof(V))
-                return ManagerMock.Object as IManager<TK, TV>;
-            return manager;
-        }
+        if (Mocks.ContainsKey(typeof(TV)))
+            return Mocks[typeof(TV)].Object as IManager<TK, TV>;
+        var mock = new Mock<IManager<TK, TV>>();
+        Mocks.Add(typeof(TV), mock);
+        return mock.Object;
     }
+}
 
+public class CommandLineInterfaceTest
+{
     [Fact]
-    public void CreateCallsGet()
+    public void DoesNotCreateAlreadyExistingEntity()
     {
+        var factory = new MockManagerFactory();
+        
         var manager = new Mock<IManager<string, StorageRule>>();
-        var factory = new SpyManagerFactory<string, StorageRule>(manager);
+        manager.Setup(manager => manager.Get("testname")).Returns(new StorageRule());
+        
+        factory.AddMockManager<StorageRule>(manager);
 
         CommandLineInterface cli = new CommandLineInterface(factory);
         cli.Invoke($"dc c -n testname");
         
         manager.Verify(manager => manager.Get(
             It.Is<string>(s => s == "testname")));
+        manager.Verify(manager => manager.Create(It.IsAny<string>()), Times.Never);
     }
     
     [Fact]
-    public void CreateCallsCreate()
+    public void CreateCommandCreatesANewDeleteCondition()
     {
+        var factory = new MockManagerFactory();
+        
         var manager = new Mock<IManager<string, StorageRule>>();
-        var factory = new SpyManagerFactory<string, StorageRule>(manager);
+        manager.Setup(manager => manager.Get("testname")).Returns((StorageRule?)null);
+        
+        factory.AddMockManager<StorageRule>(manager);
 
         CommandLineInterface cli = new CommandLineInterface(factory);
         cli.Invoke($"dc c -n testname");
@@ -88,8 +76,10 @@ public class CommandLineInterfaceTest
     }
     
     [Fact]
-    public void CreateWithDescriptionCallsUpdate()
+    public void CreatedEntityIsUpdatedWithAdditionalInformation()
     {
+        var factory = new MockManagerFactory();
+        
         var manager = new Mock<IManager<string, StorageRule>>();
         manager.Setup(manager => manager.Create(It.IsAny<string>())).Returns(true);
         
@@ -97,7 +87,7 @@ public class CommandLineInterfaceTest
             .Returns(() => null)
             .Returns(new StorageRule());
         
-        var factory = new SpyManagerFactory<string, StorageRule>(manager);
+        factory.AddMockManager<StorageRule>(manager);
 
         CommandLineInterface cli = new CommandLineInterface(factory);
         cli.Invoke($"dc c -n testname -d description");
