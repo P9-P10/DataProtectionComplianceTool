@@ -1,5 +1,6 @@
 using System.CommandLine;
 using GraphManipulation.Commands.Builders.Binders;
+using GraphManipulation.Commands.Factories;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
