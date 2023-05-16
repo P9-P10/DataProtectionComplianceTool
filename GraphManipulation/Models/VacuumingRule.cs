@@ -28,10 +28,15 @@ public class VacuumingRule : Entity<string>
 
     public override string ToListing()
     {
-        return string.Join(", ", base.ToListing(),
+        return string.Join(ToListingSeparator, base.ToListing(),
             NullToString(Interval),
             NullToString(LastExecution),
             ListNullOrEmptyToString(Purposes));
+    }
+
+    public override string ToListingHeader()
+    {
+        return string.Join(ToListingSeparator, base.ToListingHeader(), "Interval", "Last Execution", "Purposes");
     }
 
     private struct ParsedInterval

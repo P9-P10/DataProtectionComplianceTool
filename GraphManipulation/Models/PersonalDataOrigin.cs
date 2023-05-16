@@ -10,9 +10,14 @@ public class PersonalDataOrigin : Entity<int>
 
     public override string ToListing()
     {
-        return base.ToListing() + "(" + string.Join(", ",
+        return base.ToListing() + "(" + string.Join(ToListingSeparator,
             NullToString(Individual),
             NullToString(PersonalDataColumn),
             NullToString(Origin)) + ")";
+    }
+    
+    public override string ToListingHeader()
+    {
+        return string.Join(ToListingSeparator, base.ToListingHeader(), "Individual", "Personal Data Column", "Origin");
     }
 }

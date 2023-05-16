@@ -8,23 +8,13 @@ public class Processing : Entity<string>
     public virtual PersonalDataColumn? PersonalDataColumn { get; set; }
     public override string ToListing()
     {
-        return string.Join(", ", base.ToListing(), 
+        return string.Join(ToListingSeparator, base.ToListing(), 
             NullToString(Purpose),
             NullToString(PersonalDataColumn));
     }
     
-    // public override void Fill(object? other)
-    // {
-    //     if (other is null || other.GetType() != typeof(Processing))
-    //     {
-    //         return;
-    //     }
-    //     
-    //     base.Fill(other);
-    //
-    //     var otherProcessing = (other as Processing)!;
-    //     
-    //     otherProcessing.Purpose ??= Purpose;
-    //     otherProcessing.PersonalDataColumn ??= PersonalDataColumn;
-    // }
+    public override string ToListingHeader()
+    {
+        return string.Join(ToListingSeparator, base.ToListingHeader(), "Purpose", "Personal Data Column");
+    }
 }

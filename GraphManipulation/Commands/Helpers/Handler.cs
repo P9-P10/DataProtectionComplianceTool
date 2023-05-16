@@ -188,7 +188,15 @@ public class Handler<TKey, TValue> : IHandler<TKey, TValue> where TValue : Entit
 
     public static void ListHandler(IManager<TKey, TValue> manager)
     {
-        manager.GetAll().Select(r => r.ToListing()).ToList().ForEach(Console.WriteLine);
+        var values = manager.GetAll().ToList();
+        
+        if (!values.Any())
+        {
+            return;
+        }
+
+        Console.WriteLine(values.First().ToListingHeader());
+        values.Select(r => r.ToListing()).ToList().ForEach(Console.WriteLine);
     }
 
     public void StatusHandler()

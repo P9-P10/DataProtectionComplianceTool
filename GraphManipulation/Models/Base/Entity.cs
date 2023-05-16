@@ -49,12 +49,19 @@ public class Entity<TKey> : DomainEntity, IListable
 
     public virtual string ToListing()
     {
-        return string.Join(", ", ToListingIdentifier(), Description ?? "None");
+        return string.Join(ToListingSeparator, ToListingIdentifier(), NullToString(Description));
     }
+
+    protected static string ToListingSeparator => " | ";
 
     public virtual string ToListingIdentifier()
     {
         return Key?.ToString() ?? "No key";
+    }
+
+    public virtual string ToListingHeader()
+    {
+        return string.Join(ToListingSeparator, "Key", "Description");
     }
 
     protected string NullOrEmptyToString<T>(T? obj, Func<T, bool> isEmpty, Func<T, string> toString)
@@ -94,11 +101,11 @@ public class Entity<TKey> : DomainEntity, IListable
 
     protected string EncapsulateList(IEnumerable<string> list)
     {
-        return "[ " + string.Join(", ", list) + " ]";
+        return "[ " + string.Join(ToListingSeparator, list) + " ]";
     }
 
     protected string EncapsulateList<T>(IEnumerable<Entity<T>> list)
     {
-        return "[ " + string.Join(", ", list.Select(e => e.ToListingIdentifier())) + " ]";
+        return "[ " + string.Join(ToListingSeparator, list.Select(e => e.ToListingIdentifier())) + " ]";
     }
 }

@@ -11,10 +11,15 @@ public class Purpose : Entity<string>
 
     public override string ToListing()
     {
-        return string.Join(", ", base.ToListing(),
+        return string.Join(ToListingSeparator, base.ToListing(),
             NullToString(LegallyRequired),
             ListNullOrEmptyToString(StorageRules),
             ListNullOrEmptyToString(PersonalDataColumns),
             ListNullOrEmptyToString(Rules));
+    }
+    
+    public override string ToListingHeader()
+    {
+        return string.Join(ToListingSeparator, base.ToListingHeader(), "Legally Required", "Storage Rules", "Personal Data Columns", "Vacuuming Rules");
     }
 }
