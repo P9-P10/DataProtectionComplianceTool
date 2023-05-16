@@ -25,25 +25,25 @@ public class StorageRuleCommandBuilder : BaseCommandBuilder<string, StorageRule>
         var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<StorageRule>();
         var newKeyOption = OptionBuilder.CreateNewNameOption<StorageRule>();
 
-        var conditionOption = BuildConditionOption()
+        var vacuumingConditionOption = BuildVacuumingConditionOption()
             .WithDescription("The condition that must be fulfilled for data to be deleted");
 
         var tableColumnOption = OptionBuilder
             .CreateTableColumnPairOption()
             .WithDescription("The data that will be vacuumed under this condition");
 
-        var createBinder = new DeleteConditionBinder(
+        var createBinder = new StorageRuleBinder(
             keyOption,
             descriptionOption,
-            conditionOption,
+            vacuumingConditionOption,
             tableColumnOption,
             _personalDataColumnManager
         );
 
-        var updateBinder = new DeleteConditionBinder(
+        var updateBinder = new StorageRuleBinder(
             newKeyOption,
             descriptionOption,
-            conditionOption,
+            vacuumingConditionOption,
             tableColumnOption,
             _personalDataColumnManager
         );
@@ -52,11 +52,11 @@ public class StorageRuleCommandBuilder : BaseCommandBuilder<string, StorageRule>
             .WithSubCommands(
                 CreateCommand(keyOption, createBinder, new Option[]
                 {
-                    descriptionOption, conditionOption, tableColumnOption
+                    descriptionOption, vacuumingConditionOption, tableColumnOption
                 }),
                 UpdateCommand(keyOption, updateBinder, new Option[]
                 {
-                    newKeyOption, descriptionOption, conditionOption, tableColumnOption
+                    newKeyOption, descriptionOption, vacuumingConditionOption, tableColumnOption
                 })
             );
     }
@@ -79,10 +79,10 @@ public class StorageRuleCommandBuilder : BaseCommandBuilder<string, StorageRule>
         return OptionBuilder.CreateKeyOption<string, StorageRule>(OptionNamer.Name, OptionNamer.NameAlias);
     }
 
-    private static Option<string> BuildConditionOption()
+    private static Option<string> BuildVacuumingConditionOption()
     {
         return OptionBuilder
-            .CreateOption<string>(OptionNamer.Condition)
-            .WithAlias(OptionNamer.ConditionAlias);
+            .CreateOption<string>(OptionNamer.VacuumingCondition)
+            .WithAlias(OptionNamer.VacuumingConditionAlias);
     }
 }

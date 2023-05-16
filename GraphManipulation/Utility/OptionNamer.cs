@@ -29,11 +29,11 @@ public static class OptionNamer
     public const string LegallyRequired = "--legally-required";
     public const string LegallyRequiredAlias = "-lr";
 
-    public const string DeleteConditionName = "--delete-condition-name";
-    public const string DeleteConditionNameAlias = "-dcn";
+    public const string StorageRule = "--storage-rule";
+    public const string StorageRuleAlias = "-sr";
 
-    public const string Condition = "--condition";
-    public const string ConditionAlias = "-c";
+    public const string VacuumingCondition = "--vacuuming-condition";
+    public const string VacuumingConditionAlias = "-vc";
 
     public const string Interval = "--interval";
     public const string IntervalAlias = "-i";

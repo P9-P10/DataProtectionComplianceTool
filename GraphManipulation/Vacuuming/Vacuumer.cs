@@ -145,8 +145,8 @@ public class Vacuumer : IVacuumer
 
     private List<Purpose> GetAllPurposesWithSameTableColumnPair(PersonalDataColumn personalDataColumn)
     {
-        return _purposeMapper.Find(purpose => purpose.StorageRules.Any(deleteCondition =>
-            deleteCondition.PersonalDataColumn.Key.Equals(personalDataColumn.Key)
+        return _purposeMapper.Find(purpose => purpose.StorageRules.Any(storageRule =>
+            storageRule.PersonalDataColumn.Key.Equals(personalDataColumn.Key)
             && !personalDataColumn.Purposes.Contains(purpose))).ToList();
     }
 

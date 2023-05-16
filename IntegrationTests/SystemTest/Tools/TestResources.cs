@@ -160,7 +160,7 @@ public class TestResources
     {
         var addDeleteConditionCommand = $"{CommandNamer.StorageRulesName} {CommandNamer.Create} " +
                                         $"{OptionNamer.Name} {storageRule.Key} " +
-                                        $"{OptionNamer.Condition} \"{storageRule.VacuumingCondition}\" " +
+                                        $"{OptionNamer.VacuumingCondition} \"{storageRule.VacuumingCondition}\" " +
                                         $"{OptionNamer.Description} \"{storageRule.Description}\"";
 
         testProcess.GiveInput(addDeleteConditionCommand);
@@ -171,7 +171,7 @@ public class TestResources
         var addPurposeCommand = $"{CommandNamer.PurposesName} {CommandNamer.Create} " +
                                 $"{OptionNamer.Name} {purpose.Key} " +
                                 $"{OptionNamer.Description} \"{purpose.Description}\" " +
-                                $"{OptionNamer.DeleteConditionName} {String.Join(" ", purpose.StorageRules.Select(p => p.Key).ToList())} " +
+                                $"{OptionNamer.StorageRule} {String.Join(" ", purpose.StorageRules.Select(p => p.Key).ToList())} " +
                                 $"{OptionNamer.LegallyRequired} {purpose.LegallyRequired} ";
 
         testProcess.GiveInput(addPurposeCommand);
@@ -218,7 +218,7 @@ public class TestResources
     {
         string command =
             $"{CommandNamer.StorageRulesAlias} {CommandNamer.UpdateAlias} {OptionNamer.NameAlias} {old.Key}  {OptionNamer.NewNameAlias}  {newStorageRule.Key}" +
-            $" {OptionNamer.Condition} \"{newStorageRule.VacuumingCondition}\"" +
+            $" {OptionNamer.VacuumingCondition} \"{newStorageRule.VacuumingCondition}\"" +
             $" {OptionNamer.Description} \"{newStorageRule.Description}\"";
         process.GiveInput(command);
     }

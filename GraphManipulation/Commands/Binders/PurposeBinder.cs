@@ -9,19 +9,19 @@ namespace GraphManipulation.Commands.Binders;
 public class PurposeBinder : BaseBinder<string, Purpose>
 {
     private readonly Option<bool> _legallyRequiredOption;
-    private readonly Option<IEnumerable<string>> _deleteConditionsOption;
-    private readonly IManager<string, StorageRule> _deleteConditionsManager;
+    private readonly Option<IEnumerable<string>> _storageRulesOption;
+    private readonly IManager<string, StorageRule> _storageRulesManager;
 
     public PurposeBinder(
         Option<string> keyOption,
         Option<string> descriptionOption,
         Option<bool> legallyRequiredOption,
-        Option<IEnumerable<string>> deleteConditionsOption,
-        IManager<string, StorageRule> deleteConditionsManager) : base(keyOption, descriptionOption)
+        Option<IEnumerable<string>> storageRulesOption,
+        IManager<string, StorageRule> storageRulesManager) : base(keyOption, descriptionOption)
     {
         _legallyRequiredOption = legallyRequiredOption;
-        _deleteConditionsOption = deleteConditionsOption;
-        _deleteConditionsManager = deleteConditionsManager;
+        _storageRulesOption = storageRulesOption;
+        _storageRulesManager = storageRulesManager;
     }
 
     protected override Purpose GetBoundValue(BindingContext bindingContext)
@@ -33,10 +33,10 @@ public class PurposeBinder : BaseBinder<string, Purpose>
             purpose.LegallyRequired = bindingContext.ParseResult.GetValueForOption(_legallyRequiredOption);
         }
 
-        if (bindingContext.ParseResult.HasOption(_deleteConditionsOption))
+        if (bindingContext.ParseResult.HasOption(_storageRulesOption))
         {
-            var deleteConditionNames = bindingContext.ParseResult.GetValueForOption(_deleteConditionsOption)!;
-            purpose.StorageRules = HandleMustExistListWithCreateOnDemand(deleteConditionNames, _deleteConditionsManager);
+            var storageRuleNames = bindingContext.ParseResult.GetValueForOption(_storageRulesOption)!;
+            purpose.StorageRules = HandleMustExistListWithCreateOnDemand(storageRuleNames, _storageRulesManager);
         }
 
         return purpose;

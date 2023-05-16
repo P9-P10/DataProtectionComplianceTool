@@ -10,11 +10,11 @@ namespace GraphManipulation.Commands.Builders;
 
 public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
 {
-    private readonly IManager<string, StorageRule> _deleteConditionsManager;
+    private readonly IManager<string, StorageRule> _storageRuleManager;
 
     public PurposesCommandBuilder(ICommandHandlerFactory commandHandlerFactory, IManagerFactory managerFactory) : base(commandHandlerFactory)
     {
-        _deleteConditionsManager = managerFactory.CreateManager<string, StorageRule>();
+        _storageRuleManager = managerFactory.CreateManager<string, StorageRule>();
     }
 
     public override Command Build()
@@ -27,42 +27,42 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
         var legallyRequiredOption = BuildLegallyRequiredOption()
                 .WithDescription("Whether the purpose falls under any legal obligations");
 
-        var deleteConditionListOption = BuildDeleteConditionListOption()
-                .WithDescription("The conditions for which personal data stored under this purpose should be deleted");
+        var storageRuleListOption = BuildStorageRuleListOption()
+                .WithDescription("The storage rules which personal data stored under this purpose should follow");
 
         var createBinder = new PurposeBinder(
             keyOption,
             descriptionOption,
             legallyRequiredOption,
-            deleteConditionListOption,
-            _deleteConditionsManager
+            storageRuleListOption,
+            _storageRuleManager
         );
 
         var updateBinder = new PurposeBinder(
             newKeyOption,
             descriptionOption,
             legallyRequiredOption,
-            deleteConditionListOption,
-            _deleteConditionsManager
+            storageRuleListOption,
+            _storageRuleManager
         );
         
-        var deleteConditionsListChangesCommands = BuildListChangesCommand(
-            keyOption, deleteConditionListOption, _deleteConditionsManager,
+        var storageRuleListChangesCommands = BuildListChangesCommand(
+            keyOption, storageRuleListOption, _storageRuleManager,
             purpose => purpose.StorageRules ?? new List<StorageRule>(),
-            (purpose, deleteConditions) => purpose.StorageRules = deleteConditions);
+            (purpose, storageRules) => purpose.StorageRules = storageRules);
 
         return baseCommand
             .WithSubCommands(
                 CreateCommand(keyOption, createBinder, new Option[]
                 {
-                    descriptionOption, legallyRequiredOption, deleteConditionListOption
+                    descriptionOption, legallyRequiredOption, storageRuleListOption
                 }),
                 UpdateCommand(keyOption, updateBinder, new Option[]
                 {
                     newKeyOption, descriptionOption, legallyRequiredOption
                 }),
-                deleteConditionsListChangesCommands.Add,
-                deleteConditionsListChangesCommands.Remove
+                storageRuleListChangesCommands.Add,
+                storageRuleListChangesCommands.Remove
             );
     }
 
@@ -73,11 +73,11 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
             .WithAlias(OptionNamer.LegallyRequiredAlias);
     }
 
-    private static Option<IEnumerable<string>> BuildDeleteConditionListOption()
+    private static Option<IEnumerable<string>> BuildStorageRuleListOption()
     {
         return OptionBuilder
-            .CreateOption<IEnumerable<string>>(OptionNamer.DeleteConditionName)
-            .WithAlias(OptionNamer.DeleteConditionNameAlias)
+            .CreateOption<IEnumerable<string>>(OptionNamer.StorageRule)
+            .WithAlias(OptionNamer.StorageRuleAlias)
             .WithAllowMultipleArguments(true)
             .WithArity(ArgumentArity.OneOrMore);
     }
