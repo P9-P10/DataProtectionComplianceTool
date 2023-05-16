@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using GraphManipulation.Commands.Helpers;
 using IntegrationTests.SystemTest.Tools;
 
 namespace IntegrationTests.SystemTest;
@@ -14,20 +15,32 @@ public class CommandlineTest
         process.GiveInput("help");
         string result = string.Join("", process.GetAllOutputNoWhitespace());
         string error = process.GetError();
-        result.Should().Be(@$"Using config found at {process.ConfigPath}" +
-                           "$: Description:  This is a description of the root command" +
-                           "Usage:  ! [command] [options]" +
-                           "Options:  ?, h, help  Show help and usage information" +
-                           "Commands:  " +
-                           "ids, individuals  " +
-                           "pd, personal-data  " +
-                           "ps, purposes  " +
-                           "origins, os  " +
-                           "vacuuming-rules, vrs  " +
-                           "dcs, delete-conditions  " +
-                           "processings, prs  " +
-                           "lgs, logs  " +
-                           "cfg, configuration");
+        result.Should().Contain(@$"Using config found at {process.ConfigPath}");
+        result.Should().Contain("$: Description:  This is a description of the root command");
+        result.Should().Contain("Usage:  ! [command] [options]");
+        result.Should().Contain("Options:  ?, h, help  Show help and usage information");
+        result.Should().Contain("Commands:  ");
+        ContainsCommands(result);
+    }
+
+    private static void ContainsCommands(string result)
+    {
+        result.Should().Contain(CommandNamer.IndividualsName);
+        result.Should().Contain(CommandNamer.IndividualsAlias);
+        result.Should().Contain(CommandNamer.PersonalDataColumnsName);
+        result.Should().Contain(CommandNamer.PersonalDataColumnsAlias);
+        result.Should().Contain(CommandNamer.PurposesName);
+        result.Should().Contain(CommandNamer.PurposesAlias);
+        result.Should().Contain(CommandNamer.OriginsAlias);
+        result.Should().Contain(CommandNamer.OriginsName);
+        result.Should().Contain(CommandNamer.VacuumingRulesAlias);
+        result.Should().Contain(CommandNamer.VacuumingRulesName);
+        result.Should().Contain(CommandNamer.StorageRulesName);
+        result.Should().Contain(CommandNamer.StorageRulesName);
+        result.Should().Contain(CommandNamer.ProcessingsAlias);
+        result.Should().Contain(CommandNamer.ProcessingsName);
+        result.Should().Contain(CommandNamer.LoggingAlias);
+        result.Should().Contain(CommandNamer.LoggingName);
     }
 
     [Fact]

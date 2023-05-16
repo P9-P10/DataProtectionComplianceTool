@@ -8,7 +8,7 @@ public class TestProcess : IDisposable
     public List<string> Output { get; private set; }
     public List<string> Errors { get; private set; }
     public List<string> Inputs { get; }
-    
+
     public List<List<string>> AllOutputs { get; }
     public List<List<string>> AllErrors { get; }
     public string ConfigPath { get; }
@@ -44,7 +44,8 @@ public class TestProcess : IDisposable
         startInfo.RedirectStandardError = true;
 
         startInfo.UseShellExecute = false;
-        startInfo.Arguments =  ConfigPath == "" ? ConfigPath : @$"""{ConfigPath}""";;
+        startInfo.Arguments = ConfigPath == "" ? ConfigPath : @$"""{ConfigPath}""";
+        ;
         startInfo.FileName = executablePath;
 
         return startInfo;
@@ -65,13 +66,17 @@ public class TestProcess : IDisposable
         Inputs.Add(input);
         Process.StandardInput.WriteLine(input);
         AwaitProcessResponse();
+        if (!AllOutputs.Last().Any(s=>s.Contains("Would you like to create one? (y/n)"))) return;
+        Inputs.Add("y");
+        Process.StandardInput.WriteLine("y");
+        AwaitProcessResponse();
     }
 
     public void AwaitReady()
     {
         AwaitPrompt();
     }
-    
+
     public string GetOutput()
     {
         return string.Join("", Output);
@@ -81,7 +86,7 @@ public class TestProcess : IDisposable
     {
         return FlattenList(AllOutputs);
     }
-    
+
     public IEnumerable<string> GetAllOutputNoWhitespace()
     {
         return GetAllOutput().Where(s => !string.IsNullOrWhiteSpace(s));
@@ -129,19 +134,21 @@ public class TestProcess : IDisposable
 
     private string ReadStandardOutputToString()
     {
-        List<char> chars = new List<char> ();
+        List<char> chars = new List<char>();
         bool encounteredPrompt = false;
         while (!Process.StandardOutput.EndOfStream)
         {
-            if ((char)Process.StandardOutput.Peek() == '$')
+            if ((char) Process.StandardOutput.Peek() == '$')
             {
                 if (encounteredPrompt)
                 {
                     break;
                 }
+
                 encounteredPrompt = true;
             }
-            char chr = (char)Process.StandardOutput.Read();
+
+            char chr = (char) Process.StandardOutput.Read();
             chars.Add(chr);
         }
 
@@ -152,7 +159,7 @@ public class TestProcess : IDisposable
     {
         while (!Process.StandardOutput.EndOfStream)
         {
-            if ((char)Process.StandardOutput.Peek() == '$')
+            if ((char) Process.StandardOutput.Peek() == '$')
             {
                 return;
             }

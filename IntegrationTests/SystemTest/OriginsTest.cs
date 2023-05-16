@@ -16,11 +16,9 @@ public class OriginsTest : TestResources
         const string name = "OriginName";
         Origin origin = new() {Key = name, Description = description};
         AddOrigin(process, origin);
-        string result = process.GetOutput();
+        List<string> result = process.GetLastOutput();
 
-        result.Should().Contain(description);
-        result.Should().Contain(name);
-        result.Should().Contain("Successfully");
+        result.Should().ContainSingle(s=>s.Contains(description) && s.Contains(name) && s.Contains("Successfully"));
     }
 
     [Fact]
@@ -36,7 +34,7 @@ public class OriginsTest : TestResources
         ListOrigins(process);
         List<string> result = process.GetLastOutput();
 
-        result.Should().Contain($"{name}, {description}, [  ]");
+        result.Should().ContainSingle(s=>s.Contains($" {name}, {description}, [  ]"));
     }
 
     [Fact]

@@ -66,7 +66,7 @@ public class CommandLineInterface
                 new PurposesCommandBuilder(_handlerFactory, _managerFactory),
                 new OriginsCommandBuilder(_handlerFactory),
                 new VacuumingRulesCommandBuilder(_handlerFactory, _managerFactory, Vacuumer),
-                new DeleteConditionsCommandBuilder(_handlerFactory, _managerFactory),
+                new StorageRuleCommandBuilder(_handlerFactory, _managerFactory),
                 new ProcessingsCommandBuilder(_handlerFactory, _managerFactory))
             .WithSubCommands(
                 LoggingCommandBuilder.Build(Logger),
@@ -76,8 +76,9 @@ public class CommandLineInterface
     private void AddAllStatusCommand()
     {
         var subCommands = _command.Subcommands;
-        var statusCommands =
-            subCommands.Select(subCommand => subCommand.Subcommands.First(c => c.Name == CommandNamer.Status));
+        var statusCommands = subCommands
+                .Select(subCommand => subCommand.Subcommands.FirstOrDefault(c => c.Name == CommandNamer.Status))
+                .Where(command => command is not null);
         
         var allStatusCommand = CommandBuilder
             .BuildStatusCommand()

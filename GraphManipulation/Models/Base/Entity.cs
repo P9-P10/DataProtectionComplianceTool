@@ -49,7 +49,7 @@ public abstract class Entity<TKey> : DomainEntity, IListable
 
     public virtual string ToListing()
     {
-        return string.Join(", ", Key?.ToString() ?? "No key found", Description);
+        return string.Join(", ", ToListingIdentifier(), Description);
     }
 
     public virtual string ToListingIdentifier()

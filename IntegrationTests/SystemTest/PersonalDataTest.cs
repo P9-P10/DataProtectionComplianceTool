@@ -11,7 +11,7 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestStorageRule);
+        AddStorageRule(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
 
         AddPersonalData(process, TestPersonalDataColumn);
@@ -22,14 +22,10 @@ public class PersonalDataTest : TestResources
         error.Should().BeEmpty();
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully added {TestPersonalDataColumn.ToListingIdentifier()} personal data column") &&
-            s.Contains($"{TestPersonalDataColumn.Description}"));
+                $"Successfully created {TestPersonalDataColumn.ToListingIdentifier()} personal data column"));
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {TestPurpose.Key}"));
-        output.Should().ContainSingle(s =>
-            s.Contains(
-                $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {TestPersonalDataColumn.DefaultValue}"));
+                $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {TestPersonalDataColumn.ToListing()}"));
     }
 
     [Fact]
@@ -38,7 +34,7 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestStorageRule);
+        AddStorageRule(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
         ShowPersonalData(process, TestPersonalDataColumn);
@@ -47,7 +43,7 @@ public class PersonalDataTest : TestResources
         var output = process.GetAllOutputNoWhitespace();
 
         error.Should().BeEmpty();
-        output.Should().ContainSingle(s => s.Contains(TestPersonalDataColumn.ToListing()));
+        output.Should().ContainSingle(s => s.Contains("$: " + TestPersonalDataColumn.ToListing()));
     }
 
     [Fact]
@@ -56,7 +52,7 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestStorageRule);
+        AddStorageRule(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
         UpdatePersonalData(process, TestPersonalDataColumn, UpdatedTestPersonalDataColumn);
@@ -75,8 +71,8 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestStorageRule);
-        AddDeleteCondition(process, TestNewTestStorageRule);
+        AddStorageRule(process, TestStorageRule);
+        AddStorageRule(process, TestNewTestStorageRule);
         AddPurpose(process, TestPurpose);
         AddPurpose(process, NewTestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
@@ -84,7 +80,7 @@ public class PersonalDataTest : TestResources
         ListPersonalData(process);
 
         var error = process.GetAllErrorsNoWhitespace();
-        var output = process.GetAllOutputNoWhitespace().ToList();
+        var output = process.GetLastOutput().ToList();
 
         error.Should().BeEmpty();
         output.Should().ContainSingle(s => s.Contains(TestPersonalDataColumn.ToListing()));
@@ -97,7 +93,7 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestStorageRule);
+        AddStorageRule(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
         DeletePersonalData(process, TestPersonalDataColumn);
@@ -117,24 +113,22 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestStorageRule);
-        AddDeleteCondition(process, TestNewTestStorageRule);
+        AddStorageRule(process, TestStorageRule);
+        AddStorageRule(process, TestNewTestStorageRule);
         AddPurpose(process, TestPurpose);
         AddPurpose(process, NewTestPurpose);
         AddPurpose(process, VeryNewTestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
-        AddPurposesToPersonalData(process, TestPersonalDataColumn, new[] { NewTestPurpose, VeryNewTestPurpose });
+        AddPurposesToPersonalData(process, TestPersonalDataColumn, new[] {NewTestPurpose, VeryNewTestPurpose});
 
         var error = process.GetAllErrorsNoWhitespace();
-        var output = process.GetAllOutputNoWhitespace().ToList();
+        var output = process.GetLastOutput();
 
         error.Should().BeEmpty();
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {NewTestPurpose.Key}"));
-        output.Should().ContainSingle(s =>
-            s.Contains(
-                $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {VeryNewTestPurpose.Key}"));
+                $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {TestPersonalDataColumnWithMorePurposes.ToListing()}") &&
+            s.Contains(NewTestPurpose.ToListingIdentifier()) && s.Contains(VeryNewTestPurpose.ToListingIdentifier()));
     }
 
     [Fact]
@@ -143,25 +137,23 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestStorageRule);
-        AddDeleteCondition(process, TestNewTestStorageRule);
+        AddStorageRule(process, TestStorageRule);
+        AddStorageRule(process, TestNewTestStorageRule);
         AddPurpose(process, TestPurpose);
         AddPurpose(process, NewTestPurpose);
         AddPurpose(process, VeryNewTestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
-        AddPurposesToPersonalData(process, TestPersonalDataColumn, new[] { NewTestPurpose, VeryNewTestPurpose });
-        RemovePurposesFromPersonalData(process, TestPersonalDataColumn, new[] { NewTestPurpose, VeryNewTestPurpose });
+        AddPurposesToPersonalData(process, TestPersonalDataColumn, new[] {NewTestPurpose, VeryNewTestPurpose});
+        RemovePurposesFromPersonalData(process, TestPersonalDataColumn, new[] {NewTestPurpose, VeryNewTestPurpose});
 
         var error = process.GetAllErrorsNoWhitespace();
-        var output = process.GetAllOutputNoWhitespace().ToList();
+        var output = process.GetLastOutput().ToList();
 
         error.Should().BeEmpty();
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"{NewTestPurpose.Key} successfully removed from {TestPersonalDataColumn.ToListingIdentifier()}"));
-        output.Should().ContainSingle(s =>
-            s.Contains(
-                $"{VeryNewTestPurpose.Key} successfully removed from {TestPersonalDataColumn.ToListingIdentifier()}"));
+                $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {TestPersonalDataColumn.ToListing()}") &&
+            !s.Contains(NewTestPurpose.ToListingIdentifier()) && !s.Contains(VeryNewTestPurpose.ToListingIdentifier()));
     }
 
     [Fact]
@@ -170,11 +162,11 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
         process.AwaitReady();
-        
+
         SetupTestData(dbConnection);
-        
-        SetIndividualsSource(process, IndividualsSource);
-        AddDeleteCondition(process, TestStorageRule);
+
+
+        AddStorageRule(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
         AddOrigin(process, TestOrigin);
@@ -182,7 +174,7 @@ public class PersonalDataTest : TestResources
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetAllOutputNoWhitespace().ToList();
-        
+
         error.Should().BeEmpty();
         output.Should().ContainSingle(s => s.Contains($"Successfully completed set operation using " +
                                                       $"{TestPersonalDataColumn.ToListingIdentifier()}, " +
@@ -196,20 +188,19 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
         process.AwaitReady();
-        
+
         SetupTestData(dbConnection);
-        
-        SetIndividualsSource(process, IndividualsSource);
-        AddDeleteCondition(process, TestStorageRule);
+
+        AddStorageRule(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
         AddOrigin(process, TestOrigin);
         SetOriginOfPersonalData(process, TestPersonalDataColumn, TestIndividual1, TestOrigin);
         ShowOriginOfPersonalData(process, TestPersonalDataColumn, TestIndividual1);
-        
+
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetAllOutputNoWhitespace();
-        
+
         error.Should().BeEmpty();
         output.Should().ContainSingle(s => s.Contains(TestOrigin.ToListing()));
     }

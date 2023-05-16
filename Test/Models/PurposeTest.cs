@@ -12,7 +12,7 @@ public class PurposeTest
         Purpose purpose = new Purpose()
         {
             Key = "Name",
-            DeleteConditions = new List<StorageRule>()
+            StorageRules = new List<StorageRule>()
         };
 
         Assert.Equal("Name, , False, [  ], [  ]", purpose.ToListing());
@@ -24,7 +24,7 @@ public class PurposeTest
         Purpose purpose = new()
         {
             Key = "Name",
-            DeleteConditions = new List<StorageRule>()
+            StorageRules = new List<StorageRule>()
         };
 
         Assert.Equal("Name, , False, [  ], [  ]", purpose.ToListing());
