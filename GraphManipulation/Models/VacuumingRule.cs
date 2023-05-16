@@ -28,8 +28,10 @@ public class VacuumingRule : Entity<string>
 
     public override string ToListing()
     {
-        return string.Join(", ", base.ToListing(), Interval, LastExecution.ToString(),
-            "[ " + string.Join(", ", Purposes is null ? new List<string>() : Purposes.Select(p => p.ToListingIdentifier())) + " ]");
+        return string.Join(", ", base.ToListing(),
+            NullToString(Interval),
+            NullToString(LastExecution),
+            ListNullOrEmptyToString(Purposes));
     }
 
     private struct ParsedInterval

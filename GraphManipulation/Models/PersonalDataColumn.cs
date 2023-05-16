@@ -10,8 +10,9 @@ public class PersonalDataColumn : Entity<TableColumnPair>
 
     public override string ToListing()
     {
-        return string.Join(", ", base.ToListing(), DefaultValue, 
-            "[ " + string.Join(", ", Purposes == null ? new List<string>() : Purposes.Select(p => p.ToListingIdentifier())) + " ]");
+        return string.Join(", ", base.ToListing(), 
+            NullToString(DefaultValue),
+            ListNullOrEmptyToString(Purposes));
     }
 
     // public void AddPurpose(Purpose purpose)

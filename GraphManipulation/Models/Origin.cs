@@ -8,9 +8,8 @@ public class Origin : Entity<string>
 
     public override string ToListing()
     {
-        return string.Join(", ", base.ToListing(),
-            "[ " + string.Join(", ",
-                PersonalDataColumns is null ? new List<string>() : PersonalDataColumns.Select(c => c.ToListingIdentifier())) + " ]");
+        return string.Join(", ", base.ToListing(), 
+            ListNullOrEmptyToString(PersonalDataColumns));
     }
 
     // public override void Fill(object? other)

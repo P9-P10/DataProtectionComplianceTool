@@ -8,8 +8,9 @@ public class Processing : Entity<string>
     public virtual PersonalDataColumn? PersonalDataColumn { get; set; }
     public override string ToListing()
     {
-        return string.Join(", ", base.ToListing(), Purpose?.ToListingIdentifier(),
-            PersonalDataColumn?.ToListingIdentifier());
+        return string.Join(", ", base.ToListing(), 
+            NullToString(Purpose),
+            NullToString(PersonalDataColumn));
     }
     
     // public override void Fill(object? other)

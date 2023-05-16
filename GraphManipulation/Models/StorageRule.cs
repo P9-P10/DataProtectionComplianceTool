@@ -10,7 +10,9 @@ public class StorageRule : Entity<string>
     
     public override string ToListing()
     {
-        return string.Join(", ", base.ToListing(), VacuumingCondition, PersonalDataColumn?.ToListingIdentifier(), 
-            "[ " + string.Join(", ", Purposes == null ? new List<string>() : Purposes.Select(p => p.ToListingIdentifier())) + " ]");
+        return string.Join(", ", base.ToListing(),
+            NullToString(VacuumingCondition),
+            NullToString(PersonalDataColumn),
+            ListNullOrEmptyToString(Purposes));
     }
 }

@@ -8,11 +8,8 @@ public class Individual : Entity<int>
 
     public override string ToListing()
     {
-        return string.Join(", ", ToListingIdentifier(), 
-            "[ " + 
-            string.Join(", ", PersonalDataOrigins == null 
-                ? new List<string>() 
-                : PersonalDataOrigins.Select(pdo => pdo.ToListing())) 
-            + " ]");
+        return string.Join(", ", ToListingIdentifier(),
+            ListNullOrEmptyToString(PersonalDataOrigins,
+                origins => EncapsulateList(origins.Select(o => o.ToListing()))));
     }
 }

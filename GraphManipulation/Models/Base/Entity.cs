@@ -2,7 +2,7 @@ using GraphManipulation.Models.Interfaces;
 
 namespace GraphManipulation.Models.Base;
 
-public abstract class Entity<TKey> : DomainEntity, IListable
+public class Entity<TKey> : DomainEntity, IListable
 {
     public TKey? Key { get; set; }
     public string? Description { get; set; }
@@ -49,11 +49,56 @@ public abstract class Entity<TKey> : DomainEntity, IListable
 
     public virtual string ToListing()
     {
-        return string.Join(", ", ToListingIdentifier(), Description);
+        return string.Join(", ", ToListingIdentifier(), Description ?? "None");
     }
 
     public virtual string ToListingIdentifier()
     {
-        return Key?.ToString() ?? "No key found";
+        return Key?.ToString() ?? "No key";
+    }
+
+    protected string NullOrEmptyToString<T>(T? obj, Func<T, bool> isEmpty, Func<T, string> toString)
+    {
+        return obj is null || isEmpty(obj) ? "Empty" : toString(obj);
+    }
+
+    protected string ListNullOrEmptyToString<T>(IEnumerable<T>? list, Func<IEnumerable<T>, string> toString)
+    {
+        return NullOrEmptyToString(list, enumerable => !enumerable.Any(), toString);
+    }
+
+    protected string ListNullOrEmptyToString<T>(IEnumerable<Entity<T>>? list)
+    {
+        return ListNullOrEmptyToString(list, EncapsulateList);
+    }
+    
+    protected string NullToString<T>(T? obj, Func<T, string> toString)
+    {
+        return obj is null ? "None" : toString(obj);
+    }
+
+    protected string NullToString(object? obj)
+    {
+        return NullToString(obj, o => o.ToString());
+    }
+
+    protected string NullToString(string? obj)
+    {
+        return NullToString(obj, s => s);
+    }
+
+    protected string NullToString<T>(Entity<T>? entity)
+    {
+        return NullToString(entity, e => e.ToListingIdentifier());
+    }
+
+    protected string EncapsulateList(IEnumerable<string> list)
+    {
+        return "[ " + string.Join(", ", list) + " ]";
+    }
+
+    protected string EncapsulateList<T>(IEnumerable<Entity<T>> list)
+    {
+        return "[ " + string.Join(", ", list.Select(e => e.ToListingIdentifier())) + " ]";
     }
 }
