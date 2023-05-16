@@ -2,117 +2,15 @@
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
 using GraphManipulation.Commands.Builders;
+using GraphManipulation.Commands.Factories;
 using GraphManipulation.Commands.Helpers;
-using GraphManipulation.DataAccess;
-using GraphManipulation.DataAccess.Mappers;
-using GraphManipulation.Decorators;
 using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
-using GraphManipulation.Managers;
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models.Base;
 using GraphManipulation.Vacuuming;
 
 namespace GraphManipulation.Commands;
-
-public interface IManagerFactory
-{
-    public IManager<TK, TV> CreateManager<TK, TV>() where TV : Entity<TK>, new() where TK : notnull;
-}
-
-public class ManagerFactory : IManagerFactory
-{
-    private GdprMetadataContext _dbContext;
-
-    public ManagerFactory(GdprMetadataContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
-    public IManager<TK, TV> CreateManager<TK, TV>() where TV : Entity<TK>, new() where TK : notnull
-    {
-        return new Manager<TK, TV>(new Mapper<TV>(_dbContext));
-    }
-}
-
-public class LoggingManagerFactory : IManagerFactory
-{
-    private IManagerFactory _managerFactory;
-    private readonly ILogger _logger;
-
-    public LoggingManagerFactory(IManagerFactory managerFactory, ILogger logger)
-    {
-        _managerFactory = managerFactory;
-        _logger = logger;
-    }
-
-    public IManager<TK, TV> CreateManager<TK, TV>() where TV : Entity<TK>, new() where TK : notnull
-    {
-        return new LoggingManager<TK, TV>(_managerFactory.CreateManager<TK, TV>(), _logger);
-    }
-}
-
-public interface IVacuumerFactory
-{
-    public IVacuumer CreateVacuumer();
-}
-
-public interface ILoggerFactory
-{
-    public ILogger CreateLogger();
-}
-
-public interface IConfigManagerFactory
-{
-    public IConfigManager CreateConfigManager();
-}
-
-public interface IComponentFactory : IManagerFactory, IVacuumerFactory, ILoggerFactory, IConfigManagerFactory, IHandlerFactory
-{
-    
-}
-public class ComponentFactory : IComponentFactory
-{
-    private readonly IManagerFactory _managerFactory;
-    private readonly IVacuumerFactory _vacuumerFactory;
-    private readonly ILoggerFactory _loggerFactory;
-    private readonly IConfigManagerFactory _configManagerFactory;
-    private readonly IHandlerFactory _handlerFactory;
-
-    public ComponentFactory(IManagerFactory managerFactory, IVacuumerFactory vacuumerFactory,
-        ILoggerFactory loggerFactory, IConfigManagerFactory configManagerFactory)
-    {
-        _managerFactory = managerFactory;
-        _vacuumerFactory = vacuumerFactory;
-        _loggerFactory = loggerFactory;
-        _configManagerFactory = configManagerFactory;
-        _handlerFactory = new HandlerFactory(managerFactory);
-    }
-    public IManager<TK, TV> CreateManager<TK, TV>() where TK : notnull where TV : Entity<TK>, new()
-    {
-        return _managerFactory.CreateManager<TK, TV>();
-    }
-
-    public IVacuumer CreateVacuumer()
-    {
-        return _vacuumerFactory.CreateVacuumer();
-    }
-
-    public ILogger CreateLogger()
-    {
-        return _loggerFactory.CreateLogger();
-    }
-
-    public IConfigManager CreateConfigManager()
-    {
-        return _configManagerFactory.CreateConfigManager();
-    }
-
-    public Handler<TK, TV> CreateHandler<TK, TV>(FeedbackEmitter<TK, TV> emitter, Action<TV> statusReport) where TK : notnull where TV : Entity<TK>, new()
-    {
-        return _handlerFactory.CreateHandler(emitter, statusReport);
-    }
-}
 
 public class HandlerFactory : IHandlerFactory {
     private readonly IManagerFactory _managerFactory;
@@ -122,7 +20,7 @@ public class HandlerFactory : IHandlerFactory {
         _managerFactory = managerFactory;
     }
     
-    public Handler<TK, TV> CreateHandler<TK, TV>(FeedbackEmitter<TK, TV> emitter, Action<TV> statusReport) where TV : Entity<TK>, new() where TK : notnull
+    public IHandler<TK, TV> CreateHandler<TK, TV>(FeedbackEmitter<TK, TV> emitter, Action<TV> statusReport) where TV : Entity<TK>, new() where TK : notnull
     {
         IManager<TK, TV> manager = _managerFactory.CreateManager<TK, TV>();
         Handler<TK, TV> handler = new Handler<TK, TV>(manager, emitter, statusReport);
@@ -132,15 +30,21 @@ public class HandlerFactory : IHandlerFactory {
 
 public class CommandLineInterface
 {
-    private IComponentFactory _componentFactory;
+    private IHandlerFactory _handlerFactory;
+    private IManagerFactory _managerFactory;
     private Command _command;
     private Parser _parser;
     
-    public CommandLineInterface(IComponentFactory componentFactory)
+    public IVacuumer Vacuumer { get; set; }
+    public ILogger Logger { get; set; }
+    public IConfigManager ConfigManager { get; set; }
+    
+    public CommandLineInterface(IHandlerFactory handlerFactory, IManagerFactory managerFactory)
     {
-        _componentFactory = componentFactory;
+        _handlerFactory = handlerFactory;
+        _managerFactory = managerFactory;
         // Create subcommands
-        _command = Build(componentFactory);
+        CreateCommand();
         AddAllStatusCommand();
         CreateCommandParser();
     }
@@ -150,22 +54,23 @@ public class CommandLineInterface
         _parser.Invoke(command);
     }
     
-    private Command Build(IComponentFactory factory)
+    private void CreateCommand()
     {
-        return CommandBuilder.CreateNewCommand(CommandNamer.RootCommandName)
+        _command = CommandBuilder.CreateNewCommand(CommandNamer.RootCommandName)
             .WithAlias(CommandNamer.RootCommandAlias)
             .WithDescription("This is a description of the root command")
             .WithSubCommands(
-                new IndividualsCommandBuilder(factory, factory),
-                new PersonalDataColumnCommandBuilder(factory, factory),
-                new PurposesCommandBuilder(factory, factory),
-                new OriginsCommandBuilder(factory),
-                new VacuumingRulesCommandBuilder(factory, factory, factory.CreateVacuumer()),
-                new DeleteConditionsCommandBuilder(factory, factory),
-                new ProcessingsCommandBuilder(factory, factory))
+                new IndividualsCommandBuilder(_handlerFactory, _managerFactory),
+                new PersonalDataOriginCommandBuilder(_handlerFactory, _managerFactory),
+                new PersonalDataColumnCommandBuilder(_handlerFactory, _managerFactory),
+                new PurposesCommandBuilder(_handlerFactory, _managerFactory),
+                new OriginsCommandBuilder(_handlerFactory),
+                new VacuumingRulesCommandBuilder(_handlerFactory, _managerFactory, Vacuumer),
+                new DeleteConditionsCommandBuilder(_handlerFactory, _managerFactory),
+                new ProcessingsCommandBuilder(_handlerFactory, _managerFactory))
             .WithSubCommands(
-                LoggingCommandBuilder.Build(factory.CreateLogger()),
-                ConfigurationCommandBuilder.Build(factory.CreateConfigManager()));
+                LoggingCommandBuilder.Build(Logger),
+                ConfigurationCommandBuilder.Build(ConfigManager));
     }
 
     private void AddAllStatusCommand()
@@ -173,8 +78,7 @@ public class CommandLineInterface
         var subCommands = _command.Subcommands;
         var statusCommands =
             subCommands.Select(subCommand => subCommand.Subcommands.First(c => c.Name == CommandNamer.Status));
-
-        // What the heck is going on here?
+        
         var allStatusCommand = CommandBuilder
             .BuildStatusCommand()
             .WithDescription("Shows the status of all entities in the system")

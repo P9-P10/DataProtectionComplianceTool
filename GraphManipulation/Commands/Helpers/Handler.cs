@@ -3,7 +3,28 @@ using GraphManipulation.Models.Base;
 
 namespace GraphManipulation.Commands.Helpers;
 
-public class Handler<TKey, TValue> where TValue : Entity<TKey>
+public interface IHandler<TKey, TValue> where TValue : Entity<TKey>
+{
+    public void CreateHandler(TKey key, TValue value);
+    public void UpdateHandler(TKey key, TValue value);
+    public void DeleteHandler(TKey key);
+    public void ShowHandler(TKey key);
+    public void ListHandler();
+    public void StatusHandler();
+
+    public void ListChangesHandler<TK, TV>(
+        TKey key,
+        IEnumerable<TK> list,
+        Func<TValue, IEnumerable<TV>> getCurrentList,
+        Action<TValue, IEnumerable<TV>> setList,
+        bool isAdd,
+        IGetter<TV, TK> manager)
+        where TV : Entity<TK>;
+
+
+}
+
+public class Handler<TKey, TValue> : IHandler<TKey, TValue> where TValue : Entity<TKey>
 {
     private readonly IManager<TKey, TValue> _manager;
     private readonly FeedbackEmitter<TKey, TValue> _feedbackEmitter;
@@ -97,7 +118,7 @@ public class Handler<TKey, TValue> where TValue : Entity<TKey>
         if (manager.Update(key, value))
         {
             feedbackEmitter.EmitSuccess(key, FeedbackEmitter<TKey, TValue>.Operations.Updated, value);
-            statusReport(manager.Get(key)!);
+            statusReport(value.Key is not null ? manager.Get(value.Key)! : manager.Get(key)!);
         }
         else
         {

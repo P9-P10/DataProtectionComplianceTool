@@ -17,7 +17,7 @@ public abstract class BaseCommandBuilder<TKey, TValue> : BaseCommandBuilder
     where TKey : notnull
     where TValue : Entity<TKey>, IListable, new()
 {
-    protected readonly Handler<TKey, TValue> Handler;
+    protected readonly IHandler<TKey, TValue> Handler;
     protected readonly FeedbackEmitter<TKey, TValue> Emitter;
 
     protected BaseCommandBuilder(IHandlerFactory handlerFactory)

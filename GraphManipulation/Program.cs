@@ -5,6 +5,7 @@ using System.Data.SQLite;
 using System.Text;
 using Dapper;
 using GraphManipulation.Commands;
+using GraphManipulation.Commands.Factories;
 using GraphManipulation.DataAccess;
 using GraphManipulation.DataAccess.Mappers;
 using GraphManipulation.Decorators;
@@ -16,33 +17,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GraphManipulation;
 
-public class VariousFactory : IVacuumerFactory, ILoggerFactory, IConfigManagerFactory
-{
-    private readonly IVacuumer _vacuumer;
-    private readonly ILogger _logger;
-    private readonly IConfigManager _configManager;
-
-    public VariousFactory(IVacuumer vacuumer, ILogger logger, IConfigManager configManager)
-    {
-        _vacuumer = vacuumer;
-        _logger = logger;
-        _configManager = configManager;
-    }
-    public IVacuumer CreateVacuumer()
-    {
-        return _vacuumer;
-    }
-
-    public ILogger CreateLogger()
-    {
-        return _logger;
-    }
-
-    public IConfigManager CreateConfigManager()
-    {
-        return _configManager;
-    }
-}
 public static class Program
 {
     private static string configPath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
@@ -93,11 +67,14 @@ public static class Program
         var vacuumer = new Vacuumer(purposeMapper, new SqliteQueryExecutor(dbConnection));
         var loggingVacuumer = new LoggingVacuumer(vacuumer, logger);
 
-        VariousFactory variousFactory = new VariousFactory(loggingVacuumer, logger, configManager);
         IManagerFactory managerFactory = new LoggingManagerFactory(new ManagerFactory(context), logger);
-        ComponentFactory componentFactory =
-            new ComponentFactory(managerFactory, variousFactory, variousFactory, variousFactory);
-        CommandLineInterface commandLineInterface = new CommandLineInterface(componentFactory);
+        IHandlerFactory handlerFactory = new HandlerFactory(managerFactory);
+
+        CommandLineInterface commandLineInterface = new CommandLineInterface(handlerFactory, managerFactory);
+        commandLineInterface.Vacuumer = loggingVacuumer;
+        commandLineInterface.ConfigManager = configManager;
+        commandLineInterface.Logger = logger;
+        
         Run(commandLineInterface);
 
     }
