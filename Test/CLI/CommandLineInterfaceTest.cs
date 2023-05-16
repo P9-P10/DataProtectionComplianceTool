@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GraphManipulation.Commands;
 using GraphManipulation.Commands.Factories;
+using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Logging;
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
@@ -70,10 +71,10 @@ public class CommandLineInterfaceTest
         manager.Setup(manager => manager.Get("testname")).Returns(new StorageRule());
         
         managerFactory.AddMockManager<StorageRule>(manager);
-
-        CommandLineInterface cli = new CommandLineInterface(managerFactory, loggerFactory, vacuumerFactory);
-        cli.Invoke($"sr c -n testname");
         
+        CommandLineInterface cli = new CommandLineInterface(managerFactory, loggerFactory, vacuumerFactory);
+        cli.Invoke($"{CommandNamer.StorageRulesName} c -n testname");
+
         manager.Verify(manager => manager.Get(
             It.Is<string>(s => s == "testname")));
         manager.Verify(manager => manager.Create(It.IsAny<string>()), Times.Never);
@@ -90,10 +91,10 @@ public class CommandLineInterfaceTest
         manager.Setup(manager => manager.Get("testname")).Returns((StorageRule?)null);
         
         managerFactory.AddMockManager<StorageRule>(manager);
-
-        CommandLineInterface cli = new CommandLineInterface(managerFactory, loggerFactory, vacuumerFactory);
-        cli.Invoke($"sr c -n testname");
         
+        CommandLineInterface cli = new CommandLineInterface(managerFactory, loggerFactory, vacuumerFactory);
+        cli.Invoke($"{CommandNamer.StorageRulesName} c -n testname");
+
         manager.Verify(manager => manager.Create(It.Is<string>(s => s == "testname")));
     }
     
@@ -112,10 +113,10 @@ public class CommandLineInterfaceTest
             .Returns(new StorageRule());
         
         managerFactory.AddMockManager<StorageRule>(manager);
-
-        CommandLineInterface cli = new CommandLineInterface(managerFactory, loggerFactory, vacuumerFactory);
-        cli.Invoke($"sr c -n testname -d description");
         
+        CommandLineInterface cli = new CommandLineInterface(managerFactory, loggerFactory, vacuumerFactory);
+        cli.Invoke($"{CommandNamer.StorageRulesName} c -n testname -d description");
+
         manager.Verify(manager => 
             manager.Update(
                 It.Is<string>(s => s == "testname"),
