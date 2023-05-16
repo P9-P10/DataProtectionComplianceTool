@@ -87,14 +87,8 @@ public static class Program
         var dbConnection = new SQLiteConnection(connectionString);
 
         AddStructureToDatabaseIfNotExists(dbConnection, context);
-        
-        var personalDataColumnMapper = new Mapper<PersonalDataColumn>(context);
         var purposeMapper = new Mapper<Purpose>(context);
-        var originMapper = new Mapper<Origin>(context);
-        var vacuumingRuleMapper = new Mapper<VacuumingRule>(context);
-        var deleteConditionMapper = new Mapper<StorageRule>(context);
-        var processingMapper = new Mapper<Processing>(context);
-        var personalDataOriginMapper = new Mapper<PersonalDataOrigin>(context);
+
 
         var vacuumer = new Vacuumer(purposeMapper, new SqliteQueryExecutor(dbConnection));
         var loggingVacuumer = new LoggingVacuumer(vacuumer, logger);

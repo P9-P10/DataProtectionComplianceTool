@@ -10,7 +10,6 @@ using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
 using GraphManipulation.Managers;
 using GraphManipulation.Managers.Interfaces;
-using GraphManipulation.Models;
 using GraphManipulation.Models.Base;
 using GraphManipulation.Vacuuming;
 
@@ -133,16 +132,16 @@ public class HandlerFactory : IHandlerFactory {
 
 public class CommandLineInterface
 {
-    private ComponentFactory _componentFactory;
+    private IComponentFactory _componentFactory;
     private Command _command;
     private Parser _parser;
     
-    public CommandLineInterface(ComponentFactory componentFactory)
+    public CommandLineInterface(IComponentFactory componentFactory)
     {
         _componentFactory = componentFactory;
         // Create subcommands
         _command = Build(componentFactory);
-        AddStatusCommands();
+        AddAllStatusCommand();
         CreateCommandParser();
     }
 
@@ -151,18 +150,8 @@ public class CommandLineInterface
         _parser.Invoke(command);
     }
     
-    private Command Build(ComponentFactory factory)
+    private Command Build(IComponentFactory factory)
     {
-        IManager<int, Individual> individualsManager = factory.CreateManager<int, Individual>();
-        IManager<TableColumnPair, PersonalDataColumn> personalDataColumnManager =
-            factory.CreateManager<TableColumnPair, PersonalDataColumn>();
-        IManager<string, Purpose> purposesManager = factory.CreateManager<string, Purpose>();
-        IManager<string, Origin> originsManager = factory.CreateManager<string, Origin>();
-        IManager<string, VacuumingRule> vacuumingRulesManager = factory.CreateManager<string, VacuumingRule>();
-        IManager<string, StorageRule> deleteConditionsManager =
-            factory.CreateManager<string, StorageRule>();
-        IManager<string, Processing> processingsManager = factory.CreateManager<string, Processing>();
-        
         return CommandBuilder.CreateNewCommand(CommandNamer.RootCommandName)
             .WithAlias(CommandNamer.RootCommandAlias)
             .WithDescription("This is a description of the root command")
@@ -179,28 +168,19 @@ public class CommandLineInterface
                 ConfigurationCommandBuilder.Build(factory.CreateConfigManager()));
     }
 
-    private void AddStatusCommands()
+    private void AddAllStatusCommand()
     {
+        var subCommands = _command.Subcommands;
+        var statusCommands =
+            subCommands.Select(subCommand => subCommand.Subcommands.First(c => c.Name == CommandNamer.Status));
+
         // What the heck is going on here?
-        _command = _command.WithSubCommands(
-            CommandBuilder
-                .BuildCreateCommand()
-                .WithHandler(() =>
-                {
-                    _command.Subcommands
-                        .ToList()
-                        .ForEach(subCommand =>
-                        {
-                            subCommand.Subcommands
-                                .Where(subSubCommand => subSubCommand.Name == CommandNamer.Status)
-                                .ToList()
-                                .ForEach(sub =>
-                                {
-                                    sub.Invoke(CommandNamer.Status);
-                                });
-                        });
-                })
-        );
+        var allStatusCommand = CommandBuilder
+            .BuildStatusCommand()
+            .WithDescription("Shows the status of all entities in the system")
+            .WithHandler(() => statusCommands.ToList().ForEach(statusCommand => statusCommand.Invoke(CommandNamer.Status)));
+
+        _command = _command.WithSubCommands(allStatusCommand);
     }
 
     private void CreateCommandParser()
