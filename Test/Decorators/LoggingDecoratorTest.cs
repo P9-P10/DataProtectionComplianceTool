@@ -1,9 +1,8 @@
-﻿
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using GraphManipulation.Decorators;
 using GraphManipulation.Logging;
 using GraphManipulation.Models;
+using GraphManipulation.Models.Base;
 using Xunit;
 
 namespace Test.Decorators;
@@ -18,6 +17,7 @@ public class LoggingDecoratorTest
         {
             Log = new List<IMutableLog>();
         }
+
         public void Append(IMutableLog mutableLog)
         {
             Log.Add(mutableLog);
@@ -29,68 +29,61 @@ public class LoggingDecoratorTest
         }
     }
 
-    private TestLogger logger;
-    private LoggingDecorator<string,Purpose> decorator;
+    private class TestEntity : Entity<string>
+    {
+    }
+
+    private readonly TestLogger _logger;
+    private readonly LoggingDecorator<string, TestEntity> _decorator;
 
     public LoggingDecoratorTest()
     {
-        logger = new TestLogger();
-        decorator = new LoggingDecorator<string,Purpose>(logger);
+        _logger = new TestLogger();
+        _decorator = new LoggingDecorator<string, TestEntity>(_logger);
     }
 
     private string GetMessage()
     {
-        return logger.Log[0].Message;
+        return _logger.Log[0].Message;
     }
-    
+
     [Fact]
     public void LogDeleteCreatesExpectedMessage()
     {
-        decorator.LogDelete("key");
+        _decorator.LogDelete("key");
 
-        string message = GetMessage();
-        
-        Assert.Equal("Delete TestType key.", message);
+        var message = GetMessage();
+
+        Assert.Equal("Delete test entity key.", message);
     }
 
     [Fact]
     public void LogUpdateCreatesExpectedMessageWithNullParameters()
     {
-        decorator.LogUpdate("key", null);
+        _decorator.LogUpdate("key", null);
 
-        string message = GetMessage();
-        
-        Assert.Equal("Update TestType key.", message);
+        var message = GetMessage();
+
+        Assert.Equal("Update test entity key.", message);
     }
 
     [Fact]
     public void LogUpdateCreatesExpectedMessageWithParameters()
     {
-        decorator.LogUpdate("key",new Purpose());
+        _decorator.LogUpdate("key", new TestEntity { Key = "key", Description = "Description" });
 
-        string message = GetMessage();
-        
-        Assert.Equal("Update TestType key. Parameters: [Param1, one], [Param2, two]", message);
+        var message = GetMessage();
+
+        Assert.Equal("Update test entity key. Value: key, Description", message);
     }
 
     [Fact]
-    public void LogAddCreatesExpectedMessageWithNullParameters()
+    public void LogCreateCreatesExpectedMessage()
     {
-        decorator.LogCreate("key");
+        _decorator.LogCreate("key");
 
-        string message = GetMessage();
-        
-        Assert.Equal("Create TestType key.", message);
+        var message = GetMessage();
+
+        Assert.Equal("Create test entity key.", message);
     }
-
-    [Fact]
-    public void LogAddCreatesExpectedMessageWithParameters()
-    {
-        decorator.LogCreate("key");
-
-        string message = GetMessage();
-        
-        Assert.Equal("Create TestType key. Parameters: [Param1, one], [Param2, two]", message);
-    }
-
 }
