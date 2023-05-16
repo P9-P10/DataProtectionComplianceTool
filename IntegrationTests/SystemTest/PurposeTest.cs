@@ -11,7 +11,7 @@ public class PurposeTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestStorageRule);
+        AddStorageRule(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
 
         var error = process.GetAllErrorsNoWhitespace();
@@ -30,7 +30,7 @@ public class PurposeTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestStorageRule);
+        AddStorageRule(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         ShowPurpose(process, TestPurpose);
         
@@ -47,8 +47,8 @@ public class PurposeTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestStorageRule);
-        AddDeleteCondition(process, TestNewTestStorageRule);
+        AddStorageRule(process, TestStorageRule);
+        AddStorageRule(process, TestNewTestStorageRule);
         AddPurpose(process, TestPurpose);
         UpdatePurpose(process, TestPurpose, NewTestPurpose);
         ShowPurpose(process, NewTestPurpose);
@@ -66,8 +66,8 @@ public class PurposeTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestStorageRule);
-        AddDeleteCondition(process, TestNewTestStorageRule);
+        AddStorageRule(process, TestStorageRule);
+        AddStorageRule(process, TestNewTestStorageRule);
         AddPurpose(process, TestPurpose);
         AddPurpose(process, NewTestPurpose);
         ListPurpose(process);
@@ -86,7 +86,7 @@ public class PurposeTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestStorageRule);
+        AddStorageRule(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         DeletePurpose(process, TestPurpose);
         

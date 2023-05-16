@@ -5,8 +5,8 @@ public static class CommandNamer
     public const string RootCommandName = "!";
     public const string RootCommandAlias = "!";
 
-    public const string DeleteConditionsName = "delete-conditions";
-    public const string DeleteConditionsAlias = "dc";
+    public const string StorageRulesName = "storage-rules";
+    public const string StorageRulesAlias = "sr";
 
     public const string IndividualsName = "individuals";
     public const string IndividualsAlias = "id";

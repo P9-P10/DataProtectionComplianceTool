@@ -156,9 +156,9 @@ public class TestResources
         Purposes = new List<Purpose> {TestPurpose}
     };
 
-    protected static void AddDeleteCondition(TestProcess testProcess, StorageRule storageRule)
+    protected static void AddStorageRule(TestProcess testProcess, StorageRule storageRule)
     {
-        var addDeleteConditionCommand = $"{CommandNamer.DeleteConditionsName} {CommandNamer.Create} " +
+        var addDeleteConditionCommand = $"{CommandNamer.StorageRulesName} {CommandNamer.Create} " +
                                         $"{OptionNamer.Name} {storageRule.Key} " +
                                         $"{OptionNamer.Condition} \"{storageRule.VacuumingCondition}\" " +
                                         $"{OptionNamer.Description} \"{storageRule.Description}\"";
@@ -208,31 +208,31 @@ public class TestResources
         testProcess.GiveInput(deleteCommand);
     }
 
-    protected static void ListDeletionConditions(TestProcess process)
+    protected static void ListStorageRules(TestProcess process)
     {
-        process.GiveInput($"{CommandNamer.DeleteConditionsAlias} {CommandNamer.List}");
+        process.GiveInput($"{CommandNamer.StorageRulesAlias} {CommandNamer.List}");
     }
 
-    protected static void UpdateDeletionCondition(TestProcess process, StorageRule old,
-        StorageRule newDeletionCondition)
+    protected static void UpdateStorageRule(TestProcess process, StorageRule old,
+        StorageRule newStorageRule)
     {
         string command =
-            $"{CommandNamer.DeleteConditionsAlias} {CommandNamer.UpdateAlias} {OptionNamer.NameAlias} {old.Key}  {OptionNamer.NewNameAlias}  {newDeletionCondition.Key}" +
-            $" {OptionNamer.Condition} \"{newDeletionCondition.VacuumingCondition}\"" +
-            $" {OptionNamer.Description} \"{newDeletionCondition.Description}\"";
+            $"{CommandNamer.StorageRulesAlias} {CommandNamer.UpdateAlias} {OptionNamer.NameAlias} {old.Key}  {OptionNamer.NewNameAlias}  {newStorageRule.Key}" +
+            $" {OptionNamer.Condition} \"{newStorageRule.VacuumingCondition}\"" +
+            $" {OptionNamer.Description} \"{newStorageRule.Description}\"";
         process.GiveInput(command);
     }
 
-    protected static void DeleteDeletionCondition(TestProcess process, StorageRule storageRule)
+    protected static void DeleteStorageRule(TestProcess process, StorageRule storageRule)
     {
-        process.GiveInput($"{CommandNamer.DeleteConditionsAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name}" +
+        process.GiveInput($"{CommandNamer.StorageRulesAlias} {CommandNamer.DeleteAlias} {OptionNamer.Name}" +
                           $" {storageRule.Key}");
     }
 
-    protected static void ShowDeleteCondition(TestProcess process, StorageRule storageRule)
+    protected static void ShowStorageRule(TestProcess process, StorageRule storageRule)
     {
         process.GiveInput(
-            $"{CommandNamer.DeleteConditionsAlias} {CommandNamer.ShowAlias} -n {storageRule.Key}");
+            $"{CommandNamer.StorageRulesAlias} {CommandNamer.ShowAlias} -n {storageRule.Key}");
     }
 
     protected static void AddOrigin(TestProcess testProcess, Origin origin)

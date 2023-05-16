@@ -99,8 +99,7 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
                     .WithDescription("The name(s) of the vacuuming rule(s) that should be executed")
                     .WithIsRequired(true)
                     .WithArity(ArgumentArity.OneOrMore)
-                    .WithAllowMultipleArguments(true)
-                    .WithDefaultValue(new List<string>()))
+                    .WithAllowMultipleArguments(true))
             .WithHandler(context =>
             {
                 var ruleNames = context.ParseResult.GetValueForOption(rulesOption)!.ToList();
