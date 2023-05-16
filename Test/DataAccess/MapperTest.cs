@@ -4,7 +4,6 @@ using System.Data.SQLite;
 using System.IO;
 using FluentAssertions;
 using GraphManipulation.DataAccess;
-using GraphManipulation.DataAccess.Mappers;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
 using Xunit;
@@ -53,30 +52,27 @@ public class MapperTest
         {
             public static PersonalDataColumn column1 = new()
             {
-                TableColumnPair = new TableColumnPair("tableOne", "columnOne"),
-                JoinCondition = "test"
+                Key = new TableColumnPair("tableOne", "columnOne")
+               
             };
 
             public static PersonalDataColumn column2 = new()
             {
-                TableColumnPair = new TableColumnPair("tableTwo", "columnTwo"),
-                JoinCondition = "test"
+                Key = new TableColumnPair("tableTwo", "columnTwo")
             };
 
-            public static VacuumingRule rule1 = new() {Name = "ruleOne", Interval = "2d", Description = ""};
-            public static VacuumingRule rule2 = new() {Name = "ruleTwo", Interval = "3d", Description = ""};
+            public static VacuumingRule rule1 = new() {Key = "ruleOne", Interval = "2d", Description = ""};
+            public static VacuumingRule rule2 = new() {Key = "ruleTwo", Interval = "3d", Description = ""};
 
             public static Purpose purpose1 = new()
             {
-                PersonalDataColumns = new[] {column1},
-                Name = "purposeOne",
+                Key = "purposeOne",
                 Rules = new[] {rule1}
             };
 
             public static Purpose purpose2 = new Purpose()
             {
-                PersonalDataColumns = new[] {column1, column2},
-                Name = "purposeTwo",
+                Key = "purposeTwo",
                 Rules = new[] {rule1, rule2}
             };
 
@@ -109,7 +105,7 @@ public class MapperTest
             // Insert is tested further in other tests
             // Assignment of id is the only functionality that can be tested in isolation.
             Mapper<Purpose> mapper = new Mapper<Purpose>(_context);
-            var testPurpose = new Purpose() {Name = "TestPurpose"};
+            var testPurpose = new Purpose() {Key = "TestPurpose"};
 
             var insertedPurpose = mapper.Insert(testPurpose);
 
@@ -120,7 +116,7 @@ public class MapperTest
         public void FindReturnsEmptyListWhenNoMatches()
         {
             Mapper<Purpose> mapper = new Mapper<Purpose>(_context);
-            IEnumerable<Purpose> result = mapper.Find(purpose => purpose.Name == "NoSuchPurpose");
+            IEnumerable<Purpose> result = mapper.Find(purpose => purpose.Key == "NoSuchPurpose");
 
             result.Should().BeEmpty();
         }
@@ -130,7 +126,7 @@ public class MapperTest
         {
             SeedData.SeedDatabase(_context);
             Mapper<Purpose> mapper = new Mapper<Purpose>(_context);
-            IEnumerable<Purpose> result = mapper.Find(purpose => purpose.Name.Contains("purpose"));
+            IEnumerable<Purpose> result = mapper.Find(purpose => purpose.Key.Contains("purpose"));
 
             result.Should().Contain(SeedData.purpose1);
             result.Should().Contain(SeedData.purpose2);
@@ -149,10 +145,10 @@ public class MapperTest
         public void FindSingleReturnsOnlyMatchingElement()
         {
             Mapper<Purpose> mapper = new Mapper<Purpose>(_context);
-            var expectedPurpose = new Purpose() {Name = "TestPurpose"};
+            var expectedPurpose = new Purpose() {Key = "TestPurpose"};
             mapper.Insert(expectedPurpose);
 
-            Purpose? actualPurpose = mapper.FindSingle(purpose => purpose.Name == "TestPurpose");
+            Purpose? actualPurpose = mapper.FindSingle(purpose => purpose.Key == "TestPurpose");
 
             actualPurpose.Should().Be(expectedPurpose);
         }
@@ -161,19 +157,19 @@ public class MapperTest
         public void FindSingleTableColumnFromPersonalDataColumn()
         {
             Mapper<PersonalDataColumn> mapper = new Mapper<PersonalDataColumn>(_context);
-            var expectedColumn = new PersonalDataColumn()
+            var expectedColumn = new PersonalDataColumn
             {
                 DefaultValue = "",
                 Description = "",
-                TableColumnPair = new TableColumnPair("Table", "Column")
+                Key = new TableColumnPair("Table", "Column")
             };
             mapper.Insert(expectedColumn);
 
             PersonalDataColumn? result = mapper.FindSingle(x =>
-                x.TableColumnPair.Equals(new TableColumnPair("Table","Column")));
-            var tableColumnPair = result?.TableColumnPair;
+                x.Key.Equals(expectedColumn.Key));
+            var tableColumnPair = result?.Key;
 
-            tableColumnPair.Should().Be(new TableColumnPair("Table", "Column"));
+            tableColumnPair.Should().Be(expectedColumn.Key);
         }
 
         [Fact]
@@ -182,17 +178,17 @@ public class MapperTest
             SeedData.SeedDatabase(_context);
             Mapper<Purpose> mapper = new Mapper<Purpose>(_context);
             Assert.Throws<InvalidOperationException>(() =>
-                mapper.FindSingle(purpose => purpose.Name.Contains("purpose")));
+                mapper.FindSingle(purpose => purpose.Key.Contains("purpose")));
         }
 
         [Fact]
         public void UpdateInsertsGivenNonExistingElement()
         {
             Mapper<Purpose> mapper = new Mapper<Purpose>(_context);
-            var newPurpose = new Purpose() {Name = "NoSuchPurpose"};
+            var newPurpose = new Purpose() {Key = "NoSuchPurpose"};
 
             mapper.Update(newPurpose);
-            var fetchedPurpose = mapper.FindSingle(purpose => purpose.Name == "NoSuchPurpose");
+            var fetchedPurpose = mapper.FindSingle(purpose => purpose.Key == "NoSuchPurpose");
 
             fetchedPurpose.Should().Be(newPurpose);
         }
@@ -202,21 +198,21 @@ public class MapperTest
         {
             Mapper<Purpose> mapper = new Mapper<Purpose>(_context);
 
-            var newPurpose = new Purpose() {Name = "OriginalValue"};
+            var newPurpose = new Purpose() {Key = "OriginalValue"};
             mapper.Insert(newPurpose);
 
-            newPurpose.Name = "NewValue";
+            newPurpose.Key = "NewValue";
             mapper.Update(newPurpose);
 
             var updatedPurpose = mapper.FindSingle(purpose => purpose.Id == newPurpose.Id);
-            updatedPurpose.Name.Should().Be("NewValue");
+            updatedPurpose.Key.Should().Be("NewValue");
         }
 
         [Fact]
         public void DeletingNonExistingEntryThrowsInvalidOperationException()
         {
             Mapper<Purpose> mapper = new Mapper<Purpose>(_context);
-            var nonExistingPurpose = new Purpose() {Name = "NoSuchPurpose"};
+            var nonExistingPurpose = new Purpose() {Key = "NoSuchPurpose"};
 
             Assert.Throws<InvalidOperationException>(() => mapper.Delete(nonExistingPurpose));
         }

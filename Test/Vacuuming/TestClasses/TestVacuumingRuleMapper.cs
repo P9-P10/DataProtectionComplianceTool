@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity.Core;
 using System.Linq;
-using GraphManipulation.DataAccess.Mappers;
+using GraphManipulation.DataAccess;
 using GraphManipulation.Models;
 
 namespace Test.Vacuuming.TestClasses;

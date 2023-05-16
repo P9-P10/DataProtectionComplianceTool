@@ -1,4 +1,4 @@
-using GraphManipulation.Helpers;
+using GraphManipulation.Utility;
 
 namespace GraphManipulation.Logging;
 

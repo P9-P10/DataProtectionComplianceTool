@@ -154,7 +154,7 @@ public class LoggingTest : TestResources
 
             SetupTestData(dbConnection);
 
-            AddDeleteCondition(process, TestDeleteCondition);
+            AddStorageRule(process, TestStorageRule);
             AddPurpose(process, TestPurpose);
             AddPersonalData(process, TestPersonalDataColumn);
             AddVacuumingRule(process, TestVacuumingRule);
@@ -177,9 +177,9 @@ public class LoggingTest : TestResources
             logEntry.Subject.Should().Be(TestPersonalDataColumn.ToListingIdentifier());
             logEntry.LogType.Should().Be(LogType.Vacuuming);
             logEntry.Message.Should().Contain(
-                $"\"UPDATE {TestPersonalDataColumn.TableColumnPair.TableName} " +
-                $"SET {TestPersonalDataColumn.TableColumnPair.ColumnName} = \'{TestPersonalDataColumn.DefaultValue}\' " +
-                $"WHERE ({TestDeleteCondition.Condition});\" " +
+                $"\"UPDATE {TestPersonalDataColumn.Key.TableName} " +
+                $"SET {TestPersonalDataColumn.Key.ColumnName} = \'{TestPersonalDataColumn.DefaultValue}\' " +
+                $"WHERE ({TestStorageRule.VacuumingCondition});\" " +
                 $"affected {TestPersonalDataColumn.ToListingIdentifier()} " +
                 $"because it is stored under the following purpose(s): {TestPurpose.ToListingIdentifier()}");
         }

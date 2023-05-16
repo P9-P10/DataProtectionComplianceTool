@@ -1,18 +1,18 @@
-using GraphManipulation.Models.Interfaces;
-
 namespace GraphManipulation.Models;
 
-public class Individual : DomainEntity, IIndividual
+public class Individual : Entity<int>
 {
-    
-    public virtual IEnumerable<PersonalData>? PersonalData { get; set; }
-    public string ToListing()
-    {
-        return Id == null ? "Unknown" : Id.ToString();
-    }
+    public virtual IEnumerable<PersonalDataOrigin>? PersonalDataOrigins { get; set; }
 
-    public string ToListingIdentifier()
+    public override string ToListing()
     {
-        return ToListing();
+        return string.Join(ToListingSeparator, ToListingIdentifier(),
+            ListNullOrEmptyToString(PersonalDataOrigins,
+                origins => EncapsulateList(origins.Select(o => o.ToListing()))));
+    }
+    
+    public override string ToListingHeader()
+    {
+        return string.Join(ToListingSeparator, base.ToListingHeader(), "Personal Data Origins");
     }
 }

@@ -1,62 +1,56 @@
 using System.CommandLine;
-using GraphManipulation.Commands.Helpers;
-using GraphManipulation.Managers.Interfaces;
+using GraphManipulation.Commands.Binders;
+using GraphManipulation.Factories;
+using GraphManipulation.Managers;
+using GraphManipulation.Models;
+using GraphManipulation.Utility;
 
 namespace GraphManipulation.Commands.Builders;
 
-public static class IndividualsCommandBuilder
+public class IndividualsCommandBuilder : BaseCommandBuilder<int, Individual>
 {
-    public static Command Build(IConsole console, IIndividualsManager individualsManager)
+    private readonly IManager<TableColumnPair, PersonalDataColumn> _personalDataColumnManager;
+
+    public IndividualsCommandBuilder(IHandlerFactory handlerFactory, IManagerFactory managerFactory) : base(handlerFactory)
     {
-        return CommandBuilder.CreateCommand(CommandNamer.IndividualsName)
-            .WithAlias(CommandNamer.IndividualsAlias)
+        _personalDataColumnManager = managerFactory.CreateManager<TableColumnPair, PersonalDataColumn>();
+    }
+
+    public override Command Build()
+    {
+        var baseCommand = base.Build(CommandNamer.IndividualsName, CommandNamer.IndividualsAlias, out var keyOption);
+
+        var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<Individual>();
+
+        return baseCommand
             .WithSubCommands(
-                SetSource(console, individualsManager),
-                ShowSource(console, individualsManager),
-                ListIndividuals(console, individualsManager),
-                ShowIndividual(console, individualsManager)
+                CreateCommand(keyOption, new IndividualBinder(keyOption, descriptionOption), new Option[]
+                {
+                    
+                })
             );
     }
 
-    private static Command SetSource(IConsole console, IIndividualsManager individualsManager)
+    protected override void StatusReport(Individual individual)
     {
-        return CommandBuilder
-            .BuildSetCommand("source")
-            .WithDescription("Sets the source of individuals for whom personal data can be managed")
-            .WithOption(out var pairOption,
-                OptionBuilder
-                    .CreateTableColumnPairOption()
-                    .WithDescription("The table and column in which the individuals can be found, should be written as: Table Column"))
-            .WithHandler(context =>
-                Handlers.SetHandler(context, console, individualsManager.SetIndividualsSource, pairOption));
+        var personalDataColumns = _personalDataColumnManager.GetAll();
+        var personalDataOrigins = individual.PersonalDataOrigins?
+            .Where(pdo => pdo.PersonalDataColumn is not null).ToList() ?? new List<PersonalDataOrigin>();
+
+        foreach (var pdc in personalDataColumns)
+        {
+            var pdo = personalDataOrigins.FirstOrDefault(pdo => pdo.PersonalDataColumn!.Equals(pdc));
+            
+            if (!personalDataOrigins.Any() || pdo?.Origin is null)
+            {
+                // There exists a personal data column, but the individual does not have a personal data origin for it
+                FeedbackEmitter.EmitMissing(individual.Key, $"origin for '{pdc.ToListingIdentifier()}'");
+            }
+        }
     }
 
-    private static Command ShowSource(IConsole console, IIndividualsManager individualsManager)
+    protected override Option<int> BuildKeyOption()
     {
-        return CommandBuilder
-            .BuildShowCommand("source")
-            .WithDescription("Shows the current source of individuals")
-            .WithHandler(() => console.WriteLine(individualsManager.GetIndividualsSource().ToListing()));
-    }
-
-    private static Command ListIndividuals(IConsole console, IIndividualsManager individualsManager)
-    {
-        return CommandBuilder
-            .BuildListCommand()
-            .WithDescription("Lists all individuals currently in the system")
-            .WithHandler(() => Handlers.ListHandler(console, individualsManager,CommandHeader.IndividualsHeader));
-    }
-
-    private static Command ShowIndividual(IConsole console, IIndividualsManager individualsManager)
-    {
-        return CommandBuilder
-            .BuildShowCommand()
-            .WithDescription("Shows information pertaining to the individual with the given id")
-            .WithOption(out var idOption,
-                OptionBuilder
-                    .CreateIdOption()
-                    .WithDescription("The id of the individual to be shown")
-                    .WithIsRequired(true))
-            .WithHandler(context => Handlers.ShowHandler(context, console, individualsManager, idOption));
+        return OptionBuilder.CreateKeyOption<int, Individual>(OptionNamer.Id, OptionNamer.IdAlias, "id");
     }
 }

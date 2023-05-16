@@ -1,14 +1,14 @@
 using System.CommandLine;
-using GraphManipulation.Commands.Helpers;
-using GraphManipulation.Helpers;
+using GraphManipulation.Managers;
+using GraphManipulation.Utility;
 
 namespace GraphManipulation.Commands.Builders;
 
 public static class ConfigurationCommandBuilder
 {
-    public static Command Build(IConsole console, IConfigManager configManager)
+    public static Command Build(IConfigManager configManager)
     {
-        return CommandBuilder.CreateCommand(CommandNamer.ConfigurationName)
+        return CommandBuilder.CreateNewCommand(CommandNamer.ConfigurationName)
             .WithAlias(CommandNamer.ConfigurationAlias);
         // .WithSubCommands(UpdateConfig());
     }

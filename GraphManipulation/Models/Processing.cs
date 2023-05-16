@@ -1,43 +1,18 @@
-﻿using GraphManipulation.Managers;
-using GraphManipulation.Managers.Interfaces.Base;
-using GraphManipulation.Models.Interfaces;
-using GraphManipulation.Models.Interfaces.Base;
+﻿namespace GraphManipulation.Models;
 
-namespace GraphManipulation.Models;
-
-public class Processing : DomainEntity, IProcessing
+public class Processing : Entity<string>
 {
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public virtual Purpose Purpose { get; set; }
-    public virtual PersonalDataColumn PersonalDataColumn { get; set; }
-    public string ToListing()
+    public virtual Purpose? Purpose { get; set; }
+    public virtual PersonalDataColumn? PersonalDataColumn { get; set; }
+    public override string ToListing()
     {
-        return string.Join(", ", Name, Description, Purpose.ToListingIdentifier(), PersonalDataColumn.TableColumnPair.ToListingIdentifier());
+        return string.Join(ToListingSeparator, base.ToListing(), 
+            NullToString(Purpose),
+            NullToString(PersonalDataColumn));
     }
-
-    public string ToListingIdentifier()
+    
+    public override string ToListingHeader()
     {
-        return GetName();
-    }
-
-    public string GetName()
-    {
-        return Name;
-    }
-
-    public string GetDescription()
-    {
-        return Description;
-    }
-
-    public IPurpose GetPurpose()
-    {
-        return Purpose;
-    }
-
-    public TableColumnPair GetPersonalDataTableColumnPair()
-    {
-        return PersonalDataColumn.TableColumnPair;
+        return string.Join(ToListingSeparator, base.ToListingHeader(), "Purpose", "Personal Data Column");
     }
 }

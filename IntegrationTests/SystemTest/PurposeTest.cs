@@ -11,7 +11,7 @@ public class PurposeTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
+        AddStorageRule(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
 
         var error = process.GetAllErrorsNoWhitespace();
@@ -19,12 +19,9 @@ public class PurposeTest : TestResources
 
         error.Should().BeEmpty();
         output.Should().ContainSingle(s => 
-            s.Contains($"Successfully added {TestPurpose.GetName()} purpose") &&
-            s.Contains($"{TestPurpose.GetLegallyRequired()}") && 
-            s.Contains(TestPurpose.GetDescription())
-            );
+            s.Contains($"Purpose '{TestPurpose.Key}' successfully created"));
         output.Should().ContainSingle(s =>
-            s.Contains($"Successfully updated {TestPurpose.GetName()} purpose with {TestDeleteCondition.GetName()}"));
+            s.Contains($"Purpose '{TestPurpose.Key}' successfully updated with {TestPurpose.ToListing()}"));
     }
 
     [Fact]
@@ -33,12 +30,12 @@ public class PurposeTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
+        AddStorageRule(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         ShowPurpose(process, TestPurpose);
         
         var error = process.GetAllErrorsNoWhitespace();
-        var output = process.GetAllOutputNoWhitespace();
+        var output = process.GetLastOutput();
         
         error.Should().BeEmpty();
         output.Should().ContainSingle(s => s.Contains(TestPurpose.ToListing()));
@@ -50,17 +47,17 @@ public class PurposeTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
-        AddDeleteCondition(process, NewTestDeleteCondition);
+        AddStorageRule(process, TestStorageRule);
+        AddStorageRule(process, TestNewTestStorageRule);
         AddPurpose(process, TestPurpose);
         UpdatePurpose(process, TestPurpose, NewTestPurpose);
         ShowPurpose(process, NewTestPurpose);
         
-        var error = process.GetAllErrorsNoWhitespace();
-        var output = process.GetAllOutputNoWhitespace();
+        var error = process.GetAllErrors();
+        var output = process.GetLastOutput();
         
         error.Should().BeEmpty();
-        output.Should().ContainSingle(s => s.Contains(NewTestPurpose.ToListing()));
+        output.Should().ContainSingle(s => s.Contains(NewTestPurposeWithOldRule.ToListing()));
     }
     
     [Fact]
@@ -69,14 +66,14 @@ public class PurposeTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
-        AddDeleteCondition(process, NewTestDeleteCondition);
+        AddStorageRule(process, TestStorageRule);
+        AddStorageRule(process, TestNewTestStorageRule);
         AddPurpose(process, TestPurpose);
         AddPurpose(process, NewTestPurpose);
         ListPurpose(process);
 
         var error = process.GetAllErrorsNoWhitespace();
-        var output = process.GetAllOutputNoWhitespace().ToList();
+        var output = process.GetLastOutput().ToList();
         
         error.Should().BeEmpty();
         output.Should().ContainSingle(s => s.Contains(TestPurpose.ToListing()));
@@ -89,7 +86,7 @@ public class PurposeTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
+        AddStorageRule(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         DeletePurpose(process, TestPurpose);
         
@@ -98,6 +95,7 @@ public class PurposeTest : TestResources
         
         error.Should().BeEmpty();
         output.Should().ContainSingle(s => 
-            s.Contains($"Successfully deleted {TestPurpose.GetName()} purpose"));
+            s.Contains($"Purpose '{TestPurpose.Key}' successfully deleted"));
+        
     }
 }

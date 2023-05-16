@@ -1,7 +1,7 @@
 using System.CommandLine;
-using GraphManipulation.Commands.Helpers;
-using GraphManipulation.Helpers;
+using GraphManipulation.Factories;
 using GraphManipulation.Logging;
+using GraphManipulation.Utility;
 
 namespace GraphManipulation.Commands.Builders;
 
@@ -9,14 +9,14 @@ public static class LoggingCommandBuilder
 {
     private static ArgumentArity ExactlyTwo => new(2, 2);
 
-    public static Command Build(IConsole console, ILogger logger)
+    public static Command Build(ILoggerFactory loggerFactory)
     {
-        return CommandBuilder.CreateCommand(CommandNamer.LoggingName)
+        return CommandBuilder.CreateNewCommand(CommandNamer.LoggingName)
             .WithAlias(CommandNamer.LoggingAlias)
-            .WithSubCommands(ListLog(console, logger));
+            .WithSubCommands(ListLog(loggerFactory.CreateLogger()));
     }
 
-    private static Command ListLog(IConsole console, ILogger logger)
+    private static Command ListLog(ILogger logger)
     {
         return CommandBuilder
             .BuildListCommand()
@@ -42,8 +42,8 @@ public static class LoggingCommandBuilder
                     messageFormats.ToList(), limit);
 
                  var result = logger.Read(constraints).ToList();
-                console.Write(string.Join(Environment.NewLine, result));
-                console.WriteLine($"{Environment.NewLine}Showing " + (result.Count < limit ? $"all {result.Count}" : $"newest {limit}")  + " log entries");
+                Console.Write(string.Join(Environment.NewLine, result));
+                Console.WriteLine($"{Environment.NewLine}Showing " + (result.Count < limit ? $"all {result.Count}" : $"newest {limit}")  + " log entries");
             });
     }
 

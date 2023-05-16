@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.IO;
 using System.Linq;
-using FluentAssertions;
 using GraphManipulation.Commands.Builders;
-using GraphManipulation.Helpers;
+using GraphManipulation.Factories;
 using GraphManipulation.Logging;
-using GraphManipulation.Managers.Interfaces;
+using GraphManipulation.Utility;
 using Moq;
 using Xunit;
 
@@ -24,12 +23,12 @@ public class LoggingCommandTest : CommandTest
             .Setup(loggerMock => loggerMock.Read(It.IsAny<ILogConstraints>()))
             .Returns(new List<ILog>().OrderBy(l => l.LogNumber));
 
-        return LoggingCommandBuilder.Build(console, loggerMock.Object);
+        return LoggingCommandBuilder.Build(new PlaintextLoggerFactory(loggerMock.Object));
     }
 
     public class List
     {
-        private const string CommandName = "list";
+        private const string CommandName = CommandNamer.List;
 
         [Fact]
         public void Parses()

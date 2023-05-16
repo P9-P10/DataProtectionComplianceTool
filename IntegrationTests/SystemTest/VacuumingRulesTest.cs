@@ -1,8 +1,5 @@
-using System.Data;
 using Dapper;
 using FluentAssertions;
-using GraphManipulation.Logging;
-using GraphManipulation.Models.Interfaces;
 using IntegrationTests.SystemTest.Tools;
 
 namespace IntegrationTests.SystemTest;
@@ -15,7 +12,7 @@ public class VacuumingRulesTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
+        AddStorageRule(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         AddVacuumingRule(process, TestVacuumingRule);
 
@@ -25,12 +22,10 @@ public class VacuumingRulesTest : TestResources
         error.Should().BeEmpty();
 
         output.Should().ContainSingle(s =>
-            s.Contains($"Successfully added {TestVacuumingRule.ToListingIdentifier()} vacuuming rule") &&
-            s.Contains($"{TestVacuumingRule.GetInterval()}") &&
-            s.Contains($"{TestVacuumingRule.GetPurposes().First().ToListingIdentifier()}"));
+            s.Contains($"Vacuuming rule '{TestVacuumingRule.ToListingIdentifier()}' successfully created"));
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully updated {TestVacuumingRule.ToListingIdentifier()} vacuuming rule with {TestVacuumingRule.GetDescription()}"));
+                $"Vacuuming rule '{TestVacuumingRule.ToListingIdentifier()}' successfully updated with {TestVacuumingRule.ToListing()}"));
     }
 
     [Fact]
@@ -39,13 +34,13 @@ public class VacuumingRulesTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
+        AddStorageRule(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         AddVacuumingRule(process, TestVacuumingRule);
         ShowVacuumingRule(process, TestVacuumingRule);
 
         var error = process.GetAllErrorsNoWhitespace();
-        var output = process.GetAllOutputNoWhitespace();
+        var output = process.GetLastOutput();
 
         error.Should().BeEmpty();
 
@@ -58,14 +53,14 @@ public class VacuumingRulesTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
+        AddStorageRule(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         AddVacuumingRule(process, TestVacuumingRule);
         UpdateVacuumingRule(process, TestVacuumingRule, UpdatedTestVacuumingRule);
         ShowVacuumingRule(process, UpdatedTestVacuumingRule);
 
         var error = process.GetAllErrorsNoWhitespace();
-        var output = process.GetAllOutputNoWhitespace();
+        var output = process.GetLastOutput();
 
         error.Should().BeEmpty();
 
@@ -78,14 +73,14 @@ public class VacuumingRulesTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
+        AddStorageRule(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         AddVacuumingRule(process, TestVacuumingRule);
         AddVacuumingRule(process, UpdatedTestVacuumingRule);
         ListVacuumingRule(process);
 
         var error = process.GetAllErrorsNoWhitespace();
-        var output = process.GetAllOutputNoWhitespace().ToList();
+        var output = process.GetLastOutput().ToList();
 
         error.Should().BeEmpty();
 
@@ -99,7 +94,7 @@ public class VacuumingRulesTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
+        AddStorageRule(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         AddVacuumingRule(process, TestVacuumingRule);
         DeleteVacuumingRule(process, TestVacuumingRule);
@@ -108,10 +103,9 @@ public class VacuumingRulesTest : TestResources
         var output = process.GetAllOutputNoWhitespace();
 
         error.Should().BeEmpty();
-
+        
         output.Should().ContainSingle(s =>
-            s.Contains(
-                $"Successfully deleted {TestVacuumingRule.ToListingIdentifier()} vacuuming rule"));
+            s.Contains($"Vacuuming rule '{TestVacuumingRule.ToListingIdentifier()}' successfully deleted"));
     }
 
     [Fact]
@@ -120,25 +114,24 @@ public class VacuumingRulesTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
-        AddDeleteCondition(process, NewTestDeleteCondition);
+        AddStorageRule(process, TestStorageRule);
+        AddStorageRule(process, TestNewTestStorageRule);
         AddPurpose(process, TestPurpose);
         AddPurpose(process, NewTestPurpose);
         AddPurpose(process, VeryNewTestPurpose);
         AddVacuumingRule(process, TestVacuumingRule);
-        AddPurposesToVacuumingRule(process, TestVacuumingRule, new[] { NewTestPurpose, VeryNewTestPurpose });
+        AddPurposesToVacuumingRule(process, TestVacuumingRule, new[] {NewTestPurpose, VeryNewTestPurpose});
 
         var error = process.GetAllErrorsNoWhitespace();
-        var output = process.GetAllOutputNoWhitespace().ToList();
+        var output = process.GetLastOutput().ToList();
 
         error.Should().BeEmpty();
 
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully updated {TestVacuumingRule.ToListingIdentifier()} vacuuming rule with {NewTestPurpose.GetName()}"));
-        output.Should().ContainSingle(s =>
-            s.Contains(
-                $"Successfully updated {TestVacuumingRule.ToListingIdentifier()} vacuuming rule with {VeryNewTestPurpose.GetName()}"));
+                $"Vacuuming rule '{TestVacuumingRule.ToListingIdentifier()}' successfully updated")
+            && s.Contains(NewTestPurpose.ToListingIdentifier())
+            && s.Contains(VeryNewTestPurpose.ToListingIdentifier()));
     }
 
     [Fact]
@@ -147,26 +140,25 @@ public class VacuumingRulesTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddDeleteCondition(process, TestDeleteCondition);
-        AddDeleteCondition(process, NewTestDeleteCondition);
+        AddStorageRule(process, TestStorageRule);
+        AddStorageRule(process, TestNewTestStorageRule);
         AddPurpose(process, TestPurpose);
         AddPurpose(process, NewTestPurpose);
         AddPurpose(process, VeryNewTestPurpose);
         AddVacuumingRule(process, TestVacuumingRule);
-        AddPurposesToVacuumingRule(process, TestVacuumingRule, new[] { NewTestPurpose, VeryNewTestPurpose });
-        RemovePurposesFromVacuumingRule(process, TestVacuumingRule, new[] { NewTestPurpose, VeryNewTestPurpose });
+        AddPurposesToVacuumingRule(process, TestVacuumingRule, new[] {NewTestPurpose, VeryNewTestPurpose});
+        RemovePurposesFromVacuumingRule(process, TestVacuumingRule, new[] {NewTestPurpose, VeryNewTestPurpose});
 
         var error = process.GetAllErrorsNoWhitespace();
-        var output = process.GetAllOutputNoWhitespace().ToList();
+        var output = process.GetLastOutput().ToList();
 
         error.Should().BeEmpty();
 
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"{NewTestPurpose.GetName()} successfully removed from {TestVacuumingRule.ToListingIdentifier()}"));
-        output.Should().ContainSingle(s =>
-            s.Contains(
-                $"{VeryNewTestPurpose.GetName()} successfully removed from {TestVacuumingRule.ToListingIdentifier()}"));
+                $"Vacuuming rule '{TestVacuumingRule.ToListingIdentifier()}' successfully updated")
+            && !s.Contains(NewTestPurpose.ToListingIdentifier())
+            && !s.Contains(VeryNewTestPurpose.ToListingIdentifier()));
     }
 
     [Fact]
@@ -178,14 +170,14 @@ public class VacuumingRulesTest : TestResources
 
         SetupTestData(dbConnection);
 
-        AddDeleteCondition(process, TestDeleteCondition);
+        AddStorageRule(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
         AddVacuumingRule(process, TestVacuumingRule);
-        ExecuteVacuumingRule(process, new[] { TestVacuumingRule });
+        ExecuteVacuumingRule(process, new[] {TestVacuumingRule});
 
-        // Do something to get errors processed
-        AddDeleteCondition(process, NewTestDeleteCondition);
+        // Operation made such that the ExecuteVacuumingRule has enough time to report potential errors.
+        AddStorageRule(process, TestStorageRule);
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetAllOutputNoWhitespace();
@@ -193,8 +185,7 @@ public class VacuumingRulesTest : TestResources
         error.Should().BeEmpty();
 
         output.Should().ContainSingle(s =>
-            s.Contains(
-                $"Successfully executed {TestVacuumingRule.ToListingIdentifier()} vacuuming rule"));
+            s.Contains($"Vacuuming rule '{TestVacuumingRule.ToListingIdentifier()}' successfully executed"));
     }
 
     [Fact]
@@ -204,23 +195,26 @@ public class VacuumingRulesTest : TestResources
         process.Start();
         process.AwaitReady();
 
-        TestDeleteCondition.Condition = "Id = 2";
-        
+        TestStorageRule.VacuumingCondition = "Id = 2";
+
         SetupTestData(dbConnection);
 
-        AddDeleteCondition(process, TestDeleteCondition);
+        AddStorageRule(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
         AddVacuumingRule(process, TestVacuumingRule);
-        ExecuteVacuumingRule(process, new[] { TestVacuumingRule });
+        ExecuteVacuumingRule(process, new[] {TestVacuumingRule});
 
         var result = dbConnection.Query<(string id, string column)>(
-            $"SELECT Id, {TestPersonalDataColumn.TableColumnPair.ColumnName} " +
-            $"FROM {TestPersonalDataColumn.TableColumnPair.TableName}")
+                $"SELECT Id, {TestPersonalDataColumn.Key.ColumnName} " +
+                $"FROM {TestPersonalDataColumn.Key.TableName}")
             .ToList();
 
-        result.First().Should().Be(new ValueTuple<string, string>(TestIndividual1.ToListing(), TestIndividual1.ToListing()));
-        result.Skip(1).First().Should().Be(new ValueTuple<string, string>(TestIndividual2.ToListing(), TestPersonalDataColumn.DefaultValue));
-        result.Skip(2).First().Should().Be(new ValueTuple<string, string>(TestIndividual3.ToListing(), TestIndividual3.ToListing()));
+        result.First().Should()
+            .Be(new ValueTuple<string, string>(TestIndividual1.Id.ToString(), TestIndividual1.Key.ToString()));
+        result.Skip(1).First().Should()
+            .Be(new ValueTuple<string, string>(TestIndividual2.Id.ToString(), TestIndividual2.Key.ToString()));
+        result.Skip(2).First().Should()
+            .Be(new ValueTuple<string, string>(TestIndividual3.Id.ToString(), TestIndividual3.Key.ToString()));
     }
 }

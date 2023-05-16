@@ -1,66 +1,23 @@
-using GraphManipulation.Models.Interfaces;
-
 namespace GraphManipulation.Models;
 
-public class Purpose : DomainEntity, IPurpose
+public class Purpose : Entity<string>
 {
-    public bool LegallyRequired { get; set; }
+    public bool? LegallyRequired { get; set; }
     public virtual IEnumerable<PersonalDataColumn>? PersonalDataColumns { get; set; }
-    public virtual DeleteCondition? DeleteCondition { get; set; }
-    public string? Description { get; set; }
-    public string Name { get; set; }
+    public virtual IEnumerable<StorageRule>? StorageRules { get; set; }
     public virtual IEnumerable<VacuumingRule>? Rules { get; set; }
 
-    public string ToListing()
+    public override string ToListing()
     {
-        return string.Join(", ",
-            Name,
-            Description,
-            LegallyRequired,
-            "[ " + (DeleteCondition is null ? "" : DeleteCondition.ToListingIdentifier()) + " ]",
-            "[ " + string.Join(", ", PersonalDataColumns is null ? new List<string>() : PersonalDataColumns.Select(c => c.ToListingIdentifier())) + " ]",
-            "[ " + string.Join(", ", Rules is null ? new List<string>() : Rules.Select(r => r.ToListingIdentifier())) + " ]"
-        );
+        return string.Join(ToListingSeparator, base.ToListing(),
+            NullToString(LegallyRequired),
+            ListNullOrEmptyToString(StorageRules),
+            ListNullOrEmptyToString(PersonalDataColumns),
+            ListNullOrEmptyToString(Rules));
     }
-
-    public string ToListingIdentifier()
+    
+    public override string ToListingHeader()
     {
-        return GetName();
-    }
-
-    public string GetName()
-    {
-        return Name;
-    }
-
-    public string GetDescription()
-    {
-        return Description ?? "";
-    }
-
-    public bool GetLegallyRequired()
-    {
-        return LegallyRequired;
-    }
-
-    public string GetDeleteCondition()
-    {
-        return (DeleteCondition ?? new DeleteCondition {Name = ""}).GetName();
-    }
-
-
-    public override bool Equals(object? obj)
-    {
-        return Equals(obj as Purpose);
-    }
-
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(Name, Id, Description);
-    }
-
-    bool Equals(Purpose? other)
-    {
-        return other.Description == Description && other.Name == Name && other.Id == Id;
+        return string.Join(ToListingSeparator, base.ToListingHeader(), "Legally Required", "Storage Rules", "Personal Data Columns", "Vacuuming Rules");
     }
 }

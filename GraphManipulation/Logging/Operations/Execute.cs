@@ -1,9 +1,11 @@
+using GraphManipulation.Models;
+using GraphManipulation.Utility;
+
 namespace GraphManipulation.Logging.Operations;
 
-public class Execute : Operation
+public class Execute<TKey, TValue> : Operation<TKey, TValue> where TValue : Entity<TKey>
 {
-    public Execute(string type, string key, Dictionary<string ,string>? parameters) : base("Execute", type, key)
+    public Execute(TKey key) : base(SystemOperation.Operation.Executed, key)
     {
-        Parameters = parameters;
     }
 }
