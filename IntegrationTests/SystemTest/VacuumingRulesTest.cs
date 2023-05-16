@@ -178,7 +178,7 @@ public class VacuumingRulesTest : TestResources
         ExecuteVacuumingRule(process, new[] {TestVacuumingRule});
 
         // Operation made such that the ExecuteVacuumingRule has enough time to report potential errors.
-        AddDeleteCondition(process, TestNewTestStorageRule);
+        AddStorageRule(process, TestStorageRule);
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetAllOutputNoWhitespace();
