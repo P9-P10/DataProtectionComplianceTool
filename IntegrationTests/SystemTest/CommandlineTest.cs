@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using GraphManipulation.Commands;
 using GraphManipulation.Utility;
 using IntegrationTests.SystemTest.Tools;
 
@@ -16,7 +17,7 @@ public class CommandlineTest
         string result = string.Join("", process.GetAllOutputNoWhitespace());
         string error = process.GetError();
         result.Should().Contain(@$"Using config found at {process.ConfigPath}");
-        result.Should().Contain("$: Description:  This is a description of the root command");
+        result.Should().Contain($"{CommandLineInterface.Prompt} Description:  This is a description of the root command");
         result.Should().Contain("Usage:  ! [command] [options]");
         result.Should().Contain("Options:  ?, h, help  Show help and usage information");
         result.Should().Contain("Commands:  ");

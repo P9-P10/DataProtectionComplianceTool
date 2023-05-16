@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using FluentAssertions;
+using GraphManipulation.Commands;
 using IntegrationTests.SystemTest.Tools;
 using Newtonsoft.Json;
 
@@ -18,7 +19,7 @@ public class CommandLineArgsTest
         process.Start();
         process.GiveInput("");
         string result = string.Join("", process.GetAllOutputNoWhitespace());
-        result.Should().Be($"Using config found at {IntegrationTests.SystemTest.Tools.SystemTest.ConfigPath}$: ");
+        result.Should().Be($"Using config found at {IntegrationTests.SystemTest.Tools.SystemTest.ConfigPath}{CommandLineInterface.Prompt} ");
     }
 
     [Fact]
@@ -41,7 +42,7 @@ public class CommandLineArgsTest
         process.Start();
         process.GiveInput("");
         string result = string.Join("", process.GetAllOutputNoWhitespace());
-        result.Should().Be($"Using config found at {configPath}$: ");
+        result.Should().Be($"Using config found at {configPath}{CommandLineInterface.Prompt} ");
     }
 
     [Fact]

@@ -88,7 +88,7 @@ public static class Program
         {
             try
             {
-                Console.Write($"{Environment.NewLine}$: ");
+                Console.Write($"{Environment.NewLine}{CommandLineInterface.Prompt} ");
                 var command = (Console.ReadLine() ?? "").Trim();
 
                 if (!string.IsNullOrEmpty(command))

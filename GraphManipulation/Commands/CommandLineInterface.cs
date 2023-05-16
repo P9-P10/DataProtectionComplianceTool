@@ -79,4 +79,6 @@ public class CommandLineInterface
             .UseParseErrorReporting()
             .Build();
     }
+
+    public static string Prompt => "$:";
 }

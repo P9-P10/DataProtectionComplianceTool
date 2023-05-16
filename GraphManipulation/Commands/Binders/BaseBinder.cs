@@ -80,7 +80,7 @@ public abstract class BaseBinder<TKey, TValue> : BinderBase<TValue> where TValue
         while (true)
         {
             Console.Write(
-                $"{key} {TypeToString.GetEntityType(typeof(TV))} does not exist. Would you like to create one? (y/n){Environment.NewLine}$: ");
+                $"{key} {TypeToString.GetEntityType(typeof(TV))} does not exist. Would you like to create one? (y/n){Environment.NewLine}{CommandLineInterface.Prompt} ");
             var reply = (Console.ReadLine() ?? "").Trim();
             if (string.IsNullOrEmpty(reply))
             {

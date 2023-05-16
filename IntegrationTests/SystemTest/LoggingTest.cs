@@ -1,4 +1,5 @@
 using FluentAssertions;
+using GraphManipulation.Commands;
 using GraphManipulation.Logging;
 using IntegrationTests.SystemTest.Tools;
 
@@ -16,7 +17,7 @@ public class LoggingTest : TestResources
 
     private static IEnumerable<string> FormatOutputForLogTest(IEnumerable<string> list)
     {
-        return list.Select(s => s.Replace("$:", "").Trim());
+        return list.Select(s => s.Replace(CommandLineInterface.Prompt, "").Trim());
     }
 
     [Fact]

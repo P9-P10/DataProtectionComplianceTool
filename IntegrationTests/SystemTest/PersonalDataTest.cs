@@ -1,4 +1,5 @@
 using FluentAssertions;
+using GraphManipulation.Commands;
 using IntegrationTests.SystemTest.Tools;
 
 namespace IntegrationTests.SystemTest;
@@ -43,7 +44,7 @@ public class PersonalDataTest : TestResources
         var output = process.GetAllOutputNoWhitespace();
 
         error.Should().BeEmpty();
-        output.Should().ContainSingle(s => s.Contains("$: " + TestPersonalDataColumn.ToListing()));
+        output.Should().ContainSingle(s => s.Contains($"{CommandLineInterface.Prompt} " + TestPersonalDataColumn.ToListing()));
     }
 
     [Fact]

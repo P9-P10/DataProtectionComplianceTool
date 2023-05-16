@@ -65,7 +65,7 @@ public class StorageRuleCommandBuilder : BaseCommandBuilder<string, StorageRule>
     {
         if (condition.VacuumingCondition is null)
         {
-            FeedbackEmitter.EmitMissing(condition.Key!, "condition");
+            FeedbackEmitter.EmitMissing(condition.Key!, "vacuuming condition");
         }
 
         if (condition.PersonalDataColumn is null)

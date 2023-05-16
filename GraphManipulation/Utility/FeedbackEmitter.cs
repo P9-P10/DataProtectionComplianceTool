@@ -9,7 +9,7 @@ public class FeedbackEmitter<TKey, TValue> where TValue : Entity<TKey>
         Console.WriteLine(SuccessMessage(key, operation, value));
     }
     // TODO: Value should be the complete new value instead of what is just updated
-    private static string SuccessMessage(TKey key, SystemOperation.Operation operation, TValue? value)
+    public static string SuccessMessage(TKey key, SystemOperation.Operation operation, TValue? value)
     {
         return ResultMessage(key, operation, true, value);
     }
@@ -19,7 +19,7 @@ public class FeedbackEmitter<TKey, TValue> where TValue : Entity<TKey>
         Console.Error.WriteLine(FailureMessage(key, operation, value));
     }
 
-    private static string FailureMessage(TKey key, SystemOperation.Operation operation, TValue? value)
+    public static string FailureMessage(TKey key, SystemOperation.Operation operation, TValue? value)
     {
         return ResultMessage(key, operation, false, value);
     }
@@ -37,7 +37,7 @@ public class FeedbackEmitter<TKey, TValue> where TValue : Entity<TKey>
         Console.Error.WriteLine(AlreadyExistsMessage(key));
     }
 
-    private static string AlreadyExistsMessage(TKey key)
+    public static string AlreadyExistsMessage(TKey key)
     {
         return $"Found an existing {TypeToString.GetEntityType(typeof(TValue))} using '{key}'";
     }
@@ -47,7 +47,7 @@ public class FeedbackEmitter<TKey, TValue> where TValue : Entity<TKey>
         Console.Error.WriteLine(CouldNotFindMessage(key));
     }
 
-    private static string CouldNotFindMessage(TKey key)
+    public static string CouldNotFindMessage(TKey key)
     {
         return $"Could not find {TypeToString.GetEntityType(typeof(TValue))} using '{key}'";
     }
@@ -55,18 +55,23 @@ public class FeedbackEmitter<TKey, TValue> where TValue : Entity<TKey>
     public void EmitMissing<TK, TV>(TKey subject)
         where TV : Entity<TK>
     {
-        Console.WriteLine(MissingMessage<TKey, TValue>(subject, TypeToString.GetEntityType(typeof(TV))));
+        Console.WriteLine(MissingMessage<TK, TV>(subject));
     }
 
     public void EmitMissing(TKey subject, string obj)
     {
-        Console.WriteLine(MissingMessage<TKey, TValue>(subject, obj));
+        Console.WriteLine(MissingMessage(subject, obj));
     }
 
-    private static string MissingMessage<TK, TV>(TK subject, string obj)
-        where TV : Entity<TK>
+    public static string MissingMessage<TK, TV>(TKey subject)
+    where TV : Entity<TK>
     {
-        return $"{TypeToString.GetEntityType(typeof(TV)).FirstCharToUpper()} '{subject}' is missing {AOrAn(obj)} {obj}";
+        return MissingMessage(subject, TypeToString.GetEntityType(typeof(TV)));
+    }
+
+    public static string MissingMessage(TKey subject, string obj)
+    {
+        return $"{TypeToString.GetEntityType(typeof(TValue)).FirstCharToUpper()} '{subject}' is missing {AOrAn(obj)} {obj}";
     }
 
     private static string AOrAn(string obj)
