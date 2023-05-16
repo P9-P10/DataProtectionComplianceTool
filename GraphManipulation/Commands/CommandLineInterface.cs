@@ -20,7 +20,7 @@ public class HandlerFactory : IHandlerFactory {
         _managerFactory = managerFactory;
     }
     
-    public Handler<TK, TV> CreateHandler<TK, TV>(FeedbackEmitter<TK, TV> emitter, Action<TV> statusReport) where TV : Entity<TK>, new() where TK : notnull
+    public IHandler<TK, TV> CreateHandler<TK, TV>(FeedbackEmitter<TK, TV> emitter, Action<TV> statusReport) where TV : Entity<TK>, new() where TK : notnull
     {
         IManager<TK, TV> manager = _managerFactory.CreateManager<TK, TV>();
         Handler<TK, TV> handler = new Handler<TK, TV>(manager, emitter, statusReport);

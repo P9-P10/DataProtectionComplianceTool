@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using GraphManipulation.Commands;
+using GraphManipulation.Commands.Factories;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
@@ -18,34 +20,90 @@ public class CommandLineInterfaceTest
     // this behaviour can include invoking handlers created by the factory
     // which can be verified by creating a factory producing test spies
 
-    protected class MockComponentFactory : IComponentFactory
+    protected class SpyHandler<K,V> : IHandler<K,V> where V : Entity<K>
     {
-        public IManager<TK, TV> CreateManager<TK, TV>() where TK : notnull where TV : Entity<TK>, new()
+        public void CreateHandler(K key, V value)
         {
             throw new NotImplementedException();
         }
 
-        public IVacuumer CreateVacuumer()
+        public void UpdateHandler(K key, V value)
         {
             throw new NotImplementedException();
         }
 
-        public ILogger CreateLogger()
+        public void DeleteHandler(K key)
         {
             throw new NotImplementedException();
         }
 
-        public IConfigManager CreateConfigManager()
+        public void ShowHandler(K key)
         {
             throw new NotImplementedException();
         }
 
-        public Handler<TK, TV> CreateHandler<TK, TV>(FeedbackEmitter<TK, TV> emitter, Action<TV> statusReport) where TK : notnull where TV : Entity<TK>, new()
+        public void ListHandler()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StatusHandler()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ListChangesHandler<TK, TV>(K key, IEnumerable<TK> list, Func<V, IEnumerable<TV>> getCurrentList, Action<V, IEnumerable<TV>> setList, bool isAdd,
+            IGetter<TV, TK> manager) where TV : Entity<TK>
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    protected class SpyHandlerFactory : IHandlerFactory
+    {
+        public IHandler<TK, TV> CreateHandler<TK, TV>(FeedbackEmitter<TK, TV> emitter, Action<TV> statusReport) where TK : notnull where TV : Entity<TK>, new()
         {
             throw new NotImplementedException();
         }
     }
     
+    
+    protected class ManagerSpy<K,V> : IManager<K,V>
+    {
+        public IEnumerable<V> GetAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        public V? Get(K key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Create(K key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Update(K key, V value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Delete(K key)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    protected class SpyManagerFactory : IManagerFactory
+    {
+        public IManager<TK, TV> CreateManager<TK, TV>() where TK : notnull where TV : Entity<TK>, new()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     [Fact]
     public void test()
     {
