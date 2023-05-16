@@ -46,7 +46,7 @@ public class TestVacuumingRule
             Purposes = new List<Purpose>()
         };
 
-        Assert.Equal("Name, , , [  ]", vacuumingRule.ToListing());
+        Assert.Equal("Name, None, None, None, Empty", vacuumingRule.ToListing());
     }
 
     [Fact]

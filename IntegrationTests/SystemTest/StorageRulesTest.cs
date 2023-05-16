@@ -16,7 +16,7 @@ public class StorageRulesTest : TestResources
         var result = process.GetAllOutput();
 
         result.Should().ContainSingle(s =>
-            s.Contains("Successfully") && s.Contains("created") && s.Contains("DeletionCondition"));
+            s.Contains("successfully") && s.Contains("created") && s.Contains("DeletionCondition"));
     }
 
     [Fact]
@@ -114,7 +114,8 @@ public class StorageRulesTest : TestResources
         // dcs d --name DeletionCondition
         DeleteStorageRule(process, storageRule);
         List<string> result = process.GetLastOutput();
-        result.First().Should().Contain("Successfully deleted DeletionCondition");
+        result.First().Should().Contain("Storage rule 'DeletionCondition' successfully deleted");
+        
     }
 
     [Fact]

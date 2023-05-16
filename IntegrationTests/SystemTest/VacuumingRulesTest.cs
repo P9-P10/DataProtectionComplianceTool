@@ -22,10 +22,10 @@ public class VacuumingRulesTest : TestResources
         error.Should().BeEmpty();
 
         output.Should().ContainSingle(s =>
-            s.Contains($"Successfully created {TestVacuumingRule.ToListingIdentifier()} vacuuming rule"));
+            s.Contains($"Vacuuming rule '{TestVacuumingRule.ToListingIdentifier()}' successfully created"));
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully updated {TestVacuumingRule.ToListingIdentifier()} vacuuming rule with {TestVacuumingRule.ToListing()}"));
+                $"Vacuuming rule '{TestVacuumingRule.ToListingIdentifier()}' successfully updated with {TestVacuumingRule.ToListing()}"));
     }
 
     [Fact]
@@ -103,10 +103,9 @@ public class VacuumingRulesTest : TestResources
         var output = process.GetAllOutputNoWhitespace();
 
         error.Should().BeEmpty();
-
+        
         output.Should().ContainSingle(s =>
-            s.Contains(
-                $"Successfully deleted {TestVacuumingRule.ToListingIdentifier()} vacuuming rule"));
+            s.Contains($"Vacuuming rule '{TestVacuumingRule.ToListingIdentifier()}' successfully deleted"));
     }
 
     [Fact]
@@ -130,7 +129,7 @@ public class VacuumingRulesTest : TestResources
 
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully updated {TestVacuumingRule.Key}")
+                $"Vacuuming rule '{TestVacuumingRule.ToListingIdentifier()}' successfully updated")
             && s.Contains(NewTestPurpose.ToListingIdentifier())
             && s.Contains(VeryNewTestPurpose.ToListingIdentifier()));
     }
@@ -157,7 +156,7 @@ public class VacuumingRulesTest : TestResources
 
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully updated {TestVacuumingRule.Key}")
+                $"Vacuuming rule '{TestVacuumingRule.ToListingIdentifier()}' successfully updated")
             && !s.Contains(NewTestPurpose.ToListingIdentifier())
             && !s.Contains(VeryNewTestPurpose.ToListingIdentifier()));
     }
@@ -186,8 +185,7 @@ public class VacuumingRulesTest : TestResources
         error.Should().BeEmpty();
 
         output.Should().ContainSingle(s =>
-            s.Contains(
-                $"Successfully executed {TestVacuumingRule.ToListingIdentifier()} vacuuming rule"));
+            s.Contains($"Vacuuming rule '{TestVacuumingRule.ToListingIdentifier()}' successfully executed"));
     }
 
     [Fact]

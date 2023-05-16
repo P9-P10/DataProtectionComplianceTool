@@ -2,6 +2,7 @@ using System.CommandLine;
 using GraphManipulation.Commands.Builders.Binders;
 using GraphManipulation.Commands.Factories;
 using GraphManipulation.Commands.Helpers;
+using GraphManipulation.Helpers;
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
 using GraphManipulation.Vacuuming;
@@ -120,7 +121,7 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
                 foreach (var rule in rules)
                 {
                     _vacuumer.ExecuteVacuumingRules(new[] { rule });
-                    Emitter.EmitSuccess(rule.Key!, FeedbackEmitter<string, VacuumingRule>.Operations.Executed, rule);
+                    Emitter.EmitSuccess(rule.Key!, SystemAction.Operation.Executed, rule);
                 }
             });
     }

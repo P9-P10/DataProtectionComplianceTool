@@ -5,26 +5,31 @@ namespace GraphManipulation.Commands.Helpers;
 
 public class FeedbackEmitter<TKey, TValue> where TValue : Entity<TKey>
 {
-    public void EmitSuccess(TKey key, Operations operation, TValue? value = null)
+    public void EmitSuccess(TKey key, SystemAction.Operation operation, TValue? value = null)
     {
         Console.WriteLine(SuccessMessage(key, operation, value));
     }
-    // TODO: Switch subject and type in success and failure message: Purpose 'purposeName' instead of 'purposeName' purpose
     // TODO: Value should be the complete new value instead of what is just updated
-    private static string SuccessMessage(TKey key, Operations operation, TValue? value)
+    private static string SuccessMessage(TKey key, SystemAction.Operation operation, TValue? value)
     {
-        return $"Successfully {OperationToString(operation)} {key} {TypeToString.GetEntityType(typeof(TValue))}" +
-               (value is not null ? $" with {value.ToListing()}" : "");
+        return ResultMessage(key, operation, true, value);
     }
 
-    public void EmitFailure(TKey key, Operations operation, TValue? value = null)
+    public void EmitFailure(TKey key, SystemAction.Operation operation, TValue? value = null)
     {
         Console.Error.WriteLine(FailureMessage(key, operation, value));
     }
 
-    private static string FailureMessage(TKey key, Operations operation, TValue? value)
+    private static string FailureMessage(TKey key, SystemAction.Operation operation, TValue? value)
     {
-        return $"{key} {TypeToString.GetEntityType(typeof(TValue))} could not be {OperationToString(operation)}" +
+        return ResultMessage(key, operation, false, value);
+    }
+
+    private static string ResultMessage(TKey key, SystemAction.Operation operation, bool isSuccess, TValue? value)
+    {
+        return $"{TypeToString.GetEntityType(typeof(TValue)).FirstCharToUpper()} '{key}' " +
+               (isSuccess ? "successfully " : "could not be ") +
+               SystemAction.OperationToString(operation) +
                (value is not null ? $" with {value.ToListing()}" : "");
     }
 
@@ -35,7 +40,7 @@ public class FeedbackEmitter<TKey, TValue> where TValue : Entity<TKey>
 
     private static string AlreadyExistsMessage(TKey key)
     {
-        return $"Found an existing {TypeToString.GetEntityType(typeof(TValue))} using {key}";
+        return $"Found an existing {TypeToString.GetEntityType(typeof(TValue))} using '{key}'";
     }
 
     public void EmitCouldNotFind(TKey key)
@@ -45,7 +50,7 @@ public class FeedbackEmitter<TKey, TValue> where TValue : Entity<TKey>
 
     private static string CouldNotFindMessage(TKey key)
     {
-        return $"Could not find {TypeToString.GetEntityType(typeof(TValue))} using {key}";
+        return $"Could not find {TypeToString.GetEntityType(typeof(TValue))} using '{key}'";
     }
 
     public void EmitMissing<TK, TV>(TKey subject)
@@ -68,30 +73,5 @@ public class FeedbackEmitter<TKey, TValue> where TValue : Entity<TKey>
     private static string AOrAn(string obj)
     {
         return new List<char> { 'a', 'e', 'i', 'o', 'u' }.Contains(char.ToLower(obj[0])) ? "an" : "a";
-    }
-
-    public void EmitCancel(Operations operation, string reason = "")
-    {
-        Console.Error.WriteLine(CancelMessage<TKey, TValue>(operation, reason));
-    }
-
-    private static string CancelMessage<TK, TV>(Operations operation, string reason = "")
-        where TV : Entity<TK>
-    {
-        return $"{TypeToString.GetEntityType(typeof(TV))} could not be {OperationToString(operation)}" +
-               (!string.IsNullOrEmpty(reason) ? $" due to {reason}" : "");
-    }
-
-    private static string OperationToString(Operations operation)
-    {
-        return operation.ToString().ToLower();
-    }
-
-    public enum Operations
-    {
-        Updated,
-        Deleted,
-        Created,
-        Executed
     }
 }

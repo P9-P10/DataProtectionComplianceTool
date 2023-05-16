@@ -1,3 +1,4 @@
+using GraphManipulation.Helpers;
 using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models.Base;
 
@@ -53,13 +54,13 @@ public class Handler<TKey, TValue> : IHandler<TKey, TValue> where TValue : Entit
 
         if (manager.Create(key))
         {
-            feedbackEmitter.EmitSuccess(key, FeedbackEmitter<TKey, TValue>.Operations.Created);
+            feedbackEmitter.EmitSuccess(key, SystemAction.Operation.Created);
             statusReport(manager.Get(key)!);
         }
         else
         {
             // Could not create entity
-            feedbackEmitter.EmitFailure(key, FeedbackEmitter<TKey, TValue>.Operations.Created);
+            feedbackEmitter.EmitFailure(key, SystemAction.Operation.Created);
         }
     }
 
@@ -80,7 +81,7 @@ public class Handler<TKey, TValue> : IHandler<TKey, TValue> where TValue : Entit
 
         if (manager.Create(key))
         {
-            feedbackEmitter.EmitSuccess(key, FeedbackEmitter<TKey, TValue>.Operations.Created);
+            feedbackEmitter.EmitSuccess(key, SystemAction.Operation.Created);
 
             var shouldUpdate = typeof(TValue).GetProperties()
                 .Where(pi => !pi.Name.Equals("Key"))
@@ -99,7 +100,7 @@ public class Handler<TKey, TValue> : IHandler<TKey, TValue> where TValue : Entit
         else
         {
             // Could not create entity
-            feedbackEmitter.EmitFailure(key, FeedbackEmitter<TKey, TValue>.Operations.Created);
+            feedbackEmitter.EmitFailure(key, SystemAction.Operation.Created);
         }
     }
 
@@ -129,12 +130,12 @@ public class Handler<TKey, TValue> : IHandler<TKey, TValue> where TValue : Entit
 
         if (manager.Update(key, value))
         {
-            feedbackEmitter.EmitSuccess(key, FeedbackEmitter<TKey, TValue>.Operations.Updated, value);
+            feedbackEmitter.EmitSuccess(key, SystemAction.Operation.Updated, value);
             statusReport(value.Key is not null ? manager.Get(value.Key)! : manager.Get(key)!);
         }
         else
         {
-            feedbackEmitter.EmitFailure(key, FeedbackEmitter<TKey, TValue>.Operations.Updated, value);
+            feedbackEmitter.EmitFailure(key, SystemAction.Operation.Updated, value);
         }
     }
 
@@ -155,11 +156,11 @@ public class Handler<TKey, TValue> : IHandler<TKey, TValue> where TValue : Entit
 
         if (manager.Delete(key))
         {
-            feedbackEmitter.EmitSuccess(key, FeedbackEmitter<TKey, TValue>.Operations.Deleted);
+            feedbackEmitter.EmitSuccess(key, SystemAction.Operation.Deleted);
         }
         else
         {
-            feedbackEmitter.EmitFailure(key, FeedbackEmitter<TKey, TValue>.Operations.Deleted);
+            feedbackEmitter.EmitFailure(key, SystemAction.Operation.Deleted);
         }
     }
 

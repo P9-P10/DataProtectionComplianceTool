@@ -18,7 +18,7 @@ public class OriginsTest : TestResources
         AddOrigin(process, origin);
         List<string> result = process.GetLastOutput();
 
-        result.Should().ContainSingle(s => s.Contains(description) && s.Contains(name) && s.Contains("Successfully"));
+        result.Should().ContainSingle(s => s.Contains(description) && s.Contains(name) && s.Contains("successfully"));
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public class OriginsTest : TestResources
 
         result.First().Should().Contain("NewName");
         result.First().Should().Contain(name);
-        result.First().Should().Contain("Successfully");
+        result.First().Should().Contain("successfully");
         result.First().Should().Contain("updated");
     }
 

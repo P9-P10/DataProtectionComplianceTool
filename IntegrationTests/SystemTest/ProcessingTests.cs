@@ -17,9 +17,9 @@ public class ProcessingTests : TestResources
 
         List<string> result = process.GetLastOutput();
         result.Should().ContainSingle(s =>
-            s.Contains("ProcessingName") && s.Contains("Successfully") && s.Contains("created"));
+            s.Contains("ProcessingName") && s.Contains("successfully") && s.Contains("created"));
         result.Should()
-            .ContainSingle(s => s.Contains("Successfully updated") && s.Contains(TestProcessing.ToListing()));
+            .ContainSingle(s => s.Contains("successfully") && s.Contains("updated") && s.Contains(TestProcessing.ToListing()));
     }
 
     [Fact]
