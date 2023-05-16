@@ -1,4 +1,4 @@
-using GraphManipulation.DataAccess.Mappers;
+using GraphManipulation.DataAccess;
 using GraphManipulation.Models;
 
 namespace GraphManipulation.Vacuuming;

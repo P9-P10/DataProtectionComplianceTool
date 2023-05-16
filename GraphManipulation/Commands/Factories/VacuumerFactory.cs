@@ -1,4 +1,4 @@
-using GraphManipulation.DataAccess.Mappers;
+using GraphManipulation.DataAccess;
 using GraphManipulation.Decorators;
 using GraphManipulation.Logging;
 using GraphManipulation.Models;

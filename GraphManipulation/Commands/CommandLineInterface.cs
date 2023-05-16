@@ -6,8 +6,8 @@ using GraphManipulation.Commands.Factories;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
-using GraphManipulation.Managers.Interfaces;
-using GraphManipulation.Models.Base;
+using GraphManipulation.Managers;
+using GraphManipulation.Models;
 using GraphManipulation.Vacuuming;
 
 namespace GraphManipulation.Commands;

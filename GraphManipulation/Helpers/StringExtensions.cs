@@ -1,4 +1,4 @@
-namespace GraphManipulation.Commands.Helpers;
+﻿namespace GraphManipulation.Helpers;
 
 // From: https://stackoverflow.com/questions/4135317/make-first-letter-of-a-string-upper-case-with-maximum-performance
 public static class StringExtensions

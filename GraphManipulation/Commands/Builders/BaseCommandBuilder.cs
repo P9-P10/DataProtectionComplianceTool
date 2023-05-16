@@ -1,10 +1,10 @@
 using System.CommandLine;
 using GraphManipulation.Commands.Builders.Binders;
+using GraphManipulation.Commands.Factories;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Helpers;
-using GraphManipulation.Managers.Interfaces;
-using GraphManipulation.Models.Base;
-using GraphManipulation.Models.Interfaces;
+using GraphManipulation.Managers;
+using GraphManipulation.Models;
 
 namespace GraphManipulation.Commands.Builders;
 
@@ -15,7 +15,7 @@ public abstract class BaseCommandBuilder
 
 public abstract class BaseCommandBuilder<TKey, TValue> : BaseCommandBuilder
     where TKey : notnull
-    where TValue : Entity<TKey>, IListable, new()
+    where TValue : Entity<TKey>, new()
 {
     protected readonly IHandler<TKey, TValue> Handler;
     protected readonly FeedbackEmitter<TKey, TValue> Emitter;
@@ -23,7 +23,7 @@ public abstract class BaseCommandBuilder<TKey, TValue> : BaseCommandBuilder
     protected BaseCommandBuilder(IHandlerFactory handlerFactory)
     {
         Emitter = new FeedbackEmitter<TKey, TValue>();
-        Handler = handlerFactory.CreateHandler<TKey, TValue>(Emitter, StatusReport);
+        Handler = handlerFactory.CreateHandler(Emitter, StatusReport);
     }
 
     protected Command Build(string name, string alias, out Option<TKey> keyOption)

@@ -1,6 +1,4 @@
-﻿using GraphManipulation.Models.Base;
-
-namespace GraphManipulation.Models;
+﻿namespace GraphManipulation.Models;
 
 public class ConfigKeyValue : DomainEntity
 {

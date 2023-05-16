@@ -1,6 +1,6 @@
-﻿using GraphManipulation.Models.Base;
+﻿using GraphManipulation.Models;
 
-namespace GraphManipulation.DataAccess.Mappers;
+namespace GraphManipulation.DataAccess;
 
 public class Mapper<T> : IMapper<T> where T : DomainEntity
 {

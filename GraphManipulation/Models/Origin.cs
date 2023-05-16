@@ -1,5 +1,3 @@
-using GraphManipulation.Models.Base;
-
 namespace GraphManipulation.Models;
 
 public class Origin : Entity<string>

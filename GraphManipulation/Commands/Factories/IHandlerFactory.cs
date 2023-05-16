@@ -1,7 +1,7 @@
 ﻿using GraphManipulation.Commands.Helpers;
-using GraphManipulation.Models.Base;
+using GraphManipulation.Models;
 
-namespace GraphManipulation.Commands;
+namespace GraphManipulation.Commands.Factories;
 
 public interface IHandlerFactory
 {

@@ -1,8 +1,6 @@
-using GraphManipulation.Models.Interfaces;
+﻿namespace GraphManipulation.Models;
 
-namespace GraphManipulation.Models.Base;
-
-public class Entity<TKey> : DomainEntity, IListable
+public class Entity<TKey> : DomainEntity
 {
     public TKey? Key { get; set; }
     public string? Description { get; set; }

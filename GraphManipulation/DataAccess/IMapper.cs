@@ -1,4 +1,4 @@
-﻿namespace GraphManipulation.DataAccess.Mappers;
+﻿namespace GraphManipulation.DataAccess;
 
 public interface IMapper<T>
 {

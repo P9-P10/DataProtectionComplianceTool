@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GraphManipulation.DataAccess.Mappers;
+using GraphManipulation.DataAccess;
 using GraphManipulation.Models;
 using GraphManipulation.SchemaEvolution.Models.Entity;
 

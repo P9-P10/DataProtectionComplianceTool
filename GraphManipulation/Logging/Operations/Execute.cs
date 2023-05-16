@@ -1,5 +1,5 @@
 using GraphManipulation.Helpers;
-using GraphManipulation.Models.Base;
+using GraphManipulation.Models;
 
 namespace GraphManipulation.Logging.Operations;
 

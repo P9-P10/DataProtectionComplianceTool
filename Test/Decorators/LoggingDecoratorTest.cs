@@ -2,7 +2,6 @@
 using GraphManipulation.Decorators;
 using GraphManipulation.Logging;
 using GraphManipulation.Models;
-using GraphManipulation.Models.Base;
 using Xunit;
 
 namespace Test.Decorators;

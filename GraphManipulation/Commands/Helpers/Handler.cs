@@ -1,6 +1,6 @@
 using GraphManipulation.Helpers;
-using GraphManipulation.Managers.Interfaces;
-using GraphManipulation.Models.Base;
+using GraphManipulation.Managers;
+using GraphManipulation.Models;
 
 namespace GraphManipulation.Commands.Helpers;
 
@@ -19,7 +19,7 @@ public interface IHandler<TKey, TValue> where TValue : Entity<TKey> where TKey :
         Func<TValue, IEnumerable<TV>> getCurrentList,
         Action<TValue, IEnumerable<TV>> setList,
         bool isAdd,
-        IGetter<TV, TK> manager)
+        IManager<TK, TV> manager)
         where TV : Entity<TK>;
 }
 
@@ -216,7 +216,7 @@ public class Handler<TKey, TValue> : IHandler<TKey, TValue> where TValue : Entit
         Func<TValue, IEnumerable<TV>> getCurrentList,
         Action<TValue, IEnumerable<TV>> setList,
         bool isAdd,
-        IGetter<TV, TK> manager)
+        IManager<TK, TV> manager)
         where TV : Entity<TK>
     {
         ListChangesHandler(key, list, getCurrentList, setList, isAdd, _manager, manager, _feedbackEmitter,
@@ -230,7 +230,7 @@ public class Handler<TKey, TValue> : IHandler<TKey, TValue> where TValue : Entit
         Action<TValue, IEnumerable<TV>> setList,
         bool isAdd,
         IManager<TKey, TValue> manger1,
-        IGetter<TV, TK> manager2,
+        IManager<TK, TV> manager2,
         FeedbackEmitter<TKey, TValue> feedbackEmitter1,
         FeedbackEmitter<TK, TV> feedbackEmitter2,
         Action<TValue> statusAction)

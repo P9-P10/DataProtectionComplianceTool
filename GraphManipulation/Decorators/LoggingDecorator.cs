@@ -1,6 +1,6 @@
 ﻿using GraphManipulation.Logging;
 using GraphManipulation.Logging.Operations;
-using GraphManipulation.Models.Base;
+using GraphManipulation.Models;
 
 namespace GraphManipulation.Decorators;
 

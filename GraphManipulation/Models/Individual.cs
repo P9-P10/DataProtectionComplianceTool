@@ -1,5 +1,3 @@
-using GraphManipulation.Models.Base;
-
 namespace GraphManipulation.Models;
 
 public class Individual : Entity<int>

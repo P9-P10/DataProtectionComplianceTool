@@ -3,8 +3,8 @@ using System.CommandLine.Binding;
 using System.CommandLine.Parsing;
 using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Helpers;
-using GraphManipulation.Managers.Interfaces;
-using GraphManipulation.Models.Base;
+using GraphManipulation.Managers;
+using GraphManipulation.Models;
 
 namespace GraphManipulation.Commands.Builders.Binders;
 

@@ -2,7 +2,6 @@ using System.CommandLine;
 using System.CommandLine.Binding;
 using System.CommandLine.Parsing;
 using GraphManipulation.Managers;
-using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
 
 namespace GraphManipulation.Commands.Builders.Binders;

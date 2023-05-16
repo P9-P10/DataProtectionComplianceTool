@@ -1,6 +1,5 @@
-using GraphManipulation.DataAccess.Mappers;
-using GraphManipulation.Managers.Interfaces;
-using GraphManipulation.Models.Base;
+using GraphManipulation.DataAccess;
+using GraphManipulation.Models;
 
 namespace GraphManipulation.Managers;
 

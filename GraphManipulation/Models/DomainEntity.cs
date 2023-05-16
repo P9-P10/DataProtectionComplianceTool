@@ -1,4 +1,4 @@
-﻿namespace GraphManipulation.Models.Base;
+﻿namespace GraphManipulation.Models;
 
 public abstract class DomainEntity
 {

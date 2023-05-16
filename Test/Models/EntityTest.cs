@@ -1,4 +1,4 @@
-using GraphManipulation.Models.Base;
+using GraphManipulation.Models;
 using Xunit;
 
 namespace Test.Models;
