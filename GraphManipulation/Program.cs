@@ -68,9 +68,8 @@ public static class Program
         var loggingVacuumer = new LoggingVacuumer(vacuumer, logger);
 
         IManagerFactory managerFactory = new LoggingManagerFactory(new ManagerFactory(context), logger);
-        IHandlerFactory handlerFactory = new HandlerFactory(managerFactory);
 
-        CommandLineInterface commandLineInterface = new CommandLineInterface(handlerFactory, managerFactory);
+        CommandLineInterface commandLineInterface = new CommandLineInterface(managerFactory);
         commandLineInterface.Vacuumer = loggingVacuumer;
         commandLineInterface.ConfigManager = configManager;
         commandLineInterface.Logger = logger;

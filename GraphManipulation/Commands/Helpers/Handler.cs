@@ -3,7 +3,7 @@ using GraphManipulation.Models.Base;
 
 namespace GraphManipulation.Commands.Helpers;
 
-public interface IHandler<TKey, TValue> where TValue : Entity<TKey>
+public interface IHandler<TKey, TValue> where TValue : Entity<TKey> where TKey : notnull
 {
     public void CreateHandler(TKey key, TValue value);
     public void UpdateHandler(TKey key, TValue value);
@@ -20,17 +20,16 @@ public interface IHandler<TKey, TValue> where TValue : Entity<TKey>
         bool isAdd,
         IGetter<TV, TK> manager)
         where TV : Entity<TK>;
-
-
 }
 
-public class Handler<TKey, TValue> : IHandler<TKey, TValue> where TValue : Entity<TKey>
+public class Handler<TKey, TValue> : IHandler<TKey, TValue> where TValue : Entity<TKey> where TKey : notnull
 {
     private readonly IManager<TKey, TValue> _manager;
     private readonly FeedbackEmitter<TKey, TValue> _feedbackEmitter;
     private readonly Action<TValue> _statusReport;
 
-    public Handler(IManager<TKey, TValue> manager, FeedbackEmitter<TKey, TValue> feedbackEmitter, Action<TValue> statusReport)
+    public Handler(IManager<TKey, TValue> manager, FeedbackEmitter<TKey, TValue> feedbackEmitter,
+        Action<TValue> statusReport)
     {
         _feedbackEmitter = feedbackEmitter;
         _statusReport = statusReport;
@@ -41,7 +40,7 @@ public class Handler<TKey, TValue> : IHandler<TKey, TValue> where TValue : Entit
     {
         CreateHandler(key, _manager, _feedbackEmitter, _statusReport);
     }
-    
+
     public static void CreateHandler(TKey key, IManager<TKey, TValue> manager,
         FeedbackEmitter<TKey, TValue> feedbackEmitter, Action<TValue> statusReport)
     {
@@ -82,7 +81,20 @@ public class Handler<TKey, TValue> : IHandler<TKey, TValue> where TValue : Entit
         if (manager.Create(key))
         {
             feedbackEmitter.EmitSuccess(key, FeedbackEmitter<TKey, TValue>.Operations.Created);
-            UpdateHandler(key, value, manager, feedbackEmitter, statusReport);
+
+            var shouldUpdate = typeof(TValue).GetProperties()
+                .Where(pi => !pi.Name.Equals("Key"))
+                .Select(pi => pi.GetValue(value))
+                .Any(obj => obj is not null);
+
+            if (shouldUpdate)
+            {
+                UpdateHandler(key, value, manager, feedbackEmitter, statusReport);
+            }
+            else
+            {
+                statusReport(manager.Get(key)!);
+            }
         }
         else
         {
@@ -108,7 +120,7 @@ public class Handler<TKey, TValue> : IHandler<TKey, TValue> where TValue : Entit
             return;
         }
 
-        if (!key!.Equals(value.Key!) && manager.Get(value.Key!) is not null)
+        if (value.Key is not null && !key.Equals(value.Key) && manager.Get(value.Key) is not null)
         {
             // If the key is updated, it can only be updated to something that doesn't already exist
             feedbackEmitter.EmitAlreadyExists(value.Key!);
@@ -183,12 +195,12 @@ public class Handler<TKey, TValue> : IHandler<TKey, TValue> where TValue : Entit
     {
         StatusHandler(_statusReport, _manager);
     }
-    
+
     public static void StatusHandler(Action<TValue> statusAction, IManager<TKey, TValue> manager)
     {
         manager.GetAll().ToList().ForEach(statusAction);
     }
-    
+
     public void ListChangesHandler<TK, TV>(
         TKey key,
         IEnumerable<TK> list,

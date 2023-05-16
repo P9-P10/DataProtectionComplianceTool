@@ -80,6 +80,27 @@ public class PersonalDataOriginCommandBuilder : BaseCommandBuilder<int, Personal
 
     protected override void StatusReport(PersonalDataOrigin value)
     {
-        // TODO: Report something?
+        if (value.Individual is null)
+        {
+            Emitter.EmitMissing<int, Individual>(value.Key);
+        }
+        if (value.PersonalDataColumn is not null && value.Origin is null)
+        {
+            Emitter.EmitMissing(value.Key, $"origin for individual {value.Individual!.Key} " +
+                                           $"and personal data column {value.PersonalDataColumn.Key}");
+            return;
+        } 
+        
+        if (value.PersonalDataColumn is null)
+        {
+            Emitter.EmitMissing<TableColumnPair, PersonalDataColumn>(value.Key);
+        }
+
+        if (value.Origin is null)
+        {
+            Emitter.EmitMissing<string, Origin>(value.Key);
+        }
+        
+        
     }
 }
