@@ -52,7 +52,7 @@ public class Entity<TKey> : DomainEntity, IListable
         return string.Join(ToListingSeparator, ToListingIdentifier(), NullToString(Description));
     }
 
-    protected static string ToListingSeparator => " | ";
+    protected static string ToListingSeparator => ", ";
 
     public virtual string ToListingIdentifier()
     {
