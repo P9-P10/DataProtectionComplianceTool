@@ -77,8 +77,7 @@ public class CommandLineInterface
         var subCommands = _command.Subcommands;
         var statusCommands =
             subCommands.Select(subCommand => subCommand.Subcommands.First(c => c.Name == CommandNamer.Status));
-
-        // What the heck is going on here?
+        
         var allStatusCommand = CommandBuilder
             .BuildStatusCommand()
             .WithDescription("Shows the status of all entities in the system")
