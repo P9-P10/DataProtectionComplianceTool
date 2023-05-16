@@ -39,10 +39,10 @@ public class CommandLineInterface
     public ILogger Logger { get; set; }
     public IConfigManager ConfigManager { get; set; }
     
-    public CommandLineInterface(IHandlerFactory handlerFactory, IManagerFactory managerFactory)
+    public CommandLineInterface(IManagerFactory managerFactory)
     {
-        _handlerFactory = handlerFactory;
         _managerFactory = managerFactory;
+        _handlerFactory = new HandlerFactory(managerFactory);
         // Create subcommands
         CreateCommand();
         AddAllStatusCommand();
