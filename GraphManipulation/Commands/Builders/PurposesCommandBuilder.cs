@@ -1,9 +1,9 @@
 using System.CommandLine;
-using GraphManipulation.Commands.Builders.Binders;
-using GraphManipulation.Commands.Factories;
-using GraphManipulation.Commands.Helpers;
+using GraphManipulation.Commands.Binders;
+using GraphManipulation.Factories;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
+using GraphManipulation.Utility;
 
 namespace GraphManipulation.Commands.Builders;
 
@@ -86,17 +86,17 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
     {
         if (purpose.LegallyRequired is null)
         {
-            Emitter.EmitMissing(purpose.Key!, "legally required value");
+            FeedbackEmitter.EmitMissing(purpose.Key!, "legally required value");
         }
         
         if (purpose.Rules is null || !purpose.Rules.Any())
         {
-            Emitter.EmitMissing<string, VacuumingRule>(purpose.Key!);
+            FeedbackEmitter.EmitMissing<string, VacuumingRule>(purpose.Key!);
         }
 
         if (purpose.StorageRules is null || !purpose.StorageRules.Any())
         {
-            Emitter.EmitMissing<string, StorageRule>(purpose.Key!);
+            FeedbackEmitter.EmitMissing<string, StorageRule>(purpose.Key!);
         }
     }
 

@@ -1,9 +1,9 @@
 using System.CommandLine;
-using GraphManipulation.Commands.Builders.Binders;
-using GraphManipulation.Commands.Factories;
-using GraphManipulation.Commands.Helpers;
+using GraphManipulation.Commands.Binders;
+using GraphManipulation.Factories;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
+using GraphManipulation.Utility;
 
 namespace GraphManipulation.Commands.Builders;
 
@@ -44,7 +44,7 @@ public class IndividualsCommandBuilder : BaseCommandBuilder<int, Individual>
             if (!personalDataOrigins.Any() || pdo?.Origin is null)
             {
                 // There exists a personal data column, but the individual does not have a personal data origin for it
-                Emitter.EmitMissing(individual.Key, $"origin for '{pdc.ToListingIdentifier()}'");
+                FeedbackEmitter.EmitMissing(individual.Key, $"origin for '{pdc.ToListingIdentifier()}'");
             }
         }
     }

@@ -1,9 +1,9 @@
 using System.CommandLine;
-using GraphManipulation.Commands.Builders.Binders;
-using GraphManipulation.Commands.Factories;
-using GraphManipulation.Commands.Helpers;
+using GraphManipulation.Commands.Binders;
+using GraphManipulation.Factories;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
+using GraphManipulation.Utility;
 
 namespace GraphManipulation.Commands.Builders;
 
@@ -64,12 +64,12 @@ public class StorageRuleCommandBuilder : BaseCommandBuilder<string, StorageRule>
     {
         if (condition.VacuumingCondition is null)
         {
-            Emitter.EmitMissing(condition.Key!, "condition");
+            FeedbackEmitter.EmitMissing(condition.Key!, "condition");
         }
 
         if (condition.PersonalDataColumn is null)
         {
-            Emitter.EmitMissing<TableColumnPair, PersonalDataColumn>(condition.Key!);
+            FeedbackEmitter.EmitMissing<TableColumnPair, PersonalDataColumn>(condition.Key!);
         }
     }
 

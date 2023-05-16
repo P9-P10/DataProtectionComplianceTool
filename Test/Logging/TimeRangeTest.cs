@@ -1,5 +1,5 @@
 using System;
-using GraphManipulation.Helpers;
+using GraphManipulation.Utility;
 using Xunit;
 
 namespace Test.Logging;

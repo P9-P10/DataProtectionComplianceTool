@@ -5,12 +5,13 @@ using System.Data.SQLite;
 using System.Text;
 using Dapper;
 using GraphManipulation.Commands;
-using GraphManipulation.Commands.Factories;
 using GraphManipulation.DataAccess;
 using GraphManipulation.Decorators;
-using GraphManipulation.Helpers;
+using GraphManipulation.Factories;
 using GraphManipulation.Logging;
+using GraphManipulation.Managers;
 using GraphManipulation.Models;
+using GraphManipulation.Utility;
 using GraphManipulation.Vacuuming;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,10 +1,10 @@
 using System.CommandLine;
-using GraphManipulation.Commands.Builders.Binders;
-using GraphManipulation.Commands.Factories;
-using GraphManipulation.Commands.Helpers;
-using GraphManipulation.Helpers;
+using GraphManipulation.Commands.Binders;
+using GraphManipulation.Factories;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
+using GraphManipulation.Utility;
+
 namespace GraphManipulation.Commands.Builders;
 
 public class PersonalDataOriginCommandBuilder : BaseCommandBuilder<int, PersonalDataOrigin>
@@ -82,23 +82,23 @@ public class PersonalDataOriginCommandBuilder : BaseCommandBuilder<int, Personal
     {
         if (value.Individual is null)
         {
-            Emitter.EmitMissing<int, Individual>(value.Key);
+            FeedbackEmitter.EmitMissing<int, Individual>(value.Key);
         }
         if (value.PersonalDataColumn is not null && value.Origin is null)
         {
-            Emitter.EmitMissing(value.Key, $"{TypeToString.GetEntityType(typeof(Origin))} for {TypeToString.GetEntityType(typeof(Individual))} '{value.Individual!.Key}' " +
+            FeedbackEmitter.EmitMissing(value.Key, $"{TypeToString.GetEntityType(typeof(Origin))} for {TypeToString.GetEntityType(typeof(Individual))} '{value.Individual!.Key}' " +
                                            $"and {TypeToString.GetEntityType(typeof(PersonalDataColumn))} '{value.PersonalDataColumn.Key}'");
             return;
         } 
         
         if (value.PersonalDataColumn is null)
         {
-            Emitter.EmitMissing<TableColumnPair, PersonalDataColumn>(value.Key);
+            FeedbackEmitter.EmitMissing<TableColumnPair, PersonalDataColumn>(value.Key);
         }
 
         if (value.Origin is null)
         {
-            Emitter.EmitMissing<string, Origin>(value.Key);
+            FeedbackEmitter.EmitMissing<string, Origin>(value.Key);
         }
         
         

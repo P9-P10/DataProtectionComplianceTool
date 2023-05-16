@@ -1,10 +1,9 @@
 using System.CommandLine;
-using GraphManipulation.Commands.Builders.Binders;
-using GraphManipulation.Commands.Factories;
-using GraphManipulation.Commands.Helpers;
-using GraphManipulation.Helpers;
+using GraphManipulation.Commands.Binders;
+using GraphManipulation.Factories;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
+using GraphManipulation.Utility;
 
 namespace GraphManipulation.Commands.Builders;
 
@@ -17,13 +16,13 @@ public abstract class BaseCommandBuilder<TKey, TValue> : BaseCommandBuilder
     where TKey : notnull
     where TValue : Entity<TKey>, new()
 {
-    protected readonly IHandler<TKey, TValue> Handler;
-    protected readonly FeedbackEmitter<TKey, TValue> Emitter;
+    protected readonly ICommandHandler<TKey, TValue> CommandHandler;
+    protected readonly FeedbackEmitter<TKey, TValue> FeedbackEmitter;
 
     protected BaseCommandBuilder(IHandlerFactory handlerFactory)
     {
-        Emitter = new FeedbackEmitter<TKey, TValue>();
-        Handler = handlerFactory.CreateHandler(Emitter, StatusReport);
+        FeedbackEmitter = new FeedbackEmitter<TKey, TValue>();
+        CommandHandler = handlerFactory.CreateHandler(FeedbackEmitter, StatusReport);
     }
 
     protected Command Build(string name, string alias, out Option<TKey> keyOption)
@@ -49,7 +48,7 @@ public abstract class BaseCommandBuilder<TKey, TValue> : BaseCommandBuilder
             .WithOption(out _, keyOption)
             .WithOptions(options);
 
-        command.SetHandler(Handler.CreateHandler, keyOption, binder);
+        command.SetHandler(CommandHandler.CreateHandler, keyOption, binder);
 
         return command;
     }
@@ -63,7 +62,7 @@ public abstract class BaseCommandBuilder<TKey, TValue> : BaseCommandBuilder
             .WithOption(out _, keyOption)
             .WithOptions(options);
 
-        command.SetHandler(Handler.UpdateHandler, keyOption, binder);
+        command.SetHandler(CommandHandler.UpdateHandler, keyOption, binder);
 
         return command;
     }
@@ -75,7 +74,7 @@ public abstract class BaseCommandBuilder<TKey, TValue> : BaseCommandBuilder
             .WithDescription($"Deletes the given {GetEntityType()} from the system")
             .WithOption(out _, keyOption);
 
-        command.SetHandler(Handler.DeleteHandler, keyOption);
+        command.SetHandler(CommandHandler.DeleteHandler, keyOption);
 
         return command;
     }
@@ -87,7 +86,7 @@ public abstract class BaseCommandBuilder<TKey, TValue> : BaseCommandBuilder
             .WithDescription($"Shows details about the given {GetEntityType()}")
             .WithOption(out _, keyOption);
 
-        command.SetHandler(Handler.ShowHandler, keyOption);
+        command.SetHandler(CommandHandler.ShowHandler, keyOption);
 
         return command;
     }
@@ -98,7 +97,7 @@ public abstract class BaseCommandBuilder<TKey, TValue> : BaseCommandBuilder
             .BuildListCommand()
             .WithDescription($"Lists the {GetEntityType()}(e)s currently in the system");
 
-        command.SetHandler(Handler.ListHandler);
+        command.SetHandler(CommandHandler.ListHandler);
         return command;
     }
 
@@ -108,7 +107,7 @@ public abstract class BaseCommandBuilder<TKey, TValue> : BaseCommandBuilder
             .BuildStatusCommand()
             .WithDescription($"Shows the status(es) of the {GetEntityType()}(e)s currently in the system");
 
-        command.SetHandler(() => Handler.StatusHandler());
+        command.SetHandler(() => CommandHandler.StatusHandler());
         return command;
     }
 
@@ -127,7 +126,7 @@ public abstract class BaseCommandBuilder<TKey, TValue> : BaseCommandBuilder
             .WithOption(out _, keyOption)
             .WithOption(out _, listOption);
 
-        command.SetHandler((key, list) => { Handler.ListChangesHandler(key, list, getCurrentList, setList, isAdd, manager); },
+        command.SetHandler((key, list) => { CommandHandler.ListChangesHandler(key, list, getCurrentList, setList, isAdd, manager); },
             keyOption, listOption);
 
         return command;

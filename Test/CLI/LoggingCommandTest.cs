@@ -4,10 +4,9 @@ using System.CommandLine;
 using System.CommandLine.IO;
 using System.Linq;
 using GraphManipulation.Commands.Builders;
-using GraphManipulation.Commands.Factories;
-using GraphManipulation.Commands.Helpers;
-using GraphManipulation.Helpers;
+using GraphManipulation.Factories;
 using GraphManipulation.Logging;
+using GraphManipulation.Utility;
 using Moq;
 using Xunit;
 
