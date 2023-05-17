@@ -120,8 +120,9 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
 
                 foreach (var rule in rules)
                 {
+                    Console.WriteLine($"Executing {rule.ToListingIdentifier()}...");
                     _vacuumer.ExecuteVacuumingRules(new[] { rule });
-                    FeedbackEmitter.EmitSuccess(rule.Key!, SystemOperation.Operation.Executed, rule);
+                    FeedbackEmitter.EmitSuccess(rule.Key!, SystemOperation.Operation.Executed);
                 }
             });
     }

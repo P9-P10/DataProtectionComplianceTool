@@ -30,9 +30,9 @@ public class Vacuumer : IVacuumer
     private List<DeletionExecution> CreateExecutionsFromPurpose(Purpose purpose)
     {
         List<DeletionExecution> output = new List<DeletionExecution>();
-        foreach (var condition in purpose.StorageRules)
+        foreach (var storageRule in purpose.StorageRules ?? new List<StorageRule>())
         {
-            AddConditionIfNotExists(output, condition, purpose);
+            AddConditionIfNotExists(output, storageRule, purpose);
         }
 
         return output;
@@ -40,15 +40,18 @@ public class Vacuumer : IVacuumer
 
     private void AddConditionIfNotExists(List<DeletionExecution> output, StorageRule condition, Purpose purpose)
     {
-        foreach (DeletionExecution execution in UniqueExecutions(output, condition, purpose))
-        {
-            output.Add(execution);
-        }
+        var uniqueExecutions = UniqueExecutions(output, condition, purpose);
+        output.AddRange(uniqueExecutions);
     }
 
     private IEnumerable<DeletionExecution> UniqueExecutions(List<DeletionExecution> output, StorageRule condition,
         Purpose purpose)
     {
+        if (condition.PersonalDataColumn is null)
+        {
+            return new List<DeletionExecution>();
+        }
+        
         return CreateDeletionExecutions(
                 DeleteConditionsWithSameTableColumnPair(condition.PersonalDataColumn), purpose)
             .Where(execution => !output.Contains(execution));
@@ -122,8 +125,8 @@ public class Vacuumer : IVacuumer
     private List<DeletionExecution> CreateExecutionsFromRule(VacuumingRule vacuumingRule)
     {
         List<DeletionExecution> executions = new List<DeletionExecution>();
-
-        foreach (var purpose in vacuumingRule.Purposes)
+        
+        foreach (var purpose in vacuumingRule.Purposes ?? new List<Purpose>())
         {
             executions.AddRange(CreateExecutionsFromPurpose(purpose));
         }
@@ -155,16 +158,16 @@ public class Vacuumer : IVacuumer
         List<DeletionExecution> output = new List<DeletionExecution>();
         var logicOperator = " AND ";
 
-        foreach (StorageRule condition in conditions)
+        foreach (StorageRule storageRule in conditions)
         {
-            DeletionExecution? execution = output.Find(HasSameTableColumnPair(condition));
+            DeletionExecution? execution = output.Find(HasSameTableColumnPair(storageRule));
             if (execution != null)
             {
-                UpdateExecution(execution, condition, logicOperator, purpose);
+                UpdateExecution(execution, storageRule, logicOperator, purpose);
             }
             else
             {
-                AddExecution(condition, logicOperator, output, purpose);
+                AddExecution(storageRule, logicOperator, output, purpose);
             }
         }
 

@@ -196,8 +196,8 @@ public class VacuumingRulesTest : TestResources
         error.Should().BeEmpty();
 
         output.Should().ContainSingle(s =>
-            s == FeedbackEmitterMessage.SuccessMessage(TestVacuumingRule.Key!,
-                SystemOperation.Operation.Executed, TestVacuumingRule));
+            s == FeedbackEmitterMessage.SuccessMessage<string, VacuumingRule>(TestVacuumingRule.Key!,
+                SystemOperation.Operation.Executed, null));
     }
     
     [Fact]
@@ -300,15 +300,15 @@ public class VacuumingRulesTest : TestResources
         
         var executeOutput = process.GetLastOutputNoWhitespaceOrPrompt();
         executeOutput.Should().ContainSingle(s =>
-            s == FeedbackEmitterMessage.SuccessMessage(TestVacuumingRule.Key!,
-                SystemOperation.Operation.Executed, TestVacuumingRule));
+            s == FeedbackEmitterMessage.SuccessMessage<string, VacuumingRule>(TestVacuumingRule.Key!,
+                SystemOperation.Operation.Executed, null));
         
         // The log should contain entries regarding the vacuuming rules that have been executed
         ListLogs(process, new LogConstraints(logTypes: new [] { LogType.Vacuuming }));
         
         var logOutput = process.GetLastOutputNoWhitespaceOrPrompt().ToList();
-        logOutput.Should().Contain(FeedbackEmitterMessage.ResultMessage(TestVacuumingRule.Key!,
-            SystemOperation.Operation.Executed, null, TestVacuumingRule));
+        logOutput.Should().Contain(FeedbackEmitterMessage.ResultMessage<string, VacuumingRule>(TestVacuumingRule.Key!,
+            SystemOperation.Operation.Executed, null, null));
         logOutput.Should().Contain(s => s.Contains("WHERE (Id = 2)") && s.Contains("affected"));
 
         // There should be no errors
