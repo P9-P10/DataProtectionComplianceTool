@@ -309,7 +309,7 @@ public class VacuumingRulesTest : TestResources
         var logOutput = process.GetLastOutputNoWhitespaceOrPrompt().ToList();
         logOutput.Should().Contain(FeedbackEmitterMessage.ResultMessage(TestVacuumingRule.Key!,
             SystemOperation.Operation.Executed, null, TestVacuumingRule));
-        logOutput.Should().Contain(s => s.Contains("WHERE Id = 2"));
+        logOutput.Should().Contain(s => s.Contains("WHERE (Id = 2)") && s.Contains("affected"));
 
         // There should be no errors
         var error = process.GetAllErrorsNoWhitespace();
