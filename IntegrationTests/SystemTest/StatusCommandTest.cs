@@ -12,7 +12,7 @@ public class StatusCommandTest : TestResources
     {
         return list
             .Select(s => s.Replace(CommandLineInterface.Prompt, "").Trim())
-            .Where(s => !string.IsNullOrEmpty(s) && !s.Contains("Using config"));
+            .Where(s => s.Contains("missing"));
     }
 
     private static string UniqueStringKey => "UniqueStringKey";
@@ -42,15 +42,14 @@ public class StatusCommandTest : TestResources
         ReportStatus(process);
         
         var error = process.GetAllErrorsNoWhitespace();
-        var output = FormatOutputForStatusTest(process.GetAllOutputNoWhitespace());
+        var output = FormatOutputForStatusTest(process.GetAllOutputNoWhitespace()).ToList();
 
         error.Should().BeEmpty();
-        var statusReports = output.TakeLast(2).ToList();
 
-        statusReports.First().Should().Be(FeedbackEmitter<string, StorageRule>
-            .MissingMessage(UniqueStringKey, "vacuuming condition"));
-        statusReports.Skip(1).First().Should().Be(FeedbackEmitter<string, StorageRule>
-            .MissingMessage<TableColumnPair, PersonalDataColumn>(UniqueStringKey));
+        output.First().Should().Be(FeedbackEmitterMessage
+            .MissingMessage<string, StorageRule>(UniqueStringKey, "vacuuming condition"));
+        output.Skip(1).First().Should().Be(FeedbackEmitterMessage
+            .MissingMessage<string, StorageRule, PersonalDataColumn>(UniqueStringKey));
     }
 
     [Fact]

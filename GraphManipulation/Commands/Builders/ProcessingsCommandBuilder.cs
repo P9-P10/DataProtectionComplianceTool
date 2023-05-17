@@ -70,12 +70,12 @@ public class ProcessingsCommandBuilder : BaseCommandBuilder<string, Processing>
     {
         if (processing.Purpose is null)
         {
-            FeedbackEmitter.EmitMissing<string, Purpose>(processing.Key!);
+            FeedbackEmitter.EmitMissing<Purpose>(processing.Key!);
         }
 
         if (processing.PersonalDataColumn is null)
         {
-            FeedbackEmitter.EmitMissing<TableColumnPair, PersonalDataColumn>(processing.Key!);
+            FeedbackEmitter.EmitMissing<PersonalDataColumn>(processing.Key!);
         }
     }
 

@@ -92,12 +92,12 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
         
         if (purpose.Rules is null || !purpose.Rules.Any())
         {
-            FeedbackEmitter.EmitMissing<string, VacuumingRule>(purpose.Key!);
+            FeedbackEmitter.EmitMissing<VacuumingRule>(purpose.Key!);
         }
 
         if (purpose.StorageRules is null || !purpose.StorageRules.Any())
         {
-            FeedbackEmitter.EmitMissing<string, StorageRule>(purpose.Key!);
+            FeedbackEmitter.EmitMissing<StorageRule>(purpose.Key!);
         }
     }
 

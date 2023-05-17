@@ -75,7 +75,7 @@ public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPa
     {
         if (column.Purposes is null || !column.Purposes.Any())
         {
-            FeedbackEmitter.EmitMissing<string, Purpose>(column.Key!);
+            FeedbackEmitter.EmitMissing<Purpose>(column.Key!);
         }
 
         if (column.DefaultValue is null)

@@ -83,7 +83,7 @@ public class PersonalDataOriginCommandBuilder : BaseCommandBuilder<int, Personal
     {
         if (value.Individual is null)
         {
-            FeedbackEmitter.EmitMissing<int, Individual>(value.Key);
+            FeedbackEmitter.EmitMissing<Individual>(value.Key);
         }
         if (value.PersonalDataColumn is not null && value.Origin is null)
         {
@@ -94,12 +94,12 @@ public class PersonalDataOriginCommandBuilder : BaseCommandBuilder<int, Personal
         
         if (value.PersonalDataColumn is null)
         {
-            FeedbackEmitter.EmitMissing<TableColumnPair, PersonalDataColumn>(value.Key);
+            FeedbackEmitter.EmitMissing<PersonalDataColumn>(value.Key);
         }
 
         if (value.Origin is null)
         {
-            FeedbackEmitter.EmitMissing<string, Origin>(value.Key);
+            FeedbackEmitter.EmitMissing<Origin>(value.Key);
         }
         
         

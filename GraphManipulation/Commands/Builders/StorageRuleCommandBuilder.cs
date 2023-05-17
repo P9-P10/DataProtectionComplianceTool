@@ -70,7 +70,7 @@ public class StorageRuleCommandBuilder : BaseCommandBuilder<string, StorageRule>
 
         if (condition.PersonalDataColumn is null)
         {
-            FeedbackEmitter.EmitMissing<TableColumnPair, PersonalDataColumn>(condition.Key!);
+            FeedbackEmitter.EmitMissing<PersonalDataColumn>(condition.Key!);
         }
     }
 
