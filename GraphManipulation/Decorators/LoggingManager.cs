@@ -41,7 +41,8 @@ public class LoggingManager<TKey, TValue> : LoggingDecorator<TKey, TValue>, IMan
         
         if (success)
         {
-            LogUpdate(key, value);
+            var newValue = value.Key is not null ? _manager.Get(value.Key)! : _manager.Get(key)!;
+            LogUpdate(key, newValue);
         }
 
         return success;
