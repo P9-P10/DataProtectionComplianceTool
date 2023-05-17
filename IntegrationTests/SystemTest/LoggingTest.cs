@@ -165,7 +165,6 @@ public class LoggingTest : TestResources
             var constraints = new LogConstraints(logTypes: new[] { LogType.Vacuuming });
 
             ListLogs(process, constraints);
-            ListVacuumingRule(process);
 
             var error = process.GetAllErrorsNoWhitespace();
             var output = FormatOutputForLogTest(process.GetAllOutputNoWhitespaceOrPrompt());
