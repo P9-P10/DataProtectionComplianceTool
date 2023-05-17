@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentAssertions;
 using GraphManipulation.Decorators;
 using GraphManipulation.Logging;
 using GraphManipulation.Models;
+using GraphManipulation.Utility;
 using Xunit;
 
 namespace Test.Decorators;
@@ -55,7 +57,7 @@ public class LoggingDecoratorTest
 
         var message = GetMessage();
 
-        Assert.Equal("Test entity 'key' deleted.", message);
+        Assert.Equal(FeedbackEmitterMessage.ResultMessage<string, TestEntity>("key", SystemOperation.Operation.Deleted, null, null), message);
     }
 
     [Fact]
@@ -65,17 +67,18 @@ public class LoggingDecoratorTest
 
         var message = GetMessage();
 
-        Assert.Equal("Test entity 'key' updated.", message);
+        Assert.Equal(FeedbackEmitterMessage.ResultMessage<string, TestEntity>("key", SystemOperation.Operation.Updated, null, null), message);
     }
 
     [Fact]
     public void LogUpdateCreatesExpectedMessageWithParameters()
     {
-        _decorator.LogUpdate("key", new TestEntity { Key = "key", Description = "Description" });
+        var value = new TestEntity { Key = "key", Description = "Description" };
+        _decorator.LogUpdate("key", value);
 
         var message = GetMessage();
-
-        Assert.Equal("Test entity 'key' updated. Value: key, Description", message);
+        
+        Assert.Equal(FeedbackEmitterMessage.ResultMessage<string, TestEntity>("key", SystemOperation.Operation.Updated, null, value), message);
     }
 
     [Fact]
@@ -85,6 +88,6 @@ public class LoggingDecoratorTest
 
         var message = GetMessage();
 
-        Assert.Equal("Test entity 'key' created.", message);
+        Assert.Equal(FeedbackEmitterMessage.ResultMessage<string, TestEntity>("key", SystemOperation.Operation.Created, null, null), message);
     }
 }

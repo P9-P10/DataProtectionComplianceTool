@@ -16,11 +16,11 @@ public class FeedbackEmitterMessage
         return ResultMessage(key, operation, false, value);
     }
 
-    private static string ResultMessage<TKey, TValue>(TKey key, SystemOperation.Operation operation, bool isSuccess, TValue? value) 
+    public static string ResultMessage<TKey, TValue>(TKey key, SystemOperation.Operation operation, bool? isSuccess, TValue? value) 
         where TValue : Entity<TKey>
     {
         return $"{TypeToString.GetEntityType(typeof(TValue)).FirstCharToUpper()} '{key}' " +
-               (isSuccess ? "successfully " : "could not be ") +
+               (isSuccess is null ? "" : isSuccess.Value ? "successfully " : "could not be ") +
                SystemOperation.OperationToString(operation) +
                (value is not null ? $" to '{value.ToListing()}'" : "");
     }

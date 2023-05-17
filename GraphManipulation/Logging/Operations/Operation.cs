@@ -18,7 +18,6 @@ public abstract class Operation<TKey, TValue> where TValue : Entity<TKey>
     
     public override string ToString()
     {
-        var valueString = Value is not null ? " Value: " + Value.ToListing() : "";
-        return $"{TypeToString.GetEntityType(typeof(TValue)).FirstCharToUpper()} '{Key}' {SystemOperation.OperationToString(OperationName)}." + valueString;
+        return FeedbackEmitterMessage.ResultMessage(Key, OperationName, null, Value);
     }
 }
