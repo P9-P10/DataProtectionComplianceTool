@@ -31,12 +31,12 @@ public abstract class BaseBinder<TKey, TValue> : BinderBase<TValue> where TValue
         return new TValue { Key = key, Description = description };
     }
 
-    protected IEnumerable<TV> HandleMustExistList<TK, TV>(IEnumerable<TK> keys, IManager<TK, TV> manager)
+    public static IEnumerable<TV> HandleMustExistList<TK, TV>(IEnumerable<TK> keys, IManager<TK, TV> manager)
     {
         return keys.Select(key => HandleMustExist(key, manager)).ToList();
     }
 
-    protected TV HandleMustExist<TK, TV>(TK key, IManager<TK, TV> manager)
+    public static TV HandleMustExist<TK, TV>(TK key, IManager<TK, TV> manager)
     {
         var value = manager.Get(key);
         if (value is not null)
@@ -47,14 +47,14 @@ public abstract class BaseBinder<TKey, TValue> : BinderBase<TValue> where TValue
         throw new BindingException($"Could not bind to {key} as it does not exist in the system");
     }
 
-    protected IEnumerable<TV> HandleMustExistListWithCreateOnDemand<TK, TV>(IEnumerable<TK> keys,
-        IManager<TK, TV> manager) where TV : Entity<TK>
+    public static IEnumerable<TV> HandleMustExistListWithCreateOnDemand<TK, TV>(IEnumerable<TK> keys,
+        IManager<TK, TV> manager) where TV : Entity<TK> where TK : notnull
     {
         return keys.Select(key => HandleMustExistWithCreateOnDemand(key, manager)).ToList();
     }
 
-    protected TV HandleMustExistWithCreateOnDemand<TK, TV>(TK key, IManager<TK, TV> manager)
-        where TV : Entity<TK>
+    public static TV HandleMustExistWithCreateOnDemand<TK, TV>(TK key, IManager<TK, TV> manager)
+        where TV : Entity<TK> where TK : notnull
     {
         try
         {
@@ -74,7 +74,7 @@ public abstract class BaseBinder<TKey, TValue> : BinderBase<TValue> where TValue
         }
     }
 
-    private static bool PromptCreateNew<TK, TV>(TK key)
+    public static bool PromptCreateNew<TK, TV>(TK key)
         where TV : Entity<TK>
     {
         while (true)

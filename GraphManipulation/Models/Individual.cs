@@ -8,11 +8,11 @@ public class Individual : Entity<int>
     {
         return string.Join(ToListingSeparator, ToListingIdentifier(),
             ListNullOrEmptyToString(PersonalDataOrigins,
-                origins => EncapsulateList(origins.Select(o => o.ToListing()))));
+                origins => EncapsulateList(origins.Select(o => "{ " + o.ToListing() + " }"))));
     }
     
     public override string ToListingHeader()
     {
-        return string.Join(ToListingSeparator, base.ToListingHeader(), "Personal Data Origins");
+        return string.Join(ToListingSeparator, "Key", "Personal Data Origins");
     }
 }

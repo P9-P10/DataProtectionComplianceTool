@@ -66,11 +66,11 @@ public class PersonalDataOriginCommandBuilder : BaseCommandBuilder<int, Personal
             .WithSubCommands(
                 CreateCommand(keyOption, createBinder, new Option[]
                 {
-                    descriptionOption, individualOption, tableColumnOption, originOption
+                    individualOption, tableColumnOption, originOption
                 }),
                 UpdateCommand(keyOption, updateBinder, new Option[]
                 {
-                    descriptionOption, individualOption, tableColumnOption, originOption
+                    individualOption, tableColumnOption, originOption
                 }));
     }
 
@@ -85,12 +85,12 @@ public class PersonalDataOriginCommandBuilder : BaseCommandBuilder<int, Personal
         {
             FeedbackEmitter.EmitMissing<Individual>(value.Key);
         }
-        if (value.PersonalDataColumn is not null && value.Origin is null)
-        {
-            FeedbackEmitter.EmitMissing(value.Key, $"{TypeToString.GetEntityType(typeof(Origin))} for {TypeToString.GetEntityType(typeof(Individual))} '{value.Individual!.Key}' " +
-                                           $"and {TypeToString.GetEntityType(typeof(PersonalDataColumn))} '{value.PersonalDataColumn.Key}'");
-            return;
-        } 
+        // if (value.PersonalDataColumn is not null && value.Origin is null)
+        // {
+        //     FeedbackEmitter.EmitMissing(value.Key, $"{TypeToString.GetEntityType(typeof(Origin))} for {TypeToString.GetEntityType(typeof(Individual))} '{value.Individual!.Key}' " +
+        //                                    $"and {TypeToString.GetEntityType(typeof(PersonalDataColumn))} '{value.PersonalDataColumn.Key}'");
+        //     return;
+        // } 
         
         if (value.PersonalDataColumn is null)
         {

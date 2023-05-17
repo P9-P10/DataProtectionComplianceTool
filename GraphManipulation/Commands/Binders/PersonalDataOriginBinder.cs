@@ -54,7 +54,7 @@ public class PersonalDataOriginBinder : BaseBinder<int, PersonalDataOrigin>
         if (bindingContext.ParseResult.HasOption(_originOption))
         {
             var origin = bindingContext.ParseResult.GetValueForOption(_originOption);
-            pdo.Origin = origin is null ? null : HandleMustExist(origin, _originsManager);
+            pdo.Origin = origin is null ? null : HandleMustExistWithCreateOnDemand(origin, _originsManager);
         }
 
         return pdo;

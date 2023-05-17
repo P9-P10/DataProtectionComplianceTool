@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using GraphManipulation.Commands;
 
 namespace IntegrationTests.SystemTest.Tools;
 
@@ -66,7 +67,12 @@ public class TestProcess : IDisposable
         Inputs.Add(input);
         Process.StandardInput.WriteLine(input);
         AwaitProcessResponse();
-        if (!AllOutputs.Last().Any(s=>s.Contains("Would you like to create one? (y/n)"))) return;
+        
+        if (!AllOutputs.Last().Any(s => s.Contains("Would you like to create one? (y/n)")))
+        {
+            return;
+        }
+
         Inputs.Add("y");
         Process.StandardInput.WriteLine("y");
         AwaitProcessResponse();
@@ -90,6 +96,11 @@ public class TestProcess : IDisposable
     public IEnumerable<string> GetAllOutputNoWhitespace()
     {
         return GetAllOutput().Where(s => !string.IsNullOrWhiteSpace(s));
+    }
+
+    public IEnumerable<string> GetLastOutputNoWhitespace()
+    {
+        return GetLastOutput().Where(s => !string.IsNullOrWhiteSpace(s));
     }
 
     public List<string> GetLastOutput()
@@ -138,7 +149,7 @@ public class TestProcess : IDisposable
         bool encounteredPrompt = false;
         while (!Process.StandardOutput.EndOfStream)
         {
-            if ((char) Process.StandardOutput.Peek() == '$')
+            if ((char)Process.StandardOutput.Peek() == CommandLineInterface.Prompt[0])
             {
                 if (encounteredPrompt)
                 {
@@ -148,7 +159,7 @@ public class TestProcess : IDisposable
                 encounteredPrompt = true;
             }
 
-            char chr = (char) Process.StandardOutput.Read();
+            char chr = (char)Process.StandardOutput.Read();
             chars.Add(chr);
         }
 
@@ -159,7 +170,7 @@ public class TestProcess : IDisposable
     {
         while (!Process.StandardOutput.EndOfStream)
         {
-            if ((char) Process.StandardOutput.Peek() == '$')
+            if ((char)Process.StandardOutput.Peek() == CommandLineInterface.Prompt[0])
             {
                 return;
             }
