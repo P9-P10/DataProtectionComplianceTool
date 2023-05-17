@@ -149,7 +149,7 @@ public class TestProcess : IDisposable
         bool encounteredPrompt = false;
         while (!Process.StandardOutput.EndOfStream)
         {
-            if ((char)Process.StandardOutput.Peek() == CommandLineInterface.Prompt[0])
+            if ((char)Process.StandardOutput.Peek() == CommandLineInterface.Prompt)
             {
                 if (encounteredPrompt)
                 {
@@ -170,7 +170,7 @@ public class TestProcess : IDisposable
     {
         while (!Process.StandardOutput.EndOfStream)
         {
-            if ((char)Process.StandardOutput.Peek() == CommandLineInterface.Prompt[0])
+            if ((char)Process.StandardOutput.Peek() == CommandLineInterface.Prompt)
             {
                 return;
             }

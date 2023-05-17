@@ -80,5 +80,5 @@ public class CommandLineInterface
             .Build();
     }
 
-    public static string Prompt => "$:";
+    public static char Prompt => '$';
 }

@@ -22,7 +22,7 @@ public interface ICommandHandler<TKey, TValue> where TValue : Entity<TKey> where
         where TV : Entity<TK>;
 }
 
-public partial class CommandHandler<TKey, TValue> : ICommandHandler<TKey, TValue>
+public class CommandHandler<TKey, TValue> : ICommandHandler<TKey, TValue>
     where TValue : Entity<TKey> where TKey : notnull
 {
     private readonly IManager<TKey, TValue> _manager;

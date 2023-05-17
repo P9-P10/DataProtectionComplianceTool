@@ -12,7 +12,7 @@ public class StatusCommandTest : TestResources
     private static IEnumerable<string> FormatOutputForStatusTest(IEnumerable<string> list)
     {
         return list
-            .Select(s => s.Replace(CommandLineInterface.Prompt, "").Trim())
+            .Select(s => s.Replace(CommandLineInterface.Prompt, ' ').Trim())
             .Where(s => s.Contains("missing"));
     }
 

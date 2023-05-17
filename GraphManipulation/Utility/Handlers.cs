@@ -245,7 +245,7 @@ public static class Handlers
         }
     }
 
-    public static bool PromptAndCreate<TKey, TValue>(TKey key, IManager<TKey, TValue> manager)
+    private static bool PromptAndCreate<TKey, TValue>(TKey key, IManager<TKey, TValue> manager)
         where TValue : Entity<TKey>
     {
         if (!PromptCreateNew<TKey, TValue>(key))
