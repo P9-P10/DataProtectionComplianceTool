@@ -20,7 +20,7 @@ public class PersonalDataTest : TestResources
         AddPersonalData(process, TestPersonalDataColumn);
 
         var error = process.GetAllErrorsNoWhitespace();
-        var output = process.GetAllOutputNoWhiteSpaceOrPrompt().ToList();
+        var output = process.GetAllOutputNoWhitespaceOrPrompt().ToList();
 
         error.Should().BeEmpty();
         

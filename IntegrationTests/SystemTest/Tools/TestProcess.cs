@@ -101,7 +101,7 @@ public class TestProcess : IDisposable
             .Select(s => s.Trim());
     }
 
-    public IEnumerable<string> GetAllOutputNoWhiteSpaceOrPrompt()
+    public IEnumerable<string> GetAllOutputNoWhitespaceOrPrompt()
     {
         return GetAllOutputNoWhitespace().Select(s => s.Replace(CommandLineInterface.Prompt, ' ').Trim());
     }

@@ -17,7 +17,7 @@ public class PurposeTest : TestResources
         AddPurpose(process, TestPurpose);
 
         var error = process.GetAllErrorsNoWhitespace();
-        var output = process.GetAllOutputNoWhiteSpaceOrPrompt().ToList();
+        var output = process.GetAllOutputNoWhitespaceOrPrompt().ToList();
 
         error.Should().BeEmpty();
 

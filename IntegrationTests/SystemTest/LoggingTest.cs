@@ -158,6 +158,7 @@ public class LoggingTest : TestResources
             AddStorageRule(process, TestStorageRule);
             AddPurpose(process, TestPurpose);
             AddPersonalData(process, TestPersonalDataColumn);
+            UpdateStorageRuleWithPersonalDataColumn(process, TestStorageRule, TestPersonalDataColumn);
             AddVacuumingRule(process, TestVacuumingRule);
             ExecuteVacuumingRule(process, new[] { TestVacuumingRule });
 

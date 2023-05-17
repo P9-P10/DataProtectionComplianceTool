@@ -35,7 +35,7 @@ public class TestResources
     {
         Key = "purposeName",
         Description = Description,
-        StorageRules = new List<StorageRule>() {TestStorageRule},
+        StorageRules = new List<StorageRule>() { TestStorageRule },
         LegallyRequired = true,
         Rules = new List<VacuumingRule>() { }
     };
@@ -44,7 +44,7 @@ public class TestResources
     {
         Key = TestPurpose.Key + "NEW",
         Description = TestPurpose.Description + "NEW",
-        StorageRules = new List<StorageRule>() {TestNewTestStorageRule},
+        StorageRules = new List<StorageRule>() { TestNewTestStorageRule },
         LegallyRequired = !TestPurpose.LegallyRequired,
         Rules = new List<VacuumingRule>()
     };
@@ -53,7 +53,7 @@ public class TestResources
     {
         Key = TestPurpose.Key + "NEW",
         Description = TestPurpose.Description + "NEW",
-        StorageRules = new List<StorageRule>() {TestStorageRule},
+        StorageRules = new List<StorageRule>() { TestStorageRule },
         LegallyRequired = !TestPurpose.LegallyRequired,
         Rules = new List<VacuumingRule>()
     };
@@ -62,7 +62,7 @@ public class TestResources
     {
         Key = TestPurpose.Key + "VERY_NEW",
         Description = TestPurpose.Description + "VERY_NEW",
-        StorageRules = new List<StorageRule>() {TestNewTestStorageRule},
+        StorageRules = new List<StorageRule>() { TestNewTestStorageRule },
         LegallyRequired = !NewTestPurpose.LegallyRequired,
         Rules = new List<VacuumingRule>()
     };
@@ -70,7 +70,7 @@ public class TestResources
     protected static readonly PersonalDataColumn TestPersonalDataColumn = new()
     {
         Key = new TableColumnPair("TestTable", "TestColumn"),
-        Purposes = new[] {TestPurpose},
+        Purposes = new[] { TestPurpose },
         DefaultValue = "testDefaultValue",
         Description = Description
     };
@@ -86,7 +86,7 @@ public class TestResources
     protected static readonly PersonalDataColumn TestPersonalDataColumnWithMorePurposes = new PersonalDataColumn()
     {
         Key = TestPersonalDataColumn.Key,
-        Purposes = new []{TestPurpose,NewTestPurpose,VeryNewTestPurpose},
+        Purposes = new[] { TestPurpose, NewTestPurpose, VeryNewTestPurpose },
         Description = TestPersonalDataColumn.Description,
         DefaultValue = TestPersonalDataColumn.DefaultValue
     };
@@ -145,7 +145,7 @@ public class TestResources
         Key = "vacuumingRule",
         Description = Description,
         Interval = "2h 4d",
-        Purposes = new List<Purpose> {TestPurpose}
+        Purposes = new List<Purpose> { TestPurpose }
     };
 
     protected static readonly VacuumingRule UpdatedTestVacuumingRule = new()
@@ -153,7 +153,7 @@ public class TestResources
         Key = TestVacuumingRule.Key + "UPDATED",
         Description = TestVacuumingRule.Description + "NEW",
         Interval = TestVacuumingRule.Interval + "6h",
-        Purposes = new List<Purpose> {TestPurpose}
+        Purposes = new List<Purpose> { TestPurpose }
     };
 
     protected static void AddStorageRule(TestProcess testProcess, StorageRule storageRule)
@@ -220,6 +220,15 @@ public class TestResources
             $"{CommandNamer.StorageRulesAlias} {CommandNamer.UpdateAlias} {OptionNamer.NameAlias} {old.Key}  {OptionNamer.NewNameAlias}  {newStorageRule.Key}" +
             $" {OptionNamer.VacuumingCondition} \"{newStorageRule.VacuumingCondition}\"" +
             $" {OptionNamer.Description} \"{newStorageRule.Description}\"";
+        process.GiveInput(command);
+    }
+
+    protected static void UpdateStorageRuleWithPersonalDataColumn(TestProcess process, StorageRule storageRule,
+        PersonalDataColumn personalDataColumn)
+    {
+        var command =
+            $"{CommandNamer.StorageRulesAlias} {CommandNamer.UpdateAlias} {OptionNamer.NameAlias} {storageRule.Key} " +
+            $" {OptionNamer.TableColumn} {personalDataColumn.Key.TableName} {personalDataColumn.Key.ColumnName}";
         process.GiveInput(command);
     }
 
