@@ -1,5 +1,7 @@
 using Dapper;
 using FluentAssertions;
+using GraphManipulation.Models;
+using GraphManipulation.Utility;
 using IntegrationTests.SystemTest.Tools;
 
 namespace IntegrationTests.SystemTest;
@@ -17,15 +19,16 @@ public class VacuumingRulesTest : TestResources
         AddVacuumingRule(process, TestVacuumingRule);
 
         var error = process.GetAllErrorsNoWhitespace();
-        var output = process.GetAllOutputNoWhitespace().ToList();
+        var output = process.GetAllOutputNoWhiteSpaceOrPrompt().ToList();
 
         error.Should().BeEmpty();
 
         output.Should().ContainSingle(s =>
-            s.Contains($"Vacuuming rule '{TestVacuumingRule.ToListingIdentifier()}' successfully created"));
+            s == FeedbackEmitterMessage.SuccessMessage<string, VacuumingRule>(TestVacuumingRule.Key!,
+                SystemOperation.Operation.Created, null));
         output.Should().ContainSingle(s =>
-            s.Contains(
-                $"Vacuuming rule '{TestVacuumingRule.ToListingIdentifier()}' successfully updated with {TestVacuumingRule.ToListing()}"));
+            s == FeedbackEmitterMessage.SuccessMessage(TestVacuumingRule.Key!,
+                SystemOperation.Operation.Updated, TestVacuumingRule));
     }
 
     [Fact]
@@ -103,7 +106,7 @@ public class VacuumingRulesTest : TestResources
         var output = process.GetAllOutputNoWhitespace();
 
         error.Should().BeEmpty();
-        
+
         output.Should().ContainSingle(s =>
             s.Contains($"Vacuuming rule '{TestVacuumingRule.ToListingIdentifier()}' successfully deleted"));
     }
@@ -120,7 +123,7 @@ public class VacuumingRulesTest : TestResources
         AddPurpose(process, NewTestPurpose);
         AddPurpose(process, VeryNewTestPurpose);
         AddVacuumingRule(process, TestVacuumingRule);
-        AddPurposesToVacuumingRule(process, TestVacuumingRule, new[] {NewTestPurpose, VeryNewTestPurpose});
+        AddPurposesToVacuumingRule(process, TestVacuumingRule, new[] { NewTestPurpose, VeryNewTestPurpose });
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetLastOutput().ToList();
@@ -146,8 +149,8 @@ public class VacuumingRulesTest : TestResources
         AddPurpose(process, NewTestPurpose);
         AddPurpose(process, VeryNewTestPurpose);
         AddVacuumingRule(process, TestVacuumingRule);
-        AddPurposesToVacuumingRule(process, TestVacuumingRule, new[] {NewTestPurpose, VeryNewTestPurpose});
-        RemovePurposesFromVacuumingRule(process, TestVacuumingRule, new[] {NewTestPurpose, VeryNewTestPurpose});
+        AddPurposesToVacuumingRule(process, TestVacuumingRule, new[] { NewTestPurpose, VeryNewTestPurpose });
+        RemovePurposesFromVacuumingRule(process, TestVacuumingRule, new[] { NewTestPurpose, VeryNewTestPurpose });
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetLastOutput().ToList();
@@ -174,7 +177,7 @@ public class VacuumingRulesTest : TestResources
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
         AddVacuumingRule(process, TestVacuumingRule);
-        ExecuteVacuumingRule(process, new[] {TestVacuumingRule});
+        ExecuteVacuumingRule(process, new[] { TestVacuumingRule });
 
         // Operation made such that the ExecuteVacuumingRule has enough time to report potential errors.
         AddStorageRule(process, TestStorageRule);
@@ -203,7 +206,7 @@ public class VacuumingRulesTest : TestResources
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
         AddVacuumingRule(process, TestVacuumingRule);
-        ExecuteVacuumingRule(process, new[] {TestVacuumingRule});
+        ExecuteVacuumingRule(process, new[] { TestVacuumingRule });
 
         var result = dbConnection.Query<(string id, string column)>(
                 $"SELECT Id, {TestPersonalDataColumn.Key.ColumnName} " +

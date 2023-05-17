@@ -1,4 +1,6 @@
 using FluentAssertions;
+using GraphManipulation.Models;
+using GraphManipulation.Utility;
 using IntegrationTests.SystemTest.Tools;
 
 namespace IntegrationTests.SystemTest;
@@ -15,13 +17,16 @@ public class PurposeTest : TestResources
         AddPurpose(process, TestPurpose);
 
         var error = process.GetAllErrorsNoWhitespace();
-        var output = process.GetAllOutputNoWhitespace().ToList();
+        var output = process.GetAllOutputNoWhiteSpaceOrPrompt().ToList();
 
         error.Should().BeEmpty();
-        output.Should().ContainSingle(s => 
-            s.Contains($"Purpose '{TestPurpose.Key}' successfully created"));
+
         output.Should().ContainSingle(s =>
-            s.Contains($"Purpose '{TestPurpose.Key}' successfully updated with {TestPurpose.ToListing()}"));
+            s == FeedbackEmitterMessage.SuccessMessage<string, Purpose>(TestPurpose.Key!,
+                SystemOperation.Operation.Created, null));
+        output.Should().ContainSingle(s =>
+            s == FeedbackEmitterMessage.SuccessMessage(TestPurpose.Key!,
+                SystemOperation.Operation.Updated, TestPurpose));
     }
 
     [Fact]

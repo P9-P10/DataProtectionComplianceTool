@@ -1,5 +1,7 @@
 using FluentAssertions;
 using GraphManipulation.Commands;
+using GraphManipulation.Models;
+using GraphManipulation.Utility;
 using IntegrationTests.SystemTest.Tools;
 
 namespace IntegrationTests.SystemTest;
@@ -18,15 +20,16 @@ public class PersonalDataTest : TestResources
         AddPersonalData(process, TestPersonalDataColumn);
 
         var error = process.GetAllErrorsNoWhitespace();
-        var output = process.GetAllOutputNoWhitespace().ToList();
+        var output = process.GetAllOutputNoWhiteSpaceOrPrompt().ToList();
 
         error.Should().BeEmpty();
+        
         output.Should().ContainSingle(s =>
-            s.Contains(
-                $"Personal data column '{TestPersonalDataColumn.ToListingIdentifier()}' successfully created"));
+            s == FeedbackEmitterMessage.SuccessMessage<TableColumnPair, PersonalDataColumn>(TestPersonalDataColumn.Key!,
+                SystemOperation.Operation.Created, null));
         output.Should().ContainSingle(s =>
-            s.Contains(
-                $"Personal data column '{TestPersonalDataColumn.ToListingIdentifier()}' successfully updated with {TestPersonalDataColumn.ToListing()}"));
+            s == FeedbackEmitterMessage.SuccessMessage(TestPersonalDataColumn.Key!,
+                SystemOperation.Operation.Updated, TestPersonalDataColumn));
     }
 
     [Fact]
@@ -44,7 +47,8 @@ public class PersonalDataTest : TestResources
         var output = process.GetAllOutputNoWhitespace();
 
         error.Should().BeEmpty();
-        output.Should().ContainSingle(s => s.Contains($"{CommandLineInterface.Prompt} " + TestPersonalDataColumn.ToListing()));
+        output.Should().ContainSingle(s =>
+            s.Contains($"{CommandLineInterface.Prompt} " + TestPersonalDataColumn.ToListing()));
     }
 
     [Fact]
@@ -60,7 +64,7 @@ public class PersonalDataTest : TestResources
         ShowPersonalData(process, UpdatedTestPersonalDataColumn);
 
         var error = process.GetAllErrorsNoWhitespace();
-        var output = process.GetAllOutputNoWhitespace();
+        var output = process.GetLastOutputNoWhitespace();
 
         error.Should().BeEmpty();
         output.Should().ContainSingle(s => s.Contains(UpdatedTestPersonalDataColumn.ToListing()));
@@ -120,18 +124,18 @@ public class PersonalDataTest : TestResources
         AddPurpose(process, NewTestPurpose);
         AddPurpose(process, VeryNewTestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
-        AddPurposesToPersonalData(process, TestPersonalDataColumn, new[] {NewTestPurpose, VeryNewTestPurpose});
+        AddPurposesToPersonalData(process, TestPersonalDataColumn, new[] { NewTestPurpose, VeryNewTestPurpose });
 
         var error = process.GetAllErrorsNoWhitespace();
-        var output = process.GetLastOutput();
+        var output = process.GetLastOutputNoWhitespaceOrPrompt();
+
+        TestPersonalDataColumn.Purposes =
+            TestPersonalDataColumn.Purposes.Append(NewTestPurpose).Append(VeryNewTestPurpose);
 
         error.Should().BeEmpty();
         output.Should().ContainSingle(s =>
-            s.Contains(
-                $"Personal data column '{TestPersonalDataColumn.ToListingIdentifier()}' successfully updated with {TestPersonalDataColumnWithMorePurposes.ToListing()}") &&
-            s.Contains(NewTestPurpose.ToListingIdentifier()) && s.Contains(VeryNewTestPurpose.ToListingIdentifier()));
-        
-        
+            s == FeedbackEmitterMessage.SuccessMessage(TestPersonalDataColumn.Key!,
+                SystemOperation.Operation.Updated, TestPersonalDataColumn));
     }
 
     [Fact]
@@ -146,18 +150,15 @@ public class PersonalDataTest : TestResources
         AddPurpose(process, NewTestPurpose);
         AddPurpose(process, VeryNewTestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
-        AddPurposesToPersonalData(process, TestPersonalDataColumn, new[] {NewTestPurpose, VeryNewTestPurpose});
-        RemovePurposesFromPersonalData(process, TestPersonalDataColumn, new[] {NewTestPurpose, VeryNewTestPurpose});
+        AddPurposesToPersonalData(process, TestPersonalDataColumn, new[] { NewTestPurpose, VeryNewTestPurpose });
+        RemovePurposesFromPersonalData(process, TestPersonalDataColumn, new[] { NewTestPurpose, VeryNewTestPurpose });
 
         var error = process.GetAllErrorsNoWhitespace();
-        var output = process.GetLastOutput().ToList();
+        var output = process.GetLastOutputNoWhitespaceOrPrompt().ToList();
 
         error.Should().BeEmpty();
         output.Should().ContainSingle(s =>
-            s.Contains(
-                $"Personal data column '{TestPersonalDataColumn.ToListingIdentifier()}' successfully updated with {TestPersonalDataColumn.ToListing()}") &&
-            !s.Contains(NewTestPurpose.ToListingIdentifier()) && !s.Contains(VeryNewTestPurpose.ToListingIdentifier()));
+            s == FeedbackEmitterMessage.SuccessMessage(TestPersonalDataColumn.Key!,
+                SystemOperation.Operation.Updated, TestPersonalDataColumn));
     }
-
-
 }

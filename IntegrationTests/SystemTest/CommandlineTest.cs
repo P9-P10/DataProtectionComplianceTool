@@ -14,13 +14,17 @@ public class CommandlineTest
         process.Start();
 
         process.GiveInput("help");
-        string result = string.Join("", process.GetAllOutputNoWhitespace());
-        string error = process.GetError();
-        result.Should().Contain(@$"Using config found at {process.ConfigPath}");
-        result.Should().Contain($"{CommandLineInterface.Prompt} Description:  This is a description of the root command");
-        result.Should().Contain("Usage:  ! [command] [options]");
-        result.Should().Contain("Options:  ?, h, help  Show help and usage information");
-        result.Should().Contain("Commands:  ");
+        
+        var result = string.Join("", process.GetAllOutputNoWhitespace());
+        var error = process.GetAllErrorsNoWhitespace();
+        
+        error.Should().BeEmpty();
+        
+        result.Should().Contain($"Using config found at {process.ConfigPath}");
+        result.Should().Contain("Description:");
+        result.Should().Contain("Usage:! [command] [options]");
+        result.Should().Contain("Options:?, h, help  Show help and usage information");
+        result.Should().Contain("Commands:");
         ContainsCommands(result);
     }
 

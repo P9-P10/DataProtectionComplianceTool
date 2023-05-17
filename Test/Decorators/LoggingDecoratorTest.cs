@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using GraphManipulation.Decorators;
 using GraphManipulation.Logging;
 using GraphManipulation.Models;
@@ -24,7 +26,7 @@ public class LoggingDecoratorTest
 
         public IEnumerable<ILog> Read(ILogConstraints constraints)
         {
-            throw new System.NotImplementedException();
+            return Log.Select(log => new Log(1, DateTime.MinValue, log));
         }
     }
 

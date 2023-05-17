@@ -22,7 +22,7 @@ public class FeedbackEmitterMessage
         return $"{TypeToString.GetEntityType(typeof(TValue)).FirstCharToUpper()} '{key}' " +
                (isSuccess ? "successfully " : "could not be ") +
                SystemOperation.OperationToString(operation) +
-               (value is not null ? $" with {value.ToListing()}" : "");
+               (value is not null ? $" to '{value.ToListing()}'" : "");
     }
 
     public static string AlreadyExistsMessage<TKey, TValue>(TKey key) 

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Diagnostics;
 using GraphManipulation.Commands;
 
@@ -95,12 +96,24 @@ public class TestProcess : IDisposable
 
     public IEnumerable<string> GetAllOutputNoWhitespace()
     {
-        return GetAllOutput().Where(s => !string.IsNullOrWhiteSpace(s));
+        return GetAllOutput()
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .Select(s => s.Trim());
+    }
+
+    public IEnumerable<string> GetAllOutputNoWhiteSpaceOrPrompt()
+    {
+        return GetAllOutputNoWhitespace().Select(s => s.Replace(CommandLineInterface.Prompt, ' ').Trim());
     }
 
     public IEnumerable<string> GetLastOutputNoWhitespace()
     {
         return GetLastOutput().Where(s => !string.IsNullOrWhiteSpace(s));
+    }
+
+    public IEnumerable<string> GetLastOutputNoWhitespaceOrPrompt()
+    {
+        return GetLastOutputNoWhitespace().Select(s => s.Replace(CommandLineInterface.Prompt, ' ').Trim());
     }
 
     public List<string> GetLastOutput()

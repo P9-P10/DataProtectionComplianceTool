@@ -116,7 +116,7 @@ public class ProcessingTests : TestResources
         AddProcessing(process, TestProcessing);
 
         ShowProcessing(process, TestProcessing);
-        List<string> result = process.GetLastOutput();
+        var result = process.GetLastOutputNoWhitespaceOrPrompt();
         result.Should().ContainSingle(s => s.Contains(TestProcessing.ToListing()));
     }
 }

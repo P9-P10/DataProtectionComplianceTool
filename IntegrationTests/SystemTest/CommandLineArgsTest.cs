@@ -19,7 +19,7 @@ public class CommandLineArgsTest
         process.Start();
         process.GiveInput("");
         string result = string.Join("", process.GetAllOutputNoWhitespace());
-        result.Should().Be($"Using config found at {IntegrationTests.SystemTest.Tools.SystemTest.ConfigPath}{CommandLineInterface.Prompt} ");
+        result.Should().Be($"Using config found at {IntegrationTests.SystemTest.Tools.SystemTest.ConfigPath}{CommandLineInterface.Prompt}");
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class CommandLineArgsTest
         process.Start();
         process.GiveInput("");
         string result = string.Join("", process.GetAllOutputNoWhitespace());
-        result.Should().Be($"Using config found at {configPath}{CommandLineInterface.Prompt} ");
+        result.Should().Be($"Using config found at {configPath}{CommandLineInterface.Prompt}");
     }
 
     [Fact]

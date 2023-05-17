@@ -8,7 +8,6 @@ public class FeedbackEmitter<TKey, TValue> where TValue : Entity<TKey>
     {
         Console.WriteLine(FeedbackEmitterMessage.SuccessMessage(key, operation, value));
     }
-    // TODO: Value should be the complete new value instead of what is just updated
 
     public void EmitFailure(TKey key, SystemOperation.Operation operation, TValue? value = null)
     {

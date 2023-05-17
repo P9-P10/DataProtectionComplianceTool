@@ -100,12 +100,13 @@ public static class Handlers
 
         if (manager.Update(key, value))
         {
-            feedbackEmitter.EmitSuccess(key, SystemOperation.Operation.Updated, value);
-            statusReport(value.Key is not null ? manager.Get(value.Key)! : manager.Get(key)!);
+            var newValue = value.Key is not null ? manager.Get(value.Key)! : manager.Get(key)!;
+            feedbackEmitter.EmitSuccess(key, SystemOperation.Operation.Updated, newValue);
+            statusReport(newValue);
         }
         else
         {
-            feedbackEmitter.EmitFailure(key, SystemOperation.Operation.Updated, value);
+            feedbackEmitter.EmitFailure(key, SystemOperation.Operation.Updated);
         }
     }
 
