@@ -3,6 +3,7 @@ using System.CommandLine.Binding;
 using System.CommandLine.Parsing;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
+using GraphManipulation.Utility;
 
 namespace GraphManipulation.Commands.Binders;
 
@@ -36,7 +37,7 @@ public class PurposeBinder : BaseBinder<string, Purpose>
         if (bindingContext.ParseResult.HasOption(_storageRulesOption))
         {
             var storageRuleNames = bindingContext.ParseResult.GetValueForOption(_storageRulesOption)!;
-            purpose.StorageRules = HandleMustExistListWithCreateOnDemand(storageRuleNames, _storageRulesManager);
+            purpose.StorageRules = Handlers.HandleMustExistListWithCreateOnDemand(storageRuleNames, _storageRulesManager);
         }
 
         return purpose;

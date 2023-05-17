@@ -219,12 +219,12 @@ public class StatusCommandTest : TestResources
     public void CreatingIndividual()
     {
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
-
-        var outputBeforeReport = FormatOutputForStatusTest(process.GetLastOutputNoWhitespace()).ToList();
-
         process.Start();
 
         CreateEntity(process, CommandNamer.IndividualsName, OptionNamer.Id, IntegerKey.ToString());
+        
+        var outputBeforeReport = FormatOutputForStatusTest(process.GetLastOutputNoWhitespace()).ToList();
+        
         ReportStatus(process);
 
         var error = process.GetAllErrorsNoWhitespace();

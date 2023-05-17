@@ -3,6 +3,7 @@ using System.CommandLine.Binding;
 using System.CommandLine.Parsing;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
+using GraphManipulation.Utility;
 
 namespace GraphManipulation.Commands.Binders;
 
@@ -33,7 +34,7 @@ public class StorageRuleBinder : BaseBinder<string, StorageRule>
             var tableColumn = bindingContext.ParseResult.GetValueForOption(_tableColumnOption);
             storageRule.PersonalDataColumn = tableColumn is null
                 ? null
-                : HandleMustExistWithCreateOnDemand(tableColumn, _personalDataColumnManager);
+                : Handlers.HandleMustExistWithCreateOnDemand(tableColumn, _personalDataColumnManager);
         }
 
         if (bindingContext.ParseResult.HasOption(_vacuumingConditionOption))

@@ -1,14 +1,27 @@
-﻿using GraphManipulation.Managers;
+﻿using GraphManipulation.Commands;
+using GraphManipulation.Commands.Binders;
+using GraphManipulation.Managers;
 using GraphManipulation.Models;
 
 namespace GraphManipulation.Utility;
 
-public partial class CommandHandler<TKey, TValue> 
-    where TValue : Entity<TKey> 
-    where TKey : notnull
+public static class Handlers
 {
-    public static void CreateHandler(TKey key, IManager<TKey, TValue> manager,
-        FeedbackEmitter<TKey, TValue> feedbackEmitter, Action<TValue> statusReport)
+    public static void ShowHandler<TKey, TValue>(TKey key, IManager<TKey, TValue> manager,
+        FeedbackEmitter<TKey, TValue> feedbackEmitter) where TValue : Entity<TKey>
+    {
+        if (manager.Get(key) is null)
+        {
+            // Can only show something that exists
+            feedbackEmitter.EmitCouldNotFind(key);
+            return;
+        }
+
+        Console.WriteLine(manager.Get(key)!.ToListing());
+    }
+
+    public static void CreateHandler<TKey, TValue>(TKey key, IManager<TKey, TValue> manager,
+        FeedbackEmitter<TKey, TValue> feedbackEmitter, Action<TValue> statusReport) where TValue : Entity<TKey>
     {
         if (manager.Get(key) is not null)
         {
@@ -28,9 +41,10 @@ public partial class CommandHandler<TKey, TValue>
             feedbackEmitter.EmitFailure(key, SystemOperation.Operation.Created);
         }
     }
-    
-    public static void CreateHandler(TKey key, TValue value, IManager<TKey, TValue> manager,
+
+    public static void CreateHandler<TKey, TValue>(TKey key, TValue value, IManager<TKey, TValue> manager,
         FeedbackEmitter<TKey, TValue> feedbackEmitter, Action<TValue> statusReport)
+        where TValue : Entity<TKey> where TKey : notnull
     {
         if (manager.Get(key) is not null)
         {
@@ -63,9 +77,10 @@ public partial class CommandHandler<TKey, TValue>
             feedbackEmitter.EmitFailure(key, SystemOperation.Operation.Created);
         }
     }
-    
-    public static void UpdateHandler(TKey key, TValue value, IManager<TKey, TValue> manager,
+
+    public static void UpdateHandler<TKey, TValue>(TKey key, TValue value, IManager<TKey, TValue> manager,
         FeedbackEmitter<TKey, TValue> feedbackEmitter, Action<TValue> statusReport)
+        where TValue : Entity<TKey> where TKey : notnull
     {
         var old = manager.Get(key);
 
@@ -93,9 +108,9 @@ public partial class CommandHandler<TKey, TValue>
             feedbackEmitter.EmitFailure(key, SystemOperation.Operation.Updated, value);
         }
     }
-    
-    public static void DeleteHandler(TKey key, IManager<TKey, TValue> manager,
-        FeedbackEmitter<TKey, TValue> feedbackEmitter)
+
+    public static void DeleteHandler<TKey, TValue>(TKey key, IManager<TKey, TValue> manager,
+        FeedbackEmitter<TKey, TValue> feedbackEmitter) where TValue : Entity<TKey>
     {
         if (manager.Get(key) is null)
         {
@@ -113,8 +128,8 @@ public partial class CommandHandler<TKey, TValue>
             feedbackEmitter.EmitFailure(key, SystemOperation.Operation.Deleted);
         }
     }
-    
-    public static void ListHandler(IManager<TKey, TValue> manager)
+
+    public static void ListHandler<TKey, TValue>(IManager<TKey, TValue> manager) where TValue : Entity<TKey>
     {
         var values = manager.GetAll().ToList();
 
@@ -126,13 +141,14 @@ public partial class CommandHandler<TKey, TValue>
         Console.WriteLine(values.First().ToListingHeader());
         values.Select(r => r.ToListing()).ToList().ForEach(Console.WriteLine);
     }
-    
-    public static void StatusHandler(Action<TValue> statusAction, IManager<TKey, TValue> manager)
+
+    public static void StatusHandler<TValue, TKey>(Action<TValue> statusAction, IManager<TKey, TValue> manager)
+        where TValue : Entity<TKey>
     {
         manager.GetAll().ToList().ForEach(statusAction);
     }
-    
-    public static void ListChangesHandler<TK, TV>(
+
+    public static void ListChangesHandler<TK, TV, TKey, TValue>(
         TKey key,
         IEnumerable<TK> list,
         Func<TValue, IEnumerable<TV>> getCurrentList,
@@ -143,7 +159,7 @@ public partial class CommandHandler<TKey, TValue>
         FeedbackEmitter<TKey, TValue> feedbackEmitter1,
         FeedbackEmitter<TK, TV> feedbackEmitter2,
         Action<TValue> statusAction)
-        where TV : Entity<TK>
+        where TV : Entity<TK> where TValue : Entity<TKey> where TKey : notnull
     {
         var value = manger1.Get(key);
         if (value is null)
@@ -160,8 +176,13 @@ public partial class CommandHandler<TKey, TValue>
 
             if (entity is null)
             {
-                feedbackEmitter2.EmitCouldNotFind(k);
-                return;
+                if (!PromptAndCreate(k, manager2))
+                {
+                    feedbackEmitter2.EmitCouldNotFind(k);
+                    return;
+                }
+
+                entity = manager2.Get(k)!;
             }
 
             if (isAdd)
@@ -182,5 +203,91 @@ public partial class CommandHandler<TKey, TValue>
 
         setList(value, currentList);
         UpdateHandler(key, value, manger1, feedbackEmitter1, statusAction);
+    }
+
+    public static IEnumerable<TValue> HandleMustExistList<TKey, TValue>(IEnumerable<TKey> keys, IManager<TKey, TValue> manager)
+    {
+        return keys.Select<TKey, TValue>(key => HandleMustExist(key, manager)).ToList();
+    }
+
+    public static TValue HandleMustExist<TKey, TValue>(TKey key, IManager<TKey, TValue> manager)
+    {
+        var value = manager.Get(key);
+        if (value is not null)
+        {
+            return value;
+        }
+
+        throw new HandlerException($"Could not bind to {key} as it does not exist in the system");
+    }
+
+    public static IEnumerable<TValue> HandleMustExistListWithCreateOnDemand<TKey, TValue>(IEnumerable<TKey> keys,
+        IManager<TKey, TValue> manager) where TValue : Entity<TKey> where TKey : notnull
+    {
+        return keys.Select<TKey, TValue>(key => HandleMustExistWithCreateOnDemand(key, manager)).ToList();
+    }
+
+    public static TValue HandleMustExistWithCreateOnDemand<TKey, TValue>(TKey key, IManager<TKey, TValue> manager)
+        where TValue : Entity<TKey> where TKey : notnull
+    {
+        try
+        {
+            return HandleMustExist(key, manager);
+        }
+        catch (HandlerException)
+        {
+            if (!PromptAndCreate(key, manager))
+            {
+                throw;
+            }
+            
+            return manager.Get(key)!;
+        }
+    }
+
+    public static bool PromptAndCreate<TKey, TValue>(TKey key, IManager<TKey, TValue> manager)
+        where TValue : Entity<TKey>
+    {
+        if (!PromptCreateNew<TKey, TValue>(key))
+        {
+            return false;
+        }
+        
+        CreateHandler(key, manager, new FeedbackEmitter<TKey, TValue>(),
+            _ => Console.WriteLine("Not reporting status when creating on demand"));
+        return true;
+    }
+
+    private static bool PromptCreateNew<TKey, TValue>(TKey key)
+        where TValue : Entity<TKey>
+    {
+        while (true)
+        {
+            Console.Write(
+                $"{key} {TypeToString.GetEntityType(typeof(TValue))} does not exist. Would you like to create one? (y/n){Environment.NewLine}{CommandLineInterface.Prompt} ");
+            var reply = (Console.ReadLine() ?? "").Trim();
+            if (string.IsNullOrEmpty(reply))
+            {
+                Console.WriteLine("You must answer either 'y' or 'n'");
+            }
+            else
+                switch (reply)
+                {
+                    case "y" or "Y":
+                        return true;
+                    case "n" or "N":
+                        return false;
+                    default:
+                        Console.WriteLine($"Cannot parse '{reply}', you must either answer 'y' or 'n'");
+                        break;
+                }
+        }
+    }
+}
+
+public class HandlerException : Exception
+{
+    public HandlerException(string message) : base(message)
+    {
     }
 }

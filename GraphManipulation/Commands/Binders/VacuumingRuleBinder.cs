@@ -3,6 +3,7 @@ using System.CommandLine.Binding;
 using System.CommandLine.Parsing;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
+using GraphManipulation.Utility;
 
 namespace GraphManipulation.Commands.Binders;
 
@@ -36,7 +37,7 @@ public class VacuumingRuleBinder : BaseBinder<string, VacuumingRule>
         if (bindingContext.ParseResult.HasOption(_purposesOption))
         {
             var purposes = bindingContext.ParseResult.GetValueForOption(_purposesOption);
-            rule.Purposes = purposes is null ? null : HandleMustExistListWithCreateOnDemand(purposes, _purposesManager);
+            rule.Purposes = purposes is null ? null : Handlers.HandleMustExistListWithCreateOnDemand(purposes, _purposesManager);
         }
 
         return rule;

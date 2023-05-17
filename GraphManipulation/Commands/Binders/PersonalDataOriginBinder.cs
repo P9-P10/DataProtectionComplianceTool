@@ -3,6 +3,7 @@ using System.CommandLine.Binding;
 using System.CommandLine.Parsing;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
+using GraphManipulation.Utility;
 
 namespace GraphManipulation.Commands.Binders;
 
@@ -42,19 +43,19 @@ public class PersonalDataOriginBinder : BaseBinder<int, PersonalDataOrigin>
         if (bindingContext.ParseResult.HasOption(_individualOption))
         {
             var individual = bindingContext.ParseResult.GetValueForOption(_individualOption);
-            pdo.Individual = individual is null ? null : HandleMustExist(individual.Value, _individualsManager);
+            pdo.Individual = individual is null ? null : Handlers.HandleMustExist(individual.Value, _individualsManager);
         }
 
         if (bindingContext.ParseResult.HasOption(_tableColumnOption))
         {
             var pdc = bindingContext.ParseResult.GetValueForOption(_tableColumnOption);
-            pdo.PersonalDataColumn = pdc is null ? null : HandleMustExist(pdc, _personalDataColumnManager);
+            pdo.PersonalDataColumn = pdc is null ? null : Handlers.HandleMustExist(pdc, _personalDataColumnManager);
         }
 
         if (bindingContext.ParseResult.HasOption(_originOption))
         {
             var origin = bindingContext.ParseResult.GetValueForOption(_originOption);
-            pdo.Origin = origin is null ? null : HandleMustExistWithCreateOnDemand(origin, _originsManager);
+            pdo.Origin = origin is null ? null : Handlers.HandleMustExistWithCreateOnDemand(origin, _originsManager);
         }
 
         return pdo;

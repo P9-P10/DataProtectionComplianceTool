@@ -39,50 +39,37 @@ public partial class CommandHandler<TKey, TValue> : ICommandHandler<TKey, TValue
 
     public void CreateHandler(TKey key)
     {
-        CreateHandler(key, _manager, _feedbackEmitter, _statusReport);
+        Handlers.CreateHandler(key, _manager, _feedbackEmitter, _statusReport);
     }
 
     public void CreateHandler(TKey key, TValue value)
     {
-        CreateHandler(key, value, _manager, _feedbackEmitter, _statusReport);
+        Handlers.CreateHandler(key, value, _manager, _feedbackEmitter, _statusReport);
     }
 
     public void UpdateHandler(TKey key, TValue value)
     {
-        UpdateHandler(key, value, _manager, _feedbackEmitter, _statusReport);
+        Handlers.UpdateHandler(key, value, _manager, _feedbackEmitter, _statusReport);
     }
 
     public void DeleteHandler(TKey key)
     {
-        DeleteHandler(key, _manager, _feedbackEmitter);
+        Handlers.DeleteHandler(key, _manager, _feedbackEmitter);
     }
     
     public void ShowHandler(TKey key)
     {
-        ShowHandler(key, _manager, _feedbackEmitter);
-    }
-
-    public static void ShowHandler(TKey key, IManager<TKey, TValue> manager,
-        FeedbackEmitter<TKey, TValue> feedbackEmitter)
-    {
-        if (manager.Get(key) is null)
-        {
-            // Can only show something that exists
-            feedbackEmitter.EmitCouldNotFind(key);
-            return;
-        }
-
-        Console.WriteLine(manager.Get(key)!.ToListing());
+        Handlers.ShowHandler(key, _manager, _feedbackEmitter);
     }
 
     public void ListHandler()
     {
-        ListHandler(_manager);
+        Handlers.ListHandler(_manager);
     }
     
     public void StatusHandler()
     {
-        StatusHandler(_statusReport, _manager);
+        Handlers.StatusHandler(_statusReport, _manager);
     }
     
     public void ListChangesHandler<TK, TV>(
@@ -94,7 +81,7 @@ public partial class CommandHandler<TKey, TValue> : ICommandHandler<TKey, TValue
         IManager<TK, TV> manager)
         where TV : Entity<TK>
     {
-        ListChangesHandler(key, list, getCurrentList, setList, isAdd, _manager, manager, _feedbackEmitter,
+        Handlers.ListChangesHandler(key, list, getCurrentList, setList, isAdd, _manager, manager, _feedbackEmitter,
             new FeedbackEmitter<TK, TV>(), _statusReport);
     }
 }

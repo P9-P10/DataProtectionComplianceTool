@@ -3,6 +3,7 @@ using System.CommandLine.Binding;
 using System.CommandLine.Parsing;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
+using GraphManipulation.Utility;
 
 namespace GraphManipulation.Commands.Binders;
 
@@ -34,13 +35,13 @@ public class ProcessingBinder : BaseBinder<string, Processing>
         if (bindingContext.ParseResult.HasOption(_purposeOption))
         {
             var purpose = bindingContext.ParseResult.GetValueForOption(_purposeOption);
-            processing.Purpose = purpose is null ? null : HandleMustExistWithCreateOnDemand(purpose, _purposesManager);
+            processing.Purpose = purpose is null ? null : Handlers.HandleMustExistWithCreateOnDemand(purpose, _purposesManager);
         }
 
         if (bindingContext.ParseResult.HasOption(_tableColumnOption))
         {
             var tableColumn = bindingContext.ParseResult.GetValueForOption(_tableColumnOption);
-            processing.PersonalDataColumn = tableColumn is null ? null : HandleMustExist(tableColumn, _personalDataColumnManager);
+            processing.PersonalDataColumn = tableColumn is null ? null : Handlers.HandleMustExist(tableColumn, _personalDataColumnManager);
         }
 
         return processing;
