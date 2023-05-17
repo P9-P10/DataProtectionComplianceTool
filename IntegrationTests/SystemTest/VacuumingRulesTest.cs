@@ -214,10 +214,10 @@ public class VacuumingRulesTest : TestResources
             .ToList();
 
         result.First().Should()
-            .Be(new ValueTuple<string, string>(TestIndividual1.Id.ToString(), TestIndividual1.Key.ToString()));
+            .Be(new ValueTuple<string, string>(TestIndividual1.ToListingIdentifier(), TestIndividual1.ToListingIdentifier()));
         result.Skip(1).First().Should()
-            .Be(new ValueTuple<string, string>(TestIndividual2.Id.ToString(), TestIndividual2.Key.ToString()));
+            .Be(new ValueTuple<string, string>(TestIndividual2.ToListingIdentifier(), TestPersonalDataColumn.DefaultValue));
         result.Skip(2).First().Should()
-            .Be(new ValueTuple<string, string>(TestIndividual3.Id.ToString(), TestIndividual3.Key.ToString()));
+            .Be(new ValueTuple<string, string>(TestIndividual3.ToListingIdentifier(), TestIndividual3.ToListingIdentifier()));
     }
 }
