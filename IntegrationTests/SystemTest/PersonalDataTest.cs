@@ -22,10 +22,10 @@ public class PersonalDataTest : TestResources
         error.Should().BeEmpty();
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully created {TestPersonalDataColumn.ToListingIdentifier()} personal data column"));
+                $"Personal data column '{TestPersonalDataColumn.ToListingIdentifier()}' successfully created"));
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {TestPersonalDataColumn.ToListing()}"));
+                $"Personal data column '{TestPersonalDataColumn.ToListingIdentifier()}' successfully updated with {TestPersonalDataColumn.ToListing()}"));
     }
 
     [Fact]
@@ -104,7 +104,7 @@ public class PersonalDataTest : TestResources
         error.Should().BeEmpty();
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully deleted {TestPersonalDataColumn.ToListingIdentifier()} personal data column"));
+                $"Personal data column '{TestPersonalDataColumn.ToListingIdentifier()}' successfully deleted"));
     }
 
     [Fact]
@@ -127,8 +127,10 @@ public class PersonalDataTest : TestResources
         error.Should().BeEmpty();
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {TestPersonalDataColumnWithMorePurposes.ToListing()}") &&
+                $"Personal data column '{TestPersonalDataColumn.ToListingIdentifier()}' successfully updated with {TestPersonalDataColumnWithMorePurposes.ToListing()}") &&
             s.Contains(NewTestPurpose.ToListingIdentifier()) && s.Contains(VeryNewTestPurpose.ToListingIdentifier()));
+        
+        
     }
 
     [Fact]
@@ -152,7 +154,7 @@ public class PersonalDataTest : TestResources
         error.Should().BeEmpty();
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Successfully updated {TestPersonalDataColumn.ToListingIdentifier()} personal data column with {TestPersonalDataColumn.ToListing()}") &&
+                $"Personal data column '{TestPersonalDataColumn.ToListingIdentifier()}' successfully updated with {TestPersonalDataColumn.ToListing()}") &&
             !s.Contains(NewTestPurpose.ToListingIdentifier()) && !s.Contains(VeryNewTestPurpose.ToListingIdentifier()));
     }
 

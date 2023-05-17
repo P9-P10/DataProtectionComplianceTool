@@ -4,10 +4,8 @@ using System.Data.SQLite;
 using System.IO;
 using FluentAssertions;
 using GraphManipulation.DataAccess;
-using GraphManipulation.DataAccess.Mappers;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
-using GraphManipulation.Models.Base;
 using Xunit;
 
 namespace Test.DataAccess;

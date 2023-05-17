@@ -1,9 +1,9 @@
 using System.CommandLine;
-using GraphManipulation.Commands.Builders.Binders;
-using GraphManipulation.Commands.Factories;
-using GraphManipulation.Commands.Helpers;
-using GraphManipulation.Managers.Interfaces;
+using GraphManipulation.Commands.Binders;
+using GraphManipulation.Factories;
+using GraphManipulation.Managers;
 using GraphManipulation.Models;
+using GraphManipulation.Utility;
 using GraphManipulation.Vacuuming;
 
 namespace GraphManipulation.Commands.Builders;
@@ -77,7 +77,7 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
     {
         if (rule.Interval is null)
         {
-            Emitter.EmitMissing(rule.Key!, "interval");
+            FeedbackEmitter.EmitMissing(rule.Key!, "interval");
         }
     }
 
@@ -110,7 +110,7 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
                     var rule =  _vacuumingRulesManager.Get(ruleName);
                     if (rule is null)
                     {
-                        Emitter.EmitCouldNotFind(ruleName);
+                        FeedbackEmitter.EmitCouldNotFind(ruleName);
                         return;
                     }
 
@@ -120,7 +120,7 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
                 foreach (var rule in rules)
                 {
                     _vacuumer.ExecuteVacuumingRules(new[] { rule });
-                    Emitter.EmitSuccess(rule.Key!, FeedbackEmitter<string, VacuumingRule>.Operations.Executed, rule);
+                    FeedbackEmitter.EmitSuccess(rule.Key!, SystemOperation.Operation.Executed, rule);
                 }
             });
     }

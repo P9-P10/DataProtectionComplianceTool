@@ -1,10 +1,11 @@
-﻿using GraphManipulation.Models.Base;
+﻿using GraphManipulation.Models;
+using GraphManipulation.Utility;
 
 namespace GraphManipulation.Logging.Operations;
 
 public class Update<TKey, TValue> : Operation<TKey, TValue> where TValue : Entity<TKey>
 {
-    public Update(TKey key, TValue value) : base(OperationName.Update, key, value)
+    public Update(TKey key, TValue value) : base(SystemOperation.Operation.Updated, key, value)
     {
     }
 }

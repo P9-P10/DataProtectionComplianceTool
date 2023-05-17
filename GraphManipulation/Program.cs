@@ -5,13 +5,13 @@ using System.Data.SQLite;
 using System.Text;
 using Dapper;
 using GraphManipulation.Commands;
-using GraphManipulation.Commands.Factories;
 using GraphManipulation.DataAccess;
-using GraphManipulation.DataAccess.Mappers;
 using GraphManipulation.Decorators;
-using GraphManipulation.Helpers;
+using GraphManipulation.Factories;
 using GraphManipulation.Logging;
+using GraphManipulation.Managers;
 using GraphManipulation.Models;
+using GraphManipulation.Utility;
 using GraphManipulation.Vacuuming;
 using Microsoft.EntityFrameworkCore;
 
@@ -67,8 +67,7 @@ public static class Program
         var vacuumer = new Vacuumer(purposeMapper, new SqliteQueryExecutor(dbConnection));
 
         IManagerFactory managerFactory = new LoggingManagerFactory(new ManagerFactory(context), logger);
-        IConfigManagerFactory configManagerFactory = new ConfigManagerFactory(configManager);
-        ILoggerFactory loggerFactory = new PlaintextLoggerFactory(configManagerFactory);
+        ILoggerFactory loggerFactory = new PlaintextLoggerFactory(logger);
         IVacuumerFactory vacuumerFactory = new LoggingVacuumerFactory(new VacuumerFactory(vacuumer), logger);
 
         var commandLineInterface = new CommandLineInterface(managerFactory, loggerFactory, vacuumerFactory);

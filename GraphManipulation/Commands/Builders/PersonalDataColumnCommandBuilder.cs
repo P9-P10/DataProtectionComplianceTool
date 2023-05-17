@@ -1,10 +1,9 @@
 using System.CommandLine;
-using GraphManipulation.Commands.Builders.Binders;
-using GraphManipulation.Commands.Factories;
-using GraphManipulation.Commands.Helpers;
+using GraphManipulation.Commands.Binders;
+using GraphManipulation.Factories;
 using GraphManipulation.Managers;
-using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
+using GraphManipulation.Utility;
 
 namespace GraphManipulation.Commands.Builders;
 
@@ -75,12 +74,12 @@ public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPa
     {
         if (column.Purposes is null || !column.Purposes.Any())
         {
-            Emitter.EmitMissing<string, Purpose>(column.Key!);
+            FeedbackEmitter.EmitMissing<string, Purpose>(column.Key!);
         }
 
         if (column.DefaultValue is null)
         {
-            Emitter.EmitMissing(column.Key!, "default value");
+            FeedbackEmitter.EmitMissing(column.Key!, "default value");
         }
     }
 }

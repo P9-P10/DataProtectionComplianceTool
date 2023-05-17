@@ -1,8 +1,7 @@
 using System.CommandLine;
-using GraphManipulation.Commands.Factories;
-using GraphManipulation.Commands.Helpers;
-using GraphManipulation.Helpers;
+using GraphManipulation.Factories;
 using GraphManipulation.Logging;
+using GraphManipulation.Utility;
 
 namespace GraphManipulation.Commands.Builders;
 

@@ -45,7 +45,7 @@ public class LoggingVacuumer : LoggingDecorator<string, VacuumingRule>, IVacuume
     {
         return executions.Select(execution =>
         {
-            var subject = new TableColumnPair(execution.Table, execution.Column).ToListingIdentifier();
+            var subject = new TableColumnPair(execution.Table, execution.Column).ToString();
             var message = CreateDeleteExecutionLogMessage(execution);
             return new MutableLog(LogType.Vacuuming, subject, LogMessageFormat.Plaintext, message);
         });

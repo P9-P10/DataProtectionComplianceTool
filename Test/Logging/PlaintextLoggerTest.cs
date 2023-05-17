@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GraphManipulation.Helpers;
 using GraphManipulation.Logging;
+using GraphManipulation.Managers;
+using GraphManipulation.Utility;
 using Xunit;
 
 namespace Test.Logging;

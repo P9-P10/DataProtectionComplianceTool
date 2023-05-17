@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using GraphManipulation.Commands.Helpers;
+using GraphManipulation.Utility;
 using IntegrationTests.SystemTest.Tools;
 
 namespace IntegrationTests.SystemTest;

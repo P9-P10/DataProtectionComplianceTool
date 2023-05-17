@@ -1,8 +1,6 @@
-using GraphManipulation.Models.Interfaces;
-
 namespace GraphManipulation.Managers;
 
-public class TableColumnPair : IListable
+public class TableColumnPair
 {
     public string TableName { get; set; }
     public string ColumnName { get; set; }
@@ -13,19 +11,9 @@ public class TableColumnPair : IListable
         ColumnName = columnName;
     }
 
-    public string ToListing()
-    {
-        return "(" + string.Join(", ", TableName, ColumnName) + ")";
-    }
-
-    public string ToListingIdentifier()
-    {
-        return ToListing();
-    }
-
     public override string ToString()
     {
-        return ToListing();
+        return "(" + string.Join(", ", TableName, ColumnName) + ")";
     }
 
     public override bool Equals(object? obj)

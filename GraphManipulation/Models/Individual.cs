@@ -1,5 +1,3 @@
-using GraphManipulation.Models.Base;
-
 namespace GraphManipulation.Models;
 
 public class Individual : Entity<int>
@@ -8,11 +6,13 @@ public class Individual : Entity<int>
 
     public override string ToListing()
     {
-        return string.Join(", ", ToListingIdentifier(), 
-            "[ " + 
-            string.Join(", ", PersonalDataOrigins == null 
-                ? new List<string>() 
-                : PersonalDataOrigins.Select(pdo => pdo.ToListing())) 
-            + " ]");
+        return string.Join(ToListingSeparator, ToListingIdentifier(),
+            ListNullOrEmptyToString(PersonalDataOrigins,
+                origins => EncapsulateList(origins.Select(o => o.ToListing()))));
+    }
+    
+    public override string ToListingHeader()
+    {
+        return string.Join(ToListingSeparator, base.ToListingHeader(), "Personal Data Origins");
     }
 }

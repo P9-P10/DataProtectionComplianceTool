@@ -14,11 +14,11 @@ public class OriginsTest : TestResources
 
         const string description = "This is the description";
         const string name = "OriginName";
-        Origin origin = new() {Key = name, Description = description};
+        Origin origin = new() { Key = name, Description = description };
         AddOrigin(process, origin);
         List<string> result = process.GetLastOutput();
 
-        result.Should().ContainSingle(s=>s.Contains(description) && s.Contains(name) && s.Contains("Successfully"));
+        result.Should().ContainSingle(s => s.Contains(description) && s.Contains(name) && s.Contains("successfully"));
     }
 
     [Fact]
@@ -29,12 +29,12 @@ public class OriginsTest : TestResources
 
         const string description = "This is the description";
         const string name = "OriginName";
-        Origin origin = new() {Key = name, Description = description};
+        Origin origin = new() { Key = name, Description = description };
         AddOrigin(process, origin);
         ListOrigins(process);
         List<string> result = process.GetLastOutput();
 
-        result.Should().ContainSingle(s=>s.Contains($" {name}, {description}, [  ]"));
+        result.Should().ContainSingle(s => s.Contains(origin.ToListing()));
     }
 
     [Fact]
@@ -45,16 +45,16 @@ public class OriginsTest : TestResources
 
         const string description = "This is the description";
         const string name = "OriginName";
-        Origin origin = new() {Key = name, Description = description};
+        Origin origin = new() { Key = name, Description = description };
         AddOrigin(process, origin);
 
 
-        UpdateOrigin(process, origin, new Origin() {Description = description, Key = "NewName"});
+        UpdateOrigin(process, origin, new Origin() { Description = description, Key = "NewName" });
         List<string> result = process.GetLastOutput();
 
         result.First().Should().Contain("NewName");
         result.First().Should().Contain(name);
-        result.First().Should().Contain("Successfully");
+        result.First().Should().Contain("successfully");
         result.First().Should().Contain("updated");
     }
 
@@ -66,9 +66,9 @@ public class OriginsTest : TestResources
 
         const string description = "This is the description";
         const string name = "OriginName";
-        Origin origin = new() {Key = name, Description = description};
+        Origin origin = new() { Key = name, Description = description };
         AddOrigin(process, origin);
-        
+
         DeleteOrigin(process, origin);
 
         List<string> result = process.GetLastOutput();
@@ -86,17 +86,16 @@ public class OriginsTest : TestResources
 
         const string description = "This is the description";
         const string name = "OriginName";
-        Origin origin = new() {Key = name, Description = description};
+        Origin origin = new() { Key = name, Description = description };
         AddOrigin(process, origin);
-        
+
         DeleteOrigin(process, origin);
-        
+
         ListOrigins(process);
 
         List<string> result = process.GetLastOutput();
 
-        result.FindAll(s=>s.Contains(name)).Should().BeEmpty();
-
+        result.FindAll(s => s.Contains(name)).Should().BeEmpty();
     }
 
     [Fact]
@@ -107,12 +106,12 @@ public class OriginsTest : TestResources
 
         const string description = "This is the description";
         const string name = "OriginName";
-        Origin origin = new() {Key = name, Description = description};
+        Origin origin = new() { Key = name, Description = description };
         AddOrigin(process, origin);
-        
-        ShowOrigin(process,origin);
+
+        ShowOrigin(process, origin);
         List<string> result = process.GetLastOutput();
-        
-        result.First().Should().Contain($"{name}, {description}, [  ]");
+
+        result.First().Should().Contain(origin.ToListing());
     }
 }

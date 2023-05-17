@@ -2,7 +2,6 @@
 using GraphManipulation.Decorators;
 using GraphManipulation.Logging;
 using GraphManipulation.Models;
-using GraphManipulation.Models.Base;
 using Xunit;
 
 namespace Test.Decorators;
@@ -54,7 +53,7 @@ public class LoggingDecoratorTest
 
         var message = GetMessage();
 
-        Assert.Equal("Delete test entity key.", message);
+        Assert.Equal("Test entity 'key' deleted.", message);
     }
 
     [Fact]
@@ -64,7 +63,7 @@ public class LoggingDecoratorTest
 
         var message = GetMessage();
 
-        Assert.Equal("Update test entity key.", message);
+        Assert.Equal("Test entity 'key' updated.", message);
     }
 
     [Fact]
@@ -74,7 +73,7 @@ public class LoggingDecoratorTest
 
         var message = GetMessage();
 
-        Assert.Equal("Update test entity key. Value: key, Description", message);
+        Assert.Equal("Test entity 'key' updated. Value: key, Description", message);
     }
 
     [Fact]
@@ -84,6 +83,6 @@ public class LoggingDecoratorTest
 
         var message = GetMessage();
 
-        Assert.Equal("Create test entity key.", message);
+        Assert.Equal("Test entity 'key' created.", message);
     }
 }

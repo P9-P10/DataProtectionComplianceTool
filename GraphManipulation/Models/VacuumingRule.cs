@@ -1,5 +1,4 @@
 using System.Text.RegularExpressions;
-using GraphManipulation.Models.Base;
 
 namespace GraphManipulation.Models;
 
@@ -28,8 +27,15 @@ public class VacuumingRule : Entity<string>
 
     public override string ToListing()
     {
-        return string.Join(", ", base.ToListing(), Interval, LastExecution.ToString(),
-            "[ " + string.Join(", ", Purposes is null ? new List<string>() : Purposes.Select(p => p.ToListingIdentifier())) + " ]");
+        return string.Join(ToListingSeparator, base.ToListing(),
+            NullToString(Interval),
+            NullToString(LastExecution),
+            ListNullOrEmptyToString(Purposes));
+    }
+
+    public override string ToListingHeader()
+    {
+        return string.Join(ToListingSeparator, base.ToListingHeader(), "Interval", "Last Execution", "Purposes");
     }
 
     private struct ParsedInterval

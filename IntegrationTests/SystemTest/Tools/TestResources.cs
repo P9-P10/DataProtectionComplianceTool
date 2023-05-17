@@ -1,10 +1,10 @@
 using System.Data;
 using System.Globalization;
 using Dapper;
-using GraphManipulation.Commands.Helpers;
 using GraphManipulation.Logging;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
+using GraphManipulation.Utility;
 
 namespace IntegrationTests.SystemTest.Tools;
 

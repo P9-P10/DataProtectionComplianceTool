@@ -2,12 +2,11 @@
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
 using GraphManipulation.Commands.Builders;
-using GraphManipulation.Commands.Factories;
-using GraphManipulation.Commands.Helpers;
-using GraphManipulation.Helpers;
+using GraphManipulation.Factories;
 using GraphManipulation.Logging;
-using GraphManipulation.Managers.Interfaces;
-using GraphManipulation.Models.Base;
+using GraphManipulation.Managers;
+using GraphManipulation.Models;
+using GraphManipulation.Utility;
 using GraphManipulation.Vacuuming;
 
 namespace GraphManipulation.Commands;
@@ -20,11 +19,11 @@ public class HandlerFactory : IHandlerFactory {
         _managerFactory = managerFactory;
     }
     
-    public IHandler<TK, TV> CreateHandler<TK, TV>(FeedbackEmitter<TK, TV> emitter, Action<TV> statusReport) where TV : Entity<TK>, new() where TK : notnull
+    public ICommandHandler<TK, TV> CreateHandler<TK, TV>(FeedbackEmitter<TK, TV> emitter, Action<TV> statusReport) where TV : Entity<TK>, new() where TK : notnull
     {
         IManager<TK, TV> manager = _managerFactory.CreateManager<TK, TV>();
-        Handler<TK, TV> handler = new Handler<TK, TV>(manager, emitter, statusReport);
-        return handler;
+        CommandHandler<TK, TV> commandHandler = new CommandHandler<TK, TV>(manager, emitter, statusReport);
+        return commandHandler;
     }
 }
 

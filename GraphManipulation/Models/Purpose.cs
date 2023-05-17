@@ -1,5 +1,3 @@
-using GraphManipulation.Models.Base;
-
 namespace GraphManipulation.Models;
 
 public class Purpose : Entity<string>
@@ -11,26 +9,15 @@ public class Purpose : Entity<string>
 
     public override string ToListing()
     {
-        return string.Join(", ", base.ToListing(), LegallyRequired is null ? "" : LegallyRequired,
-            "[ " + string.Join(", ", StorageRules is null ? new List<string>() : StorageRules.Select(c => c.ToListingIdentifier())) + " ]",
-            "[ " + string.Join(", ", PersonalDataColumns is null ? new List<string>() : PersonalDataColumns.Select(c => c.ToListingIdentifier())) + " ]",
-            "[ " + string.Join(", ", Rules is null ? new List<string>() : Rules.Select(r => r.ToListingIdentifier())) + " ]"
-        );
+        return string.Join(ToListingSeparator, base.ToListing(),
+            NullToString(LegallyRequired),
+            ListNullOrEmptyToString(StorageRules),
+            ListNullOrEmptyToString(PersonalDataColumns),
+            ListNullOrEmptyToString(Rules));
     }
     
-    // public override void Fill(object? other)
-    // {
-    //     if (other is null || other.GetType() != typeof(Purpose))
-    //     {
-    //         return;
-    //     }
-    //     
-    //     base.Fill(other);
-    //
-    //     var otherPurpose = (other as Purpose)!;
-    //     
-    //     otherPurpose.PersonalDataColumns ??= PersonalDataColumns;
-    //     otherPurpose.DeleteConditions ??= DeleteConditions;
-    //     otherPurpose.Rules ??= Rules;
-    // }
+    public override string ToListingHeader()
+    {
+        return string.Join(ToListingSeparator, base.ToListingHeader(), "Legally Required", "Storage Rules", "Personal Data Columns", "Vacuuming Rules");
+    }
 }

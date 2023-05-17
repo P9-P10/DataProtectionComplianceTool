@@ -1,10 +1,9 @@
 using System.CommandLine;
-using GraphManipulation.Commands.Builders.Binders;
-using GraphManipulation.Commands.Factories;
-using GraphManipulation.Commands.Helpers;
+using GraphManipulation.Commands.Binders;
+using GraphManipulation.Factories;
 using GraphManipulation.Managers;
-using GraphManipulation.Managers.Interfaces;
 using GraphManipulation.Models;
+using GraphManipulation.Utility;
 
 namespace GraphManipulation.Commands.Builders;
 
@@ -70,12 +69,12 @@ public class ProcessingsCommandBuilder : BaseCommandBuilder<string, Processing>
     {
         if (processing.Purpose is null)
         {
-            Emitter.EmitMissing<string, Purpose>(processing.Key!);
+            FeedbackEmitter.EmitMissing<string, Purpose>(processing.Key!);
         }
 
         if (processing.PersonalDataColumn is null)
         {
-            Emitter.EmitMissing<TableColumnPair, PersonalDataColumn>(processing.Key!);
+            FeedbackEmitter.EmitMissing<TableColumnPair, PersonalDataColumn>(processing.Key!);
         }
     }
 

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using GraphManipulation.Commands;
-using GraphManipulation.Commands.Factories;
-using GraphManipulation.Commands.Helpers;
+using GraphManipulation.Factories;
 using GraphManipulation.Logging;
-using GraphManipulation.Managers.Interfaces;
+using GraphManipulation.Managers;
 using GraphManipulation.Models;
-using GraphManipulation.Models.Base;
+using GraphManipulation.Utility;
 using GraphManipulation.Vacuuming;
 using Moq;
 using Xunit;

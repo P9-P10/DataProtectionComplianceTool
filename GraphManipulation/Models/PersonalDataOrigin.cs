@@ -1,6 +1,4 @@
-﻿using GraphManipulation.Models.Base;
-
-namespace GraphManipulation.Models;
+﻿namespace GraphManipulation.Models;
 
 public class PersonalDataOrigin : Entity<int>
 {
@@ -10,9 +8,14 @@ public class PersonalDataOrigin : Entity<int>
 
     public override string ToListing()
     {
-        return base.ToListing() + "(" + string.Join(", ", 
-            Individual?.ToListingIdentifier(), 
-            PersonalDataColumn?.ToListingIdentifier(),
-            Origin?.ToListingIdentifier()) + ")";
+        return base.ToListing() + "(" + string.Join(ToListingSeparator,
+            NullToString(Individual),
+            NullToString(PersonalDataColumn),
+            NullToString(Origin)) + ")";
+    }
+    
+    public override string ToListingHeader()
+    {
+        return string.Join(ToListingSeparator, base.ToListingHeader(), "Individual", "Personal Data Column", "Origin");
     }
 }

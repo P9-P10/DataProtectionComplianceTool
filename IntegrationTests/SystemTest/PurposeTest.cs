@@ -19,9 +19,9 @@ public class PurposeTest : TestResources
 
         error.Should().BeEmpty();
         output.Should().ContainSingle(s => 
-            s.Contains($"Successfully created {TestPurpose.Key} purpose"));
+            s.Contains($"Purpose '{TestPurpose.Key}' successfully created"));
         output.Should().ContainSingle(s =>
-            s.Contains($"Successfully updated {TestPurpose.Key} purpose with {TestPurpose.ToListing()}"));
+            s.Contains($"Purpose '{TestPurpose.Key}' successfully updated with {TestPurpose.ToListing()}"));
     }
 
     [Fact]
@@ -95,6 +95,7 @@ public class PurposeTest : TestResources
         
         error.Should().BeEmpty();
         output.Should().ContainSingle(s => 
-            s.Contains($"Successfully deleted {TestPurpose.Key} purpose"));
+            s.Contains($"Purpose '{TestPurpose.Key}' successfully deleted"));
+        
     }
 }

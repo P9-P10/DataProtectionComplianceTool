@@ -1,6 +1,6 @@
 using System.CommandLine;
-using GraphManipulation.Commands.Helpers;
-using GraphManipulation.Helpers;
+using GraphManipulation.Managers;
+using GraphManipulation.Utility;
 
 namespace GraphManipulation.Commands.Builders;
 
