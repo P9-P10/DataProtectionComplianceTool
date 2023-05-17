@@ -3,15 +3,16 @@ using System.Data.SQLite;
 using System.Text;
 using Dapper;
 using GraphManipulation.Commands;
-using GraphManipulation.Commands.Factories;
 using GraphManipulation.DataAccess;
-using GraphManipulation.DataAccess.Mappers;
-using GraphManipulation.Helpers;
+using GraphManipulation.Decorators;
+using GraphManipulation.Factories;
+using GraphManipulation.Factories.Interfaces;
 using GraphManipulation.Logging;
+using GraphManipulation.Managers;
 using GraphManipulation.Models;
+using GraphManipulation.Utility;
 using GraphManipulation.Vacuuming;
 using Microsoft.EntityFrameworkCore;
-
 namespace GraphManipulation;
 
 public class TestProgram
