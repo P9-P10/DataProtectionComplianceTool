@@ -1,4 +1,6 @@
 ﻿using FluentAssertions;
+using GraphManipulation.Models;
+using GraphManipulation.Utility;
 using IntegrationTests.SystemTest.Tools;
 
 namespace IntegrationTests.SystemTest;
@@ -6,51 +8,29 @@ namespace IntegrationTests.SystemTest;
 public class PersonalDataOriginsTest : TestResources
 {
     [Fact]
-    public void PersonalDataCanSetOriginForAnIndividual()
+    public void PersonalDataOriginCanSetOriginForAnIndividual()
     {
-        using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
+        using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
-        process.AwaitReady();
 
-        SetupTestData(dbConnection);
-
-
+        CreateIndividual(process, TestIndividual1);
         AddStorageRule(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
         AddOrigin(process, TestOrigin);
-        SetOriginOfPersonalData(process, TestPersonalDataColumn, TestIndividual1, TestOrigin);
+        CreatePersonalDataOrigin(process, 1, TestPersonalDataColumn, TestIndividual1, TestOrigin);
 
         var error = process.GetAllErrorsNoWhitespace();
-        var output = process.GetAllOutputNoWhitespace().ToList();
+        var output = process.GetLastOutputNoWhitespaceOrPrompt().ToList();
 
         error.Should().BeEmpty();
-        output.Should().ContainSingle(s => s.Contains($"Successfully completed set operation using " +
-                                                      $"{TestPersonalDataColumn.ToListingIdentifier()}, " +
-                                                      $"{TestIndividual1.ToListing()}, " +
-                                                      $"{TestOrigin.ToListingIdentifier()}"));
-    }
-
-    [Fact]
-    public void PersonalDataCanShowOriginForAnIndividual()
-    {
-        using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
-        process.Start();
-        process.AwaitReady();
-
-        SetupTestData(dbConnection);
-
-        AddStorageRule(process, TestStorageRule);
-        AddPurpose(process, TestPurpose);
-        AddPersonalData(process, TestPersonalDataColumn);
-        AddOrigin(process, TestOrigin);
-        SetOriginOfPersonalData(process, TestPersonalDataColumn, TestIndividual1, TestOrigin);
-        ShowOriginOfPersonalData(process, TestPersonalDataColumn, TestIndividual1);
-
-        var error = process.GetAllErrorsNoWhitespace();
-        var output = process.GetAllOutputNoWhitespace();
-
-        error.Should().BeEmpty();
-        output.Should().ContainSingle(s => s.Contains(TestOrigin.ToListing()));
+        output.Should().ContainSingle(s =>
+            s == FeedbackEmitterMessage.SuccessMessage<int, PersonalDataOrigin>(1, SystemOperation.Operation.Created,
+                null));
+        output.Should().ContainSingle(s => s == FeedbackEmitterMessage.SuccessMessage(1,
+            SystemOperation.Operation.Updated, new PersonalDataOrigin
+            {
+                Key = 1, Individual = TestIndividual1, Origin = TestOrigin, PersonalDataColumn = TestPersonalDataColumn
+            }));
     }
 }

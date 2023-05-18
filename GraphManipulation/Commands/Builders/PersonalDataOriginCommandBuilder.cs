@@ -29,7 +29,7 @@ public class PersonalDataOriginCommandBuilder : BaseCommandBuilder<int, Personal
         var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<PersonalDataOrigin>();
 
         var individualOption = OptionBuilder
-            .CreateOption<int?>(OptionNamer.Individual)
+            .CreateOption<int>(OptionNamer.Individual)
             .WithAlias(OptionNamer.IndividualAlias)
             .WithDescription("The id of the individual, whose personal data is getting an origin");
         

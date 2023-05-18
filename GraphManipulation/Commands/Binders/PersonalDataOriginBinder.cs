@@ -10,7 +10,7 @@ namespace GraphManipulation.Commands.Binders;
 public class PersonalDataOriginBinder : BaseBinder<int, PersonalDataOrigin>
 {
     
-    private readonly Option<int?> _individualOption;
+    private readonly Option<int> _individualOption;
     private readonly Option<TableColumnPair> _tableColumnOption;
     private readonly Option<string> _originOption;
     private readonly IManager<int, Individual> _individualsManager;
@@ -20,7 +20,7 @@ public class PersonalDataOriginBinder : BaseBinder<int, PersonalDataOrigin>
     
     public PersonalDataOriginBinder(
         Option<int> keyOption, 
-        Option<int?> individualOption,
+        Option<int> individualOption,
         Option<string> descriptionOption, 
         Option<TableColumnPair> tableColumnOption, 
         Option<string> originOption, 
@@ -43,7 +43,7 @@ public class PersonalDataOriginBinder : BaseBinder<int, PersonalDataOrigin>
         if (bindingContext.ParseResult.HasOption(_individualOption))
         {
             var individual = bindingContext.ParseResult.GetValueForOption(_individualOption);
-            pdo.Individual = individual is null ? null : Handlers.HandleMustExist(individual.Value, _individualsManager);
+            pdo.Individual = Handlers.HandleMustExist(individual, _individualsManager);
         }
 
         if (bindingContext.ParseResult.HasOption(_tableColumnOption))

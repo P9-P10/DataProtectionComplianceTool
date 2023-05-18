@@ -153,7 +153,7 @@ public class LoggingTest : TestResources
             process.Start();
             process.AwaitReady();
 
-            SetupTestData(dbConnection);
+            SetupTestData(dbConnection, process);
 
             AddStorageRule(process, TestStorageRule);
             AddPurpose(process, TestPurpose);

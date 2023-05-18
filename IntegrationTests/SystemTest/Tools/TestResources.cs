@@ -379,13 +379,14 @@ public class TestResources
         testProcess.GiveInput(command);
     }
 
-    protected static void SetOriginOfPersonalData(TestProcess testProcess, PersonalDataColumn personalDataColumn,
+    protected static void CreatePersonalDataOrigin(TestProcess testProcess, int id, PersonalDataColumn personalDataColumn,
         Individual individual, Origin origin)
     {
-        var command = $"{CommandNamer.PersonalDataColumnsAlias} {CommandNamer.SetOriginAlias} " +
+        var command = $"{CommandNamer.PersonalDataOriginsName} {CommandNamer.Create} " +
+                      $"{OptionNamer.Id} {id} " +
                       $"{OptionNamer.TableColumn} {personalDataColumn.Key.TableName} " +
                       $"{personalDataColumn.Key.ColumnName} " +
-                      $"{OptionNamer.Id} {individual.ToListing()} " +
+                      $"{OptionNamer.Individual} {individual.Key} " +
                       $"{OptionNamer.Origin} {origin.Key}";
 
         testProcess.GiveInput(command);
@@ -517,10 +518,10 @@ public class TestResources
         testProcess.GiveInput(command);
     }
 
-    protected static void InsertIndividual(IDbConnection dbConnection, Individual individual)
+    protected static void CreateIndividual(TestProcess testProcess, Individual individual)
     {
-        dbConnection.Execute(
-            $"INSERT INTO {IndividualsTable} ({IndividualsColumn}, Key) VALUES ({individual.Id}, {individual.Key})");
+        var command = $"{CommandNamer.IndividualsName} {CommandNamer.Create} {OptionNamer.Id} {individual.Key}";
+        testProcess.GiveInput(command);
     }
 
     protected static void CreatePersonalDataTable(IDbConnection dbConnection, PersonalDataColumn personalDataColumn)
@@ -542,11 +543,11 @@ public class TestResources
         dbConnection.Execute(query);
     }
 
-    protected static void SetupTestData(IDbConnection dbConnection)
+    protected static void SetupTestData(IDbConnection dbConnection, TestProcess testProcess)
     {
-        InsertIndividual(dbConnection, TestIndividual1);
-        InsertIndividual(dbConnection, TestIndividual2);
-        InsertIndividual(dbConnection, TestIndividual3);
+        CreateIndividual(testProcess, TestIndividual1);
+        CreateIndividual(testProcess, TestIndividual2);
+        CreateIndividual(testProcess, TestIndividual3);
 
         CreatePersonalDataTable(dbConnection, TestPersonalDataColumn);
 
