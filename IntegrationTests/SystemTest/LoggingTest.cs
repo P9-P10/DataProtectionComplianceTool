@@ -167,15 +167,18 @@ public class LoggingTest : TestResources
             ListLogs(process, constraints);
 
             var error = process.GetAllErrorsNoWhitespace();
-            var output = FormatOutputForLogTest(process.GetAllOutputNoWhitespaceOrPrompt());
+            var output = FormatOutputForLogTest(process.GetLastOutputNoWhitespaceOrPrompt()).ToList();
 
             error.Should().BeEmpty();
+            
+            output.Last().Should().NotContain("0");
+            output.Count.Should().Be(2);
+            
             var logEntry = output
-                .TakeLast(2)
                 .Take(1)
                 .Select(s => new Log(s))
                 .First();
-
+            
             logEntry.Subject.Should().Be(TestPersonalDataColumn.ToListingIdentifier());
             logEntry.LogType.Should().Be(LogType.Vacuuming);
             logEntry.Message.Should().Contain(

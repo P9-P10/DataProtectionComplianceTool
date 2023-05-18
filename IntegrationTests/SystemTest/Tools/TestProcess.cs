@@ -103,7 +103,10 @@ public class TestProcess : IDisposable
 
     public IEnumerable<string> GetAllOutputNoWhitespaceOrPrompt()
     {
-        return GetAllOutputNoWhitespace().Select(s => s.Replace(CommandLineInterface.Prompt, ' ').Trim());
+        return GetAllOutput()
+            .Select(s => s.Replace(CommandLineInterface.Prompt, ' '))
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .Select(s => s.Trim());
     }
 
     public IEnumerable<string> GetLastOutputNoWhitespace()
@@ -113,7 +116,10 @@ public class TestProcess : IDisposable
 
     public IEnumerable<string> GetLastOutputNoWhitespaceOrPrompt()
     {
-        return GetLastOutputNoWhitespace().Select(s => s.Replace(CommandLineInterface.Prompt, ' ').Trim());
+        return GetLastOutput()
+            .Select(s => s.Replace(CommandLineInterface.Prompt, ' '))
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .Select(s => s.Trim());
     }
 
     public List<string> GetLastOutput()

@@ -196,8 +196,8 @@ public class VacuumingRulesTest : TestResources
         error.Should().BeEmpty();
 
         output.Should().ContainSingle(s =>
-            s == FeedbackEmitterMessage.SuccessMessage<string, VacuumingRule>(TestVacuumingRule.Key!,
-                SystemOperation.Operation.Executed, null));
+            s == FeedbackEmitterMessage.ResultMessage<string, VacuumingRule>(TestVacuumingRule.Key!,
+                SystemOperation.Operation.Executed, null, null));
     }
     
     [Fact]
