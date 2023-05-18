@@ -7,6 +7,7 @@ public class Vacuumer : IVacuumer
 {
     private readonly IMapper<Purpose> _purposeMapper;
     private readonly IQueryExecutor _queryExecutor;
+    private readonly IMapper<PersonalDataColumn> _personalDataColumnMapper;
 
 
     public Vacuumer(IMapper<Purpose> purposeMapper, IQueryExecutor queryExecutor)
@@ -17,13 +18,45 @@ public class Vacuumer : IVacuumer
 
     public IEnumerable<DeletionExecution> GenerateUpdateStatement(string predefinedExpirationDate = "")
     {
-        List<DeletionExecution> output = new List<DeletionExecution>();
-        foreach (var purpose in _purposeMapper.Find(_ => true))
+        List<StorageRule> allStorageRules = _purposeMapper.Find(_ => true)
+            .Where(p => p.StorageRules != null)
+            .SelectMany(p => p.StorageRules)
+            .Where(sr => sr.PersonalDataColumn != null)
+            .ToList();
+
+        // Get all unique columns
+        // Gets them via StorageRules
+        // Could be done more directly using a Mapper for PersonalDataColumn
+        List<PersonalDataColumn> allColumns = allStorageRules.Select(rule => rule.PersonalDataColumn)
+            .GroupBy(column => column.Key).Select(y => y.First()).ToList();
+
+        List<DeletionExecution> deletionExecutions = new List<DeletionExecution>();
+        foreach (PersonalDataColumn personalDataColumn in allColumns)
         {
-            output.AddRange(CreateExecutionsFromPurpose(purpose));
+            var deletionExecution = new DeletionExecution();
+            
+            var columnRules = allStorageRules.Where(rule => rule.PersonalDataColumn.Equals(personalDataColumn));
+
+            // Set execution purposes to the purposes of all the rules for the PersonalDataColumn
+            deletionExecution.SetPurposesFromRules(columnRules);
+            
+            // This is the more direct way of adding purposes
+            // But unit tests do not define PersonalDataColumns for purposes
+            
+            // Set execution purposes to all purposes for the PersonalDataColumn
+            //deletionExecution.Purposes = allPurposes
+            //    .Where(purpose => purpose.PersonalDataColumns
+            //        .Contains(personalDataColumn))
+            //    .ToList();
+
+            deletionExecution.CreateQuery(personalDataColumn, columnRules);
+
+            deletionExecution.SetTableAndColum(personalDataColumn);
+            
+            deletionExecutions.Add(deletionExecution);
         }
 
-        return output;
+        return deletionExecutions;
     }
 
 
@@ -32,7 +65,8 @@ public class Vacuumer : IVacuumer
         List<DeletionExecution> output = new List<DeletionExecution>();
         foreach (var storageRule in purpose.StorageRules ?? new List<StorageRule>())
         {
-            AddConditionIfNotExists(output, storageRule, purpose);
+            var uniqueExecutions = UniqueExecutions(output, storageRule, purpose);
+            output.AddRange(uniqueExecutions);
         }
 
         return output;
@@ -148,9 +182,12 @@ public class Vacuumer : IVacuumer
 
     private List<Purpose> GetAllPurposesWithSameTableColumnPair(PersonalDataColumn personalDataColumn)
     {
-        return _purposeMapper.Find(purpose => purpose.StorageRules.Any(storageRule =>
+        return _purposeMapper
+            .Find(purpose => purpose.StorageRules
+            .Any(storageRule =>
             storageRule.PersonalDataColumn.Key.Equals(personalDataColumn.Key)
-            && !personalDataColumn.Purposes.Contains(purpose))).ToList();
+            && !personalDataColumn.Purposes.Contains(purpose)))
+            .ToList();
     }
 
     private List<DeletionExecution> CreateDeletionExecutions(List<StorageRule> conditions, Purpose purpose)

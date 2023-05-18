@@ -77,7 +77,7 @@ public class VacuumerTest
         Assert.Contains(expectedQuery, testQueryExecutor.Query);
         Assert.Contains(executions, x => x.Purposes.Any(y => y.Key == firstName));
         Assert.Contains(executions, x => x.Purposes.Any(y => y.Key == secondName));
-        Assert.True(executions.Count == 2);
+        Assert.True(executions.Count == 1);
     }
 
     [Fact]
