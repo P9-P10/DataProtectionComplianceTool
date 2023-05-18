@@ -35,7 +35,7 @@ public class LoggingVacuumer : LoggingDecorator<string, VacuumingRule>, IVacuume
     private IEnumerable<DeletionExecution> ExecuteAndLog(Func<IEnumerable<DeletionExecution>> executeFunc)
     {
         var executions = executeFunc().ToList();
-        executions.ForEach(execution => LogExecute(execution.VacuumingRule.Key!));
+        executions.ForEach(execution => LogExecute(execution.VacuumingRule.Key));
         
         CreateDeletionExecutionLogs(executions).ToList().ForEach(_logger.Append);
         return executions;

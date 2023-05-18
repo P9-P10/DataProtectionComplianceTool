@@ -115,8 +115,12 @@ public class Vacuumer : IVacuumer
                     return executions;
                 }
 
-                executions.AddRange(purpose.StorageRules.Select(storageRule =>
-                    ExecutionFromStorageRule(storageRule, purpose, rule)));
+                var execs = purpose.StorageRules
+                    .Select(storageRule => ExecutionFromStorageRule(storageRule, purpose, rule))
+                    .Where(e => e != null)
+                    .Select(e => e!);
+                
+                executions.AddRange(execs);
             }
 
             CleanupStatement(executions, " AND");
@@ -127,15 +131,15 @@ public class Vacuumer : IVacuumer
         return executions;
     }
 
-    private DeletionExecution ExecutionFromStorageRule(StorageRule storageRule, Purpose purpose, VacuumingRule rule)
+    private DeletionExecution? ExecutionFromStorageRule(StorageRule storageRule, Purpose purpose, VacuumingRule rule)
     {
         DeletionExecution execution = new();
-        if (storageRule.PersonalDataColumn == null || storageRule.PersonalDataColumn.Key == null)
+        if (storageRule.PersonalDataColumn?.Key == null)
         {
+            _storageRuleFeedbackEmitter.EmitMissing<PersonalDataColumn>(storageRule.Key);
             return null;
         }
-
-
+        
         List<StorageRule> rulesWithSameTableColumn = RulesWithSameTableColumn(storageRule);
 
         execution.CreateQuery(storageRule.PersonalDataColumn, rulesWithSameTableColumn);
@@ -151,7 +155,7 @@ public class Vacuumer : IVacuumer
         return _purposeMapper.Find(p =>
                 p.StorageRules != null && p.StorageRules.Any(s =>
                     s.PersonalDataColumn is {Key: not null} &&
-                    s.PersonalDataColumn.Key.Equals(storageRule.PersonalDataColumn.Key)))
+                    s.PersonalDataColumn.Equals(storageRule.PersonalDataColumn)))
             .SelectMany(HasSameTableColumn(storageRule)).ToList();
     }
 
