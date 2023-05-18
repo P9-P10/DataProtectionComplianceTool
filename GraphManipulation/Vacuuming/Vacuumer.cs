@@ -89,38 +89,40 @@ public class Vacuumer : IVacuumer
     /// </summary>
     /// <param name="vacuumingRules"></param>
     /// <returns></returns>
-    public IEnumerable<DeletionExecution> ExecuteVacuumingRules(IEnumerable<VacuumingRule> vacuumingRules)
+    public IEnumerable<DeletionExecution> ExecuteVacuumingRuleList(IEnumerable<VacuumingRule> vacuumingRules)
     {
-        List<DeletionExecution> executions = new List<DeletionExecution>();
+        return vacuumingRules.SelectMany(ExecuteVacuumingRule);
+    }
 
-        foreach (VacuumingRule rule in vacuumingRules)
+    public IEnumerable<DeletionExecution> ExecuteVacuumingRule(VacuumingRule vacuumingRule)
+    {
+        var executions = new List<DeletionExecution>();
+
+        if (vacuumingRule.Purposes is null || !vacuumingRule.Purposes.Any())
         {
-            if (rule.Purposes is null || !rule.Purposes.Any())
-            {
-                _vacuumingRuleFeedbackEmitter.EmitMissing<Purpose>(rule.Key);
-                return executions;
-            }
-
-            foreach (var purpose in rule.Purposes)
-            {
-                if (purpose.StorageRules is null || !purpose.StorageRules.Any())
-                {
-                    _purposeFeedbackEmitter.EmitMissing<StorageRule>(purpose.Key);
-                    continue;
-                }
-
-                var execs = purpose.StorageRules
-                    .Select(storageRule => ExecutionFromStorageRule(storageRule, purpose, rule))
-                    .Where(e => e != null)
-                    .Select(e => e!);
-                
-                executions.AddRange(execs);
-            }
-
-           
+            _vacuumingRuleFeedbackEmitter.EmitMissing<Purpose>(vacuumingRule.Key);
+            return new List<DeletionExecution>();;
         }
+        
+        foreach (var purpose in vacuumingRule.Purposes)
+        {
+            if (purpose.StorageRules is null || !purpose.StorageRules.Any())
+            {
+                _purposeFeedbackEmitter.EmitMissing<StorageRule>(purpose.Key);
+                continue;
+            }
+
+            var execs = purpose.StorageRules
+                .Select(storageRule => ExecutionFromStorageRule(storageRule, purpose, vacuumingRule))
+                .Where(e => e != null)
+                .Select(e => e!);
+                
+            executions.AddRange(execs);
+        }
+        
         CleanupStatement(executions, " AND");
         ExecuteConditions(executions);
+
         return executions;
     }
 

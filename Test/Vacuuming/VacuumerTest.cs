@@ -163,7 +163,7 @@ public class VacuumerTest
         vr.Purposes = vr.Purposes.Append(purpose);
 
         List<DeletionExecution> executions =
-            vacuumer.ExecuteVacuumingRules(new List<VacuumingRule> { vr}).ToList();
+            vacuumer.ExecuteVacuumingRuleList(new List<VacuumingRule> { vr}).ToList();
         const string expectedQuery = "UPDATE Table SET Column = 'Null' WHERE (Condition);";
         const string secondExpectedQuery = "UPDATE SecondTable SET Column = 'Null' WHERE (SecondCondition);";
         Assert.Contains(expectedQuery, testQueryExecutor.Query);
