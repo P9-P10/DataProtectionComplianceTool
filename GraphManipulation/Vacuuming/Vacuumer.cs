@@ -136,11 +136,7 @@ public class Vacuumer : IVacuumer
         }
 
         execution.Query = CreateUpdateQuery(storageRule.PersonalDataColumn);
-        List<StorageRule> rulesWithSameTableColumn = _purposeMapper.Find(p =>
-                p.StorageRules != null && p.StorageRules.Any(s =>
-                    s.PersonalDataColumn is {Key: not null} &&
-                    s.PersonalDataColumn.Key.Equals(storageRule.PersonalDataColumn.Key)))
-            .SelectMany(HasSameTableColumn(storageRule)).ToList();
+        List<StorageRule> rulesWithSameTableColumn = RulesWithSameTableColumn(storageRule);
 
         foreach (var currentStorageRule in rulesWithSameTableColumn)
         {
@@ -152,6 +148,15 @@ public class Vacuumer : IVacuumer
         execution.VacuumingRule = rule;
         execution.SetPurposesFromRules(rulesWithSameTableColumn);
         return execution;
+    }
+
+    private List<StorageRule> RulesWithSameTableColumn(StorageRule storageRule)
+    {
+        return _purposeMapper.Find(p =>
+                p.StorageRules != null && p.StorageRules.Any(s =>
+                    s.PersonalDataColumn is {Key: not null} &&
+                    s.PersonalDataColumn.Key.Equals(storageRule.PersonalDataColumn.Key)))
+            .SelectMany(HasSameTableColumn(storageRule)).ToList();
     }
 
     private static Func<Purpose, IEnumerable<StorageRule>> HasSameTableColumn(StorageRule storageRule)
