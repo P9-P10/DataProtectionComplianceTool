@@ -121,8 +121,12 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
                 foreach (var rule in rules)
                 {
                     Console.WriteLine($"Executing {rule.ToListingIdentifier()}...");
-                    _vacuumer.ExecuteVacuumingRules(new[] { rule });
-                    FeedbackEmitter.EmitSuccess(rule.Key!, SystemOperation.Operation.Executed);
+                    var executions = _vacuumer.ExecuteVacuumingRules(new[] { rule });
+                    if (!executions.Any())
+                    {
+                        FeedbackEmitter.EmitMessage($"{rule.ToListingIdentifier()} had no effect");
+                    }
+                    FeedbackEmitter.EmitResult(rule.Key!, SystemOperation.Operation.Executed);
                 }
             });
     }
