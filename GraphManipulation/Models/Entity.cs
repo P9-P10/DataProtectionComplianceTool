@@ -52,7 +52,7 @@ public class Entity<TKey> : DomainEntity
 
     protected static string ToListingSeparator => ", ";
 
-    public virtual string ToListingIdentifier()
+    public string ToListingIdentifier()
     {
         return Key?.ToString() ?? "No key";
     }

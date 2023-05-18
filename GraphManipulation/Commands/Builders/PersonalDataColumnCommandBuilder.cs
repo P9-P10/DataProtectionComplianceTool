@@ -68,7 +68,9 @@ public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPa
 
     protected override Option<TableColumnPair> BuildKeyOption()
     {
-        return OptionBuilder.CreateTableColumnPairOption();
+        return OptionBuilder.CreateTableColumnPairOption()
+            .WithDescription("The table and column in which the personal data is stored")
+            .WithIsRequired(true);
     }
 
     protected override void StatusReport(PersonalDataColumn column)
