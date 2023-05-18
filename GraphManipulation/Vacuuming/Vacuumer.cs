@@ -138,11 +138,7 @@ public class Vacuumer : IVacuumer
         execution.Query = CreateUpdateQuery(storageRule.PersonalDataColumn);
         List<StorageRule> rulesWithSameTableColumn = RulesWithSameTableColumn(storageRule);
 
-        foreach (var currentStorageRule in rulesWithSameTableColumn)
-        {
-            execution.Query += "(" + currentStorageRule.VacuumingCondition + ") AND";
-        }
-
+        execution.CreateQuery(storageRule.PersonalDataColumn, rulesWithSameTableColumn);
         execution.SetTableAndColum(storageRule.PersonalDataColumn);
         execution.AddPurpose(purpose);
         execution.VacuumingRule = rule;
@@ -165,7 +161,8 @@ public class Vacuumer : IVacuumer
         {
             if (p.StorageRules != null)
                 return p.StorageRules.Where(
-                    sr => storageRule.PersonalDataColumn is {Key: not null} && sr.PersonalDataColumn != null && storageRule.PersonalDataColumn != null &&
+                    sr => storageRule.PersonalDataColumn is {Key: not null} && sr.PersonalDataColumn != null &&
+                          storageRule.PersonalDataColumn != null &&
                           sr.PersonalDataColumn.Key != null && sr.PersonalDataColumn != null &&
                           sr.PersonalDataColumn.Key.Equals(storageRule.PersonalDataColumn.Key));
             return new List<StorageRule>();
