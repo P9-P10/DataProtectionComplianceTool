@@ -1,5 +1,6 @@
 using GraphManipulation.DataAccess;
 using GraphManipulation.Models;
+using GraphManipulation.Utility;
 
 namespace GraphManipulation.Vacuuming;
 
@@ -7,12 +8,18 @@ public class Vacuumer : IVacuumer
 {
     private readonly IMapper<Purpose> _purposeMapper;
     private readonly IQueryExecutor _queryExecutor;
+    private readonly FeedbackEmitter<string, VacuumingRule> _vacuumingRuleFeedbackEmitter;
+    private readonly FeedbackEmitter<string, Purpose> _purposeFeedbackEmitter;
+    private readonly FeedbackEmitter<string, StorageRule> _storageRuleFeedbackEmitter;
 
 
     public Vacuumer(IMapper<Purpose> purposeMapper, IQueryExecutor queryExecutor)
     {
         _purposeMapper = purposeMapper;
         _queryExecutor = queryExecutor;
+        _vacuumingRuleFeedbackEmitter = new FeedbackEmitter<string, VacuumingRule>();
+        _purposeFeedbackEmitter = new FeedbackEmitter<string, Purpose>();
+        _storageRuleFeedbackEmitter = new FeedbackEmitter<string, StorageRule>();
     }
 
     public IEnumerable<DeletionExecution> GenerateUpdateStatement(string predefinedExpirationDate = "")
@@ -30,7 +37,14 @@ public class Vacuumer : IVacuumer
     private List<DeletionExecution> CreateExecutionsFromPurpose(Purpose purpose)
     {
         List<DeletionExecution> output = new List<DeletionExecution>();
-        foreach (var storageRule in purpose.StorageRules ?? new List<StorageRule>())
+
+        if (purpose.StorageRules is null || !purpose.StorageRules.Any())
+        {
+            _purposeFeedbackEmitter.EmitMissing<StorageRule>(purpose.Key);
+            return output;
+        }
+        
+        foreach (var storageRule in purpose.StorageRules)
         {
             AddConditionIfNotExists(output, storageRule, purpose);
         }
@@ -38,38 +52,39 @@ public class Vacuumer : IVacuumer
         return output;
     }
 
-    private void AddConditionIfNotExists(List<DeletionExecution> output, StorageRule condition, Purpose purpose)
+    private void AddConditionIfNotExists(List<DeletionExecution> output, StorageRule storageRule, Purpose purpose)
     {
-        var uniqueExecutions = UniqueExecutions(output, condition, purpose);
+        var uniqueExecutions = UniqueExecutions(output, storageRule, purpose);
         output.AddRange(uniqueExecutions);
     }
 
-    private IEnumerable<DeletionExecution> UniqueExecutions(List<DeletionExecution> output, StorageRule condition,
+    private IEnumerable<DeletionExecution> UniqueExecutions(List<DeletionExecution> output, StorageRule storageRule,
         Purpose purpose)
     {
-        if (condition.PersonalDataColumn is null)
+        if (storageRule.PersonalDataColumn is null)
         {
+            _storageRuleFeedbackEmitter.EmitMissing<PersonalDataColumn>(storageRule.Key);
             return new List<DeletionExecution>();
         }
         
         return CreateDeletionExecutions(
-                DeleteConditionsWithSameTableColumnPair(condition.PersonalDataColumn), purpose)
+                DeleteConditionsWithSameTableColumnPair(storageRule.PersonalDataColumn), purpose)
             .Where(execution => !output.Contains(execution));
     }
 
 
-    private static string AppendConditions(StorageRule condition, string logicOperator,
+    private static string AppendConditions(StorageRule storageRule, string logicOperator,
         DeletionExecution deletionExecution, Purpose purpose)
     {
-        string conditionalStatement = CreateConditionalStatement(condition, logicOperator);
+        string conditionalStatement = CreateConditionalStatement(storageRule, logicOperator);
         deletionExecution.AddPurpose(purpose);
 
         return conditionalStatement;
     }
 
-    private static string CreateConditionalStatement(StorageRule condition, string logicOperator)
+    private static string CreateConditionalStatement(StorageRule storageRule, string logicOperator)
     {
-        string conditionalStatement = $"({condition.VacuumingCondition})";
+        string conditionalStatement = $"({storageRule.VacuumingCondition})";
         conditionalStatement += logicOperator;
         return conditionalStatement;
     }
@@ -126,7 +141,13 @@ public class Vacuumer : IVacuumer
     {
         List<DeletionExecution> executions = new List<DeletionExecution>();
         
-        foreach (var purpose in vacuumingRule.Purposes ?? new List<Purpose>())
+        if (vacuumingRule.Purposes is null || !vacuumingRule.Purposes.Any())
+        {
+            _vacuumingRuleFeedbackEmitter.EmitMissing<Purpose>(vacuumingRule.Key);
+            return executions;
+        }
+        
+        foreach (var purpose in vacuumingRule.Purposes)
         {
             executions.AddRange(CreateExecutionsFromPurpose(purpose));
         }
@@ -153,12 +174,12 @@ public class Vacuumer : IVacuumer
             && !personalDataColumn.Purposes.Contains(purpose))).ToList();
     }
 
-    private List<DeletionExecution> CreateDeletionExecutions(List<StorageRule> conditions, Purpose purpose)
+    private List<DeletionExecution> CreateDeletionExecutions(List<StorageRule> storageRules, Purpose purpose)
     {
         List<DeletionExecution> output = new List<DeletionExecution>();
         var logicOperator = " AND ";
 
-        foreach (StorageRule storageRule in conditions)
+        foreach (StorageRule storageRule in storageRules)
         {
             DeletionExecution? execution = output.Find(HasSameTableColumnPair(storageRule));
             if (execution != null)
@@ -176,29 +197,29 @@ public class Vacuumer : IVacuumer
         return output;
     }
 
-    private static Predicate<DeletionExecution> HasSameTableColumnPair(StorageRule condition)
+    private static Predicate<DeletionExecution> HasSameTableColumnPair(StorageRule storageRule)
     {
         return deleteExecution =>
-            deleteExecution.Table == condition.PersonalDataColumn.Key.TableName &&
-            deleteExecution.Column == condition.PersonalDataColumn.Key.ColumnName;
+            deleteExecution.Table == storageRule.PersonalDataColumn.Key.TableName &&
+            deleteExecution.Column == storageRule.PersonalDataColumn.Key.ColumnName;
     }
 
-    private static void UpdateExecution(DeletionExecution execution, StorageRule condition, string logicOperator,
+    private static void UpdateExecution(DeletionExecution execution, StorageRule storageRule, string logicOperator,
         Purpose purpose)
     {
-        execution.Query += AppendConditions(condition, logicOperator, execution, purpose);
+        execution.Query += AppendConditions(storageRule, logicOperator, execution, purpose);
     }
 
-    private static void AddExecution(StorageRule condition, string logicOperator, List<DeletionExecution> output,
+    private static void AddExecution(StorageRule storageRule, string logicOperator, List<DeletionExecution> output,
         Purpose purpose)
     {
         DeletionExecution execution = new();
-        string updateQuery = CreateUpdateQuery(condition.PersonalDataColumn);
+        string updateQuery = CreateUpdateQuery(storageRule.PersonalDataColumn);
 
-        execution.Query += updateQuery + AppendConditions(condition, logicOperator, execution, purpose);
+        execution.Query += updateQuery + AppendConditions(storageRule, logicOperator, execution, purpose);
 
-        execution.Column = condition.PersonalDataColumn.Key.ColumnName;
-        execution.Table = condition.PersonalDataColumn.Key.TableName;
+        execution.Column = storageRule.PersonalDataColumn.Key.ColumnName;
+        execution.Table = storageRule.PersonalDataColumn.Key.TableName;
         output.Add(execution);
     }
 
