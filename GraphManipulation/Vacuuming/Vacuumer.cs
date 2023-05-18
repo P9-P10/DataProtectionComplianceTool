@@ -135,7 +135,7 @@ public class Vacuumer : IVacuumer
             return null;
         }
 
-        execution.Query = CreateUpdateQuery(storageRule.PersonalDataColumn);
+
         List<StorageRule> rulesWithSameTableColumn = RulesWithSameTableColumn(storageRule);
 
         execution.CreateQuery(storageRule.PersonalDataColumn, rulesWithSameTableColumn);
