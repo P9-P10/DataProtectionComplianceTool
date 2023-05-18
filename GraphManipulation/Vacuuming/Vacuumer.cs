@@ -66,12 +66,6 @@ public class Vacuumer : IVacuumer
         return deletionExecutions;
     }
 
-    private static string CreateUpdateQuery(PersonalDataColumn personalDataColumn)
-    {
-        return
-            $"UPDATE {personalDataColumn.Key.TableName} SET {personalDataColumn.Key.ColumnName} = '{personalDataColumn.DefaultValue}' WHERE ";
-    }
-
     public IEnumerable<DeletionExecution> Execute()
     {
         IEnumerable<DeletionExecution> executions = GenerateUpdateStatement();
@@ -112,7 +106,7 @@ public class Vacuumer : IVacuumer
                 if (purpose.StorageRules is null || !purpose.StorageRules.Any())
                 {
                     _purposeFeedbackEmitter.EmitMissing<StorageRule>(purpose.Key);
-                    return executions;
+                    continue;
                 }
 
                 var execs = purpose.StorageRules
@@ -123,11 +117,10 @@ public class Vacuumer : IVacuumer
                 executions.AddRange(execs);
             }
 
-            CleanupStatement(executions, " AND");
-            ExecuteConditions(executions);
-            return executions;
+           
         }
-
+        CleanupStatement(executions, " AND");
+        ExecuteConditions(executions);
         return executions;
     }
 
