@@ -1,6 +1,8 @@
 using FluentAssertions;
 using GraphManipulation.Commands;
 using GraphManipulation.Logging;
+using GraphManipulation.Models;
+using GraphManipulation.Utility;
 using IntegrationTests.SystemTest.Tools;
 
 namespace IntegrationTests.SystemTest;
@@ -172,16 +174,22 @@ public class LoggingTest : TestResources
             error.Should().BeEmpty();
             
             output.Last().Should().NotContain("0");
-            output.Count.Should().Be(2);
-            
-            var logEntry = output
-                .Take(1)
+            output.Count.Should().Be(3);
+
+            var logEntries = output
+                .Take(2)
                 .Select(s => new Log(s))
-                .First();
+                .ToList();
+
+            logEntries[0].Subject.Should().Be(TestVacuumingRule.ToListingIdentifier());
+            logEntries[0].LogType.Should().Be(LogType.Vacuuming);
+            logEntries[0].Message.Should()
+                .Contain(FeedbackEmitterMessage.ResultMessage<string, VacuumingRule>(TestVacuumingRule.Key,
+                    SystemOperation.Operation.Executed, null, null));
             
-            logEntry.Subject.Should().Be(TestPersonalDataColumn.ToListingIdentifier());
-            logEntry.LogType.Should().Be(LogType.Vacuuming);
-            logEntry.Message.Should().Contain(
+            logEntries[1].Subject.Should().Be(TestPersonalDataColumn.ToListingIdentifier());
+            logEntries[1].LogType.Should().Be(LogType.Vacuuming);
+            logEntries[1].Message.Should().Contain(
                 $"\"UPDATE {TestPersonalDataColumn.Key.TableName} " +
                 $"SET {TestPersonalDataColumn.Key.ColumnName} = \'{TestPersonalDataColumn.DefaultValue}\' " +
                 $"WHERE ({TestStorageRule.VacuumingCondition});\" " +

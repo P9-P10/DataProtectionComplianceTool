@@ -295,8 +295,8 @@ public class VacuumingRulesTest : TestResources
         ListLogs(process, new LogConstraints(logTypes: new [] { LogType.Vacuuming }));
         
         var logOutput = process.GetLastOutputNoWhitespaceOrPrompt().ToList();
-        logOutput.Should().Contain(FeedbackEmitterMessage.ResultMessage<string, VacuumingRule>(TestVacuumingRule.Key!,
-            SystemOperation.Operation.Executed, null, null));
+        logOutput.Should().Contain(s => s.Contains(FeedbackEmitterMessage.ResultMessage<string, VacuumingRule>(TestVacuumingRule.Key!,
+            SystemOperation.Operation.Executed, null, null)));
         logOutput.Should().Contain(s => 
             s.Contains("WHERE") && 
             s.Contains(TestStorageRule.VacuumingCondition) && 
