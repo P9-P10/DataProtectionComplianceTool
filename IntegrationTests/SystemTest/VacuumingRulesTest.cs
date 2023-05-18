@@ -283,6 +283,8 @@ public class VacuumingRulesTest : TestResources
         // Console should show that the vacuuming rule has been executed
         ExecuteVacuumingRule(process, new[] { TestVacuumingRule });
         
+        process.GetAllErrorsNoWhitespace().Should().BeEmpty();
+        
         var executeOutput = process.GetLastOutputNoWhitespaceOrPrompt().ToList();
         executeOutput.Should().ContainSingle(s =>
             s == FeedbackEmitterMessage.ResultMessage<string, VacuumingRule>(TestVacuumingRule.Key!,
@@ -302,8 +304,7 @@ public class VacuumingRulesTest : TestResources
             s.Contains(TestPersonalDataColumn.ToListingIdentifier()));
 
         // There should be no errors
-        var error = process.GetAllErrorsNoWhitespace();
-        error.Should().BeEmpty();
+        process.GetAllErrorsNoWhitespace().Should().BeEmpty();
 
         var result = dbConnection.Query<(string key, string column)>(
                 $"SELECT Id, {TestPersonalDataColumn.Key.ColumnName} " +
