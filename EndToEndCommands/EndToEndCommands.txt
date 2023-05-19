@@ -2,9 +2,10 @@ p c -n Marketing -d "Purpose for marketing" -lr false
 p c -n Bookkeeping -d "Purpose for bookeeping" -lr true
 pdc c -tc users name -d "Users name" -dv "Null" -ps Marketing Bookkeeping
 pdc c -tc newsletter email -d "newsletter email" -dv "Null" -ps Marketing Bookkeeping
-sr c -n MarketingUsers -d "Storage rule for marketing in" -tc users name -vc "EXISTS(SELECT * FROM Users as u WHERE u.Creation_date > datetime('now', '-2 year') AND users.id = u.id)" 
-sr c -n MarketingNewsletter -d "Storage rule for marketing in newsletters" -tc newsletter email -vc "EXISTS(SELECT n.id FROM newsletter as n JOIN users u on u.id = n.id WHERE ((u.Creation_date > datetime('now', '-2 year') and n.subscribed = 0) OR subscribed = 0) AND n.id == newsletter.id)"
-sr c -n BookkeepingUsers -d "Storage rule for bookeeping in newsletters" -tc users name -vc "EXISTS(SELECT u.id as uid, max(order_date) as expiration_date FROM orders JOIN users as u ON u.id = orderedBy WHERE u.id = users.id GROUP BY orderedBy HAVING expiration_date > datetime('now', '-5 year'))"
+sr c -n MarketingUsers -d "Storage rule for marketing in users name" -tc users name -vc "EXISTS(SELECT u.name FROM users u join newsletter n on u.id = n.id WHERE((u.Creation_date < datetime('now', '-2 year') and n.subscribed = 0) OR subscribed = 0) OR subscribed = 0 AND u.id == users.id)" 
+sr c -n MarketingNewsletter -d "Storage rule for marketing in newsletters" -tc newsletter email -vc "EXISTS(SELECT n.id FROM newsletter as n JOIN users u on u.id = n.id WHERE ((u.Creation_date < datetime('now', '-2 year') AND n.subscribed = 0) OR subscribed = 0) AND n.id == newsletter.id)"
+sr c -n BookkeepingUsers -d "Storage rule for bookeeping in newsletters" -tc users name -vc "EXISTS(SELECT u.id as uid, max(order_date) as expiration_date FROM orders JOIN users as u ON u.id = orderedBy WHERE u.id = users.id GROUP BY orderedBy HAVING expiration_date < datetime('now', '-5 year'))"
+sr c -n BookKeepingNewsletter -d "Storage rule for bookkeeping in newsletters" -tc newsletter email -vc "EXISTS(SELECT n.id, max(order_date) as expiration_date FROM newsletter as n JOIN users u on u.id = n.id JOIN orders o on u.id = o.orderedBy GROUP BY orderedBy HAVING expiration_date < datetime('now','-5 year'))"
 o c -n Collected -d "Data collected from the user"
 id c -i 1
 id c -i 2 
@@ -17,6 +18,7 @@ vr c -n BookkeepingVacuuming -d "Rule for vacuuming Marketing purpose" -ps Bookk
 p as -n Marketing -sr MarketingUsers
 p as -n Marketing -sr MarketingNewsletter
 p as -n Bookkeeping -sr BookkeepingUsers
+p as -n Bookkeeping -sr BookKeepingNewsletter
 vr e -rs MarketingVacuuming BookkeepingVacuuming
 
 
