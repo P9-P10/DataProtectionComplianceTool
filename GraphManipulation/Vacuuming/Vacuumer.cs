@@ -32,38 +32,27 @@ public class Vacuumer : IVacuumer
             .ToList();
 
         // Get all unique columns
-        // Gets them via StorageRules
-        // Could be done more directly using a Mapper for PersonalDataColumn
         List<PersonalDataColumn> allColumns = allStorageRules.Select(rule => rule.PersonalDataColumn)
             .GroupBy(column => column.Key).Select(y => y.First()).ToList();
 
         List<DeletionExecution> deletionExecutions = new List<DeletionExecution>();
         foreach (PersonalDataColumn personalDataColumn in allColumns)
         {
-            var deletionExecution = new DeletionExecution();
-
             var columnRules = allStorageRules.Where(rule => rule.PersonalDataColumn.Equals(personalDataColumn));
-
-            // Set execution purposes to the purposes of all the rules for the PersonalDataColumn
-            deletionExecution.SetPurposesFromRules(columnRules);
-
-            // This is the more direct way of adding purposes
-            // But unit tests do not define PersonalDataColumns for purposes
-
-            // Set execution purposes to all purposes for the PersonalDataColumn
-            //deletionExecution.Purposes = allPurposes
-            //    .Where(purpose => purpose.PersonalDataColumns
-            //        .Contains(personalDataColumn))
-            //    .ToList();
-
-            deletionExecution.CreateQuery(personalDataColumn, columnRules);
-
-            deletionExecution.SetTableAndColum(personalDataColumn);
-
-            deletionExecutions.Add(deletionExecution);
+            deletionExecutions.Add(CreateDeletionExecution(columnRules, personalDataColumn));
         }
 
         return deletionExecutions;
+    }
+
+    private DeletionExecution CreateDeletionExecution(IEnumerable<StorageRule> columnRules, PersonalDataColumn personalDataColumn)
+    {
+        var deletionExecution = new DeletionExecution();
+        // Set execution purposes to the purposes of all the rules for the PersonalDataColumn
+        deletionExecution.SetPurposesFromRules(columnRules);
+        deletionExecution.CreateQuery(personalDataColumn, columnRules);
+        deletionExecution.SetTableAndColum(personalDataColumn);
+        return deletionExecution;
     }
 
     public IEnumerable<DeletionExecution> Execute()
@@ -120,7 +109,6 @@ public class Vacuumer : IVacuumer
             executions.AddRange(execs);
         }
         
-        CleanupStatement(executions, " AND");
         ExecuteConditions(executions);
 
         return executions;
@@ -166,24 +154,5 @@ public class Vacuumer : IVacuumer
                           sr.PersonalDataColumn.Key.Equals(storageRule.PersonalDataColumn.Key));
             return new List<StorageRule>();
         };
-    }
-
-
-    private static void CleanupStatement(List<DeletionExecution> output, string logicOperator)
-    {
-        foreach (var execution in output)
-        {
-            execution.Query = ReplaceLastOccurrenceOfString(execution.Query, logicOperator);
-        }
-    }
-
-    private static string ReplaceLastOccurrenceOfString(string inputString, string occurrenceToReplace,
-        string replaceWith = ";")
-    {
-        var place = inputString.LastIndexOf(occurrenceToReplace, StringComparison.Ordinal);
-
-        return place == -1
-            ? inputString
-            : inputString.Remove(place, occurrenceToReplace.Length).Insert(place, replaceWith);
     }
 }
