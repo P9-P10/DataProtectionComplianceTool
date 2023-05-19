@@ -150,16 +150,14 @@ public class Vacuumer : IVacuumer
                 return new List<StorageRule>();
             
             return p.StorageRules.Where(
-                sr => AreValid(storageRule, sr) &&
+                sr => IsValid(sr) && IsValid(storageRule) &&
                       sr.PersonalDataColumn.Key.Equals(storageRule.PersonalDataColumn.Key));
 
         };
     }
 
-    private bool AreValid(StorageRule ruleOne, StorageRule ruleTwo)
+    private bool IsValid(StorageRule storageRule)
     {
-        return ruleOne.PersonalDataColumn is { Key: not null } && ruleTwo.PersonalDataColumn != null &&
-               ruleOne.PersonalDataColumn != null &&
-               ruleTwo.PersonalDataColumn.Key != null && ruleTwo.PersonalDataColumn != null;
+        return storageRule.PersonalDataColumn != null && storageRule.PersonalDataColumn.Key != null;
     }
 }
