@@ -142,17 +142,24 @@ public class Vacuumer : IVacuumer
             .SelectMany(HasSameTableColumn(storageRule)).ToList();
     }
 
-    private static Func<Purpose, IEnumerable<StorageRule>> HasSameTableColumn(StorageRule storageRule)
+    private Func<Purpose, IEnumerable<StorageRule>> HasSameTableColumn(StorageRule storageRule)
     {
         return p =>
         {
-            if (p.StorageRules != null)
-                return p.StorageRules.Where(
-                    sr => storageRule.PersonalDataColumn is {Key: not null} && sr.PersonalDataColumn != null &&
-                          storageRule.PersonalDataColumn != null &&
-                          sr.PersonalDataColumn.Key != null && sr.PersonalDataColumn != null &&
-                          sr.PersonalDataColumn.Key.Equals(storageRule.PersonalDataColumn.Key));
-            return new List<StorageRule>();
+            if (p.StorageRules == null)
+                return new List<StorageRule>();
+            
+            return p.StorageRules.Where(
+                sr => AreValid(storageRule, sr) &&
+                      sr.PersonalDataColumn.Key.Equals(storageRule.PersonalDataColumn.Key));
+
         };
+    }
+
+    private bool AreValid(StorageRule ruleOne, StorageRule ruleTwo)
+    {
+        return ruleOne.PersonalDataColumn is { Key: not null } && ruleTwo.PersonalDataColumn != null &&
+               ruleOne.PersonalDataColumn != null &&
+               ruleTwo.PersonalDataColumn.Key != null && ruleTwo.PersonalDataColumn != null;
     }
 }
