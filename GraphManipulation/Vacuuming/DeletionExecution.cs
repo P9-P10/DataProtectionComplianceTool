@@ -14,8 +14,6 @@ public class DeletionExecution
     public List<Purpose> Purposes { get; set; }
     
     public VacuumingRule VacuumingRule { get; set; }
-    
-    private const string LogicOperator = " AND ";
 
     public DeletionExecution(List<Purpose> purposes, string column, string table, string query, VacuumingRule vacuumingRule)
     {
