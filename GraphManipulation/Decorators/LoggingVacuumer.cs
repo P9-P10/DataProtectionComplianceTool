@@ -17,9 +17,9 @@ public class LoggingVacuumer : LoggingDecorator<string, VacuumingRule>, IVacuume
     }
 
 
-    public IEnumerable<DeletionExecution> GenerateUpdateStatement(string predefinedExpirationDate = "")
+    public IEnumerable<DeletionExecution> GenerateUpdateStatement()
     {
-        return _vacuumer.GenerateUpdateStatement(predefinedExpirationDate);
+        return _vacuumer.GenerateUpdateStatement();
     }
 
     public IEnumerable<DeletionExecution> Execute()
@@ -27,15 +27,20 @@ public class LoggingVacuumer : LoggingDecorator<string, VacuumingRule>, IVacuume
         return ExecuteAndLog(() => _vacuumer.Execute());
     }
 
-    public IEnumerable<DeletionExecution> ExecuteVacuumingRules(IEnumerable<VacuumingRule> vacuumingRules)
+    public IEnumerable<DeletionExecution> ExecuteVacuumingRuleList(IEnumerable<VacuumingRule> vacuumingRules)
     {
-        return ExecuteAndLog(() => _vacuumer.ExecuteVacuumingRules(vacuumingRules));
+        return ExecuteAndLog(() => _vacuumer.ExecuteVacuumingRuleList(vacuumingRules));
+    }
+
+    public IEnumerable<DeletionExecution> ExecuteVacuumingRule(VacuumingRule vacuumingRule)
+    {
+        return ExecuteAndLog(() => _vacuumer.ExecuteVacuumingRule(vacuumingRule));
     }
 
     private IEnumerable<DeletionExecution> ExecuteAndLog(Func<IEnumerable<DeletionExecution>> executeFunc)
     {
         var executions = executeFunc().ToList();
-        executions.ForEach(execution => LogExecute(execution.VacuumingRule.Key!));
+        executions.ForEach(execution => LogExecute(execution.VacuumingRule.Key));
         
         CreateDeletionExecutionLogs(executions).ToList().ForEach(_logger.Append);
         return executions;

@@ -215,6 +215,29 @@ public class VacuumingRulesTest : TestResources
         // UpdateStorageRuleWithPersonalDataColumn(process, TestStorageRule, TestPersonalDataColumn);
         AddVacuumingRule(process, TestVacuumingRule);
         ExecuteVacuumingRule(process, new[] { TestVacuumingRule });
+
+        // Operation made such that the ExecuteVacuumingRule has enough time to report potential errors.
+        AddOrigin(process, TestOrigin);
+
+        var error = process.GetAllErrorsNoWhitespace();
+        error.Should().BeEmpty();
+    }
+    
+    [Fact]
+    public void ExecutingVacuumingRulesEmitsStorageRuleMissingPersonalDataColumn()
+    {
+        using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
+        process.Start();
+        process.AwaitReady();
+
+        SetupTestData(dbConnection);
+
+        AddStorageRule(process, TestStorageRule);
+        AddPurpose(process, TestPurpose);
+        AddPersonalData(process, TestPersonalDataColumn);
+        // UpdateStorageRuleWithPersonalDataColumn(process, TestStorageRule, TestPersonalDataColumn);
+        AddVacuumingRule(process, TestVacuumingRule);
+        ExecuteVacuumingRule(process, new[] { TestVacuumingRule });
         
         var output = process.GetLastOutputNoWhitespaceOrPrompt();
         output.Should()
@@ -243,6 +266,29 @@ public class VacuumingRulesTest : TestResources
         UpdateStorageRuleWithPersonalDataColumn(process, TestStorageRule, TestPersonalDataColumn);
         AddVacuumingRule(process, TestVacuumingRule);
         ExecuteVacuumingRule(process, new[] { TestVacuumingRule });
+
+        // Operation made such that the ExecuteVacuumingRule has enough time to report potential errors.
+        AddOrigin(process, TestOrigin);
+
+        var error = process.GetAllErrorsNoWhitespace();
+        error.Should().BeEmpty();
+    }
+    
+    [Fact]
+    public void ExecutingVacuumingRulesEmitsPurposeMissingStorageRule()
+    {
+        using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
+        process.Start();
+        process.AwaitReady();
+
+        SetupTestData(dbConnection);
+
+        AddStorageRule(process, TestStorageRule);
+        // AddPurpose(process, TestPurpose);
+        AddPersonalData(process, TestPersonalDataColumn);
+        UpdateStorageRuleWithPersonalDataColumn(process, TestStorageRule, TestPersonalDataColumn);
+        AddVacuumingRule(process, TestVacuumingRule);
+        ExecuteVacuumingRule(process, new[] { TestVacuumingRule });
         
         var output = process.GetLastOutputNoWhitespaceOrPrompt();
         output.Should()
@@ -253,7 +299,6 @@ public class VacuumingRulesTest : TestResources
         AddOrigin(process, TestOrigin);
 
         var error = process.GetAllErrorsNoWhitespace();
-
         error.Should().BeEmpty();
     }
 
