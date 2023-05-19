@@ -23,7 +23,7 @@ public class Vacuumer : IVacuumer
         _storageRuleFeedbackEmitter = new FeedbackEmitter<string, StorageRule>();
     }
 
-    public IEnumerable<DeletionExecution> GenerateUpdateStatement(string predefinedExpirationDate = "")
+    public IEnumerable<DeletionExecution> GenerateUpdateStatement()
     {
         List<StorageRule> allStorageRules = _purposeMapper.Find(_ => true)
             .Where(p => p.StorageRules != null)
