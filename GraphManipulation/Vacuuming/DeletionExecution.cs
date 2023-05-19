@@ -32,14 +32,6 @@ public class DeletionExecution
         Table = "";
     }
 
-    public void AddPurpose(Purpose purpose)
-    {
-        if (!Purposes.Contains(purpose))
-        {
-            Purposes.Add(purpose);
-        }
-    }
-
     public void SetTableAndColum(PersonalDataColumn personalDataColumn)
     {
         Column = personalDataColumn.Key.ColumnName;
@@ -71,7 +63,7 @@ public class DeletionExecution
         return HashCode.Combine(Table, Column, Query);
     }
 
-    bool Equals(DeletionExecution? other)
+    public bool Equals(DeletionExecution? other)
     {
         return other.Column == Column && other.Table == Table && other.Query == Query;
     }

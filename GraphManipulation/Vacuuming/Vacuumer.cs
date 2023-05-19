@@ -90,7 +90,7 @@ public class Vacuumer : IVacuumer
         if (vacuumingRule.Purposes is null || !vacuumingRule.Purposes.Any())
         {
             _vacuumingRuleFeedbackEmitter.EmitMissing<Purpose>(vacuumingRule.Key);
-            return new List<DeletionExecution>();;
+            return new List<DeletionExecution>();
         }
         
         foreach (var purpose in vacuumingRule.Purposes)
@@ -101,12 +101,12 @@ public class Vacuumer : IVacuumer
                 continue;
             }
 
-            var execs = purpose.StorageRules
-                .Select(storageRule => ExecutionFromStorageRule(storageRule, purpose, vacuumingRule))
-                .Where(e => e != null)
-                .Select(e => e!);
+            var executionsFromStorageRules = purpose.StorageRules
+                .Select(storageRule => ExecutionFromStorageRule(storageRule, vacuumingRule))
+                .Where(execution => execution != null)
+                .Select(execution => execution!);
                 
-            executions.AddRange(execs);
+            executions.AddRange(executionsFromStorageRules);
         }
         
         ExecuteConditions(executions);
@@ -114,7 +114,7 @@ public class Vacuumer : IVacuumer
         return executions;
     }
 
-    private DeletionExecution? ExecutionFromStorageRule(StorageRule storageRule, Purpose purpose, VacuumingRule rule)
+    private DeletionExecution? ExecutionFromStorageRule(StorageRule storageRule, VacuumingRule rule)
     {
         if (storageRule.PersonalDataColumn?.Key == null)
         {
@@ -132,26 +132,29 @@ public class Vacuumer : IVacuumer
 
     private List<StorageRule> RulesWithSameTableColumn(StorageRule storageRule)
     {
-        return _purposeMapper.Find(p => HasRulesForColumn(p, storageRule.PersonalDataColumn))
-            .SelectMany(p => SelectRulesForColumn(p.StorageRules, storageRule.PersonalDataColumn)).ToList();
+        return _purposeMapper
+            .Find(p => HasRulesForColumn(p, storageRule.PersonalDataColumn))
+            .SelectMany(p => SelectRulesForColumn(p.StorageRules, storageRule.PersonalDataColumn))
+            .ToList();
     }
 
-    private bool HasRulesForColumn(Purpose purpose, PersonalDataColumn column)
+    private static bool HasRulesForColumn(Purpose purpose, PersonalDataColumn column)
     {
-        return purpose.StorageRules != null 
-               && purpose.StorageRules.Any(s => s.PersonalDataColumn != null 
-                                                && s.PersonalDataColumn.Equals(column));
+        return IsValid(purpose) && purpose.StorageRules!.Any(sr => IsValid(sr) && sr.PersonalDataColumn!.Equals(column));
     }
     
-    private IEnumerable<StorageRule> SelectRulesForColumn(IEnumerable<StorageRule> rules, PersonalDataColumn column)
+    private static IEnumerable<StorageRule> SelectRulesForColumn(IEnumerable<StorageRule> rules, PersonalDataColumn column)
     {
-        return rules.Where(
-            sr => IsValid(sr) &&
-                  sr.PersonalDataColumn.Key.Equals(column.Key));
+        return rules.Where(sr => IsValid(sr) && sr.PersonalDataColumn!.Equals(column));
     }
 
-    private bool IsValid(StorageRule storageRule)
+    private static bool IsValid(StorageRule storageRule)
     {
         return storageRule.PersonalDataColumn != null && storageRule.PersonalDataColumn.Key != null;
+    }
+
+    private static bool IsValid(Purpose purpose)
+    {
+        return purpose.StorageRules is not null;
     }
 }

@@ -13,6 +13,9 @@ id c -i 3
 pdo c -i 1 -indi 1 -tc users name -o Collected
 pdo c -i 2 -indi 2 -tc users name -o Collected
 pdo c -i 3 -indi 3 -tc users name -o Collected
+pdo c -i 4 -indi 1 -tc newsletter email -o Collected
+pdo c -i 5 -indi 2 -tc newsletter email -o Collected
+pdo c -i 6 -indi 3 -tc newsletter email -o Collected
 vr c -n MarketingVacuuming -d "Rule for vacuuming Marketing purpose" -ps Marketing -i "1d"
 vr c -n BookkeepingVacuuming -d "Rule for vacuuming Marketing purpose" -ps Bookkeeping -i "1d"
 p as -n Marketing -sr MarketingUsers
@@ -20,3 +23,4 @@ p as -n Marketing -sr MarketingNewsletter
 p as -n Bookkeeping -sr BookkeepingUsers
 p as -n Bookkeeping -sr BookKeepingNewsletter
 vr e -rs MarketingVacuuming BookkeepingVacuuming
+status
