@@ -9,24 +9,24 @@ namespace GraphManipulation.Commands.Binders;
 
 public class PersonalDataOriginBinder : BaseBinder<int, PersonalDataOrigin>
 {
-    
     private readonly Option<int> _individualOption;
     private readonly Option<TableColumnPair> _tableColumnOption;
     private readonly Option<string> _originOption;
     private readonly IManager<int, Individual> _individualsManager;
     private readonly IManager<TableColumnPair, PersonalDataColumn> _personalDataColumnManager;
     private readonly IManager<string, Origin> _originsManager;
-    
-    
+    private readonly ILineReader _reader;
+
+
     public PersonalDataOriginBinder(
-        Option<int> keyOption, 
+        Option<int> keyOption,
         Option<int> individualOption,
-        Option<string> descriptionOption, 
-        Option<TableColumnPair> tableColumnOption, 
-        Option<string> originOption, 
+        Option<string> descriptionOption,
+        Option<TableColumnPair> tableColumnOption,
+        Option<string> originOption,
         IManager<int, Individual> individualsManager,
-        IManager<TableColumnPair, PersonalDataColumn> personalDataColumnManager, 
-        IManager<string, Origin> originsManager) : base(keyOption, descriptionOption)
+        IManager<TableColumnPair, PersonalDataColumn> personalDataColumnManager,
+        IManager<string, Origin> originsManager, ILineReader reader) : base(keyOption, descriptionOption)
     {
         _individualOption = individualOption;
         _tableColumnOption = tableColumnOption;
@@ -34,6 +34,7 @@ public class PersonalDataOriginBinder : BaseBinder<int, PersonalDataOrigin>
         _individualsManager = individualsManager;
         _personalDataColumnManager = personalDataColumnManager;
         _originsManager = originsManager;
+        _reader = reader;
     }
 
     protected override PersonalDataOrigin GetBoundValue(BindingContext bindingContext)
@@ -55,7 +56,9 @@ public class PersonalDataOriginBinder : BaseBinder<int, PersonalDataOrigin>
         if (bindingContext.ParseResult.HasOption(_originOption))
         {
             var origin = bindingContext.ParseResult.GetValueForOption(_originOption);
-            pdo.Origin = origin is null ? null : Handlers.HandleMustExistWithCreateOnDemand(origin, _originsManager);
+            pdo.Origin = origin is null
+                ? null
+                : Handlers.HandleMustExistWithCreateOnDemand(origin, _originsManager, _reader);
         }
 
         return pdo;

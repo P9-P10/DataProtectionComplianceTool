@@ -50,7 +50,7 @@ public class PersonalDataOriginCommandBuilder : BaseCommandBuilder<int, Personal
             originOption,
             _individualsManager,
             _personalDataColumnManager, 
-            _originsManager);
+            _originsManager,Reader);
 
         var updateBinder = new PersonalDataOriginBinder(
             keyOption,
@@ -60,7 +60,7 @@ public class PersonalDataOriginCommandBuilder : BaseCommandBuilder<int, Personal
             originOption,
             _individualsManager,
             _personalDataColumnManager,
-            _originsManager);
+            _originsManager,Reader);
 
         return baseCommand
             .WithSubCommands(

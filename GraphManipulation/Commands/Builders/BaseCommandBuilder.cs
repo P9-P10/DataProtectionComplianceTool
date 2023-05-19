@@ -5,6 +5,7 @@ using GraphManipulation.Factories.Interfaces;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
 using GraphManipulation.Utility;
+using Lucene.Net.Util;
 
 namespace GraphManipulation.Commands.Builders;
 
@@ -19,11 +20,13 @@ public abstract class BaseCommandBuilder<TKey, TValue> : BaseCommandBuilder
 {
     protected readonly ICommandHandler<TKey, TValue> CommandHandler;
     protected readonly FeedbackEmitter<TKey, TValue> FeedbackEmitter;
+    protected readonly ILineReader Reader;
 
     protected BaseCommandBuilder(ICommandHandlerFactory commandHandlerFactory)
     {
         FeedbackEmitter = new FeedbackEmitter<TKey, TValue>();
         CommandHandler = commandHandlerFactory.CreateCommandHandler(FeedbackEmitter, StatusReport);
+        Reader = CommandHandler.Reader();
     }
 
     protected Command Build(string name, string alias, out Option<TKey> keyOption)
@@ -127,7 +130,8 @@ public abstract class BaseCommandBuilder<TKey, TValue> : BaseCommandBuilder
             .WithOption(out _, keyOption)
             .WithOption(out _, listOption);
 
-        command.SetHandler((key, list) => { CommandHandler.ListChangesHandler(key, list, getCurrentList, setList, isAdd, manager); },
+        command.SetHandler(
+            (key, list) => { CommandHandler.ListChangesHandler(key, list, getCurrentList, setList, isAdd, manager); },
             keyOption, listOption);
 
         return command;
@@ -146,7 +150,7 @@ public abstract class BaseCommandBuilder<TKey, TValue> : BaseCommandBuilder
     }
 
     protected abstract Option<TKey> BuildKeyOption();
-    
+
     protected abstract void StatusReport(TValue value);
 
     private static string GetEntityType()

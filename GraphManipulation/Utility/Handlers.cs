@@ -159,7 +159,7 @@ public static class Handlers
         IManager<TK, TV> manager2,
         FeedbackEmitter<TKey, TValue> feedbackEmitter1,
         FeedbackEmitter<TK, TV> feedbackEmitter2,
-        Action<TValue> statusAction)
+        Action<TValue> statusAction, ILineReader reader)
         where TV : Entity<TK> where TValue : Entity<TKey> where TKey : notnull
     {
         var value = manger1.Get(key);
@@ -177,7 +177,7 @@ public static class Handlers
 
             if (entity is null)
             {
-                if (!PromptAndCreate(k, manager2))
+                if (!PromptAndCreate(k, manager2, reader))
                 {
                     feedbackEmitter2.EmitCouldNotFind(k);
                     return;
@@ -206,7 +206,8 @@ public static class Handlers
         UpdateHandler(key, value, manger1, feedbackEmitter1, statusAction);
     }
 
-    public static IEnumerable<TValue> HandleMustExistList<TKey, TValue>(IEnumerable<TKey> keys, IManager<TKey, TValue> manager)
+    public static IEnumerable<TValue> HandleMustExistList<TKey, TValue>(IEnumerable<TKey> keys,
+        IManager<TKey, TValue> manager)
     {
         return keys.Select<TKey, TValue>(key => HandleMustExist(key, manager)).ToList();
     }
@@ -223,12 +224,13 @@ public static class Handlers
     }
 
     public static IEnumerable<TValue> HandleMustExistListWithCreateOnDemand<TKey, TValue>(IEnumerable<TKey> keys,
-        IManager<TKey, TValue> manager) where TValue : Entity<TKey> where TKey : notnull
+        IManager<TKey, TValue> manager, ILineReader reader) where TValue : Entity<TKey> where TKey : notnull
     {
-        return keys.Select<TKey, TValue>(key => HandleMustExistWithCreateOnDemand(key, manager)).ToList();
+        return keys.Select<TKey, TValue>(key => HandleMustExistWithCreateOnDemand(key, manager, reader)).ToList();
     }
 
-    public static TValue HandleMustExistWithCreateOnDemand<TKey, TValue>(TKey key, IManager<TKey, TValue> manager)
+    public static TValue HandleMustExistWithCreateOnDemand<TKey, TValue>(TKey key, IManager<TKey, TValue> manager,
+        ILineReader reader)
         where TValue : Entity<TKey> where TKey : notnull
     {
         try
@@ -237,36 +239,36 @@ public static class Handlers
         }
         catch (HandlerException)
         {
-            if (!PromptAndCreate(key, manager))
+            if (!PromptAndCreate(key, manager, reader))
             {
                 throw;
             }
-            
+
             return manager.Get(key)!;
         }
     }
 
-    private static bool PromptAndCreate<TKey, TValue>(TKey key, IManager<TKey, TValue> manager)
+    private static bool PromptAndCreate<TKey, TValue>(TKey key, IManager<TKey, TValue> manager, ILineReader reader)
         where TValue : Entity<TKey>
     {
-        if (!PromptCreateNew<TKey, TValue>(key))
+        if (!PromptCreateNew<TKey, TValue>(key, reader))
         {
             return false;
         }
-        
+
         CreateHandler(key, manager, new FeedbackEmitter<TKey, TValue>(),
             _ => Console.WriteLine("Not reporting status when creating on demand"));
         return true;
     }
 
-    private static bool PromptCreateNew<TKey, TValue>(TKey key)
+    private static bool PromptCreateNew<TKey, TValue>(TKey key, ILineReader reader)
         where TValue : Entity<TKey>
     {
         while (true)
         {
             Console.Write(
                 $"{key} {TypeToString.GetEntityType(typeof(TValue))} does not exist. Would you like to create one? (y/n){Environment.NewLine}{CommandLineInterface.Prompt} ");
-            var reply = (Console.ReadLine() ?? "").Trim();
+            var reply = (reader.ReadLine() ?? "").Trim();
             if (string.IsNullOrEmpty(reply))
             {
                 Console.WriteLine("You must answer either 'y' or 'n'");

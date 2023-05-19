@@ -22,7 +22,7 @@ public class TestProgram
     private bool VerboseOutput = true;
     public CommandLineInterface Cli { get; set; }
 
-    public void Start(string config = "")
+    public void Start( ILineReader reader, string config = "")
     {
         if (config != "")
             configPath = config;
@@ -52,7 +52,7 @@ public class TestProgram
             ILoggerFactory loggerFactory = new PlaintextLoggerFactory(configManagerFactory);
             IVacuumerFactory vacuumerFactory = new LoggingVacuumerFactory(new VacuumerFactory(vacuumer), logger);
 
-            Cli = new CommandLineInterface(managerFactory, loggerFactory, vacuumerFactory);
+            Cli = new CommandLineInterface(managerFactory, loggerFactory, vacuumerFactory,reader);
             Console.Write($"{Environment.NewLine}$: ");
         }
         catch (IOException e)
@@ -67,7 +67,7 @@ public class TestProgram
             CreateStatementManipulator.UpdateCreationScript(context.Database.GenerateCreateScript()));
     }
 
-    public void Run(string command, bool giveY = false)
+    public void Run(string command)
     {
         try
         {

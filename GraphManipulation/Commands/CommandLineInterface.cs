@@ -20,13 +20,14 @@ public class CommandLineInterface
     private readonly IVacuumerFactory _vacuumerFactory;
     private readonly ILoggerFactory _loggerFactory;
 
-    public CommandLineInterface(IManagerFactory managerFactory, ILoggerFactory loggerFactory, IVacuumerFactory vacuumerFactory)
+    public CommandLineInterface(IManagerFactory managerFactory, ILoggerFactory loggerFactory,
+        IVacuumerFactory vacuumerFactory, ILineReader reader)
     {
         _managerFactory = managerFactory;
         _loggerFactory = loggerFactory;
         _vacuumerFactory = vacuumerFactory;
-        _commandHandlerFactory = new CommandHandlerFactory(managerFactory);
-        
+        _commandHandlerFactory = new CommandHandlerFactory(managerFactory, reader);
+
         // Create subcommands
         CreateCommand();
         AddAllStatusCommand();
@@ -37,7 +38,7 @@ public class CommandLineInterface
     {
         _parser.Invoke(command);
     }
-    
+
     private void CreateCommand()
     {
         _command = CommandBuilder.CreateNewCommand(CommandNamer.RootCommandName)
@@ -60,13 +61,14 @@ public class CommandLineInterface
     {
         var subCommands = _command.Subcommands;
         var statusCommands = subCommands
-                .Select(subCommand => subCommand.Subcommands.FirstOrDefault(c => c.Name == CommandNamer.Status))
-                .Where(command => command is not null);
-        
+            .Select(subCommand => subCommand.Subcommands.FirstOrDefault(c => c.Name == CommandNamer.Status))
+            .Where(command => command is not null);
+
         var allStatusCommand = CommandBuilder
             .BuildStatusCommand()
             .WithDescription("Shows the status of all entities in the system")
-            .WithHandler(() => statusCommands.ToList().ForEach(statusCommand => statusCommand.Invoke(CommandNamer.Status)));
+            .WithHandler(() =>
+                statusCommands.ToList().ForEach(statusCommand => statusCommand.Invoke(CommandNamer.Status)));
 
         _command = _command.WithSubCommands(allStatusCommand);
     }

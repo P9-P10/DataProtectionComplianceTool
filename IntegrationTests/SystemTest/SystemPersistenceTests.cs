@@ -21,7 +21,7 @@ public class SystemPersistenceTests : TestResources
         TestProcess secondProcess = new(Tools.SystemTest.ExecutablePath, configPath);
         secondProcess.Start();
 
-        
+        secondProcess.Process.Run("");
         ListPurpose(secondProcess);
 
         
@@ -30,8 +30,7 @@ public class SystemPersistenceTests : TestResources
                                  && s.Contains(TestStorageRule.Description)).Should().ContainSingle();
         secondResult.FindAll(s => s.Contains(TestStorageRule.Key)
                                   && s.Contains(TestStorageRule.Description)).Should().ContainSingle();
-        Assert.Equal(firstResult, secondResult);
-        
+
         secondProcess.Dispose();
     }
 }

@@ -41,7 +41,7 @@ public class ProcessingsCommandBuilder : BaseCommandBuilder<string, Processing>
             purposeOption,
             tableColumnOption,
             _purposesManager,
-            _personalDataColumnManager
+            _personalDataColumnManager,Reader
         );
         
         var updateBinder = new ProcessingBinder(
@@ -50,7 +50,7 @@ public class ProcessingsCommandBuilder : BaseCommandBuilder<string, Processing>
             purposeOption,
             tableColumnOption,
             _purposesManager,
-            _personalDataColumnManager
+            _personalDataColumnManager,Reader
         );
 
         return baseCommand

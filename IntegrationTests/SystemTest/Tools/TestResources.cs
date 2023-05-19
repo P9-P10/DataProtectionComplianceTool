@@ -314,7 +314,7 @@ public class TestResources
         process.GiveInput(command);
     }
 
-    protected static void AddPersonalData(TestProcess process, PersonalDataColumn personalDataColumn, bool appendY = true)
+    protected static void AddPersonalData(TestProcess process, PersonalDataColumn personalDataColumn)
     {
         var command = $"{CommandNamer.PersonalDataColumnsAlias} {CommandNamer.CreateAlias}" +
                       $" {OptionNamer.TableColumn} {personalDataColumn.Key.TableName} {personalDataColumn.Key.ColumnName}" +
@@ -322,10 +322,6 @@ public class TestResources
                       $" {OptionNamer.Description} \"{personalDataColumn.Description}\"" +
                       $" {OptionNamer.PurposeList} {string.Join(" ", personalDataColumn.Purposes.Select(p => p.Key))}";
         
-        if (appendY)
-        {
-            command += $"{Environment.NewLine}y {Environment.NewLine}";
-        }
         process.GiveInput(command);
     }
 

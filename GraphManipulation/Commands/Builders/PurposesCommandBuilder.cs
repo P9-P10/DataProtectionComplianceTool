@@ -5,6 +5,7 @@ using GraphManipulation.Factories.Interfaces;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
 using GraphManipulation.Utility;
+using Lucene.Net.Util;
 
 namespace GraphManipulation.Commands.Builders;
 
@@ -12,7 +13,8 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
 {
     private readonly IManager<string, StorageRule> _storageRuleManager;
 
-    public PurposesCommandBuilder(ICommandHandlerFactory commandHandlerFactory, IManagerFactory managerFactory) : base(commandHandlerFactory)
+    public PurposesCommandBuilder(ICommandHandlerFactory commandHandlerFactory, IManagerFactory managerFactory) : base(
+        commandHandlerFactory)
     {
         _storageRuleManager = managerFactory.CreateManager<string, StorageRule>();
     }
@@ -25,17 +27,17 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
         var newKeyOption = OptionBuilder.CreateNewNameOption<Purpose>();
 
         var legallyRequiredOption = BuildLegallyRequiredOption()
-                .WithDescription("Whether the purpose falls under any legal obligations");
+            .WithDescription("Whether the purpose falls under any legal obligations");
 
         var storageRuleListOption = BuildStorageRuleListOption()
-                .WithDescription("The storage rules which personal data stored under this purpose should follow");
+            .WithDescription("The storage rules which personal data stored under this purpose should follow");
 
         var createBinder = new PurposeBinder(
             keyOption,
             descriptionOption,
             legallyRequiredOption,
             storageRuleListOption,
-            _storageRuleManager
+            _storageRuleManager, Reader
         );
 
         var updateBinder = new PurposeBinder(
@@ -43,9 +45,9 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
             descriptionOption,
             legallyRequiredOption,
             storageRuleListOption,
-            _storageRuleManager
+            _storageRuleManager, Reader
         );
-        
+
         var storageRuleListChangesCommands = BuildListChangesCommand(
             keyOption, storageRuleListOption, _storageRuleManager,
             purpose => purpose.StorageRules ?? new List<StorageRule>(),
@@ -89,7 +91,7 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
         {
             FeedbackEmitter.EmitMissing(purpose.Key!, "legally required value");
         }
-        
+
         if (purpose.Rules is null || !purpose.Rules.Any())
         {
             FeedbackEmitter.EmitMissing<VacuumingRule>(purpose.Key!);

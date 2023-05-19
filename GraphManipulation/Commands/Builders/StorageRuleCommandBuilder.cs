@@ -37,7 +37,7 @@ public class StorageRuleCommandBuilder : BaseCommandBuilder<string, StorageRule>
             descriptionOption,
             vacuumingConditionOption,
             tableColumnOption,
-            _personalDataColumnManager
+            _personalDataColumnManager,Reader
         );
 
         var updateBinder = new StorageRuleBinder(
@@ -45,7 +45,7 @@ public class StorageRuleCommandBuilder : BaseCommandBuilder<string, StorageRule>
             descriptionOption,
             vacuumingConditionOption,
             tableColumnOption,
-            _personalDataColumnManager
+            _personalDataColumnManager,Reader
         );
 
         return baseCommand

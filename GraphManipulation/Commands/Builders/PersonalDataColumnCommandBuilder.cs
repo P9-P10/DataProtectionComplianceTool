@@ -5,6 +5,7 @@ using GraphManipulation.Factories.Interfaces;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
 using GraphManipulation.Utility;
+using Lucene.Net.Util;
 
 namespace GraphManipulation.Commands.Builders;
 
@@ -12,14 +13,16 @@ public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPa
 {
     private readonly IManager<string, Purpose> _purposesManager;
 
-    public PersonalDataColumnCommandBuilder(ICommandHandlerFactory commandHandlerFactory, IManagerFactory managerFactory) : base(commandHandlerFactory)
+    public PersonalDataColumnCommandBuilder(ICommandHandlerFactory commandHandlerFactory,
+        IManagerFactory managerFactory) : base(commandHandlerFactory)
     {
         _purposesManager = managerFactory.CreateManager<string, Purpose>();
     }
 
     public override Command Build()
     {
-        var baseCommand = base.Build(CommandNamer.PersonalDataColumnsName, CommandNamer.PersonalDataColumnsAlias, out var keyOption);
+        var baseCommand = base.Build(CommandNamer.PersonalDataColumnsName, CommandNamer.PersonalDataColumnsAlias,
+            out var keyOption);
 
         var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<PersonalDataColumn>();
 
@@ -37,14 +40,14 @@ public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPa
             descriptionOption,
             purposeListOption,
             defaultValueOption,
-            _purposesManager);
+            _purposesManager, Reader);
 
         var updateBinder = new PersonalDataColumnBinder(
             keyOption,
             descriptionOption,
             purposeListOption,
             defaultValueOption,
-            _purposesManager);
+            _purposesManager, Reader);
 
         var purposeListChangesCommands = BuildListChangesCommand(
             keyOption, purposeListOption, _purposesManager,

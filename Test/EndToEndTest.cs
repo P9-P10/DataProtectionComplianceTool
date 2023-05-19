@@ -2,6 +2,7 @@
 using System.IO;
 using FluentAssertions;
 using GraphManipulation;
+using GraphManipulation.Utility;
 using Xunit;
 
 namespace Test;
@@ -41,7 +42,9 @@ public class EndToEndTest
     {
         StreamReader reader = new StreamReader(stream);
         stream.Position = 0;
-        return reader.ReadToEnd();
+        string output = reader.ReadToEnd();
+        stream.SetLength(0);
+        return output;
 
     }
 
@@ -49,7 +52,7 @@ public class EndToEndTest
     public void CanRunProgram()
     {
         TestProgram testProgram = new TestProgram();
-        testProgram.Start();
+        testProgram.Start(new LineReader());
 
         string output = ReadOutput();
         output.Should().Contain(testProgram.configPath);

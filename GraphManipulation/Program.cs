@@ -64,14 +64,15 @@ public static class Program
 
         AddStructureToDatabaseIfNotExists(dbConnection, context);
         var purposeMapper = new Mapper<Purpose>(context);
-        
+
         var vacuumer = new Vacuumer(purposeMapper, new SqliteQueryExecutor(dbConnection));
 
         IManagerFactory managerFactory = new LoggingManagerFactory(new ManagerFactory(context), logger);
         ILoggerFactory loggerFactory = new PlaintextLoggerFactory(logger);
         IVacuumerFactory vacuumerFactory = new LoggingVacuumerFactory(new VacuumerFactory(vacuumer), logger);
 
-        var commandLineInterface = new CommandLineInterface(managerFactory, loggerFactory, vacuumerFactory);
+        var commandLineInterface =
+            new CommandLineInterface(managerFactory, loggerFactory, vacuumerFactory, new LineReader());
 
         Run(commandLineInterface);
     }
@@ -127,12 +128,12 @@ public static class Program
         var configFilePath = configPath;
         var configValues = new Dictionary<string, string>
         {
-            { "GraphStoragePath", "" },
-            { "BaseURI", "http://www.test.com/" },
-            { "OntologyPath", "" },
-            { "LogPath", "" },
-            { "DatabaseConnectionString", "" },
-            { "IndividualsTable", "" }
+            {"GraphStoragePath", ""},
+            {"BaseURI", "http://www.test.com/"},
+            {"OntologyPath", ""},
+            {"LogPath", ""},
+            {"DatabaseConnectionString", ""},
+            {"IndividualsTable", ""}
         };
 
         configManager = new ConfigManager(configFilePath, configValues);
