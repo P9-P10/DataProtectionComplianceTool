@@ -17,9 +17,9 @@ public class LoggingVacuumer : LoggingDecorator<string, VacuumingRule>, IVacuume
     }
 
 
-    public IEnumerable<DeletionExecution> GenerateUpdateStatement(string predefinedExpirationDate = "")
+    public IEnumerable<DeletionExecution> GenerateUpdateStatement()
     {
-        return _vacuumer.GenerateUpdateStatement(predefinedExpirationDate);
+        return _vacuumer.GenerateUpdateStatement();
     }
 
     public IEnumerable<DeletionExecution> Execute()
