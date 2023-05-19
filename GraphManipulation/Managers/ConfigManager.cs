@@ -13,8 +13,8 @@ public class ConfigManager : IConfigManager
         _filepath = filepath;
         Init();
     }
-    
-    public ConfigManager(string filepath,Dictionary<string,string> config)
+
+    public ConfigManager(string filepath, Dictionary<string, string> config)
     {
         _config = config;
         _filepath = filepath;
@@ -55,14 +55,15 @@ public class ConfigManager : IConfigManager
             {
                 _config = new Dictionary<string, string>
                 {
-                    {"GraphStoragePath", ""},
-                    {"BaseURI", "http://www.test.com/"},
-                    {"OntologyPath", ""},
-                    {"LogPath", ""},
-                    {"DatabaseConnectionString", ""},
-                    {"IndividualsTable", ""}
+                    { "GraphStoragePath", "" },
+                    { "BaseURI", "http://www.test.com/" },
+                    { "OntologyPath", "" },
+                    { "LogPath", "" },
+                    { "DatabaseConnectionString", "" },
+                    { "IndividualsTable", "" }
                 };
             }
+
             using var file = File.CreateText(_filepath);
             var json = JsonConvert.SerializeObject(_config, Formatting.Indented);
             file.Write(json);

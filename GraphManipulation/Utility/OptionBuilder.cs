@@ -1,7 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.Diagnostics;
-using GraphManipulation.Managers;
 using GraphManipulation.Models;
 
 namespace GraphManipulation.Utility;
@@ -54,7 +53,7 @@ public static class OptionBuilder
         option.Description = description;
         return option;
     }
-    
+
     public static Option<string> CreateNewNameOption<TValue>()
     {
         return CreateOption<string>(OptionNamer.NewName)

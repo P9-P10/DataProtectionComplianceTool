@@ -4,40 +4,41 @@ using System.CommandLine.Parsing;
 using GraphManipulation.Commands.Builders;
 using GraphManipulation.Factories;
 using GraphManipulation.Factories.Interfaces;
-using GraphManipulation.Logging;
 using GraphManipulation.Utility;
-using GraphManipulation.Vacuuming;
 
 namespace GraphManipulation.Commands;
 
 public class CommandLineInterface
 {
-    private ICommandHandlerFactory _commandHandlerFactory;
-    private IManagerFactory _managerFactory;
-    private Command _command;
-    private Parser _parser;
-
-    private readonly IVacuumerFactory _vacuumerFactory;
     private readonly ILoggerFactory _loggerFactory;
 
-    public CommandLineInterface(IManagerFactory managerFactory, ILoggerFactory loggerFactory, IVacuumerFactory vacuumerFactory)
+    private readonly IVacuumerFactory _vacuumerFactory;
+    private Command _command;
+    private readonly ICommandHandlerFactory _commandHandlerFactory;
+    private readonly IManagerFactory _managerFactory;
+    private Parser _parser;
+
+    public CommandLineInterface(IManagerFactory managerFactory, ILoggerFactory loggerFactory,
+        IVacuumerFactory vacuumerFactory)
     {
         _managerFactory = managerFactory;
         _loggerFactory = loggerFactory;
         _vacuumerFactory = vacuumerFactory;
         _commandHandlerFactory = new CommandHandlerFactory(managerFactory);
-        
+
         // Create subcommands
         CreateCommand();
         AddAllStatusCommand();
         CreateCommandParser();
     }
 
+    public static char Prompt => '$';
+
     public void Invoke(string command)
     {
         _parser.Invoke(command);
     }
-    
+
     private void CreateCommand()
     {
         _command = CommandBuilder.CreateNewCommand(CommandNamer.RootCommandName)
@@ -60,13 +61,14 @@ public class CommandLineInterface
     {
         var subCommands = _command.Subcommands;
         var statusCommands = subCommands
-                .Select(subCommand => subCommand.Subcommands.FirstOrDefault(c => c.Name == CommandNamer.Status))
-                .Where(command => command is not null);
-        
+            .Select(subCommand => subCommand.Subcommands.FirstOrDefault(c => c.Name == CommandNamer.Status))
+            .Where(command => command is not null);
+
         var allStatusCommand = CommandBuilder
             .BuildStatusCommand()
             .WithDescription("Shows the status of all entities in the system")
-            .WithHandler(() => statusCommands.ToList().ForEach(statusCommand => statusCommand.Invoke(CommandNamer.Status)));
+            .WithHandler(() =>
+                statusCommands.ToList().ForEach(statusCommand => statusCommand.Invoke(CommandNamer.Status)));
 
         _command = _command.WithSubCommands(allStatusCommand);
     }
@@ -79,6 +81,4 @@ public class CommandLineInterface
             .UseParseErrorReporting()
             .Build();
     }
-
-    public static char Prompt => '$';
 }

@@ -5,7 +5,8 @@ namespace GraphManipulation.Commands.Binders;
 
 public class IndividualBinder : BaseBinder<int, Individual>
 {
-    public IndividualBinder(Option<int> keyOption, Option<string> descriptionOption) : base(keyOption, descriptionOption)
+    public IndividualBinder(Option<int> keyOption, Option<string> descriptionOption) : base(keyOption,
+        descriptionOption)
     {
     }
 }

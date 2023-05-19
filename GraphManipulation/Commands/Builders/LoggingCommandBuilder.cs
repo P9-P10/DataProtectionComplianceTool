@@ -1,5 +1,4 @@
 using System.CommandLine;
-using GraphManipulation.Factories;
 using GraphManipulation.Factories.Interfaces;
 using GraphManipulation.Logging;
 using GraphManipulation.Utility;
@@ -42,9 +41,10 @@ public static class LoggingCommandBuilder
                 var constraints = new LogConstraints(numbers, dateTimes, logTypes.ToList(), subjects,
                     messageFormats.ToList(), limit);
 
-                 var result = logger.Read(constraints).ToList();
+                var result = logger.Read(constraints).ToList();
                 Console.Write(string.Join(Environment.NewLine, result));
-                Console.WriteLine($"{Environment.NewLine}Showing " + (result.Count < limit ? $"all {result.Count}" : $"newest {limit}")  + " log entries");
+                Console.WriteLine($"{Environment.NewLine}Showing " +
+                                  (result.Count < limit ? $"all {result.Count}" : $"newest {limit}") + " log entries");
             });
     }
 

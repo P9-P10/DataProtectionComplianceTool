@@ -4,52 +4,7 @@ namespace GraphManipulation.Models;
 
 public class VacuumingRule : Entity<string>
 {
-    public string? Interval
-    {
-        get => _interval;
-        set
-        {        if (IsValidInterval(value))
-            {
-                _interval = value;
-            }
-            else
-            {
-                throw new IntervalParseException();
-            }
-        }
-    }
-
     private string? _interval;
-
-    public DateTime? LastExecution { get; set; }
-
-    public virtual IEnumerable<Purpose>? Purposes { get; set; }
-
-    public override string ToListing()
-    {
-        return string.Join(ToListingSeparator, base.ToListing(),
-            NullToString(Interval),
-            NullToString(LastExecution),
-            ListNullOrEmptyToString(Purposes));
-    }
-
-    public override string ToListingHeader()
-    {
-        return string.Join(ToListingSeparator, base.ToListingHeader(), "Interval", "Last Execution", "Purposes");
-    }
-
-    private struct ParsedInterval
-    {
-        public int minutes = 0;
-        public int hours = 0;
-        public int days = 0;
-        public int months = 0;
-        public int years = 0;
-
-        public ParsedInterval()
-        {
-        }
-    }
 
     public VacuumingRule(int id, string description, string name, string interval,
         IEnumerable<Purpose>? purposes = null)
@@ -60,11 +15,6 @@ public class VacuumingRule : Entity<string>
         Interval = interval;
         purposes ??= new List<Purpose>();
         Purposes = purposes;
-    }
-    
-    public static bool IsValidInterval(string? interval)
-    {
-        return interval is not null && Regex.Match(interval, @"(\d+(y|d|m|M|D|w) {0,1})+").Success;
     }
 
     public VacuumingRule(string description, string name, string interval,
@@ -101,6 +51,44 @@ public class VacuumingRule : Entity<string>
     public VacuumingRule()
     {
         // This constructor is needed.
+    }
+
+    public string? Interval
+    {
+        get => _interval;
+        set
+        {
+            if (IsValidInterval(value))
+            {
+                _interval = value;
+            }
+            else
+            {
+                throw new IntervalParseException();
+            }
+        }
+    }
+
+    public DateTime? LastExecution { get; set; }
+
+    public virtual IEnumerable<Purpose>? Purposes { get; set; }
+
+    public override string ToListing()
+    {
+        return string.Join(ToListingSeparator, base.ToListing(),
+            NullToString(Interval),
+            NullToString(LastExecution),
+            ListNullOrEmptyToString(Purposes));
+    }
+
+    public override string ToListingHeader()
+    {
+        return string.Join(ToListingSeparator, base.ToListingHeader(), "Interval", "Last Execution", "Purposes");
+    }
+
+    public static bool IsValidInterval(string? interval)
+    {
+        return interval is not null && Regex.Match(interval, @"(\d+(y|d|m|M|D|w) {0,1})+").Success;
     }
 
     public bool ShouldExecute()
@@ -158,6 +146,19 @@ public class VacuumingRule : Entity<string>
     private int GetTimeFromComponent(string input)
     {
         return int.Parse(Regex.Match(input, @"\d+").Value);
+    }
+
+    private struct ParsedInterval
+    {
+        public int minutes = 0;
+        public int hours = 0;
+        public int days = 0;
+        public int months = 0;
+        public int years = 0;
+
+        public ParsedInterval()
+        {
+        }
     }
 
     public class IntervalParseException : Exception

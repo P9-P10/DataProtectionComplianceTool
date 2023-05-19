@@ -15,9 +15,10 @@ public class Purpose : Entity<string>
             ListNullOrEmptyToString(PersonalDataColumns),
             ListNullOrEmptyToString(Rules));
     }
-    
+
     public override string ToListingHeader()
     {
-        return string.Join(ToListingSeparator, base.ToListingHeader(), "Legally Required", "Storage Rules", "Personal Data Columns", "Vacuuming Rules");
+        return string.Join(ToListingSeparator, base.ToListingHeader(), "Legally Required", "Storage Rules",
+            "Personal Data Columns", "Vacuuming Rules");
     }
 }

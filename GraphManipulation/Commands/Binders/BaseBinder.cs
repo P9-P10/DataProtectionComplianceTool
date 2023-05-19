@@ -1,16 +1,14 @@
 using System.CommandLine;
 using System.CommandLine.Binding;
 using System.CommandLine.Parsing;
-using GraphManipulation.Managers;
 using GraphManipulation.Models;
-using GraphManipulation.Utility;
 
 namespace GraphManipulation.Commands.Binders;
 
 public abstract class BaseBinder<TKey, TValue> : BinderBase<TValue> where TValue : Entity<TKey>, new()
 {
-    private readonly Option<TKey> _keyOption;
     private readonly Option<string> _descriptionOption;
+    private readonly Option<TKey> _keyOption;
 
     protected BaseBinder(Option<TKey> keyOption, Option<string> descriptionOption)
     {
@@ -27,7 +25,7 @@ public abstract class BaseBinder<TKey, TValue> : BinderBase<TValue> where TValue
         {
             description = bindingContext.ParseResult.GetValueForOption(_descriptionOption);
         }
-        
+
         return new TValue { Key = key, Description = description };
     }
 }

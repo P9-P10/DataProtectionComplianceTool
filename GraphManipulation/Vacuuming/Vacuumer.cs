@@ -6,12 +6,12 @@ namespace GraphManipulation.Vacuuming;
 
 public class Vacuumer : IVacuumer
 {
+    private readonly FeedbackEmitter<string, Purpose> _purposeFeedbackEmitter;
     private readonly IMapper<Purpose> _purposeMapper;
     private readonly IQueryExecutor _queryExecutor;
+    private readonly FeedbackEmitter<string, StorageRule> _storageRuleFeedbackEmitter;
 
     private readonly FeedbackEmitter<string, VacuumingRule> _vacuumingRuleFeedbackEmitter;
-    private readonly FeedbackEmitter<string, Purpose> _purposeFeedbackEmitter;
-    private readonly FeedbackEmitter<string, StorageRule> _storageRuleFeedbackEmitter;
 
 
     public Vacuumer(IMapper<Purpose> purposeMapper, IQueryExecutor queryExecutor)
@@ -45,16 +45,6 @@ public class Vacuumer : IVacuumer
         return deletionExecutions;
     }
 
-    private DeletionExecution CreateDeletionExecution(IEnumerable<StorageRule> columnRules, PersonalDataColumn personalDataColumn)
-    {
-        var deletionExecution = new DeletionExecution();
-        // Set execution purposes to the purposes of all the rules for the PersonalDataColumn
-        deletionExecution.SetPurposesFromRules(columnRules);
-        deletionExecution.CreateQuery(personalDataColumn, columnRules);
-        deletionExecution.SetTableAndColum(personalDataColumn);
-        return deletionExecution;
-    }
-
     public IEnumerable<DeletionExecution> Execute()
     {
         IEnumerable<DeletionExecution> executions = GenerateUpdateStatement();
@@ -64,17 +54,9 @@ public class Vacuumer : IVacuumer
         return deletionExecutions;
     }
 
-    private void ExecuteConditions(List<DeletionExecution> deletionExecutions)
-    {
-        foreach (var deletionExecution in deletionExecutions)
-        {
-            _queryExecutor.Execute(deletionExecution.Query);
-        }
-    }
-
     /// <summary>
-    /// This function executes a specified vacuuming rule.
-    /// It does not vacuum data if its protected by other purposes.
+    ///     This function executes a specified vacuuming rule.
+    ///     It does not vacuum data if its protected by other purposes.
     /// </summary>
     /// <param name="vacuumingRules"></param>
     /// <returns></returns>
@@ -92,7 +74,7 @@ public class Vacuumer : IVacuumer
             _vacuumingRuleFeedbackEmitter.EmitMissing<Purpose>(vacuumingRule.Key);
             return new List<DeletionExecution>();
         }
-        
+
         foreach (var purpose in vacuumingRule.Purposes)
         {
             if (purpose.StorageRules is null || !purpose.StorageRules.Any())
@@ -105,13 +87,30 @@ public class Vacuumer : IVacuumer
                 .Select(storageRule => ExecutionFromStorageRule(storageRule, vacuumingRule))
                 .Where(execution => execution != null)
                 .Select(execution => execution!);
-                
+
             executions.AddRange(executionsFromStorageRules);
         }
-        
+
         ExecuteConditions(executions);
 
         return executions;
+    }
+
+    private DeletionExecution CreateDeletionExecution(IEnumerable<StorageRule> columnRules,
+        PersonalDataColumn personalDataColumn)
+    {
+        var deletionExecution = new DeletionExecution();
+        // Set execution purposes to the purposes of all the rules for the PersonalDataColumn
+        deletionExecution.SetPurposesFromRules(columnRules);
+        deletionExecution.CreateQuery(personalDataColumn, columnRules);
+        deletionExecution.SetTableAndColum(personalDataColumn);
+        return deletionExecution;
+    }
+
+    private void ExecuteConditions(List<DeletionExecution> deletionExecutions)
+    {
+        foreach (var deletionExecution in deletionExecutions)
+            _queryExecutor.Execute(deletionExecution.Query);
     }
 
     private DeletionExecution? ExecutionFromStorageRule(StorageRule storageRule, VacuumingRule rule)
@@ -121,7 +120,7 @@ public class Vacuumer : IVacuumer
             _storageRuleFeedbackEmitter.EmitMissing<PersonalDataColumn>(storageRule.Key);
             return null;
         }
-        
+
         List<StorageRule> rulesWithSameTableColumn = RulesWithSameTableColumn(storageRule);
 
         DeletionExecution execution = CreateDeletionExecution(rulesWithSameTableColumn, storageRule.PersonalDataColumn);
@@ -140,10 +139,12 @@ public class Vacuumer : IVacuumer
 
     private static bool HasRulesForColumn(Purpose purpose, PersonalDataColumn column)
     {
-        return IsValid(purpose) && purpose.StorageRules!.Any(sr => IsValid(sr) && sr.PersonalDataColumn!.Equals(column));
+        return IsValid(purpose) &&
+               purpose.StorageRules!.Any(sr => IsValid(sr) && sr.PersonalDataColumn!.Equals(column));
     }
-    
-    private static IEnumerable<StorageRule> SelectRulesForColumn(IEnumerable<StorageRule> rules, PersonalDataColumn column)
+
+    private static IEnumerable<StorageRule> SelectRulesForColumn(IEnumerable<StorageRule> rules,
+        PersonalDataColumn column)
     {
         return rules.Where(sr => IsValid(sr) && sr.PersonalDataColumn!.Equals(column));
     }

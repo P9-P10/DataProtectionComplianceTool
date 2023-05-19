@@ -1,6 +1,5 @@
 using System.CommandLine;
 using GraphManipulation.Commands.Binders;
-using GraphManipulation.Factories;
 using GraphManipulation.Factories.Interfaces;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
@@ -12,7 +11,8 @@ public class IndividualsCommandBuilder : BaseCommandBuilder<int, Individual>
 {
     private readonly IManager<TableColumnPair, PersonalDataColumn> _personalDataColumnManager;
 
-    public IndividualsCommandBuilder(ICommandHandlerFactory commandHandlerFactory, IManagerFactory managerFactory) : base(commandHandlerFactory)
+    public IndividualsCommandBuilder(ICommandHandlerFactory commandHandlerFactory, IManagerFactory managerFactory) :
+        base(commandHandlerFactory)
     {
         _personalDataColumnManager = managerFactory.CreateManager<TableColumnPair, PersonalDataColumn>();
     }
@@ -27,7 +27,6 @@ public class IndividualsCommandBuilder : BaseCommandBuilder<int, Individual>
             .WithSubCommands(
                 CreateCommand(keyOption, new IndividualBinder(keyOption, descriptionOption), new Option[]
                 {
-                    
                 })
             );
     }
@@ -41,7 +40,7 @@ public class IndividualsCommandBuilder : BaseCommandBuilder<int, Individual>
         foreach (var pdc in personalDataColumns)
         {
             var pdo = personalDataOrigins.FirstOrDefault(pdo => pdo.PersonalDataColumn!.Equals(pdc));
-            
+
             if (!personalDataOrigins.Any() || pdo?.Origin is null)
             {
                 // There exists a personal data column, but the individual does not have a personal data origin for it

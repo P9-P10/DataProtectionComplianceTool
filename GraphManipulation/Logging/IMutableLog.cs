@@ -1,5 +1,3 @@
-using GraphManipulation.Logging.Operations;
-
 namespace GraphManipulation.Logging;
 
 public interface IMutableLog

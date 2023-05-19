@@ -15,7 +15,7 @@ public abstract class Logger : ILogger
         {
             throw new LoggerException("Value for log path must be set in config file");
         }
-        
+
         _logNumber = LoadCurrentLogNumber();
     }
 
@@ -29,7 +29,9 @@ public abstract class Logger : ILogger
     public abstract IEnumerable<ILog> Read(ILogConstraints constraints);
     protected abstract void AppendLogToFile(ILog log);
     protected abstract ILog CreateLog(IMutableLog mutableLog);
-    protected abstract ILog CreateLog(LogType logType, string subject, LogMessageFormat logMessageFormat, string message);
+
+    protected abstract ILog CreateLog(LogType logType, string subject, LogMessageFormat logMessageFormat,
+        string message);
 
     protected string GetLogFilePath()
     {

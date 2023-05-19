@@ -6,7 +6,7 @@ public class Origin : Entity<string>
 
     public override string ToListing()
     {
-        return string.Join(ToListingSeparator, base.ToListing(), 
+        return string.Join(ToListingSeparator, base.ToListing(),
             ListNullOrEmptyToString(PersonalDataColumns));
     }
 

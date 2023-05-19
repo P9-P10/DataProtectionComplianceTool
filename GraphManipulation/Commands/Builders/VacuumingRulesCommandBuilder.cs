@@ -1,6 +1,5 @@
 using System.CommandLine;
 using GraphManipulation.Commands.Binders;
-using GraphManipulation.Factories;
 using GraphManipulation.Factories.Interfaces;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
@@ -27,7 +26,7 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
     {
         var baseCommand = base.Build(CommandNamer.VacuumingRulesName, CommandNamer.VacuumingRulesAlias,
             out var keyOption);
-        
+
         var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<VacuumingRule>();
         var newKeyOption = OptionBuilder.CreateNewNameOption<VacuumingRule>();
 
@@ -49,7 +48,7 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
             purposeListOption,
             _purposesManager
         );
-        
+
         var updateBinder = new VacuumingRuleBinder(
             newKeyOption,
             descriptionOption,
@@ -108,7 +107,7 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
 
                 foreach (var ruleName in ruleNames)
                 {
-                    var rule =  _vacuumingRulesManager.Get(ruleName);
+                    var rule = _vacuumingRulesManager.Get(ruleName);
                     if (rule is null)
                     {
                         FeedbackEmitter.EmitCouldNotFind(ruleName);
@@ -126,6 +125,7 @@ public class VacuumingRulesCommandBuilder : BaseCommandBuilder<string, Vacuuming
                     {
                         FeedbackEmitter.EmitMessage($"{rule.ToListingIdentifier()} had no effect");
                     }
+
                     FeedbackEmitter.EmitResult(rule.Key!, SystemOperation.Operation.Executed);
                 }
             });

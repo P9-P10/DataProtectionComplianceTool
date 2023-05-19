@@ -1,6 +1,5 @@
 using System.CommandLine;
 using GraphManipulation.Commands.Binders;
-using GraphManipulation.Factories;
 using GraphManipulation.Factories.Interfaces;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
@@ -10,10 +9,11 @@ namespace GraphManipulation.Commands.Builders;
 
 public class ProcessingsCommandBuilder : BaseCommandBuilder<string, Processing>
 {
-    private readonly IManager<string, Purpose> _purposesManager;
     private readonly IManager<TableColumnPair, PersonalDataColumn> _personalDataColumnManager;
-    
-    public ProcessingsCommandBuilder(ICommandHandlerFactory commandHandlerFactory, IManagerFactory managerFactory) : base(commandHandlerFactory)
+    private readonly IManager<string, Purpose> _purposesManager;
+
+    public ProcessingsCommandBuilder(ICommandHandlerFactory commandHandlerFactory, IManagerFactory managerFactory) :
+        base(commandHandlerFactory)
     {
         _purposesManager = managerFactory.CreateManager<string, Purpose>();
         _personalDataColumnManager = managerFactory.CreateManager<TableColumnPair, PersonalDataColumn>();
@@ -25,7 +25,7 @@ public class ProcessingsCommandBuilder : BaseCommandBuilder<string, Processing>
 
         var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<Processing>();
         var newKeyOption = OptionBuilder.CreateNewNameOption<Processing>();
-        
+
         var tableColumnOption = OptionBuilder
             .CreateTableColumnPairOption()
             .WithDescription("The personal data that is being processed");
@@ -43,7 +43,7 @@ public class ProcessingsCommandBuilder : BaseCommandBuilder<string, Processing>
             _purposesManager,
             _personalDataColumnManager
         );
-        
+
         var updateBinder = new ProcessingBinder(
             newKeyOption,
             descriptionOption,

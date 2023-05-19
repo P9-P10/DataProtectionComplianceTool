@@ -9,9 +9,9 @@ namespace GraphManipulation.Commands.Binders;
 
 public class StorageRuleBinder : BaseBinder<string, StorageRule>
 {
-    private readonly Option<string> _vacuumingConditionOption;
-    private readonly Option<TableColumnPair> _tableColumnOption;
     private readonly IManager<TableColumnPair, PersonalDataColumn> _personalDataColumnManager;
+    private readonly Option<TableColumnPair> _tableColumnOption;
+    private readonly Option<string> _vacuumingConditionOption;
 
     public StorageRuleBinder(
         Option<string> keyOption,

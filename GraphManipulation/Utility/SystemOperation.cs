@@ -9,7 +9,7 @@ public static class SystemOperation
         Created,
         Executed
     }
-    
+
     public static string OperationToString(Operation operation)
     {
         return operation.ToString().ToLower();
