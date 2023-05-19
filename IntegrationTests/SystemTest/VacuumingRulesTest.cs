@@ -230,7 +230,7 @@ public class VacuumingRulesTest : TestResources
         process.Start();
         process.AwaitReady();
 
-        SetupTestData(dbConnection);
+        SetupTestData(dbConnection, process);
 
         AddStorageRule(process, TestStorageRule);
         AddPurpose(process, TestPurpose);
@@ -281,7 +281,7 @@ public class VacuumingRulesTest : TestResources
         process.Start();
         process.AwaitReady();
 
-        SetupTestData(dbConnection);
+        SetupTestData(dbConnection, process);
 
         AddStorageRule(process, TestStorageRule);
         // AddPurpose(process, TestPurpose);
