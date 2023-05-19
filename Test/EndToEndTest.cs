@@ -52,6 +52,6 @@ public class EndToEndTest
         testProgram.Start();
 
         string output = ReadOutput();
-        output.Should().Contain(@"Using config found at ");
+        output.Should().Contain(testProgram.configPath);
     }
 }

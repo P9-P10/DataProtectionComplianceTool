@@ -17,7 +17,7 @@ namespace GraphManipulation;
 
 public class TestProgram
 {
-    private string configPath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
+    public string configPath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
     private bool VerboseOutput = true;
     public CommandLineInterface Cli { get; set; }
 
