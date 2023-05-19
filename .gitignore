@@ -10,3 +10,13 @@ GraphManipulation/temp.ttl
 GraphManipulation.sln.DotSettings.user
 
 GraphManipulation/GraphStorage.sqlite
+
+GraphManipulation/config.json
+
+GraphStorage.sqlite
+
+Test/TestResources/log
+
+Test/TestResources/testConfig.json
+*.sqlite
+!EndToEndCommands/database.sqlite

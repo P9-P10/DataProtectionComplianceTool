@@ -1,210 +1,157 @@
-﻿// See https://aka.ms/new-console-template for more information
+// See https://aka.ms/new-console-template for more information
 
+using System.Data;
 using System.Data.SQLite;
-using GraphManipulation.Extensions;
-using GraphManipulation.Manipulation;
-using GraphManipulation.Models.Stores;
-using VDS.RDF;
-using VDS.RDF.Parsing;
-using VDS.RDF.Query;
-using VDS.RDF.Query.Datasets;
-using VDS.RDF.Writing;
-using StringWriter = VDS.RDF.Writing.StringWriter;
+using System.Text;
+using Dapper;
+using GraphManipulation.Commands;
+using GraphManipulation.DataAccess;
+using GraphManipulation.Decorators;
+using GraphManipulation.Factories;
+using GraphManipulation.Factories.Interfaces;
+using GraphManipulation.Logging;
+using GraphManipulation.Managers;
+using GraphManipulation.Models;
+using GraphManipulation.Utility;
+using GraphManipulation.Vacuuming;
+using Microsoft.EntityFrameworkCore;
 
 namespace GraphManipulation;
 
 public static class Program
 {
-    private const string GraphStoragePath =
-        "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/GraphStorage.sqlite";
+    private static string configPath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
+    private static bool VerboseOutput = true;
 
-    private const string OptimizedDatabaseName = "OptimizedAdvancedDatabase.sqlite";
-    private const string SimpleDatabaseName = "SimpleDatabase.sqlite";
-
-    private const string OptimizedDatabasePath =
-        $"/home/ane/Documents/GitHub/Legeplads/Databases/{OptimizedDatabaseName}";
-
-    private const string SimpleDatabasePath = $"/home/ane/Documents/GitHub/Legeplads/Databases/{SimpleDatabaseName}";
-    private const string BaseUri = "http://www.test.com/";
-    private const string OutputFileName = "output.ttl";
-
-    private const string OutputPath =
-        $"/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/{OutputFileName}";
-
-    private const string OntologyPath =
-        "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/Ontologies/datastore-description-language.ttl";
-
-    public static void Main()
+    public static void Main(string[] args)
     {
-        // Console.WriteLine();
-        // var arguments = Environment.GetCommandLineArgs();
-        // Console.WriteLine(string.Join(", ", arguments));
+        if (args.Length > 0)
+        {
+            if (args.Length == 1)
+                configPath = args[0];
+            else
+            {
+                Console.WriteLine(
+                    "Received too many arguments. Only a single argument specifying the path of the configuration file expected");
+                return;
+            }
+        }
 
-        // SparqlExperiment();
-        // SparqlExperiment("SELECT * WHERE { ?s ?p ?o }");
-        // SparqlExperiment(@"SELECT ?name ?o WHERE { ?datastore a ddl:Datastore . ?datastore ddl:hasName ?name . ?datastore ?p ?o }");
-        // SparqlExperiment("SELECT ?something ?name WHERE { ?something a ddl:Column . ?something ddl:Datastore ?name }");
-
-        // CreateAndValidateGraph();
-        // WorkingWithGraphStorage();
-
-        // InitGraphStorage();
-        // MakeChangeToGraph();
-
-        Interactive();
+        try
+        {
+            Interactive();
+        }
+        catch (IOException e)
+        {
+            Console.WriteLine("The given argument is not a valid filepath");
+        }
     }
 
     private static void Interactive()
     {
-        var interactive = new InteractiveMode();
-        interactive.Run();
+        ConsoleSetup();
+
+        if (!ConfigSetup(out var configManager))
+        {
+            return;
+        }
+
+        var logger = new PlaintextLogger(configManager);
+
+        var connectionString = configManager.GetValue("DatabaseConnectionString");
+        var context = new GdprMetadataContext(connectionString);
+        var dbConnection = new SQLiteConnection(connectionString);
+
+        AddStructureToDatabaseIfNotExists(dbConnection, context);
+        var purposeMapper = new Mapper<Purpose>(context);
+        
+        var vacuumer = new Vacuumer(purposeMapper, new SqliteQueryExecutor(dbConnection));
+
+        IManagerFactory managerFactory = new LoggingManagerFactory(new ManagerFactory(context), logger);
+        ILoggerFactory loggerFactory = new PlaintextLoggerFactory(logger);
+        IVacuumerFactory vacuumerFactory = new LoggingVacuumerFactory(new VacuumerFactory(vacuumer), logger);
+
+        var commandLineInterface = new CommandLineInterface(managerFactory, loggerFactory, vacuumerFactory);
+
+        Run(commandLineInterface);
     }
 
-    private static void InitGraphStorage()
+    private static void AddStructureToDatabaseIfNotExists(IDbConnection connection, DbContext context)
     {
-        IGraph ontology = new Graph();
-        ontology.LoadFromFile(OntologyPath, new TurtleParser());
-
-        var graphStorage = new GraphStorage(GraphStoragePath, ontology, true);
+        connection.Execute(
+            CreateStatementManipulator.UpdateCreationScript(context.Database.GenerateCreateScript()));
     }
 
-    private static void MakeChangeToGraph()
+    private static void Run(CommandLineInterface cli)
     {
-        IGraph ontology = new Graph();
-        ontology.LoadFromFile(OntologyPath, new TurtleParser());
+        while (true)
+        {
+            try
+            {
+                Console.Write($"{Environment.NewLine}{CommandLineInterface.Prompt} ");
+                var command = (Console.ReadLine() ?? "").Trim();
 
-        var graphStorage = new GraphStorage(GraphStoragePath, ontology);
+                if (!string.IsNullOrEmpty(command))
+                {
+                    cli.Invoke(command);
+                }
+            }
+            catch (AggregateException e)
+            {
+                Console.Error.WriteLine(VerboseOutput ? e.ToString() : e.Message);
 
-        using var simpleConn = new SQLiteConnection($"Data Source={SimpleDatabasePath}");
-        var simpleSqlite = new Sqlite("", BaseUri, simpleConn);
-        simpleSqlite.BuildFromDataSource();
+                foreach (var innerException in e.InnerExceptions)
+                {
+                    Console.Error.WriteLine(VerboseOutput ? innerException.ToString() : innerException.Message);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(VerboseOutput ? e.ToString() : e.Message);
 
-        var dataGraph = graphStorage.GetLatest(simpleSqlite);
-
-        var graphManipulator = new GraphManipulator<Sqlite>(dataGraph);
-
-        var userDataTable = simpleSqlite
-            .FindSchema("main")!
-            .FindTable("UserData")!;
-
-        var emailColumn = simpleSqlite
-            .FindSchema("main")!
-            .FindTable("Users")!
-            .FindColumn("email")!;
-
-        var columnUri = emailColumn.Uri.ToString();
-
-        userDataTable.AddStructure(emailColumn);
-
-        graphManipulator.Move(new Uri(columnUri), emailColumn.Uri);
-
-        graphStorage.Insert(simpleSqlite, graphManipulator.Graph, graphManipulator.Changes);
+                if (e.InnerException is not null)
+                {
+                    Console.Error.WriteLine(VerboseOutput ? e.InnerException.ToString() : e.InnerException.Message);
+                }
+            }
+        }
     }
 
-    private static void WorkingWithGraphStorage()
+    private static void ConsoleSetup()
     {
-        IGraph ontology = new Graph();
-        ontology.LoadFromFile(OntologyPath, new TurtleParser());
-
-        var graphStorage = new GraphStorage(GraphStoragePath, ontology);
-
-        using var simpleConn = new SQLiteConnection($"Data Source={SimpleDatabasePath}");
-        var simpleSqlite = new Sqlite("", BaseUri, simpleConn);
-        simpleSqlite.BuildFromDataSource();
-        var simpleGraph = simpleSqlite.ToGraph();
-
-        var graphManipulator = new GraphManipulator<Sqlite>(simpleGraph);
-
-        var userDataTable = simpleSqlite
-            .FindSchema("main")!
-            .FindTable("UserData")!;
-
-        var emailColumn = simpleSqlite
-            .FindSchema("main")!
-            .FindTable("Users")!
-            .FindColumn("email")!;
-
-        var columnUri = emailColumn.Uri.ToString();
-
-        userDataTable.AddStructure(emailColumn);
-
-        graphManipulator.Move(new Uri(columnUri), emailColumn.Uri);
-
-        graphStorage.Insert(simpleSqlite, graphManipulator.Graph, graphManipulator.Changes);
-
-        var dataGraph = graphStorage.GetLatest(simpleSqlite);
-
-        var writer = new CompressingTurtleWriter();
-
-        Console.WriteLine(StringWriter.Write(dataGraph, writer));
-        Console.WriteLine(simpleSqlite.ToSqlCreateStatement());
+        Console.OutputEncoding = Encoding.UTF8;
     }
 
-    private static void SparqlExperiment( /* string commandText */)
+    private static bool ConfigSetup(out IConfigManager? configManager)
     {
-        var graph = new Graph();
-        graph.LoadFromFile(OutputPath);
+        var configFilePath = configPath;
+        var configValues = new Dictionary<string, string>
+        {
+            { "GraphStoragePath", "" },
+            { "BaseURI", "http://www.test.com/" },
+            { "OntologyPath", "" },
+            { "LogPath", "" },
+            { "DatabaseConnectionString", "" },
+            { "IndividualsTable", "" }
+        };
 
-        IGraph ontology = new Graph();
-        ontology.LoadFromFile(OntologyPath, new TurtleParser());
+        configManager = new ConfigManager(configFilePath, configValues);
 
-        graph.ValidateUsing(ontology);
+        if (!IsValidConfig(configManager, configFilePath))
+        {
+            return false;
+        }
 
-        // var queryString = new SparqlParameterizedString();
-        // queryString.Namespaces.AddNamespace(
-        //     DataStoreDescriptionLanguage.OntologyPrefix, 
-        //     DataStoreDescriptionLanguage.OntologyUri);
-        // queryString.CommandText = commandText;
-
-
-        var parser = new SparqlQueryParser();
-        // var query = parser.ParseFromString(queryString);
-        var query = parser.ParseFromFile(
-            "/home/ane/Documents/GitHub/GraphManipulation/GraphManipulation/sparqlQuery.rq");
-
-        var tripleStore = new TripleStore();
-        tripleStore.Add(graph);
-
-        var dataset = new InMemoryDataset(tripleStore);
-
-        var processor = new LeviathanQueryProcessor(dataset);
-
-        var results = (processor.ProcessQuery(query) as SparqlResultSet)!;
-
-        foreach (var result in results)
-            Console.WriteLine(result);
+        Console.WriteLine($"Using config found at {configFilePath}");
+        return true;
     }
 
-    private static void CreateAndValidateGraph()
+    private static bool IsValidConfig(IConfigManager configManager, string configFilePath)
     {
-        using var optimizedConn = new SQLiteConnection($"Data Source={OptimizedDatabasePath}");
-        using var simpleConn = new SQLiteConnection($"Data Source={SimpleDatabasePath}");
+        if (configManager.GetEmptyKeys().Count == 0) return true;
 
-        var optimizedSqlite = new Sqlite("", BaseUri, optimizedConn);
-        var simpleSqlite = new Sqlite("", BaseUri, simpleConn);
-
-        optimizedSqlite.BuildFromDataSource();
-        simpleSqlite.BuildFromDataSource();
-
-        var optimizedGraph = optimizedSqlite.ToGraph();
-        var simpleGraph = simpleSqlite.ToGraph();
-
-        var combinedGraph = new Graph();
-        combinedGraph.Merge(optimizedGraph);
-        combinedGraph.Merge(simpleGraph);
-
-        var writer = new CompressingTurtleWriter();
-
-        writer.Save(combinedGraph, OutputPath);
-
-        IGraph dataGraph = new Graph();
-        dataGraph.LoadFromFile(OutputPath);
-
-        IGraph ontology = new Graph();
-        ontology.LoadFromFile(OntologyPath, new TurtleParser());
-
-        var report = dataGraph.ValidateUsing(ontology);
-
-        GraphValidation.PrintValidationReport(report);
+        Console.WriteLine(
+            $"Please fill {string.Join(", ", configManager.GetEmptyKeys())} in config file located at: {configFilePath}");
+        return false;
     }
 }
