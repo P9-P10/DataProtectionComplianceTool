@@ -13,6 +13,7 @@ using GraphManipulation.Models;
 using GraphManipulation.Utility;
 using GraphManipulation.Vacuuming;
 using Microsoft.EntityFrameworkCore;
+
 namespace GraphManipulation;
 
 public class TestProgram
@@ -66,7 +67,7 @@ public class TestProgram
             CreateStatementManipulator.UpdateCreationScript(context.Database.GenerateCreateScript()));
     }
 
-    public void Run(string command)
+    public void Run(string command, bool giveY = false)
     {
         try
         {
@@ -106,12 +107,12 @@ public class TestProgram
         var configFilePath = configPath;
         var configValues = new Dictionary<string, string>
         {
-            { "GraphStoragePath", "" },
-            { "BaseURI", "http://www.test.com/" },
-            { "OntologyPath", "" },
-            { "LogPath", "" },
-            { "DatabaseConnectionString", "" },
-            { "IndividualsTable", "" }
+            {"GraphStoragePath", ""},
+            {"BaseURI", "http://www.test.com/"},
+            {"OntologyPath", ""},
+            {"LogPath", ""},
+            {"DatabaseConnectionString", ""},
+            {"IndividualsTable", ""}
         };
 
         configManager = new ConfigManager(configFilePath, configValues);

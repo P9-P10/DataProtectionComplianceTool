@@ -170,7 +170,6 @@ public class VacuumingRulesTest : TestResources
     {
         using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
-        process.AwaitReady();
 
         SetupTestData(dbConnection, process);
 
@@ -205,7 +204,6 @@ public class VacuumingRulesTest : TestResources
     {
         using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
-        process.AwaitReady();
 
         SetupTestData(dbConnection, process);
 
@@ -228,7 +226,6 @@ public class VacuumingRulesTest : TestResources
     {
         using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
-        process.AwaitReady();
 
         SetupTestData(dbConnection, process);
 
@@ -256,7 +253,6 @@ public class VacuumingRulesTest : TestResources
     {
         using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
-        process.AwaitReady();
 
         SetupTestData(dbConnection, process);
 
@@ -279,7 +275,6 @@ public class VacuumingRulesTest : TestResources
     {
         using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
-        process.AwaitReady();
 
         SetupTestData(dbConnection, process);
 
@@ -307,7 +302,6 @@ public class VacuumingRulesTest : TestResources
     {
         using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
-        process.AwaitReady();
 
         TestStorageRule.VacuumingCondition = "Id = 2";
 
@@ -374,7 +368,6 @@ public class VacuumingRulesTest : TestResources
     {
         using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
-        process.AwaitReady();
 
         TestStorageRule.VacuumingCondition = "FALSE";
 

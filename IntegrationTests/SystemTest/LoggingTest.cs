@@ -153,7 +153,6 @@ public class LoggingTest : TestResources
         {
             using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
             process.Start();
-            process.AwaitReady();
 
             SetupTestData(dbConnection, process);
 

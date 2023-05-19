@@ -1,14 +1,20 @@
 using System.Collections;
 using System.Diagnostics;
+using System.Text;
+using GraphManipulation;
 using GraphManipulation.Commands;
 
 namespace IntegrationTests.SystemTest.Tools;
 
 public class TestProcess : IDisposable
 {
-    public Process Process { get; }
+    public TestProgram Process { get; }
     public List<string> Output { get; private set; }
     public List<string> Errors { get; private set; }
+    
+    private MemoryStream OutputStream;
+
+    private MemoryStream ErrorStream;
     public List<string> Inputs { get; }
 
     public List<List<string>> AllOutputs { get; }
@@ -24,40 +30,40 @@ public class TestProcess : IDisposable
         AllErrors = new List<List<string>>();
         Inputs = new List<string>();
         ConfigPath = configPath;
+        
+        // Create memory stream and redirect console output
+        OutputStream = new MemoryStream();
+        StreamWriter outputWriter = new StreamWriter(OutputStream);
+        outputWriter.AutoFlush = true;
+        Console.SetOut(outputWriter);
+        MemoryStream mstream = new MemoryStream();
+        mstream.Write(Encoding.ASCII.GetBytes($"y{Environment.NewLine}"));
+        mstream.Flush();
+        mstream.Position = 0;
+        StreamReader reader = new StreamReader(mstream);
+        Console.SetIn(reader);
 
-        Process = CreateProcess(executablePath);
+        // Do the same for standard error
+        ErrorStream = new MemoryStream();
+        StreamWriter errorWriter = new StreamWriter(ErrorStream);
+        errorWriter.AutoFlush = true;
+        Console.SetError(errorWriter);
+        
+
+        Process = CreateProcess();
     }
 
-    private Process CreateProcess(string executablePath)
+    private TestProgram CreateProcess()
     {
-        ProcessStartInfo startInfo = CreateProcessStartInfo(executablePath);
-        Process process = new Process();
-        process.StartInfo = startInfo;
 
+        TestProgram process = new TestProgram();
         return process;
-    }
-
-    private ProcessStartInfo CreateProcessStartInfo(string executablePath)
-    {
-        ProcessStartInfo startInfo = new ProcessStartInfo();
-        startInfo.CreateNoWindow = true;
-        startInfo.RedirectStandardOutput = true;
-        startInfo.RedirectStandardInput = true;
-        startInfo.RedirectStandardError = true;
-
-        startInfo.UseShellExecute = false;
-        startInfo.Arguments = ConfigPath == "" ? ConfigPath : @$"""{ConfigPath}""";
-        ;
-        startInfo.FileName = executablePath;
-
-        return startInfo;
     }
 
     public void Start()
     {
-        Process.ErrorDataReceived += (sender, args) => Errors.Add(args.Data);
-        Process.Start();
-        Process.BeginErrorReadLine();
+
+        Process.Start(ConfigPath);
         processStarted = true;
     }
 
@@ -66,7 +72,7 @@ public class TestProcess : IDisposable
         Output = new List<string>();
         Errors = new List<string>();
         Inputs.Add(input);
-        Process.StandardInput.WriteLine(input);
+        Process.Run(input);
         AwaitProcessResponse();
         
         if (!AllOutputs.Last().Any(s => s.Contains("Would you like to create one? (y/n)")))
@@ -75,13 +81,17 @@ public class TestProcess : IDisposable
         }
 
         Inputs.Add("y");
-        Process.StandardInput.WriteLine("y");
+        Process.Run("y");
         AwaitProcessResponse();
     }
 
-    public void AwaitReady()
+    private string ReadStream(Stream stream)
     {
-        AwaitPrompt();
+        
+        StreamReader reader = new StreamReader(stream);
+        stream.Position = 0;
+        return reader.ReadToEnd();
+
     }
 
     public string GetOutput()
@@ -154,7 +164,7 @@ public class TestProcess : IDisposable
 
     private void AwaitProcessResponse()
     {
-        string output = ReadStandardOutputToString();
+        string output = ReadStreamOutputToString();
 
         Output = output.Split(Environment.NewLine).ToList();
 
@@ -162,48 +172,17 @@ public class TestProcess : IDisposable
         AllErrors.Add(Errors);
     }
 
-    private string ReadStandardOutputToString()
+    private string ReadStreamOutputToString()
     {
-        List<char> chars = new List<char>();
-        bool encounteredPrompt = false;
-        while (!Process.StandardOutput.EndOfStream)
-        {
-            if ((char)Process.StandardOutput.Peek() == CommandLineInterface.Prompt)
-            {
-                if (encounteredPrompt)
-                {
-                    break;
-                }
-
-                encounteredPrompt = true;
-            }
-
-            char chr = (char)Process.StandardOutput.Read();
-            chars.Add(chr);
-        }
-
-        return new String(chars.ToArray());
+        return new String(ReadStream(OutputStream).ToArray());
     }
-
-    private void AwaitPrompt()
-    {
-        while (!Process.StandardOutput.EndOfStream)
-        {
-            if ((char)Process.StandardOutput.Peek() == CommandLineInterface.Prompt)
-            {
-                return;
-            }
-
-            Process.StandardOutput.Read();
-        }
-    }
+    
 
     public void Dispose()
     {
         if (processStarted)
         {
-            Process.Kill();
-            Process.Dispose();
+
         }
     }
 }
