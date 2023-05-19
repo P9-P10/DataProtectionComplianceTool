@@ -13,19 +13,6 @@ public class GdprMetadataContext : DbContext
         _connectionString = connectionString;
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder
-            .UseLazyLoadingProxies()
-            .UseSqlite(_connectionString);
-    }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<PersonalDataColumn>().OwnsOne(p => p.Key);
-        modelBuilder.Entity<Purpose>().HasMany<StorageRule>(p => p.StorageRules);
-    }
-
     public DbSet<PersonalDataColumn> columns { get; set; }
     public DbSet<VacuumingRule> vacuumingRules { get; set; }
     public DbSet<Processing> processes { get; set; }
@@ -38,4 +25,17 @@ public class GdprMetadataContext : DbContext
     public DbSet<StorageRule> StorageRules { get; set; }
 
     public IDbConnection Connection => Database.GetDbConnection();
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder
+            .UseLazyLoadingProxies()
+            .UseSqlite(_connectionString);
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<PersonalDataColumn>().OwnsOne(p => p.Key);
+        modelBuilder.Entity<Purpose>().HasMany<StorageRule>(p => p.StorageRules);
+    }
 }

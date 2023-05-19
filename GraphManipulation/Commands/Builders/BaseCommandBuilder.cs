@@ -1,6 +1,5 @@
 using System.CommandLine;
 using GraphManipulation.Commands.Binders;
-using GraphManipulation.Factories;
 using GraphManipulation.Factories.Interfaces;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
@@ -127,7 +126,8 @@ public abstract class BaseCommandBuilder<TKey, TValue> : BaseCommandBuilder
             .WithOption(out _, keyOption)
             .WithOption(out _, listOption);
 
-        command.SetHandler((key, list) => { CommandHandler.ListChangesHandler(key, list, getCurrentList, setList, isAdd, manager); },
+        command.SetHandler(
+            (key, list) => { CommandHandler.ListChangesHandler(key, list, getCurrentList, setList, isAdd, manager); },
             keyOption, listOption);
 
         return command;
@@ -146,7 +146,7 @@ public abstract class BaseCommandBuilder<TKey, TValue> : BaseCommandBuilder
     }
 
     protected abstract Option<TKey> BuildKeyOption();
-    
+
     protected abstract void StatusReport(TValue value);
 
     private static string GetEntityType()

@@ -9,9 +9,9 @@ namespace GraphManipulation.Commands.Binders;
 
 public class PersonalDataColumnBinder : BaseBinder<TableColumnPair, PersonalDataColumn>
 {
-    private readonly Option<IEnumerable<string>> _purposesOption;
     private readonly Option<string> _defaultValueOption;
     private readonly IManager<string, Purpose> _purposesManager;
+    private readonly Option<IEnumerable<string>> _purposesOption;
 
     public PersonalDataColumnBinder(
         Option<TableColumnPair> keyOption,
@@ -38,7 +38,9 @@ public class PersonalDataColumnBinder : BaseBinder<TableColumnPair, PersonalData
         {
             var purposes = bindingContext.ParseResult.GetValueForOption(_purposesOption);
 
-            pdc.Purposes = purposes is null ? null : Handlers.HandleMustExistListWithCreateOnDemand(purposes, _purposesManager);
+            pdc.Purposes = purposes is null
+                ? null
+                : Handlers.HandleMustExistListWithCreateOnDemand(purposes, _purposesManager);
         }
 
         return pdc;

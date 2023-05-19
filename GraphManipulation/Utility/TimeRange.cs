@@ -13,16 +13,6 @@ public class TimeRange : IEnumerable<DateTime>
         End = end;
     }
 
-    public bool DateTimeWithinRange(DateTime dateTime)
-    {
-        return dateTime >= Start && dateTime <= End;
-    }
-
-    public bool Equals(TimeRange other)
-    {
-        return other.Start == Start && other.End == End;
-    }
-
 
     public IEnumerator<DateTime> GetEnumerator()
     {
@@ -32,5 +22,15 @@ public class TimeRange : IEnumerable<DateTime>
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
+    }
+
+    public bool DateTimeWithinRange(DateTime dateTime)
+    {
+        return dateTime >= Start && dateTime <= End;
+    }
+
+    public bool Equals(TimeRange other)
+    {
+        return other.Start == Start && other.End == End;
     }
 }

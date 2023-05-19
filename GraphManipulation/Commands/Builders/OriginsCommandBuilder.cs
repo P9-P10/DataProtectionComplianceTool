@@ -1,6 +1,5 @@
 using System.CommandLine;
 using GraphManipulation.Commands.Binders;
-using GraphManipulation.Factories;
 using GraphManipulation.Factories.Interfaces;
 using GraphManipulation.Models;
 using GraphManipulation.Utility;
@@ -28,11 +27,11 @@ public class OriginsCommandBuilder : BaseCommandBuilder<string, Origin>
                 CreateCommand(keyOption, createOriginBinder, new Option[]
                 {
                     descriptionOption
-                }), 
+                }),
                 UpdateCommand(keyOption, updateOriginBinder, new Option[]
                 {
                     newKeyOption, descriptionOption
-                }) 
+                })
             );
     }
 

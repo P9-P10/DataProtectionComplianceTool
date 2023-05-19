@@ -6,7 +6,6 @@ using System.Text;
 using Dapper;
 using GraphManipulation.Commands;
 using GraphManipulation.DataAccess;
-using GraphManipulation.Decorators;
 using GraphManipulation.Factories;
 using GraphManipulation.Factories.Interfaces;
 using GraphManipulation.Logging;
@@ -21,14 +20,16 @@ namespace GraphManipulation;
 public static class Program
 {
     private static string configPath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
-    private static bool VerboseOutput = true;
+    private static readonly bool VerboseOutput = true;
 
     public static void Main(string[] args)
     {
         if (args.Length > 0)
         {
             if (args.Length == 1)
+            {
                 configPath = args[0];
+            }
             else
             {
                 Console.WriteLine(
@@ -64,7 +65,7 @@ public static class Program
 
         AddStructureToDatabaseIfNotExists(dbConnection, context);
         var purposeMapper = new Mapper<Purpose>(context);
-        
+
         var vacuumer = new Vacuumer(purposeMapper, new SqliteQueryExecutor(dbConnection));
 
         IManagerFactory managerFactory = new LoggingManagerFactory(new ManagerFactory(context), logger);
@@ -85,7 +86,6 @@ public static class Program
     private static void Run(CommandLineInterface cli)
     {
         while (true)
-        {
             try
             {
                 Console.Write($"{Environment.NewLine}{CommandLineInterface.Prompt} ");
@@ -101,9 +101,7 @@ public static class Program
                 Console.Error.WriteLine(VerboseOutput ? e.ToString() : e.Message);
 
                 foreach (var innerException in e.InnerExceptions)
-                {
                     Console.Error.WriteLine(VerboseOutput ? innerException.ToString() : innerException.Message);
-                }
             }
             catch (Exception e)
             {
@@ -114,7 +112,6 @@ public static class Program
                     Console.Error.WriteLine(VerboseOutput ? e.InnerException.ToString() : e.InnerException.Message);
                 }
             }
-        }
     }
 
     private static void ConsoleSetup()
@@ -148,7 +145,10 @@ public static class Program
 
     private static bool IsValidConfig(IConfigManager configManager, string configFilePath)
     {
-        if (configManager.GetEmptyKeys().Count == 0) return true;
+        if (configManager.GetEmptyKeys().Count == 0)
+        {
+            return true;
+        }
 
         Console.WriteLine(
             $"Please fill {string.Join(", ", configManager.GetEmptyKeys())} in config file located at: {configFilePath}");

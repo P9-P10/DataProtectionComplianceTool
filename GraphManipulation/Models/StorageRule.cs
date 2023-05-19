@@ -5,7 +5,7 @@ public class StorageRule : Entity<string>
     public string? VacuumingCondition { get; set; }
     public virtual PersonalDataColumn? PersonalDataColumn { get; set; }
     public virtual IEnumerable<Purpose>? Purposes { get; set; }
-    
+
     public override string ToListing()
     {
         return string.Join(ToListingSeparator, base.ToListing(),
@@ -13,9 +13,10 @@ public class StorageRule : Entity<string>
             NullToString(PersonalDataColumn),
             ListNullOrEmptyToString(Purposes));
     }
-    
+
     public override string ToListingHeader()
     {
-        return string.Join(ToListingSeparator, base.ToListingHeader(), "Vacuuming Condition", "Personal Data Column", "Purposes");
+        return string.Join(ToListingSeparator, base.ToListingHeader(), "Vacuuming Condition", "Personal Data Column",
+            "Purposes");
     }
 }

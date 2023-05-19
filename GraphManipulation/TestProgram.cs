@@ -4,7 +4,6 @@ using System.Text;
 using Dapper;
 using GraphManipulation.Commands;
 using GraphManipulation.DataAccess;
-using GraphManipulation.Decorators;
 using GraphManipulation.Factories;
 using GraphManipulation.Factories.Interfaces;
 using GraphManipulation.Logging;
@@ -13,18 +12,22 @@ using GraphManipulation.Models;
 using GraphManipulation.Utility;
 using GraphManipulation.Vacuuming;
 using Microsoft.EntityFrameworkCore;
+
 namespace GraphManipulation;
 
 public class TestProgram
 {
     public string configPath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
-    private bool VerboseOutput = true;
+    private readonly bool VerboseOutput = true;
     public CommandLineInterface Cli { get; set; }
 
     public void Start(string config = "")
     {
         if (config != "")
+        {
             configPath = config;
+        }
+
         ConsoleSetup();
 
         try
@@ -81,9 +84,7 @@ public class TestProgram
             Console.Error.WriteLine(VerboseOutput ? e.ToString() : e.Message);
 
             foreach (var innerException in e.InnerExceptions)
-            {
                 Console.Error.WriteLine(VerboseOutput ? innerException.ToString() : innerException.Message);
-            }
         }
         catch (Exception e)
         {
@@ -127,7 +128,10 @@ public class TestProgram
 
     private bool IsValidConfig(IConfigManager configManager, string configFilePath)
     {
-        if (configManager.GetEmptyKeys().Count == 0) return true;
+        if (configManager.GetEmptyKeys().Count == 0)
+        {
+            return true;
+        }
 
         Console.WriteLine(
             $"Please fill {string.Join(", ", configManager.GetEmptyKeys())} in config file located at: {configFilePath}");

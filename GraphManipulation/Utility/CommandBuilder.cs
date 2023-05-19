@@ -28,9 +28,7 @@ public static class CommandBuilder
     public static Command WithOptions(this Command command, params Option[] options)
     {
         foreach (var option in options)
-        {
             command.AddOption(option);
-        }
 
         return command;
     }
@@ -77,7 +75,7 @@ public static class CommandBuilder
 
     public static Command WithSubCommands(this Command command, params BaseCommandBuilder[] commandBuilders)
     {
-        foreach (var builder in commandBuilders) 
+        foreach (var builder in commandBuilders)
             command.AddCommand(builder.Build());
 
         return command;

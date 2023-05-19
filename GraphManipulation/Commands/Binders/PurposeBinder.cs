@@ -10,8 +10,8 @@ namespace GraphManipulation.Commands.Binders;
 public class PurposeBinder : BaseBinder<string, Purpose>
 {
     private readonly Option<bool> _legallyRequiredOption;
-    private readonly Option<IEnumerable<string>> _storageRulesOption;
     private readonly IManager<string, StorageRule> _storageRulesManager;
+    private readonly Option<IEnumerable<string>> _storageRulesOption;
 
     public PurposeBinder(
         Option<string> keyOption,
@@ -37,7 +37,8 @@ public class PurposeBinder : BaseBinder<string, Purpose>
         if (bindingContext.ParseResult.HasOption(_storageRulesOption))
         {
             var storageRuleNames = bindingContext.ParseResult.GetValueForOption(_storageRulesOption)!;
-            purpose.StorageRules = Handlers.HandleMustExistListWithCreateOnDemand(storageRuleNames, _storageRulesManager);
+            purpose.StorageRules =
+                Handlers.HandleMustExistListWithCreateOnDemand(storageRuleNames, _storageRulesManager);
         }
 
         return purpose;

@@ -1,4 +1,3 @@
-
 namespace GraphManipulation.Logging;
 
 public class MutableLog : IMutableLog

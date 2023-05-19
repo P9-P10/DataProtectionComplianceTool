@@ -7,5 +7,4 @@ public interface IMapper<T>
     public T? FindSingle(Func<T, bool> condition);
     public T Update(T value);
     public void Delete(T value);
-
 }

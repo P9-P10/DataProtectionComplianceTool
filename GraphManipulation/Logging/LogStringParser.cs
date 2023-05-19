@@ -51,7 +51,7 @@ public static class LogStringParser
 
         throw new LogStringParserException("Could not parse log type: " + logTypeString);
     }
-    
+
     public static string ParseSubject(string logString)
     {
         var subject = GetRelevantPartFromString(logString, 3);

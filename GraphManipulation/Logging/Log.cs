@@ -65,7 +65,8 @@ public class Log : ILog
     /// <summary>
     ///     Describes a pattern for a valid log string of the form: "LogNumber {LogDelimiter} CreationTimeStamp {LogDelimiter}
     ///     LogType {LogDelimiter} Subject {LogDelimiter} LogMessageFormat {LogDelimiter} Message"
-    ///     A valid string could be: "36   12/05/2027 11.56.45   Vacuuming   TestSubject   Plaintext   This is a vacuuming message"
+    ///     A valid string could be: "36   12/05/2027 11.56.45   Vacuuming   TestSubject   Plaintext   This is a vacuuming
+    ///     message"
     /// </summary>
     /// <returns></returns>
     // 

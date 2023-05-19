@@ -9,23 +9,22 @@ namespace GraphManipulation.Commands.Binders;
 
 public class PersonalDataOriginBinder : BaseBinder<int, PersonalDataOrigin>
 {
-    
     private readonly Option<int> _individualOption;
-    private readonly Option<TableColumnPair> _tableColumnOption;
-    private readonly Option<string> _originOption;
     private readonly IManager<int, Individual> _individualsManager;
-    private readonly IManager<TableColumnPair, PersonalDataColumn> _personalDataColumnManager;
+    private readonly Option<string> _originOption;
     private readonly IManager<string, Origin> _originsManager;
-    
-    
+    private readonly IManager<TableColumnPair, PersonalDataColumn> _personalDataColumnManager;
+    private readonly Option<TableColumnPair> _tableColumnOption;
+
+
     public PersonalDataOriginBinder(
-        Option<int> keyOption, 
+        Option<int> keyOption,
         Option<int> individualOption,
-        Option<string> descriptionOption, 
-        Option<TableColumnPair> tableColumnOption, 
-        Option<string> originOption, 
+        Option<string> descriptionOption,
+        Option<TableColumnPair> tableColumnOption,
+        Option<string> originOption,
         IManager<int, Individual> individualsManager,
-        IManager<TableColumnPair, PersonalDataColumn> personalDataColumnManager, 
+        IManager<TableColumnPair, PersonalDataColumn> personalDataColumnManager,
         IManager<string, Origin> originsManager) : base(keyOption, descriptionOption)
     {
         _individualOption = individualOption;

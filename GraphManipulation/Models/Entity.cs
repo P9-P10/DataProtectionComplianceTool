@@ -5,6 +5,8 @@ public class Entity<TKey> : DomainEntity
     public TKey? Key { get; set; }
     public string? Description { get; set; }
 
+    protected static string ToListingSeparator => ", ";
+
     public void UpdateUsing(object? other)
     {
         if (other is null)
@@ -50,8 +52,6 @@ public class Entity<TKey> : DomainEntity
         return string.Join(ToListingSeparator, ToListingIdentifier(), NullToString(Description));
     }
 
-    protected static string ToListingSeparator => ", ";
-
     public string ToListingIdentifier()
     {
         return Key?.ToString() ?? "No key";
@@ -76,7 +76,7 @@ public class Entity<TKey> : DomainEntity
     {
         return ListNullOrEmptyToString(list, EncapsulateList);
     }
-    
+
     protected string NullToString<T>(T? obj, Func<T, string> toString)
     {
         return obj is null ? "None" : toString(obj);

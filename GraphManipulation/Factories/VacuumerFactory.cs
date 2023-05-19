@@ -12,7 +12,7 @@ public class VacuumerFactory : IVacuumerFactory
     private readonly IMapper<Purpose>? _mapper;
     private readonly IQueryExecutor? _queryExecutor;
     private readonly IVacuumer? _vacuumer;
-    
+
     public VacuumerFactory(IVacuumer vacuumer)
     {
         _vacuumer = vacuumer;
@@ -23,7 +23,7 @@ public class VacuumerFactory : IVacuumerFactory
         _mapper = mapper;
         _queryExecutor = queryExecutor;
     }
-    
+
     public IVacuumer CreateVacuumer()
     {
         return _vacuumer ?? new Vacuumer(_mapper, _queryExecutor);
@@ -32,8 +32,8 @@ public class VacuumerFactory : IVacuumerFactory
 
 public class LoggingVacuumerFactory : IVacuumerFactory
 {
-    private readonly IVacuumerFactory _vacuumerFactory;
     private readonly ILogger _logger;
+    private readonly IVacuumerFactory _vacuumerFactory;
 
     public LoggingVacuumerFactory(IVacuumerFactory vacuumerFactory, ILogger logger)
     {

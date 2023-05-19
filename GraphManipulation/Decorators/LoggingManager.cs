@@ -4,7 +4,8 @@ using GraphManipulation.Models;
 
 namespace GraphManipulation.Decorators;
 
-public class LoggingManager<TKey, TValue> : LoggingDecorator<TKey, TValue>, IManager<TKey, TValue> where TValue : Entity<TKey>
+public class LoggingManager<TKey, TValue> : LoggingDecorator<TKey, TValue>, IManager<TKey, TValue>
+    where TValue : Entity<TKey>
 {
     private readonly IManager<TKey, TValue> _manager;
 
@@ -26,7 +27,7 @@ public class LoggingManager<TKey, TValue> : LoggingDecorator<TKey, TValue>, IMan
     public bool Create(TKey key)
     {
         var success = _manager.Create(key);
-        
+
         if (success)
         {
             LogCreate(key);
@@ -38,7 +39,7 @@ public class LoggingManager<TKey, TValue> : LoggingDecorator<TKey, TValue>, IMan
     public bool Update(TKey key, TValue value)
     {
         var success = _manager.Update(key, value);
-        
+
         if (success)
         {
             var newValue = value.Key is not null ? _manager.Get(value.Key)! : _manager.Get(key)!;
@@ -51,7 +52,7 @@ public class LoggingManager<TKey, TValue> : LoggingDecorator<TKey, TValue>, IMan
     public bool Delete(TKey key)
     {
         var success = _manager.Delete(key);
-        
+
         if (success)
         {
             LogDelete(key);

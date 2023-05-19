@@ -13,16 +13,6 @@ public class NumberRange : IEnumerable<int>
         End = end;
     }
 
-    public bool NumberWithinRange(int number)
-    {
-        return number >= Start && number <= End;
-    }
-
-    public bool Equals(NumberRange other)
-    {
-        return other.Start == Start && other.End == End;
-    }
-
     public IEnumerator<int> GetEnumerator()
     {
         return new List<int> { Start, End }.GetEnumerator();
@@ -31,5 +21,15 @@ public class NumberRange : IEnumerable<int>
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
+    }
+
+    public bool NumberWithinRange(int number)
+    {
+        return number >= Start && number <= End;
+    }
+
+    public bool Equals(NumberRange other)
+    {
+        return other.Start == Start && other.End == End;
     }
 }

@@ -1,6 +1,4 @@
-﻿using GraphManipulation.Commands;
-
-namespace GraphManipulation.Models;
+﻿namespace GraphManipulation.Models;
 
 public class PersonalDataOrigin : Entity<int>
 {
@@ -15,7 +13,7 @@ public class PersonalDataOrigin : Entity<int>
             NullToString(PersonalDataColumn),
             NullToString(Origin)) + ")";
     }
-    
+
     public override string ToListingHeader()
     {
         return string.Join(ToListingSeparator, "Key", "Individual", "Personal Data Column", "Origin");

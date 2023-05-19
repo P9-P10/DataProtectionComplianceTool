@@ -1,21 +1,11 @@
-﻿using System.Collections;
-using GraphManipulation.Models;
+﻿using GraphManipulation.Models;
 
 namespace GraphManipulation.Vacuuming;
 
 public class DeletionExecution
 {
-    public string Table { get; set; }
-
-    public string Column { get; set; }
-
-    public string Query { get; set; }
-
-    public List<Purpose> Purposes { get; set; }
-    
-    public VacuumingRule VacuumingRule { get; set; }
-
-    public DeletionExecution(List<Purpose> purposes, string column, string table, string query, VacuumingRule vacuumingRule)
+    public DeletionExecution(List<Purpose> purposes, string column, string table, string query,
+        VacuumingRule vacuumingRule)
     {
         Purposes = purposes;
         Column = column;
@@ -32,6 +22,16 @@ public class DeletionExecution
         Table = "";
     }
 
+    public string Table { get; set; }
+
+    public string Column { get; set; }
+
+    public string Query { get; set; }
+
+    public List<Purpose> Purposes { get; set; }
+
+    public VacuumingRule VacuumingRule { get; set; }
+
     public void SetTableAndColum(PersonalDataColumn personalDataColumn)
     {
         Column = personalDataColumn.Key.ColumnName;
@@ -40,11 +40,12 @@ public class DeletionExecution
 
     public void CreateQuery(PersonalDataColumn personalDataColumn, IEnumerable<StorageRule> storageRules)
     {
-        string updateQuery = $"UPDATE {personalDataColumn.Key.TableName} SET {personalDataColumn.Key.ColumnName} = '{personalDataColumn.DefaultValue}' WHERE ";
+        string updateQuery =
+            $"UPDATE {personalDataColumn.Key.TableName} SET {personalDataColumn.Key.ColumnName} = '{personalDataColumn.DefaultValue}' WHERE ";
 
         List<string> conditions = storageRules.Select(rule => $"({rule.VacuumingCondition})").ToList();
         string combinedCondition = string.Join(" AND ", conditions) + ";";
-        
+
         Query = updateQuery + combinedCondition;
     }
 

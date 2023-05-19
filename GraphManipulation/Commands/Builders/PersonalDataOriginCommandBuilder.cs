@@ -1,6 +1,5 @@
 using System.CommandLine;
 using GraphManipulation.Commands.Binders;
-using GraphManipulation.Factories;
 using GraphManipulation.Factories.Interfaces;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
@@ -11,10 +10,11 @@ namespace GraphManipulation.Commands.Builders;
 public class PersonalDataOriginCommandBuilder : BaseCommandBuilder<int, PersonalDataOrigin>
 {
     private readonly IManager<int, Individual> _individualsManager;
-    private readonly IManager<TableColumnPair, PersonalDataColumn> _personalDataColumnManager;
     private readonly IManager<string, Origin> _originsManager;
-    
-    public PersonalDataOriginCommandBuilder(ICommandHandlerFactory commandHandlerFactory, IManagerFactory managerFactory) : base(commandHandlerFactory)
+    private readonly IManager<TableColumnPair, PersonalDataColumn> _personalDataColumnManager;
+
+    public PersonalDataOriginCommandBuilder(ICommandHandlerFactory commandHandlerFactory,
+        IManagerFactory managerFactory) : base(commandHandlerFactory)
     {
         _individualsManager = managerFactory.CreateManager<int, Individual>();
         _personalDataColumnManager = managerFactory.CreateManager<TableColumnPair, PersonalDataColumn>();
@@ -25,14 +25,14 @@ public class PersonalDataOriginCommandBuilder : BaseCommandBuilder<int, Personal
     {
         var baseCommand = base.Build(CommandNamer.PersonalDataOriginsName, CommandNamer.PersonalDataOriginsAlias,
             out var keyOption);
-        
+
         var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<PersonalDataOrigin>();
 
         var individualOption = OptionBuilder
             .CreateOption<int>(OptionNamer.Individual)
             .WithAlias(OptionNamer.IndividualAlias)
             .WithDescription("The id of the individual, whose personal data is getting an origin");
-        
+
         var tableColumnOption = OptionBuilder
             .CreateTableColumnPairOption()
             .WithDescription("The table and column that the personal data is stored in");
@@ -49,7 +49,7 @@ public class PersonalDataOriginCommandBuilder : BaseCommandBuilder<int, Personal
             tableColumnOption,
             originOption,
             _individualsManager,
-            _personalDataColumnManager, 
+            _personalDataColumnManager,
             _originsManager);
 
         var updateBinder = new PersonalDataOriginBinder(
@@ -91,7 +91,7 @@ public class PersonalDataOriginCommandBuilder : BaseCommandBuilder<int, Personal
         //                                    $"and {TypeToString.GetEntityType(typeof(PersonalDataColumn))} '{value.PersonalDataColumn.Key}'");
         //     return;
         // } 
-        
+
         if (value.PersonalDataColumn is null)
         {
             FeedbackEmitter.EmitMissing<PersonalDataColumn>(value.Key);
@@ -101,7 +101,5 @@ public class PersonalDataOriginCommandBuilder : BaseCommandBuilder<int, Personal
         {
             FeedbackEmitter.EmitMissing<Origin>(value.Key);
         }
-        
-        
     }
 }

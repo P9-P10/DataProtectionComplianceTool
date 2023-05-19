@@ -1,5 +1,4 @@
 ﻿using GraphManipulation.Commands;
-using GraphManipulation.Commands.Binders;
 using GraphManipulation.Managers;
 using GraphManipulation.Models;
 
@@ -206,7 +205,8 @@ public static class Handlers
         UpdateHandler(key, value, manger1, feedbackEmitter1, statusAction);
     }
 
-    public static IEnumerable<TValue> HandleMustExistList<TKey, TValue>(IEnumerable<TKey> keys, IManager<TKey, TValue> manager)
+    public static IEnumerable<TValue> HandleMustExistList<TKey, TValue>(IEnumerable<TKey> keys,
+        IManager<TKey, TValue> manager)
     {
         return keys.Select<TKey, TValue>(key => HandleMustExist(key, manager)).ToList();
     }
@@ -241,7 +241,7 @@ public static class Handlers
             {
                 throw;
             }
-            
+
             return manager.Get(key)!;
         }
     }
@@ -253,7 +253,7 @@ public static class Handlers
         {
             return false;
         }
-        
+
         CreateHandler(key, manager, new FeedbackEmitter<TKey, TValue>(),
             _ => Console.WriteLine("Not reporting status when creating on demand"));
         return true;
@@ -272,6 +272,7 @@ public static class Handlers
                 Console.WriteLine("You must answer either 'y' or 'n'");
             }
             else
+            {
                 switch (reply)
                 {
                     case "y" or "Y":
@@ -282,6 +283,7 @@ public static class Handlers
                         Console.WriteLine($"Cannot parse '{reply}', you must either answer 'y' or 'n'");
                         break;
                 }
+            }
         }
     }
 }

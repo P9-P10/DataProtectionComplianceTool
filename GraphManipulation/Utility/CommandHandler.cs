@@ -25,8 +25,8 @@ public interface ICommandHandler<TKey, TValue> where TValue : Entity<TKey> where
 public class CommandHandler<TKey, TValue> : ICommandHandler<TKey, TValue>
     where TValue : Entity<TKey> where TKey : notnull
 {
-    private readonly IManager<TKey, TValue> _manager;
     private readonly FeedbackEmitter<TKey, TValue> _feedbackEmitter;
+    private readonly IManager<TKey, TValue> _manager;
     private readonly Action<TValue> _statusReport;
 
     public CommandHandler(IManager<TKey, TValue> manager, FeedbackEmitter<TKey, TValue> feedbackEmitter,
@@ -35,11 +35,6 @@ public class CommandHandler<TKey, TValue> : ICommandHandler<TKey, TValue>
         _feedbackEmitter = feedbackEmitter;
         _statusReport = statusReport;
         _manager = manager;
-    }
-
-    public void CreateHandler(TKey key)
-    {
-        Handlers.CreateHandler(key, _manager, _feedbackEmitter, _statusReport);
     }
 
     public void CreateHandler(TKey key, TValue value)
@@ -56,7 +51,7 @@ public class CommandHandler<TKey, TValue> : ICommandHandler<TKey, TValue>
     {
         Handlers.DeleteHandler(key, _manager, _feedbackEmitter);
     }
-    
+
     public void ShowHandler(TKey key)
     {
         Handlers.ShowHandler(key, _manager, _feedbackEmitter);
@@ -66,12 +61,12 @@ public class CommandHandler<TKey, TValue> : ICommandHandler<TKey, TValue>
     {
         Handlers.ListHandler(_manager);
     }
-    
+
     public void StatusHandler()
     {
         Handlers.StatusHandler(_statusReport, _manager);
     }
-    
+
     public void ListChangesHandler<TK, TV>(
         TKey key,
         IEnumerable<TK> list,
@@ -83,5 +78,10 @@ public class CommandHandler<TKey, TValue> : ICommandHandler<TKey, TValue>
     {
         Handlers.ListChangesHandler(key, list, getCurrentList, setList, isAdd, _manager, manager, _feedbackEmitter,
             new FeedbackEmitter<TK, TV>(), _statusReport);
+    }
+
+    public void CreateHandler(TKey key)
+    {
+        Handlers.CreateHandler(key, _manager, _feedbackEmitter, _statusReport);
     }
 }

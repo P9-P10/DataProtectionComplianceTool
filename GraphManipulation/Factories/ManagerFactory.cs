@@ -9,7 +9,7 @@ namespace GraphManipulation.Factories;
 
 public class ManagerFactory : IManagerFactory
 {
-    private GdprMetadataContext _dbContext;
+    private readonly GdprMetadataContext _dbContext;
 
     public ManagerFactory(GdprMetadataContext dbContext)
     {
@@ -24,8 +24,8 @@ public class ManagerFactory : IManagerFactory
 
 public class LoggingManagerFactory : IManagerFactory
 {
-    private IManagerFactory _managerFactory;
     private readonly ILogger _logger;
+    private readonly IManagerFactory _managerFactory;
 
     public LoggingManagerFactory(IManagerFactory managerFactory, ILogger logger)
     {

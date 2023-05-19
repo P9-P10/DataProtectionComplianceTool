@@ -5,7 +5,7 @@ namespace GraphManipulation.Managers;
 
 public class Manager<TKey, TValue> : IManager<TKey, TValue>
     where TKey : notnull
-    where TValue : Entity<TKey>, new() 
+    where TValue : Entity<TKey>, new()
 {
     protected readonly IMapper<TValue> Mapper;
 
@@ -17,8 +17,11 @@ public class Manager<TKey, TValue> : IManager<TKey, TValue>
     public bool Create(TKey key)
     {
         var old = Get(key);
-        if (old is not null) return false;
-        
+        if (old is not null)
+        {
+            return false;
+        }
+
         Mapper.Insert(new TValue { Key = key });
         return true;
     }
@@ -26,8 +29,11 @@ public class Manager<TKey, TValue> : IManager<TKey, TValue>
     public bool Update(TKey key, TValue value)
     {
         var old = Get(key);
-        if (old is null) return false;
-        
+        if (old is null)
+        {
+            return false;
+        }
+
         old.UpdateUsing(value);
 
         Mapper.Update(old);
@@ -37,7 +43,10 @@ public class Manager<TKey, TValue> : IManager<TKey, TValue>
     public bool Delete(TKey key)
     {
         var entity = Get(key);
-        if (entity is null) return false;
+        if (entity is null)
+        {
+            return false;
+        }
 
         Mapper.Delete(entity);
         return true;

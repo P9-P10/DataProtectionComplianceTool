@@ -10,11 +10,11 @@ public class Mapper<T> : IMapper<T> where T : DomainEntity
     {
         _context = context;
     }
-    
+
     public T Insert(T value)
     {
         ValidateArgument(value);
-        
+
         var insertedValue = _context.Add(value).Entity;
         _context.SaveChanges();
         return insertedValue;
@@ -52,6 +52,8 @@ public class Mapper<T> : IMapper<T> where T : DomainEntity
         // Check that the given argument is not null
         // Throw ArgumentNullException if it is
         if (value is null)
+        {
             throw new ArgumentNullException($"Expected argument 'value' to be of type {typeof(T)} but received null");
+        }
     }
 }

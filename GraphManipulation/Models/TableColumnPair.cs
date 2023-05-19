@@ -2,14 +2,14 @@ namespace GraphManipulation.Models;
 
 public class TableColumnPair
 {
-    public string TableName { get; set; }
-    public string ColumnName { get; set; }
-
     public TableColumnPair(string tableName, string columnName)
     {
         TableName = tableName;
         ColumnName = columnName;
     }
+
+    public string TableName { get; set; }
+    public string ColumnName { get; set; }
 
     public override string ToString()
     {
