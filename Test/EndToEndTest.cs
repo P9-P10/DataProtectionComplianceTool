@@ -54,4 +54,75 @@ public class EndToEndTest
         string output = ReadOutput();
         output.Should().Contain(testProgram.configPath);
     }
+
+    [Fact]
+    public void CanPreBufferReadLine()
+    {
+        const string testString = "This is a test string";
+        var memoryStream = new MemoryStream();
+        var streamWriter = new StreamWriter(memoryStream);
+        streamWriter.WriteLine(testString);
+        streamWriter.Flush();
+
+        memoryStream.Position = 0;
+        
+        var streamReader = new StreamReader(memoryStream);
+        Console.SetIn(streamReader);
+
+        Console.ReadLine().Should().Be(testString);
+    }
+
+    [Fact]
+    public void CanPreBufferFromString()
+    {
+        const string testString = "This is a test string";
+        Console.SetIn(new StringReader(testString));
+        
+        Console.ReadLine().Should().Be(testString);
+    }
+    
+    [Fact]
+    public void CanPreBufferMultipleFromString()
+    {
+        const string testString1 = "This is a test string 1";
+        const string testString2 = "This is a test string 2";
+        Console.SetIn(new StringReader(string.Join(Environment.NewLine, testString1, testString2)));
+        
+        Console.ReadLine().Should().Be(testString1);
+        Console.ReadLine().Should().Be(testString2);
+    }
+
+    private class TestReader : TextReader
+    {
+        private readonly string _output;
+
+        public TestReader(string output)
+        {
+            _output = output;
+        }
+        public override string ReadLine()
+        {
+            return _output;
+        }
+    }
+
+    [Fact]
+    public void CanPreBufferFromCustomReader()
+    {
+        const string testString = "This is a test string";
+        Console.SetIn(new TestReader(testString));
+
+        Console.ReadLine().Should().Be(testString);
+    }
+    
+    [Fact]
+    public void CanPreBufferFromCustomReaderUnlimitedTimes()
+    {
+        const string testString = "This is a test string";
+        Console.SetIn(new TestReader(testString));
+
+        Console.ReadLine().Should().Be(testString);
+        Console.ReadLine().Should().Be(testString);
+        Console.ReadLine().Should().Be(testString);
+    }
 }

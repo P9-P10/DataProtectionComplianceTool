@@ -53,7 +53,6 @@ public class TestProgram
             IVacuumerFactory vacuumerFactory = new LoggingVacuumerFactory(new VacuumerFactory(vacuumer), logger);
 
             Cli = new CommandLineInterface(managerFactory, loggerFactory, vacuumerFactory);
-            Console.Write($"{Environment.NewLine}$: ");
         }
         catch (IOException e)
         {
@@ -67,14 +66,13 @@ public class TestProgram
             CreateStatementManipulator.UpdateCreationScript(context.Database.GenerateCreateScript()));
     }
 
-    public void Run(string command, bool giveY = false)
+    public void Run(string command)
     {
         try
         {
             if (!string.IsNullOrEmpty(command))
             {
                 Cli.Invoke(command);
-                Console.Write($"{Environment.NewLine}$: ");
             }
         }
         catch (AggregateException e)
@@ -107,12 +105,12 @@ public class TestProgram
         var configFilePath = configPath;
         var configValues = new Dictionary<string, string>
         {
-            {"GraphStoragePath", ""},
-            {"BaseURI", "http://www.test.com/"},
-            {"OntologyPath", ""},
-            {"LogPath", ""},
-            {"DatabaseConnectionString", ""},
-            {"IndividualsTable", ""}
+            { "GraphStoragePath", "" },
+            { "BaseURI", "http://www.test.com/" },
+            { "OntologyPath", "" },
+            { "LogPath", "" },
+            { "DatabaseConnectionString", "" },
+            { "IndividualsTable", "" }
         };
 
         configManager = new ConfigManager(configFilePath, configValues);

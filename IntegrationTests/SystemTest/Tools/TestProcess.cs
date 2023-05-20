@@ -11,7 +11,7 @@ public class TestProcess : IDisposable
     public TestProgram Process { get; }
     public List<string> Output { get; private set; }
     public List<string> Errors { get; private set; }
-    
+
     private MemoryStream OutputStream;
 
     private MemoryStream ErrorStream;
@@ -30,39 +30,48 @@ public class TestProcess : IDisposable
         AllErrors = new List<List<string>>();
         Inputs = new List<string>();
         ConfigPath = configPath;
-        
+
         // Create memory stream and redirect console output
         OutputStream = new MemoryStream();
         StreamWriter outputWriter = new StreamWriter(OutputStream);
         outputWriter.AutoFlush = true;
         Console.SetOut(outputWriter);
-        MemoryStream mstream = new MemoryStream();
-        mstream.Write(Encoding.ASCII.GetBytes($"y{Environment.NewLine}"));
-        mstream.Flush();
-        mstream.Position = 0;
-        StreamReader reader = new StreamReader(mstream);
-        Console.SetIn(reader);
+
+        Console.SetIn(new TestReader($"y{Environment.NewLine}"));
 
         // Do the same for standard error
         ErrorStream = new MemoryStream();
         StreamWriter errorWriter = new StreamWriter(ErrorStream);
         errorWriter.AutoFlush = true;
         Console.SetError(errorWriter);
-        
+
 
         Process = CreateProcess();
     }
 
+    private class TestReader : TextReader
+    {
+        private readonly string _output;
+
+        public TestReader(string output)
+        {
+            _output = output;
+        }
+
+        public override string ReadLine()
+        {
+            return _output;
+        }
+    }
+
     private TestProgram CreateProcess()
     {
-
         TestProgram process = new TestProgram();
         return process;
     }
 
     public void Start()
     {
-
         Process.Start(ConfigPath);
         processStarted = true;
     }
@@ -74,24 +83,15 @@ public class TestProcess : IDisposable
         Inputs.Add(input);
         Process.Run(input);
         AwaitProcessResponse();
-        
-        if (!AllOutputs.Last().Any(s => s.Contains("Would you like to create one? (y/n)")))
-        {
-            return;
-        }
-
-        Inputs.Add("y");
-        Process.Run("y");
-        AwaitProcessResponse();
     }
 
     private string ReadStream(Stream stream)
     {
-        
-        StreamReader reader = new StreamReader(stream);
+        var reader = new StreamReader(stream);
         stream.Position = 0;
-        return reader.ReadToEnd();
-
+        var output = reader.ReadToEnd();
+        stream.SetLength(0);
+        return output;
     }
 
     public string GetOutput()
@@ -174,15 +174,14 @@ public class TestProcess : IDisposable
 
     private string ReadStreamOutputToString()
     {
-        return new String(ReadStream(OutputStream).ToArray());
+        return new string(ReadStream(OutputStream).ToArray());
     }
-    
+
 
     public void Dispose()
     {
         if (processStarted)
         {
-
         }
     }
 }
