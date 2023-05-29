@@ -57,7 +57,7 @@ public class LoggingVacuumer : LoggingDecorator<string, VacuumingRule>, IVacuume
 
     private static string CreateDeleteExecutionLogMessage(DeletionExecution execution)
     {
-        return $"\"{execution.Query}\" affected ({execution.Table}, {execution.Column}) " +
+        return $"\"{execution.Query}\" possibly affected ({execution.Table}, {execution.Column}) " +
                $"because it is stored under the following purpose(s): {string.Join(", ", execution.Purposes.Select(p => p.ToListingIdentifier()))}";
     }
 }
