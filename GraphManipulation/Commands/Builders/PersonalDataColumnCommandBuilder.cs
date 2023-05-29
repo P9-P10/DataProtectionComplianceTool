@@ -28,6 +28,11 @@ public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPa
             .CreateOption<string>(OptionNamer.DefaultValue)
             .WithAlias(OptionNamer.DefaultValueAlias)
             .WithDescription("The default value that attributes in the column should receive upon deletion");
+        
+        var joinConditionOption = OptionBuilder
+            .CreateOption<string>(OptionNamer.JoinCondition)
+            .WithAlias(OptionNamer.JoinConditionAlias)
+            .WithDescription("The condition that describes how this personal data column should be joined on the table containing individuals");
 
         var purposeListOption = OptionBuilder
             .CreatePurposeListOption()
@@ -38,6 +43,7 @@ public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPa
             descriptionOption,
             purposeListOption,
             defaultValueOption,
+            joinConditionOption,
             _purposesManager);
 
         var updateBinder = new PersonalDataColumnBinder(
@@ -45,6 +51,7 @@ public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPa
             descriptionOption,
             purposeListOption,
             defaultValueOption,
+            joinConditionOption,
             _purposesManager);
 
         var purposeListChangesCommands = BuildListChangesCommand(
@@ -56,11 +63,11 @@ public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPa
             .WithSubCommands(
                 CreateCommand(keyOption, createBinder, new Option[]
                 {
-                    descriptionOption, defaultValueOption, purposeListOption
+                    descriptionOption, defaultValueOption, joinConditionOption, purposeListOption
                 }),
                 UpdateCommand(keyOption, updateBinder, new Option[]
                 {
-                    descriptionOption, defaultValueOption
+                    descriptionOption, defaultValueOption, joinConditionOption
                 }),
                 purposeListChangesCommands.Add,
                 purposeListChangesCommands.Remove
@@ -84,6 +91,11 @@ public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPa
         if (column.DefaultValue is null)
         {
             FeedbackEmitter.EmitMissing(column.Key!, "default value");
+        }
+
+        if (column.JoinCondition is null)
+        {
+            FeedbackEmitter.EmitMissing(column.Key!, "join condition");
         }
     }
 }
