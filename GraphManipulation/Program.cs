@@ -124,9 +124,6 @@ public static class Program
         var configFilePath = configPath;
         var configValues = new Dictionary<string, string>
         {
-            { "GraphStoragePath", "" },
-            { "BaseURI", "http://www.test.com/" },
-            { "OntologyPath", "" },
             { "LogPath", "" },
             { "DatabaseConnectionString", "" },
             { "IndividualsTable", "" }
