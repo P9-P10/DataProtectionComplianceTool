@@ -22,7 +22,7 @@ public class ConfigManagerTest
     {
         var cf = new ConfigManager("testConfig.json");
 
-        Assert.True(cf.GetValue("GraphStoragePath") == "");
+        Assert.True(cf.GetValue("DatabaseConnectionString") == "");
         File.Delete("testConfig.json");
     }
 
