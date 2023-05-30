@@ -95,7 +95,7 @@ public abstract class BaseCommandBuilder<TKey, TValue> : BaseCommandBuilder
     {
         var command = CommandBuilder
             .BuildListCommand()
-            .WithDescription($"Lists the {GetEntityType()}(e)s currently in the system");
+            .WithDescription($"Lists the {GetEntityType()}(es) currently in the system");
 
         command.SetHandler(CommandHandler.ListHandler);
         return command;
@@ -105,7 +105,7 @@ public abstract class BaseCommandBuilder<TKey, TValue> : BaseCommandBuilder
     {
         var command = CommandBuilder
             .BuildStatusCommand()
-            .WithDescription($"Shows the status(es) of the {GetEntityType()}(e)s currently in the system");
+            .WithDescription($"Shows the status(es) of the {GetEntityType()}(es) currently in the system");
 
         command.SetHandler(() => CommandHandler.StatusHandler());
         return command;
@@ -122,7 +122,7 @@ public abstract class BaseCommandBuilder<TKey, TValue> : BaseCommandBuilder
                 ? CommandBuilder.BuildAddCommand(otherValueType)
                 : CommandBuilder.BuildRemoveCommand(otherValueType))
             .WithDescription(
-                $"{(isAdd ? "Adds" : "Removes")} the given {otherValueType}(e)s {(isAdd ? "to" : "from")} the {GetEntityType()}")
+                $"{(isAdd ? "Adds" : "Removes")} the given {otherValueType}(es) {(isAdd ? "to" : "from")} the {GetEntityType()}")
             .WithOption(out _, keyOption)
             .WithOption(out _, listOption);
 
