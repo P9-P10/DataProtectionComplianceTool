@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphManipulation", "GraphManipulation\GraphManipulation.csproj", "{6AA890E5-48DF-460B-AC7A-4D27CE4860DD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataProtectionComplianceTool", "DataProtectionComplianceTool\DataProtectionComplianceTool.csproj", "{6AA890E5-48DF-460B-AC7A-4D27CE4860DD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{1030FF38-C734-4E2D-8DAE-49231030DF5A}"
 EndProject

@@ -9,8 +9,8 @@ namespace IntegrationTests.SystemTest;
 public class CommandLineArgsTest
 {
     private string executablePath = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? 
-        Path.Combine(Directory.GetCurrentDirectory(), "GraphManipulation.exe") : 
-        Path.Combine(Directory.GetCurrentDirectory(), "GraphManipulation");
+        Path.Combine(Directory.GetCurrentDirectory(), "DataProtectionComplianceTool.exe") : 
+        Path.Combine(Directory.GetCurrentDirectory(), "DataProtectionComplianceTool");
     
     [Fact]
     public void NoArgumentsUsesDefaultConfigFile()
