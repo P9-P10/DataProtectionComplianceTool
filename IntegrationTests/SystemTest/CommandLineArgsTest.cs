@@ -58,7 +58,7 @@ public class CommandLineArgsTest
         string result = string.Join("", process.GetAllOutputNoWhitespace());
         result.Should().Be($"Please fill LogPath, "+
                            $"DatabaseConnectionString, IndividualsTable in config file located at: {configPath}" +
-                           "Press enter to close this window...");
+                           "Press enter to exit...");
     }
 
     [Fact]
@@ -69,7 +69,7 @@ public class CommandLineArgsTest
         process.GiveInput("");
         string result = string.Join("", process.GetAllOutputNoWhitespace());
         result.Should().Be("Received too many arguments. Only a single argument specifying the path of the configuration file expected" +
-                           "Press enter to close this window...");
+                           "Press enter to exit...");
     }
     
     [WindowsFact]
@@ -81,7 +81,7 @@ public class CommandLineArgsTest
         string result = string.Join("", process.GetAllOutputNoWhitespace());
         string error = string.Join("", process.GetLastError());
         result.Should().Be("The given argument is not a valid filepath" +
-                           "Press enter to close this window...");
+                           "Press enter to exit...");
         error.Should().BeEmpty();
     }
 
@@ -99,6 +99,6 @@ public class CommandLineArgsTest
         string result = string.Join("", process.GetAllOutputNoWhitespace());
         result.Should().Be($"Please fill LogPath, "+
                            $"DatabaseConnectionString, IndividualsTable in config file located at: {configPath}" +
-                           "Press enter to close this window...");
+                           "Press enter to exit...");
     }
 }

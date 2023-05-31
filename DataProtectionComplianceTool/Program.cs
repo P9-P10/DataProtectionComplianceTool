@@ -156,7 +156,7 @@ public static class Program
 
     private static void ConsoleWritePressEnterToCloseWindow()
     {
-        Console.Write("Press enter to close this window... ");
+        Console.Write("Press enter to exit... ");
         Console.Read();
         Environment.Exit(0);
     }
