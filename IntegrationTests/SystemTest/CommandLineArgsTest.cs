@@ -56,7 +56,7 @@ public class CommandLineArgsTest
         process.Start();
         process.GiveInput("");
         string result = string.Join("", process.GetAllOutputNoWhitespace());
-        result.Should().Be($"Please fill GraphStoragePath, OntologyPath, LogPath, "+
+        result.Should().Be($"Please fill LogPath, "+
                            $"DatabaseConnectionString, IndividualsTable in config file located at: {configPath}");
     }
 
@@ -94,7 +94,7 @@ public class CommandLineArgsTest
         process.Start();
         process.GiveInput("");
         string result = string.Join("", process.GetAllOutputNoWhitespace());
-        result.Should().Be($"Please fill GraphStoragePath, OntologyPath, LogPath, "+
+        result.Should().Be($"Please fill LogPath, "+
                            $"DatabaseConnectionString, IndividualsTable in config file located at: {configPath}");
     }
 }

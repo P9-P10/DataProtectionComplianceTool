@@ -193,7 +193,7 @@ public class LoggingTest : TestResources
                 $"\"UPDATE {TestPersonalDataColumn.Key.TableName} " +
                 $"SET {TestPersonalDataColumn.Key.ColumnName} = \'{TestPersonalDataColumn.DefaultValue}\' " +
                 $"WHERE ({TestStorageRule.VacuumingCondition});\" " +
-                $"affected {TestPersonalDataColumn.ToListingIdentifier()} " +
+                $"possibly affected {TestPersonalDataColumn.ToListingIdentifier()} " +
                 $"because it is stored under the following purpose(s): {TestPurpose.ToListingIdentifier()}");
         }
     }
