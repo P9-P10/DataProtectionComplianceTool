@@ -34,6 +34,7 @@ public static class Program
             {
                 Console.WriteLine(
                     "Received too many arguments. Only a single argument specifying the path of the configuration file expected");
+                ConsoleWritePressEnterToCloseWindow();
                 return;
             }
         }
@@ -45,6 +46,7 @@ public static class Program
         catch (IOException e)
         {
             Console.WriteLine("The given argument is not a valid filepath");
+            ConsoleWritePressEnterToCloseWindow();
         }
     }
 
@@ -147,8 +149,15 @@ public static class Program
             return true;
         }
 
-        Console.WriteLine(
-            $"Please fill {string.Join(", ", configManager.GetEmptyKeys())} in config file located at: {configFilePath}");
+        Console.WriteLine($"Please fill {string.Join(", ", configManager.GetEmptyKeys())} in config file located at: {configFilePath}");
+        ConsoleWritePressEnterToCloseWindow();
         return false;
+    }
+
+    private static void ConsoleWritePressEnterToCloseWindow()
+    {
+        Console.Write("Press enter to close this window... ");
+        Console.Read();
+        Environment.Exit(0);
     }
 }

@@ -57,7 +57,8 @@ public class CommandLineArgsTest
         process.GiveInput("");
         string result = string.Join("", process.GetAllOutputNoWhitespace());
         result.Should().Be($"Please fill LogPath, "+
-                           $"DatabaseConnectionString, IndividualsTable in config file located at: {configPath}");
+                           $"DatabaseConnectionString, IndividualsTable in config file located at: {configPath}" +
+                           "Press enter to close this window...");
     }
 
     [Fact]
@@ -67,7 +68,8 @@ public class CommandLineArgsTest
         process.Start();
         process.GiveInput("");
         string result = string.Join("", process.GetAllOutputNoWhitespace());
-        result.Should().Be("Received too many arguments. Only a single argument specifying the path of the configuration file expected");
+        result.Should().Be("Received too many arguments. Only a single argument specifying the path of the configuration file expected" +
+                           "Press enter to close this window...");
     }
     
     [WindowsFact]
@@ -78,7 +80,8 @@ public class CommandLineArgsTest
         process.GiveInput("");
         string result = string.Join("", process.GetAllOutputNoWhitespace());
         string error = string.Join("", process.GetLastError());
-        result.Should().Be("The given argument is not a valid filepath");
+        result.Should().Be("The given argument is not a valid filepath" +
+                           "Press enter to close this window...");
         error.Should().BeEmpty();
     }
 
@@ -95,6 +98,7 @@ public class CommandLineArgsTest
         process.GiveInput("");
         string result = string.Join("", process.GetAllOutputNoWhitespace());
         result.Should().Be($"Please fill LogPath, "+
-                           $"DatabaseConnectionString, IndividualsTable in config file located at: {configPath}");
+                           $"DatabaseConnectionString, IndividualsTable in config file located at: {configPath}" +
+                           "Press enter to close this window...");
     }
 }
