@@ -5,13 +5,13 @@ riderModule.iml
 /_ReSharper.Caches/
 .idea/
 
-GraphManipulation/temp.ttl
+DataProtectionComplianceTool/temp.ttl
 
-GraphManipulation.sln.DotSettings.user
+DataProtectionComplianceTool.sln.DotSettings.user
 
-GraphManipulation/GraphStorage.sqlite
+DataProtectionComplianceTool/GraphStorage.sqlite
 
-GraphManipulation/config.json
+DataProtectionComplianceTool/config.json
 
 GraphStorage.sqlite
 
