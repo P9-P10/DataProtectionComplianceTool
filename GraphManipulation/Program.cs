@@ -20,7 +20,7 @@ namespace GraphManipulation;
 public static class Program
 {
     private static string configPath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
-    private static readonly bool VerboseOutput = true;
+    private static readonly bool VerboseOutput = false;
 
     public static void Main(string[] args)
     {
@@ -124,9 +124,6 @@ public static class Program
         var configFilePath = configPath;
         var configValues = new Dictionary<string, string>
         {
-            { "GraphStoragePath", "" },
-            { "BaseURI", "http://www.test.com/" },
-            { "OntologyPath", "" },
             { "LogPath", "" },
             { "DatabaseConnectionString", "" },
             { "IndividualsTable", "" }

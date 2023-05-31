@@ -55,9 +55,6 @@ public class ConfigManager : IConfigManager
             {
                 _config = new Dictionary<string, string>
                 {
-                    { "GraphStoragePath", "" },
-                    { "BaseURI", "http://www.test.com/" },
-                    { "OntologyPath", "" },
                     { "LogPath", "" },
                     { "DatabaseConnectionString", "" },
                     { "IndividualsTable", "" }
