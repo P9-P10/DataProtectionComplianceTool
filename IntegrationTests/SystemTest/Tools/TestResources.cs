@@ -499,6 +499,12 @@ public class TestResources
         testProcess.GiveInput(command);
     }
 
+    protected static void QuitProgram(TestProcess testProcess)
+    {
+        const string command = $"{CommandNamer.Quit}";
+        testProcess.GiveInput(command);
+    }
+
     protected static void ListLogs(TestProcess testProcess, LogConstraints constraints)
     {
         // ReSharper disable once StringLiteralTypo

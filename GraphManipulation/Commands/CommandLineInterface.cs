@@ -54,7 +54,8 @@ public class CommandLineInterface
                 new StorageRuleCommandBuilder(_commandHandlerFactory, _managerFactory),
                 new ProcessingsCommandBuilder(_commandHandlerFactory, _managerFactory))
             .WithSubCommands(
-                LoggingCommandBuilder.Build(_loggerFactory));
+                LoggingCommandBuilder.Build(_loggerFactory),
+                QuitCommand());
     }
 
     private void AddAllStatusCommand()
@@ -71,6 +72,15 @@ public class CommandLineInterface
                 statusCommands.ToList().ForEach(statusCommand => statusCommand.Invoke(CommandNamer.Status)));
 
         _command = _command.WithSubCommands(allStatusCommand);
+    }
+
+    private static Command QuitCommand()
+    {
+        return CommandBuilder
+            .CreateNewCommand(CommandNamer.Quit)
+            .WithAlias(CommandNamer.QuitAlias)
+            .WithDescription("Quits the program")
+            .WithHandler(() => Environment.Exit(0));
     }
 
     private void CreateCommandParser()

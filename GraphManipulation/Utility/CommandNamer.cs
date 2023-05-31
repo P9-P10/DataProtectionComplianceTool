@@ -82,4 +82,7 @@ public static class CommandNamer
 
     public const string Status = "status";
     public const string StatusAlias = "stat";
+
+    public const string Quit = "quit";
+    public const string QuitAlias = "q";
 }
