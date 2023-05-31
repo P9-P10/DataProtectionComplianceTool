@@ -187,12 +187,14 @@ public class StatusCommandTest : TestResources
 
         error.Should().BeEmpty();
         outputBeforeReport.SequenceEqual(output).Should().BeTrue();
-        output.Count.Should().Be(2);
+        output.Count.Should().Be(3);
 
         output.Should().ContainSingle(s => s == FeedbackEmitterMessage
             .MissingMessage<TableColumnPair, PersonalDataColumn, Purpose>(TableColumnPair));
         output.Should().ContainSingle(s => s == FeedbackEmitterMessage
             .MissingMessage<TableColumnPair, PersonalDataColumn>(TableColumnPair, "default value"));
+        output.Should().ContainSingle(s => s == FeedbackEmitterMessage
+            .MissingMessage<TableColumnPair, PersonalDataColumn>(TableColumnPair, "join condition"));
     }
 
     [Fact]
