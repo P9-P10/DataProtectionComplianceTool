@@ -20,7 +20,7 @@ namespace GraphManipulation;
 public static class Program
 {
     private static string configPath = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
-    private static readonly bool VerboseOutput = true;
+    private static readonly bool VerboseOutput = false;
 
     public static void Main(string[] args)
     {
