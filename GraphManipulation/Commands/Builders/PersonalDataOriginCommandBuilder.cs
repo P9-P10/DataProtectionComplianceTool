@@ -23,7 +23,7 @@ public class PersonalDataOriginCommandBuilder : BaseCommandBuilder<int, Personal
 
     public override Command Build()
     {
-        var baseCommand = base.Build(CommandNamer.PersonalDataOriginsName, CommandNamer.PersonalDataOriginsAlias,
+        var baseCommand = base.Build(CommandNamer.PersonalDataOriginName, CommandNamer.PersonalDataOriginAlias,
             out var keyOption);
 
         var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<PersonalDataOrigin>();

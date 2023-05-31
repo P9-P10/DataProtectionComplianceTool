@@ -67,13 +67,13 @@ public class CommandLineInterfaceTest
         var loggerFactory = new MockLoggerFactory();
         var vacuumerFactory = new MockVacuumerFactory();
 
-        var manager = new Mock<IManager<string, StorageRule>>();
-        manager.Setup(manager => manager.Get("testname")).Returns(new StorageRule());
+        var manager = new Mock<IManager<string, StoragePolicy>>();
+        manager.Setup(manager => manager.Get("testname")).Returns(new StoragePolicy());
         
-        managerFactory.AddMockManager<StorageRule>(manager);
+        managerFactory.AddMockManager<StoragePolicy>(manager);
         
         CommandLineInterface cli = new CommandLineInterface(managerFactory, loggerFactory, vacuumerFactory);
-        cli.Invoke($"{CommandNamer.StorageRulesName} c -n testname");
+        cli.Invoke($"{CommandNamer.StoragePolicyName} c -n testname");
 
         manager.Verify(manager => manager.Get(
             It.Is<string>(s => s == "testname")));
@@ -87,13 +87,13 @@ public class CommandLineInterfaceTest
         var loggerFactory = new MockLoggerFactory();
         var vacuumerFactory = new MockVacuumerFactory();
         
-        var manager = new Mock<IManager<string, StorageRule>>();
-        manager.Setup(manager => manager.Get("testname")).Returns((StorageRule?)null);
+        var manager = new Mock<IManager<string, StoragePolicy>>();
+        manager.Setup(manager => manager.Get("testname")).Returns((StoragePolicy?)null);
         
-        managerFactory.AddMockManager<StorageRule>(manager);
+        managerFactory.AddMockManager<StoragePolicy>(manager);
         
         CommandLineInterface cli = new CommandLineInterface(managerFactory, loggerFactory, vacuumerFactory);
-        cli.Invoke($"{CommandNamer.StorageRulesName} c -n testname");
+        cli.Invoke($"{CommandNamer.StoragePolicyName} c -n testname");
 
         manager.Verify(manager => manager.Create(It.Is<string>(s => s == "testname")));
     }
@@ -105,21 +105,21 @@ public class CommandLineInterfaceTest
         var loggerFactory = new MockLoggerFactory();
         var vacuumerFactory = new MockVacuumerFactory();
         
-        var manager = new Mock<IManager<string, StorageRule>>();
+        var manager = new Mock<IManager<string, StoragePolicy>>();
         manager.Setup(manager => manager.Create(It.IsAny<string>())).Returns(true);
         
         manager.SetupSequence(manager => manager.Get(It.Is<string>(s => s == "testname")))
             .Returns(() => null)
-            .Returns(new StorageRule());
+            .Returns(new StoragePolicy());
         
-        managerFactory.AddMockManager<StorageRule>(manager);
+        managerFactory.AddMockManager<StoragePolicy>(manager);
         
         CommandLineInterface cli = new CommandLineInterface(managerFactory, loggerFactory, vacuumerFactory);
-        cli.Invoke($"{CommandNamer.StorageRulesName} c -n testname -d description");
+        cli.Invoke($"{CommandNamer.StoragePolicyName} c -n testname -d description");
 
         manager.Verify(manager => 
             manager.Update(
                 It.Is<string>(s => s == "testname"),
-                It.Is<StorageRule>(rule => rule.Description == "description")));
+                It.Is<StoragePolicy>(storagePolicy => storagePolicy.Description == "description")));
     }
 }

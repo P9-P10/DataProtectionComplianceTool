@@ -45,14 +45,14 @@ public class CommandLineInterface
             .WithAlias(CommandNamer.RootCommandAlias)
             .WithDescription("This is a description of the root command")
             .WithSubCommands(
-                new IndividualsCommandBuilder(_commandHandlerFactory, _managerFactory),
+                new IndividualCommandBuilder(_commandHandlerFactory, _managerFactory),
                 new PersonalDataOriginCommandBuilder(_commandHandlerFactory, _managerFactory),
                 new PersonalDataColumnCommandBuilder(_commandHandlerFactory, _managerFactory),
-                new PurposesCommandBuilder(_commandHandlerFactory, _managerFactory),
-                new OriginsCommandBuilder(_commandHandlerFactory),
-                new VacuumingRulesCommandBuilder(_commandHandlerFactory, _managerFactory, _vacuumerFactory),
-                new StorageRuleCommandBuilder(_commandHandlerFactory, _managerFactory),
-                new ProcessingsCommandBuilder(_commandHandlerFactory, _managerFactory))
+                new PurposeCommandBuilder(_commandHandlerFactory, _managerFactory),
+                new OriginCommandBuilder(_commandHandlerFactory),
+                new VacuumingPolicyCommandBuilder(_commandHandlerFactory, _managerFactory, _vacuumerFactory),
+                new StoragePolicyCommandBuilder(_commandHandlerFactory, _managerFactory),
+                new ProcessingCommandBuilder(_commandHandlerFactory, _managerFactory))
             .WithSubCommands(
                 LoggingCommandBuilder.Build(_loggerFactory),
                 QuitCommand());

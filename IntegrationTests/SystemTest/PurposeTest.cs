@@ -13,7 +13,7 @@ public class PurposeTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddStorageRule(process, TestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
 
         var error = process.GetAllErrorsNoWhitespace();
@@ -35,7 +35,7 @@ public class PurposeTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddStorageRule(process, TestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
         ShowPurpose(process, TestPurpose);
         
@@ -52,8 +52,8 @@ public class PurposeTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddStorageRule(process, TestStorageRule);
-        AddStorageRule(process, TestNewTestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
+        AddStoragePolicy(process, NewTestStoragePolicy);
         AddPurpose(process, TestPurpose);
         UpdatePurpose(process, TestPurpose, NewTestPurpose);
         ShowPurpose(process, NewTestPurpose);
@@ -62,7 +62,7 @@ public class PurposeTest : TestResources
         var output = process.GetLastOutput();
         
         error.Should().BeEmpty();
-        output.Should().ContainSingle(s => s.Contains(NewTestPurposeWithOldRule.ToListing()));
+        output.Should().ContainSingle(s => s.Contains(NewTestPurposeWithOldPolicy.ToListing()));
     }
     
     [Fact]
@@ -71,8 +71,8 @@ public class PurposeTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddStorageRule(process, TestStorageRule);
-        AddStorageRule(process, TestNewTestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
+        AddStoragePolicy(process, NewTestStoragePolicy);
         AddPurpose(process, TestPurpose);
         AddPurpose(process, NewTestPurpose);
         ListPurpose(process);
@@ -91,7 +91,7 @@ public class PurposeTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddStorageRule(process, TestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
         DeletePurpose(process, TestPurpose);
         

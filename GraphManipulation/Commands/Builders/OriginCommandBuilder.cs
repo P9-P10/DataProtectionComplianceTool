@@ -6,15 +6,15 @@ using GraphManipulation.Utility;
 
 namespace GraphManipulation.Commands.Builders;
 
-public class OriginsCommandBuilder : BaseCommandBuilder<string, Origin>
+public class OriginCommandBuilder : BaseCommandBuilder<string, Origin>
 {
-    public OriginsCommandBuilder(ICommandHandlerFactory commandHandlerFactory) : base(commandHandlerFactory)
+    public OriginCommandBuilder(ICommandHandlerFactory commandHandlerFactory) : base(commandHandlerFactory)
     {
     }
 
     public override Command Build()
     {
-        var baseCommand = base.Build(CommandNamer.OriginsName, CommandNamer.OriginsAlias, out var keyOption);
+        var baseCommand = base.Build(CommandNamer.OriginName, CommandNamer.OriginAlias, out var keyOption);
 
         var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<Origin>();
         var newKeyOption = OptionBuilder.CreateNewNameOption<Origin>();

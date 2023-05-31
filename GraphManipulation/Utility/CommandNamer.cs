@@ -5,32 +5,32 @@ public static class CommandNamer
     public const string RootCommandName = "!";
     public const string RootCommandAlias = "!";
 
-    public const string StorageRulesName = "storage-rules";
-    public const string StorageRulesAlias = "sr";
+    public const string StoragePolicyName = "storage-policy";
+    public const string StoragePolicyAlias = "sp";
 
-    public const string IndividualsName = "individuals";
-    public const string IndividualsAlias = "id";
+    public const string IndividualName = "individual";
+    public const string IndividualAlias = "id";
 
-    public const string LoggingName = "logs";
+    public const string LoggingName = "log";
     public const string LoggingAlias = "lg";
 
-    public const string OriginsName = "origins";
-    public const string OriginsAlias = "o";
+    public const string OriginName = "origin";
+    public const string OriginAlias = "o";
 
-    public const string PersonalDataColumnsName = "personal-data-columns";
-    public const string PersonalDataColumnsAlias = "pdc";
+    public const string PersonalDataColumnName = "personal-data-column";
+    public const string PersonalDataColumnAlias = "pdc";
 
-    public const string PersonalDataOriginsName = "personal-data-origins";
-    public const string PersonalDataOriginsAlias = "pdo";
+    public const string PersonalDataOriginName = "personal-data-origin";
+    public const string PersonalDataOriginAlias = "pdo";
 
-    public const string ProcessingsName = "processings";
-    public const string ProcessingsAlias = "pr";
+    public const string ProcessingName = "processing";
+    public const string ProcessingAlias = "pr";
 
-    public const string PurposesName = "purposes";
-    public const string PurposesAlias = "p";
+    public const string PurposeName = "purpose";
+    public const string PurposeAlias = "p";
 
-    public const string VacuumingRulesName = "vacuuming-rules";
-    public const string VacuumingRulesAlias = "vr";
+    public const string VacuumingPolicyName = "vacuuming-policy";
+    public const string VacuumingPolicyAlias = "vp";
 
     public const string ConfigurationName = "configuration";
     public const string ConfigurationAlias = "cfg";
@@ -67,12 +67,6 @@ public static class CommandNamer
 
     public const string RemovePurpose = "remove-purpose";
     public const string RemovePurposeAlias = "rp";
-
-    public const string SetOrigin = "set-origin";
-    public const string SetOriginAlias = "sto";
-
-    public const string ShowOrigin = "show-origin";
-    public const string ShowOriginAlias = "sho";
 
     public const string SetSource = "set-source";
     public const string SetSourceAlias = "sts";

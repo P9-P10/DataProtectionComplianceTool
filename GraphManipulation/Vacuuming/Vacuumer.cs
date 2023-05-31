@@ -9,37 +9,36 @@ public class Vacuumer : IVacuumer
     private readonly FeedbackEmitter<string, Purpose> _purposeFeedbackEmitter;
     private readonly IMapper<Purpose> _purposeMapper;
     private readonly IQueryExecutor _queryExecutor;
-    private readonly FeedbackEmitter<string, StorageRule> _storageRuleFeedbackEmitter;
-
-    private readonly FeedbackEmitter<string, VacuumingRule> _vacuumingRuleFeedbackEmitter;
+    private readonly FeedbackEmitter<string, StoragePolicy> _storagePolicyFeedbackEmitter;
+    private readonly FeedbackEmitter<string, VacuumingPolicy> _vacuumingPolicyFeedbackEmitter;
 
 
     public Vacuumer(IMapper<Purpose> purposeMapper, IQueryExecutor queryExecutor)
     {
         _purposeMapper = purposeMapper;
         _queryExecutor = queryExecutor;
-        _vacuumingRuleFeedbackEmitter = new FeedbackEmitter<string, VacuumingRule>();
+        _vacuumingPolicyFeedbackEmitter = new FeedbackEmitter<string, VacuumingPolicy>();
         _purposeFeedbackEmitter = new FeedbackEmitter<string, Purpose>();
-        _storageRuleFeedbackEmitter = new FeedbackEmitter<string, StorageRule>();
+        _storagePolicyFeedbackEmitter = new FeedbackEmitter<string, StoragePolicy>();
     }
 
     public IEnumerable<DeletionExecution> GenerateUpdateStatement()
     {
-        List<StorageRule> allStorageRules = _purposeMapper.Find(_ => true)
-            .Where(p => p.StorageRules != null)
-            .SelectMany(p => p.StorageRules)
+        List<StoragePolicy> allStoragePolicies = _purposeMapper.Find(_ => true)
+            .Where(p => p.StoragePolicies != null)
+            .SelectMany(p => p.StoragePolicies)
             .Where(sr => sr.PersonalDataColumn != null)
             .ToList();
 
         // Get all unique columns
-        List<PersonalDataColumn> allColumns = allStorageRules.Select(rule => rule.PersonalDataColumn)
+        List<PersonalDataColumn> allColumns = allStoragePolicies.Select(storagePolicy => storagePolicy.PersonalDataColumn)
             .GroupBy(column => column.Key).Select(y => y.First()).ToList();
 
         List<DeletionExecution> deletionExecutions = new List<DeletionExecution>();
         foreach (PersonalDataColumn personalDataColumn in allColumns)
         {
-            var columnRules = allStorageRules.Where(rule => rule.PersonalDataColumn.Equals(personalDataColumn));
-            deletionExecutions.Add(CreateDeletionExecution(columnRules, personalDataColumn));
+            var columnStoragePolicies = allStoragePolicies.Where(storagePolicy => storagePolicy.PersonalDataColumn.Equals(personalDataColumn));
+            deletionExecutions.Add(CreateDeletionExecution(columnStoragePolicies, personalDataColumn));
         }
 
         return deletionExecutions;
@@ -55,40 +54,40 @@ public class Vacuumer : IVacuumer
     }
 
     /// <summary>
-    ///     This function executes a specified vacuuming rule.
+    ///     This function executes a specified vacuuming policy.
     ///     It does not vacuum data if its protected by other purposes.
     /// </summary>
-    /// <param name="vacuumingRules"></param>
+    /// <param name="vacuumingPolicies"></param>
     /// <returns></returns>
-    public IEnumerable<DeletionExecution> ExecuteVacuumingRuleList(IEnumerable<VacuumingRule> vacuumingRules)
+    public IEnumerable<DeletionExecution> ExecuteVacuumingPolicyList(IEnumerable<VacuumingPolicy> vacuumingPolicies)
     {
-        return vacuumingRules.SelectMany(ExecuteVacuumingRule);
+        return vacuumingPolicies.SelectMany(ExecuteVacuumingPolicy);
     }
 
-    public IEnumerable<DeletionExecution> ExecuteVacuumingRule(VacuumingRule vacuumingRule)
+    public IEnumerable<DeletionExecution> ExecuteVacuumingPolicy(VacuumingPolicy vacuumingPolicy)
     {
         var executions = new List<DeletionExecution>();
 
-        if (vacuumingRule.Purposes is null || !vacuumingRule.Purposes.Any())
+        if (vacuumingPolicy.Purposes is null || !vacuumingPolicy.Purposes.Any())
         {
-            _vacuumingRuleFeedbackEmitter.EmitMissing<Purpose>(vacuumingRule.Key);
+            _vacuumingPolicyFeedbackEmitter.EmitMissing<Purpose>(vacuumingPolicy.Key);
             return new List<DeletionExecution>();
         }
 
-        foreach (var purpose in vacuumingRule.Purposes)
+        foreach (var purpose in vacuumingPolicy.Purposes)
         {
-            if (purpose.StorageRules is null || !purpose.StorageRules.Any())
+            if (purpose.StoragePolicies is null || !purpose.StoragePolicies.Any())
             {
-                _purposeFeedbackEmitter.EmitMissing<StorageRule>(purpose.Key);
+                _purposeFeedbackEmitter.EmitMissing<StoragePolicy>(purpose.Key);
                 continue;
             }
 
-            var executionsFromStorageRules = purpose.StorageRules
-                .Select(storageRule => ExecutionFromStorageRule(storageRule, vacuumingRule))
+            var executionsFromStoragePolicies = purpose.StoragePolicies
+                .Select(storagePolicy => ExecutionFromStoragePolicy(storagePolicy, vacuumingPolicy))
                 .Where(execution => execution != null)
                 .Select(execution => execution!);
 
-            executions.AddRange(executionsFromStorageRules);
+            executions.AddRange(executionsFromStoragePolicies);
         }
 
         ExecuteConditions(executions);
@@ -96,13 +95,13 @@ public class Vacuumer : IVacuumer
         return executions;
     }
 
-    private DeletionExecution CreateDeletionExecution(IEnumerable<StorageRule> columnRules,
+    private static DeletionExecution CreateDeletionExecution(IEnumerable<StoragePolicy> columnStoragePolicies,
         PersonalDataColumn personalDataColumn)
     {
         var deletionExecution = new DeletionExecution();
-        // Set execution purposes to the purposes of all the rules for the PersonalDataColumn
-        deletionExecution.SetPurposesFromRules(columnRules);
-        deletionExecution.CreateQuery(personalDataColumn, columnRules);
+        // Set execution purposes to the purposes of all the policies for the PersonalDataColumn
+        deletionExecution.SetPurposesFromStoragePolicies(columnStoragePolicies);
+        deletionExecution.CreateQuery(personalDataColumn, columnStoragePolicies);
         deletionExecution.SetTableAndColum(personalDataColumn);
         return deletionExecution;
     }
@@ -113,49 +112,49 @@ public class Vacuumer : IVacuumer
             _queryExecutor.Execute(deletionExecution.Query);
     }
 
-    private DeletionExecution? ExecutionFromStorageRule(StorageRule storageRule, VacuumingRule rule)
+    private DeletionExecution? ExecutionFromStoragePolicy(StoragePolicy storagePolicy, VacuumingPolicy policy)
     {
-        if (storageRule.PersonalDataColumn?.Key == null)
+        if (storagePolicy.PersonalDataColumn?.Key == null)
         {
-            _storageRuleFeedbackEmitter.EmitMissing<PersonalDataColumn>(storageRule.Key);
+            _storagePolicyFeedbackEmitter.EmitMissing<PersonalDataColumn>(storagePolicy.Key);
             return null;
         }
 
-        List<StorageRule> rulesWithSameTableColumn = RulesWithSameTableColumn(storageRule);
+        List<StoragePolicy> policiesWithSameTableColumn = StoragePoliciesWithSameTableColumn(storagePolicy);
 
-        DeletionExecution execution = CreateDeletionExecution(rulesWithSameTableColumn, storageRule.PersonalDataColumn);
-        execution.VacuumingRule = rule;
+        DeletionExecution execution = CreateDeletionExecution(policiesWithSameTableColumn, storagePolicy.PersonalDataColumn);
+        execution.VacuumingPolicy = policy;
 
         return execution;
     }
 
-    private List<StorageRule> RulesWithSameTableColumn(StorageRule storageRule)
+    private List<StoragePolicy> StoragePoliciesWithSameTableColumn(StoragePolicy storagePolicy)
     {
         return _purposeMapper
-            .Find(p => HasRulesForColumn(p, storageRule.PersonalDataColumn))
-            .SelectMany(p => SelectRulesForColumn(p.StorageRules, storageRule.PersonalDataColumn))
+            .Find(p => HasStoragePoliciesForColumn(p, storagePolicy.PersonalDataColumn))
+            .SelectMany(p => SelectStoragePoliciesForColumn(p.StoragePolicies, storagePolicy.PersonalDataColumn))
             .ToList();
     }
 
-    private static bool HasRulesForColumn(Purpose purpose, PersonalDataColumn column)
+    private static bool HasStoragePoliciesForColumn(Purpose purpose, PersonalDataColumn column)
     {
         return IsValid(purpose) &&
-               purpose.StorageRules!.Any(sr => IsValid(sr) && sr.PersonalDataColumn!.Equals(column));
+               purpose.StoragePolicies!.Any(sr => IsValid(sr) && sr.PersonalDataColumn!.Equals(column));
     }
 
-    private static IEnumerable<StorageRule> SelectRulesForColumn(IEnumerable<StorageRule> rules,
+    private static IEnumerable<StoragePolicy> SelectStoragePoliciesForColumn(IEnumerable<StoragePolicy> storagePolicies,
         PersonalDataColumn column)
     {
-        return rules.Where(sr => IsValid(sr) && sr.PersonalDataColumn!.Equals(column));
+        return storagePolicies.Where(sr => IsValid(sr) && sr.PersonalDataColumn!.Equals(column));
     }
 
-    private static bool IsValid(StorageRule storageRule)
+    private static bool IsValid(StoragePolicy storagePolicy)
     {
-        return storageRule.PersonalDataColumn != null && storageRule.PersonalDataColumn.Key != null;
+        return storagePolicy.PersonalDataColumn != null && storagePolicy.PersonalDataColumn.Key != null;
     }
 
     private static bool IsValid(Purpose purpose)
     {
-        return purpose.StorageRules is not null;
+        return purpose.StoragePolicies is not null;
     }
 }

@@ -1,6 +1,6 @@
 namespace GraphManipulation.Models;
 
-public class StorageRule : Entity<string>
+public class StoragePolicy : Entity<string>
 {
     public string? VacuumingCondition { get; set; }
     public virtual PersonalDataColumn? PersonalDataColumn { get; set; }

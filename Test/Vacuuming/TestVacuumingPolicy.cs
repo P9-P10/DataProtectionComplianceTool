@@ -5,73 +5,73 @@ using Xunit;
 
 namespace Test.Vacuuming;
 
-public class TestVacuumingRule
+public class TestVacuumingPolicy
 {
     [Fact]
     public void TestShouldExecute_Returns_True_When_It_Should_Execute()
     {
-        VacuumingRule vacuumingRule = new()
+        VacuumingPolicy vacuumingPolicy = new()
         {
             Key = "Name",
             Description = "Description",
             Id = 0,
-            Interval = "2y",
+            Duration = "2y",
             LastExecution = DateTime.Now.AddYears(-2).AddDays(-1)
         };
 
-        Assert.True(vacuumingRule.ShouldExecute());
+        Assert.True(vacuumingPolicy.ShouldExecute());
     }
 
     [Fact]
     public void TestShouldExecute_Returns_False_When_It_Should_Not_Execute()
     {
-        VacuumingRule vacuumingRule = new()
+        VacuumingPolicy vacuumingPolicy = new()
         {
             Key = "Name",
             Description = "Description",
             Id = 0,
-            Interval = "5y",
+            Duration = "5y",
             LastExecution = DateTime.Now.AddYears(-2).AddDays(-1)
         };
 
-        Assert.False(vacuumingRule.ShouldExecute());
+        Assert.False(vacuumingPolicy.ShouldExecute());
     }
 
     [Fact]
     public void TestToListingWorksWithNullValues()
     {
-        VacuumingRule vacuumingRule = new()
+        VacuumingPolicy vacuumingPolicy = new()
         {
             Key = "Name",
             Purposes = new List<Purpose>()
         };
 
-        Assert.Equal("Name, None, None, None, Empty", vacuumingRule.ToListing());
+        Assert.Equal("Name, None, None, None, Empty", vacuumingPolicy.ToListing());
     }
 
     [Fact]
-    public void SetInterval_Updates_Interval_If_Given_Valid_Interval()
+    public void SetDuration_Updates_Duration_If_Given_Valid_Duration()
     {
-        VacuumingRule vacuumingRule = new()
+        VacuumingPolicy vacuumingPolicy = new()
         {
             Key = "Name",
             Purposes = new List<Purpose>()
         };
 
-        vacuumingRule.Interval = "2y 5d";
-        Assert.Equal("2y 5d", vacuumingRule.Interval);
+        vacuumingPolicy.Duration = "2y 5d";
+        Assert.Equal("2y 5d", vacuumingPolicy.Duration);
     }
 
     [Fact]
-    public void SetInterval_Throws_Exception_On_Invalid_Interval()
+    public void SetDuration_Throws_Exception_On_Invalid_Duration()
     {
-        VacuumingRule vacuumingRule = new()
+        VacuumingPolicy vacuumingPolicy = new()
         {
             Key = "Name",
             Purposes = new List<Purpose>()
         };
 
-        Assert.Throws<VacuumingRule.IntervalParseException>(()=> vacuumingRule.Interval = "Test");
+        Assert.Throws<VacuumingPolicy.DurationParseException>(()=> vacuumingPolicy.Duration = "Test");
         
     }
 }

@@ -7,17 +7,17 @@ using IntegrationTests.SystemTest.Tools;
 
 namespace IntegrationTests.SystemTest;
 
-public class VacuumingRulesTest : TestResources
+public class VacuumingPoliciesTest : TestResources
 {
     [Fact]
-    public void VacuumingRulesCanBeAdded()
+    public void VacuumingPoliciesCanBeAdded()
     {
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddStorageRule(process, TestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
-        AddVacuumingRule(process, TestVacuumingRule);
+        AddVacuumingPolicy(process, VacuumingPolicy);
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetAllOutputNoWhitespaceOrPrompt().ToList();
@@ -25,83 +25,83 @@ public class VacuumingRulesTest : TestResources
         error.Should().BeEmpty();
 
         output.Should().ContainSingle(s =>
-            s == FeedbackEmitterMessage.SuccessMessage<string, VacuumingRule>(TestVacuumingRule.Key!,
+            s == FeedbackEmitterMessage.SuccessMessage<string, VacuumingPolicy>(VacuumingPolicy.Key!,
                 SystemOperation.Operation.Created, null));
         output.Should().ContainSingle(s =>
-            s == FeedbackEmitterMessage.SuccessMessage(TestVacuumingRule.Key!,
-                SystemOperation.Operation.Updated, TestVacuumingRule));
+            s == FeedbackEmitterMessage.SuccessMessage(VacuumingPolicy.Key!,
+                SystemOperation.Operation.Updated, VacuumingPolicy));
     }
 
     [Fact]
-    public void VacuumingRulesCanBeShown()
+    public void VacuumingPoliciesCanBeShown()
     {
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddStorageRule(process, TestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
-        AddVacuumingRule(process, TestVacuumingRule);
-        ShowVacuumingRule(process, TestVacuumingRule);
+        AddVacuumingPolicy(process, VacuumingPolicy);
+        ShowVacuumingPolicy(process, VacuumingPolicy);
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetLastOutput();
 
         error.Should().BeEmpty();
 
-        output.Should().ContainSingle(s => s.Contains(TestVacuumingRule.ToListing()));
+        output.Should().ContainSingle(s => s.Contains(VacuumingPolicy.ToListing()));
     }
 
     [Fact]
-    public void VacuumingRulesCanBeUpdated()
+    public void VacuumingPoliciesCanBeUpdated()
     {
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddStorageRule(process, TestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
-        AddVacuumingRule(process, TestVacuumingRule);
-        UpdateVacuumingRule(process, TestVacuumingRule, UpdatedTestVacuumingRule);
-        ShowVacuumingRule(process, UpdatedTestVacuumingRule);
+        AddVacuumingPolicy(process, VacuumingPolicy);
+        UpdateVacuumingPolicy(process, VacuumingPolicy, UpdatedTestVacuumingPolicy);
+        ShowVacuumingPolicy(process, UpdatedTestVacuumingPolicy);
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetLastOutput();
 
         error.Should().BeEmpty();
 
-        output.Should().ContainSingle(s => s.Contains(UpdatedTestVacuumingRule.ToListing()));
+        output.Should().ContainSingle(s => s.Contains(UpdatedTestVacuumingPolicy.ToListing()));
     }
 
     [Fact]
-    public void VacuumingRulesCanBeListed()
+    public void VacuumingPoliciesCanBeListed()
     {
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddStorageRule(process, TestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
-        AddVacuumingRule(process, TestVacuumingRule);
-        AddVacuumingRule(process, UpdatedTestVacuumingRule);
-        ListVacuumingRule(process);
+        AddVacuumingPolicy(process, VacuumingPolicy);
+        AddVacuumingPolicy(process, UpdatedTestVacuumingPolicy);
+        ListVacuumingPolicy(process);
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetLastOutput().ToList();
 
         error.Should().BeEmpty();
 
-        output.Should().ContainSingle(s => s.Contains(TestVacuumingRule.ToListing()));
-        output.Should().ContainSingle(s => s.Contains(UpdatedTestVacuumingRule.ToListing()));
+        output.Should().ContainSingle(s => s.Contains(VacuumingPolicy.ToListing()));
+        output.Should().ContainSingle(s => s.Contains(UpdatedTestVacuumingPolicy.ToListing()));
     }
 
     [Fact]
-    public void VacuumingRulesCanBeDeleted()
+    public void VacuumingPoliciesCanBeDeleted()
     {
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddStorageRule(process, TestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
-        AddVacuumingRule(process, TestVacuumingRule);
-        DeleteVacuumingRule(process, TestVacuumingRule);
+        AddVacuumingPolicy(process, VacuumingPolicy);
+        DeleteVacuumingPolicy(process, VacuumingPolicy);
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetAllOutputNoWhitespace();
@@ -109,22 +109,22 @@ public class VacuumingRulesTest : TestResources
         error.Should().BeEmpty();
 
         output.Should().ContainSingle(s =>
-            s.Contains($"Vacuuming rule '{TestVacuumingRule.ToListingIdentifier()}' successfully deleted"));
+            s.Contains($"Vacuuming policy '{VacuumingPolicy.ToListingIdentifier()}' successfully deleted"));
     }
 
     [Fact]
-    public void VacuumingRulesCanReceivePurposes()
+    public void VacuumingPoliciesCanReceivePurposes()
     {
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddStorageRule(process, TestStorageRule);
-        AddStorageRule(process, TestNewTestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
+        AddStoragePolicy(process, NewTestStoragePolicy);
         AddPurpose(process, TestPurpose);
         AddPurpose(process, NewTestPurpose);
         AddPurpose(process, VeryNewTestPurpose);
-        AddVacuumingRule(process, TestVacuumingRule);
-        AddPurposesToVacuumingRule(process, TestVacuumingRule, new[] { NewTestPurpose, VeryNewTestPurpose });
+        AddVacuumingPolicy(process, VacuumingPolicy);
+        AddPurposesToVacuumingPolicy(process, VacuumingPolicy, new[] { NewTestPurpose, VeryNewTestPurpose });
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetLastOutput().ToList();
@@ -133,25 +133,25 @@ public class VacuumingRulesTest : TestResources
 
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Vacuuming rule '{TestVacuumingRule.ToListingIdentifier()}' successfully updated")
+                $"Vacuuming policy '{VacuumingPolicy.ToListingIdentifier()}' successfully updated")
             && s.Contains(NewTestPurpose.ToListingIdentifier())
             && s.Contains(VeryNewTestPurpose.ToListingIdentifier()));
     }
 
     [Fact]
-    public void VacuumingRulesCanHavePurposesRemoved()
+    public void VacuumingPoliciesCanHavePurposesRemoved()
     {
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddStorageRule(process, TestStorageRule);
-        AddStorageRule(process, TestNewTestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
+        AddStoragePolicy(process, NewTestStoragePolicy);
         AddPurpose(process, TestPurpose);
         AddPurpose(process, NewTestPurpose);
         AddPurpose(process, VeryNewTestPurpose);
-        AddVacuumingRule(process, TestVacuumingRule);
-        AddPurposesToVacuumingRule(process, TestVacuumingRule, new[] { NewTestPurpose, VeryNewTestPurpose });
-        RemovePurposesFromVacuumingRule(process, TestVacuumingRule, new[] { NewTestPurpose, VeryNewTestPurpose });
+        AddVacuumingPolicy(process, VacuumingPolicy);
+        AddPurposesToVacuumingPolicy(process, VacuumingPolicy, new[] { NewTestPurpose, VeryNewTestPurpose });
+        RemovePurposesFromVacuumingPolicy(process, VacuumingPolicy, new[] { NewTestPurpose, VeryNewTestPurpose });
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetLastOutput().ToList();
@@ -160,13 +160,13 @@ public class VacuumingRulesTest : TestResources
 
         output.Should().ContainSingle(s =>
             s.Contains(
-                $"Vacuuming rule '{TestVacuumingRule.ToListingIdentifier()}' successfully updated")
+                $"Vacuuming policy '{VacuumingPolicy.ToListingIdentifier()}' successfully updated")
             && !s.Contains(NewTestPurpose.ToListingIdentifier())
             && !s.Contains(VeryNewTestPurpose.ToListingIdentifier()));
     }
 
     [Fact]
-    public void VacuumingRulesCanBeExecuted()
+    public void VacuumingPoliciesCanBeExecuted()
     {
         using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
@@ -174,20 +174,20 @@ public class VacuumingRulesTest : TestResources
 
         SetupTestData(dbConnection, process);
 
-        AddStorageRule(process, TestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
-        UpdateStorageRuleWithPersonalDataColumn(process, TestStorageRule, TestPersonalDataColumn);
-        AddVacuumingRule(process, TestVacuumingRule);
+        UpdateStoragePolicyWithPersonalDataColumn(process, StoragePolicy, TestPersonalDataColumn);
+        AddVacuumingPolicy(process, VacuumingPolicy);
 
         ReportStatus(process);
 
         var statusOutput = process.GetLastOutputNoWhitespaceOrPrompt();
         statusOutput.Where(s => !s.Contains("Individual")).Should().BeEmpty();
 
-        ExecuteVacuumingRule(process, new[] { TestVacuumingRule });
+        ExecuteVacuumingPolicy(process, new[] { VacuumingPolicy });
 
-        // Operation made such that the ExecuteVacuumingRule has enough time to report potential errors.
+        // Operation made such that the ExecuteVacuumingPolicy has enough time to report potential errors.
         AddOrigin(process, TestOrigin);
 
         var error = process.GetAllErrorsNoWhitespace();
@@ -196,12 +196,12 @@ public class VacuumingRulesTest : TestResources
         error.Should().BeEmpty();
 
         output.Should().ContainSingle(s =>
-            s == FeedbackEmitterMessage.ResultMessage<string, VacuumingRule>(TestVacuumingRule.Key!,
+            s == FeedbackEmitterMessage.ResultMessage<string, VacuumingPolicy>(VacuumingPolicy.Key!,
                 SystemOperation.Operation.Executed, null, null));
     }
 
     [Fact]
-    public void ExecutingVacuumingRulesHandlesNullReferencesGracefullyStorageRuleMissingPersonalDataColumn()
+    public void ExecutingVacuumingPoliciesHandlesNullReferencesGracefullyStoragePolicyMissingPersonalDataColumn()
     {
         using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
@@ -209,14 +209,14 @@ public class VacuumingRulesTest : TestResources
 
         SetupTestData(dbConnection, process);
 
-        AddStorageRule(process, TestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
-        // UpdateStorageRuleWithPersonalDataColumn(process, TestStorageRule, TestPersonalDataColumn);
-        AddVacuumingRule(process, TestVacuumingRule);
-        ExecuteVacuumingRule(process, new[] { TestVacuumingRule });
+        // UpdateStoragePolicyWithPersonalDataColumn(process, StoragePolicy, TestPersonalDataColumn);
+        AddVacuumingPolicy(process, VacuumingPolicy);
+        ExecuteVacuumingPolicy(process, new[] { VacuumingPolicy });
 
-        // Operation made such that the ExecuteVacuumingRule has enough time to report potential errors.
+        // Operation made such that the ExecuteVacuumingPolicy has enough time to report potential errors.
         AddOrigin(process, TestOrigin);
 
         var error = process.GetAllErrorsNoWhitespace();
@@ -224,7 +224,7 @@ public class VacuumingRulesTest : TestResources
     }
 
     [Fact]
-    public void ExecutingVacuumingRulesEmitsStorageRuleMissingPersonalDataColumn()
+    public void ExecutingVacuumingPoliciesEmitsStoragePolicyMissingPersonalDataColumn()
     {
         using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
@@ -232,19 +232,19 @@ public class VacuumingRulesTest : TestResources
 
         SetupTestData(dbConnection, process);
 
-        AddStorageRule(process, TestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
-        // UpdateStorageRuleWithPersonalDataColumn(process, TestStorageRule, TestPersonalDataColumn);
-        AddVacuumingRule(process, TestVacuumingRule);
-        ExecuteVacuumingRule(process, new[] { TestVacuumingRule });
+        // UpdateStoragePolicyWithPersonalDataColumn(process, StoragePolicy, TestPersonalDataColumn);
+        AddVacuumingPolicy(process, VacuumingPolicy);
+        ExecuteVacuumingPolicy(process, new[] { VacuumingPolicy });
 
         var output = process.GetLastOutputNoWhitespaceOrPrompt();
         output.Should()
             .Contain(
-                FeedbackEmitterMessage.MissingMessage<string, StorageRule, PersonalDataColumn>(TestStorageRule.Key));
+                FeedbackEmitterMessage.MissingMessage<string, StoragePolicy, PersonalDataColumn>(StoragePolicy.Key));
 
-        // Operation made such that the ExecuteVacuumingRule has enough time to report potential errors.
+        // Operation made such that the ExecuteVacuumingPolicy has enough time to report potential errors.
         AddOrigin(process, TestOrigin);
 
         var error = process.GetAllErrorsNoWhitespace();
@@ -252,7 +252,7 @@ public class VacuumingRulesTest : TestResources
     }
 
     [Fact]
-    public void ExecutingVacuumingRulesHandlesNullReferencesGracefullyPurposeMissingStorageRule()
+    public void ExecutingVacuumingPoliciesHandlesNullReferencesGracefullyPurposeMissingStoragePolicy()
     {
         using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
@@ -260,14 +260,14 @@ public class VacuumingRulesTest : TestResources
 
         SetupTestData(dbConnection, process);
 
-        AddStorageRule(process, TestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
         // AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
-        UpdateStorageRuleWithPersonalDataColumn(process, TestStorageRule, TestPersonalDataColumn);
-        AddVacuumingRule(process, TestVacuumingRule);
-        ExecuteVacuumingRule(process, new[] { TestVacuumingRule });
+        UpdateStoragePolicyWithPersonalDataColumn(process, StoragePolicy, TestPersonalDataColumn);
+        AddVacuumingPolicy(process, VacuumingPolicy);
+        ExecuteVacuumingPolicy(process, new[] { VacuumingPolicy });
 
-        // Operation made such that the ExecuteVacuumingRule has enough time to report potential errors.
+        // Operation made such that the ExecuteVacuumingPolicy has enough time to report potential errors.
         AddOrigin(process, TestOrigin);
 
         var error = process.GetAllErrorsNoWhitespace();
@@ -275,7 +275,7 @@ public class VacuumingRulesTest : TestResources
     }
 
     [Fact]
-    public void ExecutingVacuumingRulesEmitsPurposeMissingStorageRule()
+    public void ExecutingVacuumingPoliciesEmitsPurposeMissingStoragePolicy()
     {
         using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
@@ -283,19 +283,19 @@ public class VacuumingRulesTest : TestResources
 
         SetupTestData(dbConnection, process);
 
-        AddStorageRule(process, TestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
         // AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
-        UpdateStorageRuleWithPersonalDataColumn(process, TestStorageRule, TestPersonalDataColumn);
-        AddVacuumingRule(process, TestVacuumingRule);
-        ExecuteVacuumingRule(process, new[] { TestVacuumingRule });
+        UpdateStoragePolicyWithPersonalDataColumn(process, StoragePolicy, TestPersonalDataColumn);
+        AddVacuumingPolicy(process, VacuumingPolicy);
+        ExecuteVacuumingPolicy(process, new[] { VacuumingPolicy });
 
         var output = process.GetLastOutputNoWhitespaceOrPrompt();
         output.Should()
             .Contain(
-                FeedbackEmitterMessage.MissingMessage<string, Purpose, StorageRule>(TestPurpose.Key));
+                FeedbackEmitterMessage.MissingMessage<string, Purpose, StoragePolicy>(TestPurpose.Key));
 
-        // Operation made such that the ExecuteVacuumingRule has enough time to report potential errors.
+        // Operation made such that the ExecuteVacuumingPolicy has enough time to report potential errors.
         AddOrigin(process, TestOrigin);
 
         var error = process.GetAllErrorsNoWhitespace();
@@ -303,21 +303,21 @@ public class VacuumingRulesTest : TestResources
     }
 
     [Fact]
-    public void ExecutingVacuumingRulesAffectsData()
+    public void ExecutingVacuumingPoliciesAffectsData()
     {
         using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
         process.AwaitReady();
 
-        TestStorageRule.VacuumingCondition = "Id = 2";
+        StoragePolicy.VacuumingCondition = "Id = 2";
 
         SetupTestData(dbConnection, process);
 
-        AddStorageRule(process, TestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
-        UpdateStorageRuleWithPersonalDataColumn(process, TestStorageRule, TestPersonalDataColumn);
-        AddVacuumingRule(process, TestVacuumingRule);
+        UpdateStoragePolicyWithPersonalDataColumn(process, StoragePolicy, TestPersonalDataColumn);
+        AddVacuumingPolicy(process, VacuumingPolicy);
 
         // Status should be empty, except regarding individuals missing origins
         ReportStatus(process);
@@ -325,27 +325,27 @@ public class VacuumingRulesTest : TestResources
         var statusOutput = process.GetLastOutputNoWhitespaceOrPrompt();
         statusOutput.Where(s => !s.Contains("Individual")).Should().BeEmpty();
 
-        // Console should show that the vacuuming rule has been executed
-        ExecuteVacuumingRule(process, new[] { TestVacuumingRule });
+        // Console should show that the vacuuming policy has been executed
+        ExecuteVacuumingPolicy(process, new[] { VacuumingPolicy });
 
         process.GetAllErrorsNoWhitespace().Should().BeEmpty();
 
         var executeOutput = process.GetLastOutputNoWhitespaceOrPrompt().ToList();
         executeOutput.Should().ContainSingle(s =>
-            s == FeedbackEmitterMessage.ResultMessage<string, VacuumingRule>(TestVacuumingRule.Key!,
+            s == FeedbackEmitterMessage.ResultMessage<string, VacuumingPolicy>(VacuumingPolicy.Key!,
                 SystemOperation.Operation.Executed, null, null));
         executeOutput.Should().NotContain(s => s.Contains("had no effect"));
 
-        // The log should contain entries regarding the vacuuming rules that have been executed
+        // The log should contain entries regarding the vacuuming policies that have been executed
         ListLogs(process, new LogConstraints(logTypes: new[] { LogType.Vacuuming }));
 
         var logOutput = process.GetLastOutputNoWhitespaceOrPrompt().ToList();
-        logOutput.Should().Contain(s => s.Contains(FeedbackEmitterMessage.ResultMessage<string, VacuumingRule>(
-            TestVacuumingRule.Key!,
+        logOutput.Should().Contain(s => s.Contains(FeedbackEmitterMessage.ResultMessage<string, VacuumingPolicy>(
+            VacuumingPolicy.Key!,
             SystemOperation.Operation.Executed, null, null)));
         logOutput.Should().Contain(s =>
             s.Contains("WHERE") &&
-            s.Contains(TestStorageRule.VacuumingCondition) &&
+            s.Contains(StoragePolicy.VacuumingCondition) &&
             s.Contains("affected") &&
             s.Contains(TestPersonalDataColumn.ToListingIdentifier()));
 
@@ -370,25 +370,25 @@ public class VacuumingRulesTest : TestResources
     }
 
     [Fact]
-    public void ExecutingVacuumingRulesWithNoHitsDoesNotAffectData()
+    public void ExecutingVacuumingPoliciesWithNoHitsDoesNotAffectData()
     {
         using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
         process.Start();
         process.AwaitReady();
 
-        TestStorageRule.VacuumingCondition = "FALSE";
+        StoragePolicy.VacuumingCondition = "FALSE";
 
         SetupTestData(dbConnection, process);
 
-        AddStorageRule(process, TestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
-        UpdateStorageRuleWithPersonalDataColumn(process, TestStorageRule, TestPersonalDataColumn);
-        AddVacuumingRule(process, TestVacuumingRule);
+        UpdateStoragePolicyWithPersonalDataColumn(process, StoragePolicy, TestPersonalDataColumn);
+        AddVacuumingPolicy(process, VacuumingPolicy);
 
-        ExecuteVacuumingRule(process, new[] { TestVacuumingRule });
+        ExecuteVacuumingPolicy(process, new[] { VacuumingPolicy });
 
-        // Operation made such that the ExecuteVacuumingRule has enough time to report potential errors.
+        // Operation made such that the ExecuteVacuumingPolicy has enough time to report potential errors.
         AddOrigin(process, TestOrigin);
 
         process.GetAllErrorsNoWhitespace().Should().BeEmpty();

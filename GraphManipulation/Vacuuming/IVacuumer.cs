@@ -8,7 +8,7 @@ public interface IVacuumer
 
     public IEnumerable<DeletionExecution> Execute();
 
-    public IEnumerable<DeletionExecution> ExecuteVacuumingRuleList(IEnumerable<VacuumingRule> vacuumingRules);
+    public IEnumerable<DeletionExecution> ExecuteVacuumingPolicyList(IEnumerable<VacuumingPolicy> vacuumingPolicies);
 
-    public IEnumerable<DeletionExecution> ExecuteVacuumingRule(VacuumingRule vacuumingRule);
+    public IEnumerable<DeletionExecution> ExecuteVacuumingPolicy(VacuumingPolicy vacuumingPolicy);
 }

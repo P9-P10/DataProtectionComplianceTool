@@ -4,7 +4,7 @@ using IntegrationTests.SystemTest.Tools;
 
 namespace IntegrationTests.SystemTest;
 
-public class StorageRulesTest : TestResources
+public class StoragePoliciesTest : TestResources
 {
     [Fact]
     public void TestAddCommand_Returns_Correct_Message()
@@ -12,7 +12,7 @@ public class StorageRulesTest : TestResources
         using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddStorageRule(process, new StorageRule() { Key = "DeletionCondition", VacuumingCondition = "Condition" });
+        AddStoragePolicy(process, new StoragePolicy() { Key = "DeletionCondition", VacuumingCondition = "Condition" });
         var result = process.GetAllOutput();
 
         result.Should().ContainSingle(s =>
@@ -25,8 +25,8 @@ public class StorageRulesTest : TestResources
         using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddStorageRule(process, new StorageRule() { Key = "DeletionCondition", VacuumingCondition = "Condition" });
-        ListStorageRules(process);
+        AddStoragePolicy(process, new StoragePolicy() { Key = "DeletionCondition", VacuumingCondition = "Condition" });
+        ListStoragePolicies(process);
         string result = process.GetOutput();
 
         result.Should().Contain("DeletionCondition, , Condition");
@@ -38,14 +38,14 @@ public class StorageRulesTest : TestResources
     {
         using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
-        StorageRule storageRule = new() { Key = "DeletionCondition", VacuumingCondition = "Condition" };
-        AddStorageRule(process, storageRule);
+        StoragePolicy storagePolicy = new() { Key = "DeletionCondition", VacuumingCondition = "Condition" };
+        AddStoragePolicy(process, storagePolicy);
 
 
-        UpdateStorageRule(process, storageRule,
-            new StorageRule() { Key = "NewName", VacuumingCondition = Condition });
+        UpdateStoragePolicy(process, storagePolicy,
+            new StoragePolicy() { Key = "NewName", VacuumingCondition = Condition });
 
-        ListStorageRules(process);
+        ListStoragePolicies(process);
         List<string> result = process.GetLastOutput();
         result.Should().ContainSingle(s => s.Contains("NewName, , TRUE"));
     }
@@ -55,16 +55,16 @@ public class StorageRulesTest : TestResources
     {
         using TestProcess process = Tools.SystemTest.CreateTestProcess();
         process.Start();
-        StorageRule storageRule = new() { Key = "DeletionCondition", VacuumingCondition = "Condition" };
-        AddStorageRule(process, storageRule);
+        StoragePolicy storagePolicy = new() { Key = "DeletionCondition", VacuumingCondition = "Condition" };
+        AddStoragePolicy(process, storagePolicy);
 
 
-        UpdateStorageRule(process, storageRule, new StorageRule()
+        UpdateStoragePolicy(process, storagePolicy, new StoragePolicy()
         {
             Key = "NewName", VacuumingCondition = "Condition",
             Description = "This is the new description"
         });
-        ListStorageRules(process);
+        ListStoragePolicies(process);
 
         List<string> result = process.GetLastOutput();
         result.Should().ContainSingle(s => s.Contains("NewName, This is the new description, Condition"));
@@ -75,13 +75,13 @@ public class StorageRulesTest : TestResources
     {
         using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
-        StorageRule storageRule = new() { Key = "DeletionCondition", VacuumingCondition = "Condition" };
-        AddStorageRule(process, storageRule);
+        StoragePolicy storagePolicy = new() { Key = "DeletionCondition", VacuumingCondition = "Condition" };
+        AddStoragePolicy(process, storagePolicy);
 
-        UpdateStorageRule(process, storageRule,
-            new StorageRule()
+        UpdateStoragePolicy(process, storagePolicy,
+            new StoragePolicy()
                 { Key = "NewName", VacuumingCondition = Condition, Description = "This is a new description" });
-        ListStorageRules(process);
+        ListStoragePolicies(process);
         List<string> result = process.GetLastOutput();
         result.Should().ContainSingle(s => s.Contains($"NewName, This is a new description, {Condition}"));
     }
@@ -91,12 +91,12 @@ public class StorageRulesTest : TestResources
     {
         using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
-        StorageRule storageRule = new() { Key = "DeletionCondition", VacuumingCondition = "Condition" };
-        AddStorageRule(process, storageRule);
+        StoragePolicy storagePolicy = new() { Key = "DeletionCondition", VacuumingCondition = "Condition" };
+        AddStoragePolicy(process, storagePolicy);
 
-        DeleteStorageRule(process, storageRule);
+        DeleteStoragePolicy(process, storagePolicy);
 
-        ListStorageRules(process);
+        ListStoragePolicies(process);
         List<string> result = process.GetLastOutput();
         result.FindAll(s => s.Contains("DeletionCondition")).Should().BeEmpty();
     }
@@ -108,13 +108,13 @@ public class StorageRulesTest : TestResources
         process.Start();
 
         // dcs add --name DeletionCondition -c "Condition"
-        StorageRule storageRule = new() { Key = "DeletionCondition", VacuumingCondition = "Condition" };
-        AddStorageRule(process, storageRule);
+        StoragePolicy storagePolicy = new() { Key = "DeletionCondition", VacuumingCondition = "Condition" };
+        AddStoragePolicy(process, storagePolicy);
 
         // dcs d --name DeletionCondition
-        DeleteStorageRule(process, storageRule);
+        DeleteStoragePolicy(process, storagePolicy);
         List<string> result = process.GetLastOutput();
-        result.First().Should().Contain("Storage rule 'DeletionCondition' successfully deleted");
+        result.First().Should().Contain("Storage policy 'DeletionCondition' successfully deleted");
         
     }
 
@@ -123,10 +123,10 @@ public class StorageRulesTest : TestResources
     {
         using TestProcess process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
-        StorageRule storageRule = new() { Key = "DeletionCondition", VacuumingCondition = "Condition" };
-        AddStorageRule(process, storageRule);
+        StoragePolicy storagePolicy = new() { Key = "DeletionCondition", VacuumingCondition = "Condition" };
+        AddStoragePolicy(process, storagePolicy);
 
-        ShowStorageRule(process, storageRule);
+        ShowStoragePolicy(process, storagePolicy);
         List<string> result = process.GetLastOutput();
         result.First().Should().Contain("DeletionCondition, , Condition");
     }

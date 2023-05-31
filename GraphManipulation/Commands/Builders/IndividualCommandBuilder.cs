@@ -7,11 +7,11 @@ using GraphManipulation.Utility;
 
 namespace GraphManipulation.Commands.Builders;
 
-public class IndividualsCommandBuilder : BaseCommandBuilder<int, Individual>
+public class IndividualCommandBuilder : BaseCommandBuilder<int, Individual>
 {
     private readonly IManager<TableColumnPair, PersonalDataColumn> _personalDataColumnManager;
 
-    public IndividualsCommandBuilder(ICommandHandlerFactory commandHandlerFactory, IManagerFactory managerFactory) :
+    public IndividualCommandBuilder(ICommandHandlerFactory commandHandlerFactory, IManagerFactory managerFactory) :
         base(commandHandlerFactory)
     {
         _personalDataColumnManager = managerFactory.CreateManager<TableColumnPair, PersonalDataColumn>();
@@ -19,7 +19,7 @@ public class IndividualsCommandBuilder : BaseCommandBuilder<int, Individual>
 
     public override Command Build()
     {
-        var baseCommand = base.Build(CommandNamer.IndividualsName, CommandNamer.IndividualsAlias, out var keyOption);
+        var baseCommand = base.Build(CommandNamer.IndividualName, CommandNamer.IndividualAlias, out var keyOption);
 
         var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<Individual>();
 

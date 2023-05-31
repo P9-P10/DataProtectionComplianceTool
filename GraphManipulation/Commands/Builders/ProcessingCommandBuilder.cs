@@ -7,12 +7,12 @@ using GraphManipulation.Utility;
 
 namespace GraphManipulation.Commands.Builders;
 
-public class ProcessingsCommandBuilder : BaseCommandBuilder<string, Processing>
+public class ProcessingCommandBuilder : BaseCommandBuilder<string, Processing>
 {
     private readonly IManager<TableColumnPair, PersonalDataColumn> _personalDataColumnManager;
     private readonly IManager<string, Purpose> _purposesManager;
 
-    public ProcessingsCommandBuilder(ICommandHandlerFactory commandHandlerFactory, IManagerFactory managerFactory) :
+    public ProcessingCommandBuilder(ICommandHandlerFactory commandHandlerFactory, IManagerFactory managerFactory) :
         base(commandHandlerFactory)
     {
         _purposesManager = managerFactory.CreateManager<string, Purpose>();
@@ -21,7 +21,7 @@ public class ProcessingsCommandBuilder : BaseCommandBuilder<string, Processing>
 
     public override Command Build()
     {
-        var baseCommand = base.Build(CommandNamer.ProcessingsName, CommandNamer.ProcessingsAlias, out var keyOption);
+        var baseCommand = base.Build(CommandNamer.ProcessingName, CommandNamer.ProcessingAlias, out var keyOption);
 
         var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<Processing>();
         var newKeyOption = OptionBuilder.CreateNewNameOption<Processing>();

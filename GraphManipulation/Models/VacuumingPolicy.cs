@@ -2,69 +2,69 @@ using System.Text.RegularExpressions;
 
 namespace GraphManipulation.Models;
 
-public class VacuumingRule : Entity<string>
+public class VacuumingPolicy : Entity<string>
 {
-    private string? _interval;
+    private string? _duration;
 
-    public VacuumingRule(int id, string description, string name, string interval,
+    public VacuumingPolicy(int id, string description, string name, string duration,
         IEnumerable<Purpose>? purposes = null)
     {
         Id = id;
         Description = description;
         Key = name;
-        Interval = interval;
+        Duration = duration;
         purposes ??= new List<Purpose>();
         Purposes = purposes;
     }
 
-    public VacuumingRule(string description, string name, string interval,
+    public VacuumingPolicy(string description, string name, string duration,
         IEnumerable<Purpose>? purposes = null)
     {
         Description = description;
         Key = name;
-        Interval = interval;
+        Duration = duration;
         purposes ??= new List<Purpose>();
         Purposes = purposes;
     }
 
-    public VacuumingRule(string name, string description, string interval)
+    public VacuumingPolicy(string name, string description, string duration)
     {
         Description = description;
         Key = name;
-        Interval = interval;
+        Duration = duration;
         Purposes = new List<Purpose>();
     }
 
-    public VacuumingRule(string name, string interval, List<Purpose> purposes)
+    public VacuumingPolicy(string name, string duration, List<Purpose> purposes)
     {
         Key = name;
-        Interval = interval;
+        Duration = duration;
         Purposes = purposes;
     }
 
-    public VacuumingRule(string name, string interval)
+    public VacuumingPolicy(string name, string duration)
     {
         Key = name;
-        Interval = interval;
+        Duration = duration;
     }
 
-    public VacuumingRule()
+    public VacuumingPolicy()
     {
         // This constructor is needed.
     }
 
-    public string? Interval
+    public string? Duration
     {
-        get => _interval;
+        get => _duration;
         set
         {
-            if (IsValidInterval(value))
+            if (IsValidDuration(value))
             {
-                _interval = value;
+                _duration = value;
             }
             else
             {
-                throw new IntervalParseException();
+                throw new DurationParseException();
             }
         }
     }
@@ -76,19 +76,19 @@ public class VacuumingRule : Entity<string>
     public override string ToListing()
     {
         return string.Join(ToListingSeparator, base.ToListing(),
-            NullToString(Interval),
+            NullToString(Duration),
             NullToString(LastExecution),
             ListNullOrEmptyToString(Purposes));
     }
 
     public override string ToListingHeader()
     {
-        return string.Join(ToListingSeparator, base.ToListingHeader(), "Interval", "Last Execution", "Purposes");
+        return string.Join(ToListingSeparator, base.ToListingHeader(), "Duration", "Last Execution", "Purposes");
     }
 
-    public static bool IsValidInterval(string? interval)
+    public static bool IsValidDuration(string? duration)
     {
-        return interval is not null && Regex.Match(interval, @"(\d+(y|d|m|M|D|w) {0,1})+").Success;
+        return duration is not null && Regex.Match(duration, @"(\d+(y|d|m|M|D|w) {0,1})+").Success;
     }
 
     public bool ShouldExecute()
@@ -98,49 +98,49 @@ public class VacuumingRule : Entity<string>
 
     private DateTime GetNextExecutionDate()
     {
-        ParsedInterval interval = IntervalParser();
+        ParsedDuration duration = DurationParser();
         if (LastExecution == null)
         {
             return DateTime.Now;
         }
 
-        return LastExecution.Value.AddYears(interval.years).AddMonths(interval.months).AddDays(interval.days)
-            .AddHours(interval.hours).AddMinutes(interval.minutes);
+        return LastExecution.Value.AddYears(duration.years).AddMonths(duration.months).AddDays(duration.days)
+            .AddHours(duration.hours).AddMinutes(duration.minutes);
     }
 
-    private ParsedInterval IntervalParser()
+    private ParsedDuration DurationParser()
     {
-        ParsedInterval interval = new();
-        string[] components = Interval.Split(" ");
+        ParsedDuration duration = new();
+        string[] components = Duration.Split(" ");
         foreach (var component in components)
         {
             if (component.Contains('M'))
             {
-                interval.minutes = GetTimeFromComponent(component);
+                duration.minutes = GetTimeFromComponent(component);
             }
 
             if (component.Contains('h'))
             {
-                interval.hours = GetTimeFromComponent(component);
+                duration.hours = GetTimeFromComponent(component);
             }
 
             if (component.Contains('d'))
             {
-                interval.days = GetTimeFromComponent(component);
+                duration.days = GetTimeFromComponent(component);
             }
 
             if (component.Contains('m'))
             {
-                interval.months = GetTimeFromComponent(component);
+                duration.months = GetTimeFromComponent(component);
             }
 
             if (component.Contains('y'))
             {
-                interval.years = GetTimeFromComponent(component);
+                duration.years = GetTimeFromComponent(component);
             }
         }
 
-        return interval;
+        return duration;
     }
 
     private int GetTimeFromComponent(string input)
@@ -148,7 +148,7 @@ public class VacuumingRule : Entity<string>
         return int.Parse(Regex.Match(input, @"\d+").Value);
     }
 
-    private struct ParsedInterval
+    private struct ParsedDuration
     {
         public int minutes = 0;
         public int hours = 0;
@@ -156,12 +156,12 @@ public class VacuumingRule : Entity<string>
         public int months = 0;
         public int years = 0;
 
-        public ParsedInterval()
+        public ParsedDuration()
         {
         }
     }
 
-    public class IntervalParseException : Exception
+    public class DurationParseException : Exception
     {
     }
 }

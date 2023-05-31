@@ -5,13 +5,13 @@ namespace GraphManipulation.Vacuuming;
 public class DeletionExecution
 {
     public DeletionExecution(List<Purpose> purposes, string column, string table, string query,
-        VacuumingRule vacuumingRule)
+        VacuumingPolicy vacuumingPolicy)
     {
         Purposes = purposes;
         Column = column;
         Table = table;
         Query = query;
-        VacuumingRule = vacuumingRule;
+        VacuumingPolicy = vacuumingPolicy;
     }
 
     public DeletionExecution()
@@ -30,7 +30,7 @@ public class DeletionExecution
 
     public List<Purpose> Purposes { get; set; }
 
-    public VacuumingRule VacuumingRule { get; set; }
+    public VacuumingPolicy VacuumingPolicy { get; set; }
 
     public void SetTableAndColum(PersonalDataColumn personalDataColumn)
     {
@@ -38,20 +38,20 @@ public class DeletionExecution
         Table = personalDataColumn.Key.TableName;
     }
 
-    public void CreateQuery(PersonalDataColumn personalDataColumn, IEnumerable<StorageRule> storageRules)
+    public void CreateQuery(PersonalDataColumn personalDataColumn, IEnumerable<StoragePolicy> storagePolicies)
     {
         string updateQuery =
             $"UPDATE {personalDataColumn.Key.TableName} SET {personalDataColumn.Key.ColumnName} = '{personalDataColumn.DefaultValue}' WHERE ";
 
-        List<string> conditions = storageRules.Select(rule => $"({rule.VacuumingCondition})").ToList();
+        List<string> conditions = storagePolicies.Select(storagePolicy => $"({storagePolicy.VacuumingCondition})").ToList();
         string combinedCondition = string.Join(" AND ", conditions) + ";";
 
         Query = updateQuery + combinedCondition;
     }
 
-    public void SetPurposesFromRules(IEnumerable<StorageRule> storageRules)
+    public void SetPurposesFromStoragePolicies(IEnumerable<StoragePolicy> storagePolicies)
     {
-        Purposes = storageRules.SelectMany(rule => rule.Purposes).ToList();
+        Purposes = storagePolicies.SelectMany(storagePolicy => storagePolicy.Purposes).ToList();
     }
 
     public override bool Equals(object? obj)

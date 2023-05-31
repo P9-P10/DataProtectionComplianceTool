@@ -111,9 +111,9 @@ public class VacuumerTest
         TestQueryExecutor testQueryExecutor = new();
         Vacuumer vacuumer = VacuumInstantiate(testPurposeMapper, testQueryExecutor);
         Purpose purpose = PurposeMaker();
-        purpose.StorageRules = purpose.StorageRules.Append(DeleteConditionMaker(condition: "SecondCondition"))
+        purpose.StoragePolicies = purpose.StoragePolicies.Append(DeleteConditionMaker(condition: "SecondCondition"))
             .ToList();
-        purpose.StorageRules.ElementAt(1).Purposes = purpose.StorageRules.ElementAt(1).Purposes.Append(purpose);
+        purpose.StoragePolicies.ElementAt(1).Purposes = purpose.StoragePolicies.ElementAt(1).Purposes.Append(purpose);
         testPurposeMapper.Insert(purpose);
 
 
@@ -131,9 +131,9 @@ public class VacuumerTest
         TestQueryExecutor testQueryExecutor = new();
         Vacuumer vacuumer = VacuumInstantiate(testPurposeMapper, testQueryExecutor);
         Purpose purpose = PurposeMaker();
-        purpose.StorageRules = purpose.StorageRules
+        purpose.StoragePolicies = purpose.StoragePolicies
             .Append(DeleteConditionMaker(condition: "SecondCondition", tableName: "SecondTable")).ToList();
-        purpose.StorageRules.ElementAt(1).Purposes = purpose.StorageRules.ElementAt(1).Purposes.Append(purpose);
+        purpose.StoragePolicies.ElementAt(1).Purposes = purpose.StoragePolicies.ElementAt(1).Purposes.Append(purpose);
         testPurposeMapper.Insert(purpose);
 
 
@@ -146,24 +146,24 @@ public class VacuumerTest
     }
 
     [Fact]
-    public void TestExecuteVacuumingRulesExecutesOnlyCorrectGivenPurpose()
+    public void TestExecuteVacuumingPoliciesExecutesOnlyCorrectGivenPurpose()
     {
         TestPurposeMapper testPurposeMapper = new();
         TestQueryExecutor testQueryExecutor = new();
         Vacuumer vacuumer = VacuumInstantiate(testPurposeMapper, testQueryExecutor);
         Purpose purpose = PurposeMaker();
         Purpose newPurpose = PurposeMaker(name: "NewPurpose", tableName: "NewTable");
-        purpose.StorageRules = purpose.StorageRules
+        purpose.StoragePolicies = purpose.StoragePolicies
             .Append(DeleteConditionMaker(condition: "SecondCondition", tableName: "SecondTable")).ToList();
-        purpose.StorageRules.ElementAt(1).Purposes = purpose.StorageRules.ElementAt(1).Purposes.Append(purpose);
+        purpose.StoragePolicies.ElementAt(1).Purposes = purpose.StoragePolicies.ElementAt(1).Purposes.Append(purpose);
         testPurposeMapper.Insert(purpose);
         testPurposeMapper.Insert(newPurpose);
 
-        VacuumingRule vr = VacuumingRuleMaker();
+        VacuumingPolicy vr = VacuumingPolicyMaker();
         vr.Purposes = vr.Purposes.Append(purpose);
 
         List<DeletionExecution> executions =
-            vacuumer.ExecuteVacuumingRuleList(new List<VacuumingRule> { vr}).ToList();
+            vacuumer.ExecuteVacuumingPolicyList(new List<VacuumingPolicy> { vr}).ToList();
         const string expectedQuery = "UPDATE Table SET Column = 'Null' WHERE (Condition);";
         const string secondExpectedQuery = "UPDATE SecondTable SET Column = 'Null' WHERE (SecondCondition);";
         Assert.Contains(expectedQuery, testQueryExecutor.Query);

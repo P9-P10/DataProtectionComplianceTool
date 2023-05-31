@@ -4,7 +4,7 @@ using GraphManipulation.Vacuuming;
 
 namespace GraphManipulation.Decorators;
 
-public class LoggingVacuumer : LoggingDecorator<string, VacuumingRule>, IVacuumer
+public class LoggingVacuumer : LoggingDecorator<string, VacuumingPolicy>, IVacuumer
 {
     private readonly ILogger _logger;
     private readonly IVacuumer _vacuumer;
@@ -26,20 +26,20 @@ public class LoggingVacuumer : LoggingDecorator<string, VacuumingRule>, IVacuume
         return ExecuteAndLog(() => _vacuumer.Execute());
     }
 
-    public IEnumerable<DeletionExecution> ExecuteVacuumingRuleList(IEnumerable<VacuumingRule> vacuumingRules)
+    public IEnumerable<DeletionExecution> ExecuteVacuumingPolicyList(IEnumerable<VacuumingPolicy> vacuumingPolicies)
     {
-        return ExecuteAndLog(() => _vacuumer.ExecuteVacuumingRuleList(vacuumingRules));
+        return ExecuteAndLog(() => _vacuumer.ExecuteVacuumingPolicyList(vacuumingPolicies));
     }
 
-    public IEnumerable<DeletionExecution> ExecuteVacuumingRule(VacuumingRule vacuumingRule)
+    public IEnumerable<DeletionExecution> ExecuteVacuumingPolicy(VacuumingPolicy vacuumingPolicy)
     {
-        return ExecuteAndLog(() => _vacuumer.ExecuteVacuumingRule(vacuumingRule));
+        return ExecuteAndLog(() => _vacuumer.ExecuteVacuumingPolicy(vacuumingPolicy));
     }
 
     private IEnumerable<DeletionExecution> ExecuteAndLog(Func<IEnumerable<DeletionExecution>> executeFunc)
     {
         var executions = executeFunc().ToList();
-        executions.ForEach(execution => LogExecute(execution.VacuumingRule.Key));
+        executions.ForEach(execution => LogExecute(execution.VacuumingPolicy.Key));
 
         CreateDeletionExecutionLogs(executions).ToList().ForEach(_logger.Append);
         return executions;

@@ -29,17 +29,17 @@ public static class OptionNamer
     public const string LegallyRequired = "--legally-required";
     public const string LegallyRequiredAlias = "-lr";
 
-    public const string StorageRule = "--storage-rule";
-    public const string StorageRuleAlias = "-sr";
+    public const string StoragePolicyList = "--storage-policies";
+    public const string StoragePolicyListAlias = "-sps";
 
     public const string VacuumingCondition = "--vacuuming-condition";
     public const string VacuumingConditionAlias = "-vc";
 
-    public const string Interval = "--interval";
-    public const string IntervalAlias = "-i";
+    public const string Duration = "--duration";
+    public const string DurationAlias = "-dur";
 
-    public const string Rules = "--rules";
-    public const string RulesAlias = "-rs";
+    public const string VacuumingPolicyList = "--vacuuming-policies";
+    public const string VacuumingPolicyListAlias = "-vps";
 
     public const string Id = "--id";
     public const string IdAlias = "-i";

@@ -7,41 +7,41 @@ using GraphManipulation.Utility;
 
 namespace GraphManipulation.Commands.Binders;
 
-public class VacuumingRuleBinder : BaseBinder<string, VacuumingRule>
+public class VacuumingPolicyBinder : BaseBinder<string, VacuumingPolicy>
 {
-    private readonly Option<string> _intervalOption;
+    private readonly Option<string> _durationOption;
     private readonly IManager<string, Purpose> _purposesManager;
     private readonly Option<IEnumerable<string>> _purposesOption;
 
-    public VacuumingRuleBinder(
+    public VacuumingPolicyBinder(
         Option<string> keyOption,
         Option<string> descriptionOption,
-        Option<string> intervalOption,
+        Option<string> durationOption,
         Option<IEnumerable<string>> purposesOption,
         IManager<string, Purpose> purposesManager) : base(keyOption, descriptionOption)
     {
-        _intervalOption = intervalOption;
+        _durationOption = durationOption;
         _purposesOption = purposesOption;
         _purposesManager = purposesManager;
     }
 
-    protected override VacuumingRule GetBoundValue(BindingContext bindingContext)
+    protected override VacuumingPolicy GetBoundValue(BindingContext bindingContext)
     {
-        var rule = base.GetBoundValue(bindingContext);
+        var vacuumingPolicy = base.GetBoundValue(bindingContext);
 
-        if (bindingContext.ParseResult.HasOption(_intervalOption))
+        if (bindingContext.ParseResult.HasOption(_durationOption))
         {
-            rule.Interval = bindingContext.ParseResult.GetValueForOption(_intervalOption);
+            vacuumingPolicy.Duration = bindingContext.ParseResult.GetValueForOption(_durationOption);
         }
 
         if (bindingContext.ParseResult.HasOption(_purposesOption))
         {
             var purposes = bindingContext.ParseResult.GetValueForOption(_purposesOption);
-            rule.Purposes = purposes is null
+            vacuumingPolicy.Purposes = purposes is null
                 ? null
                 : Handlers.HandleMustExistListWithCreateOnDemand(purposes, _purposesManager);
         }
 
-        return rule;
+        return vacuumingPolicy;
     }
 }

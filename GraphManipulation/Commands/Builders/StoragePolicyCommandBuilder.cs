@@ -7,11 +7,11 @@ using GraphManipulation.Utility;
 
 namespace GraphManipulation.Commands.Builders;
 
-public class StorageRuleCommandBuilder : BaseCommandBuilder<string, StorageRule>
+public class StoragePolicyCommandBuilder : BaseCommandBuilder<string, StoragePolicy>
 {
     private readonly IManager<TableColumnPair, PersonalDataColumn> _personalDataColumnManager;
 
-    public StorageRuleCommandBuilder(ICommandHandlerFactory commandHandlerFactory, IManagerFactory managerFactory) :
+    public StoragePolicyCommandBuilder(ICommandHandlerFactory commandHandlerFactory, IManagerFactory managerFactory) :
         base(commandHandlerFactory)
     {
         _personalDataColumnManager = managerFactory.CreateManager<TableColumnPair, PersonalDataColumn>();
@@ -19,20 +19,20 @@ public class StorageRuleCommandBuilder : BaseCommandBuilder<string, StorageRule>
 
     public override Command Build()
     {
-        var baseCommand = base.Build(CommandNamer.StorageRulesName, CommandNamer.StorageRulesAlias,
+        var baseCommand = base.Build(CommandNamer.StoragePolicyName, CommandNamer.StoragePolicyAlias,
             out var keyOption);
 
-        var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<StorageRule>();
-        var newKeyOption = OptionBuilder.CreateNewNameOption<StorageRule>();
+        var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<StoragePolicy>();
+        var newKeyOption = OptionBuilder.CreateNewNameOption<StoragePolicy>();
 
         var vacuumingConditionOption = BuildVacuumingConditionOption()
             .WithDescription("The condition that must be fulfilled for data to be deleted");
 
         var tableColumnOption = OptionBuilder
             .CreateTableColumnPairOption()
-            .WithDescription("The data that will be vacuumed under this condition");
+            .WithDescription("The data that will be vacuumed under the condition");
 
-        var createBinder = new StorageRuleBinder(
+        var createBinder = new StoragePolicyBinder(
             keyOption,
             descriptionOption,
             vacuumingConditionOption,
@@ -40,7 +40,7 @@ public class StorageRuleCommandBuilder : BaseCommandBuilder<string, StorageRule>
             _personalDataColumnManager
         );
 
-        var updateBinder = new StorageRuleBinder(
+        var updateBinder = new StoragePolicyBinder(
             newKeyOption,
             descriptionOption,
             vacuumingConditionOption,
@@ -61,7 +61,7 @@ public class StorageRuleCommandBuilder : BaseCommandBuilder<string, StorageRule>
             );
     }
 
-    protected override void StatusReport(StorageRule condition)
+    protected override void StatusReport(StoragePolicy condition)
     {
         if (condition.VacuumingCondition is null)
         {
@@ -76,7 +76,7 @@ public class StorageRuleCommandBuilder : BaseCommandBuilder<string, StorageRule>
 
     protected override Option<string> BuildKeyOption()
     {
-        return OptionBuilder.CreateKeyOption<string, StorageRule>(OptionNamer.Name, OptionNamer.NameAlias);
+        return OptionBuilder.CreateKeyOption<string, StoragePolicy>(OptionNamer.Name, OptionNamer.NameAlias);
     }
 
     private static Option<string> BuildVacuumingConditionOption()

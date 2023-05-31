@@ -14,15 +14,15 @@ public class GdprMetadataContext : DbContext
     }
 
     public DbSet<PersonalDataColumn> columns { get; set; }
-    public DbSet<VacuumingRule> vacuumingRules { get; set; }
+    public DbSet<VacuumingPolicy> vacuumingPolicies { get; set; }
     public DbSet<Processing> processes { get; set; }
     public DbSet<Individual> people { get; set; }
 
-    public DbSet<ConfigKeyValue> IndividualsSourceStores { get; set; }
+    public DbSet<ConfigKeyValue> individualsSourceStores { get; set; }
     public DbSet<Purpose> purposes { get; set; }
     public DbSet<Origin> origins { get; set; }
     public DbSet<PersonalDataOrigin> personalDatas { get; set; }
-    public DbSet<StorageRule> StorageRules { get; set; }
+    public DbSet<StoragePolicy> storagePolicies { get; set; }
 
     public IDbConnection Connection => Database.GetDbConnection();
 
@@ -36,6 +36,6 @@ public class GdprMetadataContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<PersonalDataColumn>().OwnsOne(p => p.Key);
-        modelBuilder.Entity<Purpose>().HasMany<StorageRule>(p => p.StorageRules);
+        modelBuilder.Entity<Purpose>().HasMany<StoragePolicy>(p => p.StoragePolicies);
     }
 }

@@ -50,30 +50,32 @@ public class MapperTest
     {
         private static class SeedData
         {
-            public static PersonalDataColumn column1 = new()
+            public static PersonalDataColumn Column1 = new()
             {
                 Key = new TableColumnPair("tableOne", "columnOne")
-               
             };
 
-            public static PersonalDataColumn column2 = new()
+            public static PersonalDataColumn Column2 = new()
             {
                 Key = new TableColumnPair("tableTwo", "columnTwo")
             };
 
-            public static VacuumingRule rule1 = new() {Key = "ruleOne", Interval = "2d", Description = ""};
-            public static VacuumingRule rule2 = new() {Key = "ruleTwo", Interval = "3d", Description = ""};
+            public static readonly VacuumingPolicy VacuumingPolicy1 = new()
+                { Key = "policyOne", Duration = "2d", Description = "" };
+
+            public static readonly VacuumingPolicy VacuumingPolicy2 = new()
+                { Key = "policyTwo", Duration = "3d", Description = "" };
 
             public static Purpose purpose1 = new()
             {
                 Key = "purposeOne",
-                Rules = new[] {rule1}
+                VacuumingPolicies = new[] { VacuumingPolicy1 }
             };
 
-            public static Purpose purpose2 = new Purpose()
+            public static Purpose purpose2 = new()
             {
                 Key = "purposeTwo",
-                Rules = new[] {rule1, rule2}
+                VacuumingPolicies = new[] { VacuumingPolicy1, VacuumingPolicy2 }
             };
 
             public static void SeedDatabase(GdprMetadataContext context)
@@ -105,7 +107,7 @@ public class MapperTest
             // Insert is tested further in other tests
             // Assignment of id is the only functionality that can be tested in isolation.
             Mapper<Purpose> mapper = new Mapper<Purpose>(_context);
-            var testPurpose = new Purpose() {Key = "TestPurpose"};
+            var testPurpose = new Purpose() { Key = "TestPurpose" };
 
             var insertedPurpose = mapper.Insert(testPurpose);
 
@@ -145,7 +147,7 @@ public class MapperTest
         public void FindSingleReturnsOnlyMatchingElement()
         {
             Mapper<Purpose> mapper = new Mapper<Purpose>(_context);
-            var expectedPurpose = new Purpose() {Key = "TestPurpose"};
+            var expectedPurpose = new Purpose() { Key = "TestPurpose" };
             mapper.Insert(expectedPurpose);
 
             Purpose? actualPurpose = mapper.FindSingle(purpose => purpose.Key == "TestPurpose");
@@ -185,7 +187,7 @@ public class MapperTest
         public void UpdateInsertsGivenNonExistingElement()
         {
             Mapper<Purpose> mapper = new Mapper<Purpose>(_context);
-            var newPurpose = new Purpose() {Key = "NoSuchPurpose"};
+            var newPurpose = new Purpose() { Key = "NoSuchPurpose" };
 
             mapper.Update(newPurpose);
             var fetchedPurpose = mapper.FindSingle(purpose => purpose.Key == "NoSuchPurpose");
@@ -198,7 +200,7 @@ public class MapperTest
         {
             Mapper<Purpose> mapper = new Mapper<Purpose>(_context);
 
-            var newPurpose = new Purpose() {Key = "OriginalValue"};
+            var newPurpose = new Purpose() { Key = "OriginalValue" };
             mapper.Insert(newPurpose);
 
             newPurpose.Key = "NewValue";
@@ -212,7 +214,7 @@ public class MapperTest
         public void DeletingNonExistingEntryThrowsInvalidOperationException()
         {
             Mapper<Purpose> mapper = new Mapper<Purpose>(_context);
-            var nonExistingPurpose = new Purpose() {Key = "NoSuchPurpose"};
+            var nonExistingPurpose = new Purpose() { Key = "NoSuchPurpose" };
 
             Assert.Throws<InvalidOperationException>(() => mapper.Delete(nonExistingPurpose));
         }

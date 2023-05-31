@@ -2,17 +2,17 @@
 
 namespace GraphManipulation.Vacuuming;
 
-public class IntervalBasedVacuuming
+public class DurationBasedVacuuming
 {
-    private readonly int _intervalInMinutes;
+    private readonly int _durationInMinutes;
     private readonly IVacuumer _vacuumer;
 
-    public IntervalBasedVacuuming(IVacuumer vacuumer, int intervalInMinutes = 5)
+    public DurationBasedVacuuming(IVacuumer vacuumer, int durationInMinutes = 5)
     {
         _vacuumer = vacuumer;
-        _intervalInMinutes = intervalInMinutes;
+        _durationInMinutes = durationInMinutes;
 
-        Timer timer = new(_intervalInMinutes * 6000);
+        Timer timer = new(_durationInMinutes * 6000);
         timer.Elapsed += (_, _) => ExecuteWrapper();
         timer.Start();
     }

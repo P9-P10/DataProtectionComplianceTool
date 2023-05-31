@@ -7,19 +7,19 @@ using GraphManipulation.Utility;
 
 namespace GraphManipulation.Commands.Builders;
 
-public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
+public class PurposeCommandBuilder : BaseCommandBuilder<string, Purpose>
 {
-    private readonly IManager<string, StorageRule> _storageRuleManager;
+    private readonly IManager<string, StoragePolicy> _storagePolicyManager;
 
-    public PurposesCommandBuilder(ICommandHandlerFactory commandHandlerFactory, IManagerFactory managerFactory) : base(
+    public PurposeCommandBuilder(ICommandHandlerFactory commandHandlerFactory, IManagerFactory managerFactory) : base(
         commandHandlerFactory)
     {
-        _storageRuleManager = managerFactory.CreateManager<string, StorageRule>();
+        _storagePolicyManager = managerFactory.CreateManager<string, StoragePolicy>();
     }
 
     public override Command Build()
     {
-        var baseCommand = base.Build(CommandNamer.PurposesName, CommandNamer.PurposesAlias, out var keyOption);
+        var baseCommand = base.Build(CommandNamer.PurposeName, CommandNamer.PurposeAlias, out var keyOption);
 
         var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<Purpose>();
         var newKeyOption = OptionBuilder.CreateNewNameOption<Purpose>();
@@ -27,42 +27,42 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
         var legallyRequiredOption = BuildLegallyRequiredOption()
             .WithDescription("Whether the purpose falls under any legal obligations");
 
-        var storageRuleListOption = BuildStorageRuleListOption()
-            .WithDescription("The storage rules which personal data stored under this purpose should follow");
+        var storagePolicyListOption = BuildStoragePolicyListOption()
+            .WithDescription("The storage policies which personal data stored under this purpose should follow");
 
         var createBinder = new PurposeBinder(
             keyOption,
             descriptionOption,
             legallyRequiredOption,
-            storageRuleListOption,
-            _storageRuleManager
+            storagePolicyListOption,
+            _storagePolicyManager
         );
 
         var updateBinder = new PurposeBinder(
             newKeyOption,
             descriptionOption,
             legallyRequiredOption,
-            storageRuleListOption,
-            _storageRuleManager
+            storagePolicyListOption,
+            _storagePolicyManager
         );
 
-        var storageRuleListChangesCommands = BuildListChangesCommand(
-            keyOption, storageRuleListOption, _storageRuleManager,
-            purpose => purpose.StorageRules ?? new List<StorageRule>(),
-            (purpose, storageRules) => purpose.StorageRules = storageRules);
+        var storagePolicyListChangesCommands = BuildListChangesCommand(
+            keyOption, storagePolicyListOption, _storagePolicyManager,
+            purpose => purpose.StoragePolicies ?? new List<StoragePolicy>(),
+            (purpose, storagePolicies) => purpose.StoragePolicies = storagePolicies);
 
         return baseCommand
             .WithSubCommands(
                 CreateCommand(keyOption, createBinder, new Option[]
                 {
-                    descriptionOption, legallyRequiredOption, storageRuleListOption
+                    descriptionOption, legallyRequiredOption, storagePolicyListOption
                 }),
                 UpdateCommand(keyOption, updateBinder, new Option[]
                 {
                     newKeyOption, descriptionOption, legallyRequiredOption
                 }),
-                storageRuleListChangesCommands.Add,
-                storageRuleListChangesCommands.Remove
+                storagePolicyListChangesCommands.Add,
+                storagePolicyListChangesCommands.Remove
             );
     }
 
@@ -73,11 +73,11 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
             .WithAlias(OptionNamer.LegallyRequiredAlias);
     }
 
-    private static Option<IEnumerable<string>> BuildStorageRuleListOption()
+    private static Option<IEnumerable<string>> BuildStoragePolicyListOption()
     {
         return OptionBuilder
-            .CreateOption<IEnumerable<string>>(OptionNamer.StorageRule)
-            .WithAlias(OptionNamer.StorageRuleAlias)
+            .CreateOption<IEnumerable<string>>(OptionNamer.StoragePolicyList)
+            .WithAlias(OptionNamer.StoragePolicyListAlias)
             .WithAllowMultipleArguments(true)
             .WithArity(ArgumentArity.OneOrMore);
     }
@@ -90,14 +90,14 @@ public class PurposesCommandBuilder : BaseCommandBuilder<string, Purpose>
             FeedbackEmitter.EmitMissing(purpose.Key!, "legally required value");
         }
 
-        if (purpose.Rules is null || !purpose.Rules.Any())
+        if (purpose.VacuumingPolicies is null || !purpose.VacuumingPolicies.Any())
         {
-            FeedbackEmitter.EmitMissing<VacuumingRule>(purpose.Key!);
+            FeedbackEmitter.EmitMissing<VacuumingPolicy>(purpose.Key!);
         }
 
-        if (purpose.StorageRules is null || !purpose.StorageRules.Any())
+        if (purpose.StoragePolicies is null || !purpose.StoragePolicies.Any())
         {
-            FeedbackEmitter.EmitMissing<StorageRule>(purpose.Key!);
+            FeedbackEmitter.EmitMissing<StoragePolicy>(purpose.Key!);
         }
     }
 

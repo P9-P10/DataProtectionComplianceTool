@@ -7,13 +7,13 @@ using GraphManipulation.Utility;
 
 namespace GraphManipulation.Commands.Binders;
 
-public class StorageRuleBinder : BaseBinder<string, StorageRule>
+public class StoragePolicyBinder : BaseBinder<string, StoragePolicy>
 {
     private readonly IManager<TableColumnPair, PersonalDataColumn> _personalDataColumnManager;
     private readonly Option<TableColumnPair> _tableColumnOption;
     private readonly Option<string> _vacuumingConditionOption;
 
-    public StorageRuleBinder(
+    public StoragePolicyBinder(
         Option<string> keyOption,
         Option<string> descriptionOption,
         Option<string> vacuumingConditionOption,
@@ -25,23 +25,23 @@ public class StorageRuleBinder : BaseBinder<string, StorageRule>
         _vacuumingConditionOption = vacuumingConditionOption;
     }
 
-    protected override StorageRule GetBoundValue(BindingContext bindingContext)
+    protected override StoragePolicy GetBoundValue(BindingContext bindingContext)
     {
-        var storageRule = base.GetBoundValue(bindingContext);
+        var storagePolicy = base.GetBoundValue(bindingContext);
 
         if (bindingContext.ParseResult.HasOption(_tableColumnOption))
         {
             var tableColumn = bindingContext.ParseResult.GetValueForOption(_tableColumnOption);
-            storageRule.PersonalDataColumn = tableColumn is null
+            storagePolicy.PersonalDataColumn = tableColumn is null
                 ? null
                 : Handlers.HandleMustExistWithCreateOnDemand(tableColumn, _personalDataColumnManager);
         }
 
         if (bindingContext.ParseResult.HasOption(_vacuumingConditionOption))
         {
-            storageRule.VacuumingCondition = bindingContext.ParseResult.GetValueForOption(_vacuumingConditionOption);
+            storagePolicy.VacuumingCondition = bindingContext.ParseResult.GetValueForOption(_vacuumingConditionOption);
         }
 
-        return storageRule;
+        return storagePolicy;
     }
 }

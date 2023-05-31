@@ -103,7 +103,7 @@ public static class OptionBuilder
             .WithArity(ArgumentArity.OneOrMore);
     }
 
-    public static void ValidInterval(CommandResult commandResult, Option<string> option)
+    public static void ValidDuration(CommandResult commandResult, Option<string> option)
     {
         if (commandResult.FindResultFor(option) is null)
         {
@@ -118,10 +118,10 @@ public static class OptionBuilder
                 return;
             }
 
-            if (!VacuumingRule.IsValidInterval(result))
+            if (!VacuumingPolicy.IsValidDuration(result))
             {
                 commandResult.ErrorMessage =
-                    "Please provide valid vacuuming interval (Should be of the format 2y 3m 2w)";
+                    "Please provide valid duration (Should be of the format 2y 3m 2w)";
             }
         }
         catch (InvalidOperationException e)
