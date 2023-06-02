@@ -14,7 +14,7 @@ public class PersonalDataOriginsTest : TestResources
         process.Start();
 
         CreateIndividual(process, TestIndividual1);
-        AddStorageRule(process, TestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
         AddOrigin(process, TestOrigin);

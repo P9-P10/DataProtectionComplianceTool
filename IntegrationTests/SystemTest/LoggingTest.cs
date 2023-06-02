@@ -149,7 +149,7 @@ public class LoggingTest : TestResources
     public class Vacuuming
     {
         [Fact]
-        public void ExecutingVacuumingRuleResultsInLogEntry()
+        public void ExecutingVacuumingPolicyResultsInLogEntry()
         {
             using var process = Tools.SystemTest.CreateTestProcess(out var dbConnection);
             process.Start();
@@ -157,12 +157,12 @@ public class LoggingTest : TestResources
 
             SetupTestData(dbConnection, process);
 
-            AddStorageRule(process, TestStorageRule);
+            AddStoragePolicy(process, StoragePolicy);
             AddPurpose(process, TestPurpose);
             AddPersonalData(process, TestPersonalDataColumn);
-            UpdateStorageRuleWithPersonalDataColumn(process, TestStorageRule, TestPersonalDataColumn);
-            AddVacuumingRule(process, TestVacuumingRule);
-            ExecuteVacuumingRule(process, new[] { TestVacuumingRule });
+            UpdateStoragePolicyWithPersonalDataColumn(process, StoragePolicy, TestPersonalDataColumn);
+            AddVacuumingPolicy(process, VacuumingPolicy);
+            ExecuteVacuumingPolicy(process, new[] { VacuumingPolicy });
 
             var constraints = new LogConstraints(logTypes: new[] { LogType.Vacuuming });
 
@@ -181,10 +181,10 @@ public class LoggingTest : TestResources
                 .Select(s => new Log(s))
                 .ToList();
 
-            logEntries[0].Subject.Should().Be(TestVacuumingRule.ToListingIdentifier());
+            logEntries[0].Subject.Should().Be(VacuumingPolicy.ToListingIdentifier());
             logEntries[0].LogType.Should().Be(LogType.Vacuuming);
             logEntries[0].Message.Should()
-                .Contain(FeedbackEmitterMessage.ResultMessage<string, VacuumingRule>(TestVacuumingRule.Key,
+                .Contain(FeedbackEmitterMessage.ResultMessage<string, VacuumingPolicy>(VacuumingPolicy.Key,
                     SystemOperation.Operation.Executed, null, null));
             
             logEntries[1].Subject.Should().Be(TestPersonalDataColumn.ToListingIdentifier());
@@ -192,7 +192,7 @@ public class LoggingTest : TestResources
             logEntries[1].Message.Should().Contain(
                 $"\"UPDATE {TestPersonalDataColumn.Key.TableName} " +
                 $"SET {TestPersonalDataColumn.Key.ColumnName} = \'{TestPersonalDataColumn.DefaultValue}\' " +
-                $"WHERE ({TestStorageRule.VacuumingCondition});\" " +
+                $"WHERE ({StoragePolicy.VacuumingCondition});\" " +
                 $"possibly affected {TestPersonalDataColumn.ToListingIdentifier()} " +
                 $"because it is stored under the following purpose(s): {TestPurpose.ToListingIdentifier()}");
         }

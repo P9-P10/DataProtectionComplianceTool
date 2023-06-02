@@ -11,8 +11,8 @@ public static class SystemTest
     public static string ConfigPath { get; set; } = Path.Combine(Directory.GetCurrentDirectory(), "config.json");
     public static string ExecutablePath { get; set; } = 
         RuntimeInformation.IsOSPlatform(OSPlatform.Windows) 
-        ? Path.Combine(Directory.GetCurrentDirectory(), "GraphManipulation.exe") 
-        : Path.Combine(Directory.GetCurrentDirectory(), "GraphManipulation");
+        ? Path.Combine(Directory.GetCurrentDirectory(), "DataProtectionComplianceTool.exe") 
+        : Path.Combine(Directory.GetCurrentDirectory(), "DataProtectionComplianceTool");
 
 
     public static void CreateConfigFile(string path, string dbPath, string logPath)

@@ -30,20 +30,20 @@ public class CommandlineTest
 
     private static void ContainsCommands(string result)
     {
-        result.Should().Contain(CommandNamer.IndividualsName);
-        result.Should().Contain(CommandNamer.IndividualsAlias);
-        result.Should().Contain(CommandNamer.PersonalDataColumnsName);
-        result.Should().Contain(CommandNamer.PersonalDataColumnsAlias);
-        result.Should().Contain(CommandNamer.PurposesName);
-        result.Should().Contain(CommandNamer.PurposesAlias);
-        result.Should().Contain(CommandNamer.OriginsAlias);
-        result.Should().Contain(CommandNamer.OriginsName);
-        result.Should().Contain(CommandNamer.VacuumingRulesAlias);
-        result.Should().Contain(CommandNamer.VacuumingRulesName);
-        result.Should().Contain(CommandNamer.StorageRulesName);
-        result.Should().Contain(CommandNamer.StorageRulesName);
-        result.Should().Contain(CommandNamer.ProcessingsAlias);
-        result.Should().Contain(CommandNamer.ProcessingsName);
+        result.Should().Contain(CommandNamer.IndividualName);
+        result.Should().Contain(CommandNamer.IndividualAlias);
+        result.Should().Contain(CommandNamer.PersonalDataColumnName);
+        result.Should().Contain(CommandNamer.PersonalDataColumnAlias);
+        result.Should().Contain(CommandNamer.PurposeName);
+        result.Should().Contain(CommandNamer.PurposeAlias);
+        result.Should().Contain(CommandNamer.OriginAlias);
+        result.Should().Contain(CommandNamer.OriginName);
+        result.Should().Contain(CommandNamer.VacuumingPolicyAlias);
+        result.Should().Contain(CommandNamer.VacuumingPolicyName);
+        result.Should().Contain(CommandNamer.StoragePolicyName);
+        result.Should().Contain(CommandNamer.StoragePolicyName);
+        result.Should().Contain(CommandNamer.ProcessingAlias);
+        result.Should().Contain(CommandNamer.ProcessingName);
         result.Should().Contain(CommandNamer.LoggingAlias);
         result.Should().Contain(CommandNamer.LoggingName);
     }

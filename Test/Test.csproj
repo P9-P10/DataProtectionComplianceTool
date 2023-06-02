@@ -25,7 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\GraphManipulation\GraphManipulation.csproj" />
+        <ProjectReference Include="..\DataProtectionComplianceTool\DataProtectionComplianceTool.csproj" />
     </ItemGroup>
 
     <ItemGroup>

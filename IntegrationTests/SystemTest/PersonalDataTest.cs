@@ -14,7 +14,7 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddStorageRule(process, TestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
 
         AddPersonalData(process, TestPersonalDataColumn);
@@ -38,7 +38,7 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddStorageRule(process, TestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
         ShowPersonalData(process, TestPersonalDataColumn);
@@ -57,7 +57,7 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddStorageRule(process, TestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
         UpdatePersonalData(process, TestPersonalDataColumn, UpdatedTestPersonalDataColumn);
@@ -76,8 +76,8 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddStorageRule(process, TestStorageRule);
-        AddStorageRule(process, TestNewTestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
+        AddStoragePolicy(process, NewTestStoragePolicy);
         AddPurpose(process, TestPurpose);
         AddPurpose(process, NewTestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
@@ -98,7 +98,7 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddStorageRule(process, TestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
         AddPersonalData(process, TestPersonalDataColumn);
         DeletePersonalData(process, TestPersonalDataColumn);
@@ -118,8 +118,8 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddStorageRule(process, TestStorageRule);
-        AddStorageRule(process, TestNewTestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
+        AddStoragePolicy(process, NewTestStoragePolicy);
         AddPurpose(process, TestPurpose);
         AddPurpose(process, NewTestPurpose);
         AddPurpose(process, VeryNewTestPurpose);
@@ -144,8 +144,8 @@ public class PersonalDataTest : TestResources
         using var process = Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        AddStorageRule(process, TestStorageRule);
-        AddStorageRule(process, TestNewTestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
+        AddStoragePolicy(process, NewTestStoragePolicy);
         AddPurpose(process, TestPurpose);
         AddPurpose(process, NewTestPurpose);
         AddPurpose(process, VeryNewTestPurpose);

@@ -12,7 +12,7 @@ public class SystemPersistenceTests : TestResources
         string configPath = process.ConfigPath;
         process.Start();
 
-        AddStorageRule(process, TestStorageRule);
+        AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
         ListPurpose(process);
         List<string> firstResult = process.GetLastOutput();
@@ -26,10 +26,10 @@ public class SystemPersistenceTests : TestResources
 
         
         List<string> secondResult = secondProcess.GetLastOutput();
-        firstResult.FindAll(s => s.Contains(TestStorageRule.Key)
-                                 && s.Contains(TestStorageRule.Description)).Should().ContainSingle();
-        secondResult.FindAll(s => s.Contains(TestStorageRule.Key)
-                                  && s.Contains(TestStorageRule.Description)).Should().ContainSingle();
+        firstResult.FindAll(s => s.Contains(StoragePolicy.Key)
+                                 && s.Contains(StoragePolicy.Description)).Should().ContainSingle();
+        secondResult.FindAll(s => s.Contains(StoragePolicy.Key)
+                                  && s.Contains(StoragePolicy.Description)).Should().ContainSingle();
         Assert.Equal(firstResult, secondResult);
         
         secondProcess.Dispose();

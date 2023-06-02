@@ -44,12 +44,12 @@ public class StatusCommandTest : TestResources
     }
 
     [Fact]
-    public void CreatingStorageRule()
+    public void CreatingStoragePolicy()
     {
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        CreateEntity(process, CommandNamer.StorageRulesName);
+        CreateEntity(process, CommandNamer.StoragePolicyName);
 
         var outputBeforeReport = FormatOutputForStatusTest(process.GetLastOutputNoWhitespace()).ToList();
 
@@ -63,9 +63,9 @@ public class StatusCommandTest : TestResources
         output.Count.Should().Be(2);
 
         output.Should().ContainSingle(s => s == FeedbackEmitterMessage
-            .MissingMessage<string, StorageRule>(StringKey, "vacuuming condition"));
+            .MissingMessage<string, StoragePolicy>(StringKey, "vacuuming condition"));
         output.Should().ContainSingle(s => s == FeedbackEmitterMessage
-            .MissingMessage<string, StorageRule, PersonalDataColumn>(StringKey));
+            .MissingMessage<string, StoragePolicy, PersonalDataColumn>(StringKey));
     }
 
     [Fact]
@@ -74,7 +74,7 @@ public class StatusCommandTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        CreateEntity(process, CommandNamer.PurposesName);
+        CreateEntity(process, CommandNamer.PurposeName);
 
         var outputBeforeReport = FormatOutputForStatusTest(process.GetLastOutputNoWhitespace()).ToList();
 
@@ -90,18 +90,18 @@ public class StatusCommandTest : TestResources
         output.Should().ContainSingle(s => s == FeedbackEmitterMessage
             .MissingMessage<string, Purpose>(StringKey, "legally required value"));
         output.Should().ContainSingle(s => s == FeedbackEmitterMessage
-            .MissingMessage<string, Purpose, StorageRule>(StringKey));
+            .MissingMessage<string, Purpose, StoragePolicy>(StringKey));
         output.Should().ContainSingle(s => s == FeedbackEmitterMessage
-            .MissingMessage<string, Purpose, VacuumingRule>(StringKey));
+            .MissingMessage<string, Purpose, VacuumingPolicy>(StringKey));
     }
 
     [Fact]
-    public void CreatingVacuumingRule()
+    public void CreatingVacuumingPolicy()
     {
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        CreateEntity(process, CommandNamer.VacuumingRulesName);
+        CreateEntity(process, CommandNamer.VacuumingPolicyName);
 
         var outputBeforeReport = FormatOutputForStatusTest(process.GetLastOutputNoWhitespace()).ToList();
 
@@ -115,7 +115,7 @@ public class StatusCommandTest : TestResources
         output.Count.Should().Be(1);
 
         output.Should().ContainSingle(s => s == FeedbackEmitterMessage
-            .MissingMessage<string, VacuumingRule>(StringKey, "interval"));
+            .MissingMessage<string, VacuumingPolicy>(StringKey, "duration"));
     }
 
     [Fact]
@@ -124,7 +124,7 @@ public class StatusCommandTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        CreateEntity(process, CommandNamer.ProcessingsName);
+        CreateEntity(process, CommandNamer.ProcessingName);
 
         var outputBeforeReport = FormatOutputForStatusTest(process.GetLastOutputNoWhitespace()).ToList();
 
@@ -149,7 +149,7 @@ public class StatusCommandTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        CreateEntity(process, CommandNamer.PersonalDataOriginsName, OptionNamer.Id, IntegerKey.ToString());
+        CreateEntity(process, CommandNamer.PersonalDataOriginName, OptionNamer.Id, IntegerKey.ToString());
 
         var outputBeforeReport = FormatOutputForStatusTest(process.GetLastOutputNoWhitespace()).ToList();
 
@@ -176,7 +176,7 @@ public class StatusCommandTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        CreateEntity(process, CommandNamer.PersonalDataColumnsName, OptionNamer.TableColumn, TableColumnPairKey);
+        CreateEntity(process, CommandNamer.PersonalDataColumnName, OptionNamer.TableColumn, TableColumnPairKey);
 
         var outputBeforeReport = FormatOutputForStatusTest(process.GetLastOutputNoWhitespace()).ToList();
 
@@ -187,12 +187,14 @@ public class StatusCommandTest : TestResources
 
         error.Should().BeEmpty();
         outputBeforeReport.SequenceEqual(output).Should().BeTrue();
-        output.Count.Should().Be(2);
+        output.Count.Should().Be(3);
 
         output.Should().ContainSingle(s => s == FeedbackEmitterMessage
             .MissingMessage<TableColumnPair, PersonalDataColumn, Purpose>(TableColumnPair));
         output.Should().ContainSingle(s => s == FeedbackEmitterMessage
             .MissingMessage<TableColumnPair, PersonalDataColumn>(TableColumnPair, "default value"));
+        output.Should().ContainSingle(s => s == FeedbackEmitterMessage
+            .MissingMessage<TableColumnPair, PersonalDataColumn>(TableColumnPair, "join condition"));
     }
 
     [Fact]
@@ -201,7 +203,7 @@ public class StatusCommandTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        CreateEntity(process, CommandNamer.OriginsName);
+        CreateEntity(process, CommandNamer.OriginName);
 
         var outputBeforeReport = FormatOutputForStatusTest(process.GetLastOutputNoWhitespace()).ToList();
 
@@ -221,7 +223,7 @@ public class StatusCommandTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        CreateEntity(process, CommandNamer.IndividualsName, OptionNamer.Id, IntegerKey.ToString());
+        CreateEntity(process, CommandNamer.IndividualName, OptionNamer.Id, IntegerKey.ToString());
         
         var outputBeforeReport = FormatOutputForStatusTest(process.GetLastOutputNoWhitespace()).ToList();
         
@@ -241,8 +243,8 @@ public class StatusCommandTest : TestResources
         using var process = IntegrationTests.SystemTest.Tools.SystemTest.CreateTestProcess();
         process.Start();
 
-        CreateEntity(process, CommandNamer.PersonalDataColumnsName, OptionNamer.TableColumn, TableColumnPairKey);
-        CreateEntity(process, CommandNamer.IndividualsName, OptionNamer.Id, IntegerKey.ToString());
+        CreateEntity(process, CommandNamer.PersonalDataColumnName, OptionNamer.TableColumn, TableColumnPairKey);
+        CreateEntity(process, CommandNamer.IndividualName, OptionNamer.Id, IntegerKey.ToString());
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = FormatOutputForStatusTest(process.GetLastOutputNoWhitespace()).ToList();
