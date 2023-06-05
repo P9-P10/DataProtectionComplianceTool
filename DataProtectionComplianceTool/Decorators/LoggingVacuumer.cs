@@ -1,5 +1,6 @@
 using GraphManipulation.Logging;
 using GraphManipulation.Models;
+using GraphManipulation.Utility;
 using GraphManipulation.Vacuuming;
 
 namespace GraphManipulation.Decorators;
@@ -57,7 +58,9 @@ public class LoggingVacuumer : LoggingDecorator<string, VacuumingPolicy>, IVacuu
 
     private static string CreateDeleteExecutionLogMessage(DeletionExecution execution)
     {
-        return $"\"{execution.Query}\" possibly affected ({execution.Table}, {execution.Column}) " +
-               $"because it is stored under the following purpose(s): {string.Join(", ", execution.Purposes.Select(p => p.ToListingIdentifier()))}";
+        return $"Execution of {TypeToString.GetEntityType(execution.VacuumingPolicy.GetType())} '{execution.VacuumingPolicy.Key}' " + 
+               $"possibly affected ({execution.Table}, {execution.Column}) " +
+               $"because it is stored under the following purpose(s): {string.Join(", ", execution.Purposes.Select(p => p.ToListingIdentifier()))}. " +
+               $"The following query was executed: \"{execution.Query}\"";
     }
 }

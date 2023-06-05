@@ -190,11 +190,13 @@ public class LoggingTest : TestResources
             logEntries[1].Subject.Should().Be(TestPersonalDataColumn.ToListingIdentifier());
             logEntries[1].LogType.Should().Be(LogType.Vacuuming);
             logEntries[1].Message.Should().Contain(
+                $"Execution of {TypeToString.GetEntityType(typeof(VacuumingPolicy))} '{VacuumingPolicy.Key}' " +
+                $"possibly affected {TestPersonalDataColumn.ToListingIdentifier()} " +
+                $"because it is stored under the following purpose(s): {TestPurpose.ToListingIdentifier()}. " +
+                $"The following query was executed: " +
                 $"\"UPDATE {TestPersonalDataColumn.Key.TableName} " +
                 $"SET {TestPersonalDataColumn.Key.ColumnName} = \'{TestPersonalDataColumn.DefaultValue}\' " +
-                $"WHERE ({StoragePolicy.VacuumingCondition});\" " +
-                $"possibly affected {TestPersonalDataColumn.ToListingIdentifier()} " +
-                $"because it is stored under the following purpose(s): {TestPurpose.ToListingIdentifier()}");
+                $"WHERE ({StoragePolicy.VacuumingCondition});\"");
         }
     }
 }
