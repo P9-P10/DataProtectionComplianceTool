@@ -88,6 +88,7 @@ public class Vacuumer : IVacuumer
                 .Select(execution => execution!);
 
             executions.AddRange(executionsFromStoragePolicies);
+            executions = executions.Distinct().ToList();
         }
 
         ExecuteConditions(executions);

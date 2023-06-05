@@ -170,5 +170,30 @@ public class VacuumerTest
         Assert.Contains(secondExpectedQuery, testQueryExecutor.Query);
         Assert.Contains(executions, x => x.Purposes.Any(y => y.Key == purpose.Key));
         Assert.DoesNotContain(executions, x => x.Purposes.Any(y => y.Key == newPurpose.Key));
+        
+    }
+    
+    [Fact]
+    public void TestExecuteVacuumingPoliciesExecutesOnlyCorrectGivenPurposeSingleTable()
+    {
+        TestPurposeMapper testPurposeMapper = new();
+        TestQueryExecutor testQueryExecutor = new();
+        Vacuumer vacuumer = VacuumInstantiate(testPurposeMapper, testQueryExecutor);
+        Purpose purpose = PurposeMaker();
+        Purpose newPurpose = PurposeMaker(name: "NewPurpose",condition:"SecondCondition");
+       
+        testPurposeMapper.Insert(purpose);
+        testPurposeMapper.Insert(newPurpose);
+
+        VacuumingPolicy vr = VacuumingPolicyMaker();
+        vr.Purposes = vr.Purposes.Append(purpose);
+        
+
+        List<DeletionExecution> executions =
+            vacuumer.ExecuteVacuumingPolicyList(new List<VacuumingPolicy> { vr}).ToList();
+        const string expectedQuery = "UPDATE Table SET Column = 'Null' WHERE (Condition) AND (SecondCondition);";
+        Assert.Contains(expectedQuery, testQueryExecutor.Query);
+        Assert.Contains(executions, x => x.Purposes.Any(y => y.Key == purpose.Key));
+        Assert.Single(executions);
     }
 }
