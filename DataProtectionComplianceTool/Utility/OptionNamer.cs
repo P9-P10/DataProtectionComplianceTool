@@ -65,6 +65,6 @@ public static class OptionNamer
     public const string Individual = "--individual";
     public const string IndividualAlias = "-indi";
 
-    public const string JoinCondition = "--join-condition";
-    public const string JoinConditionAlias = "-jc";
+    public const string AssociationExpression = "--association-expression";
+    public const string AssociationExpressionAlias = "-ae";
 }

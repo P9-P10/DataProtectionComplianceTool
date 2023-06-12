@@ -194,7 +194,7 @@ public class StatusCommandTest : TestResources
         output.Should().ContainSingle(s => s == FeedbackEmitterMessage
             .MissingMessage<TableColumnPair, PersonalDataColumn>(TableColumnPair, "default value"));
         output.Should().ContainSingle(s => s == FeedbackEmitterMessage
-            .MissingMessage<TableColumnPair, PersonalDataColumn>(TableColumnPair, "join condition"));
+            .MissingMessage<TableColumnPair, PersonalDataColumn>(TableColumnPair, "association expression"));
     }
 
     [Fact]

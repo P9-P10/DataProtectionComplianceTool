@@ -73,7 +73,7 @@ public class TestResources
         Purposes = new[] { TestPurpose },
         DefaultValue = "testDefaultValue",
         Description = Description,
-        JoinCondition = "This is a join condition"
+        AssociationExpression = "This is a join condition"
     };
 
     protected static readonly PersonalDataColumn UpdatedTestPersonalDataColumn = new()
@@ -82,7 +82,7 @@ public class TestResources
         Purposes = TestPersonalDataColumn.Purposes,
         DefaultValue = TestPersonalDataColumn.DefaultValue + "UPDATED",
         Description = TestPersonalDataColumn.Description + "UPDATED",
-        JoinCondition = TestPersonalDataColumn.JoinCondition + "UPDATED"
+        AssociationExpression = TestPersonalDataColumn.AssociationExpression + "UPDATED"
     };
 
     protected static readonly PersonalDataColumn TestPersonalDataColumnWithMorePurposes = new()
@@ -91,7 +91,7 @@ public class TestResources
         Purposes = new[] { TestPurpose, NewTestPurpose, VeryNewTestPurpose },
         Description = TestPersonalDataColumn.Description,
         DefaultValue = TestPersonalDataColumn.DefaultValue,
-        JoinCondition = TestPersonalDataColumn.JoinCondition
+        AssociationExpression = TestPersonalDataColumn.AssociationExpression
     };
 
     protected static readonly PersonalDataColumn NewTestPersonalDataColumn = new()
@@ -102,7 +102,7 @@ public class TestResources
         Purposes = TestPersonalDataColumn.Purposes,
         DefaultValue = TestPersonalDataColumn.DefaultValue + "NEW",
         Description = TestPersonalDataColumn.Description + "NEW",
-        JoinCondition = TestPersonalDataColumn.JoinCondition + "NEW"
+        AssociationExpression = TestPersonalDataColumn.AssociationExpression + "NEW"
     };
 
     protected static readonly Processing TestProcessing = new()
@@ -324,7 +324,7 @@ public class TestResources
                       $" {OptionNamer.TableColumn} {personalDataColumn.Key.TableName} {personalDataColumn.Key.ColumnName}" +
                       $" {OptionNamer.DefaultValueAlias} \"{personalDataColumn.DefaultValue}\"" +
                       $" {OptionNamer.Description} \"{personalDataColumn.Description}\"" +
-                      $" {OptionNamer.JoinCondition} \"{personalDataColumn.JoinCondition}\"" +
+                      $" {OptionNamer.AssociationExpression} \"{personalDataColumn.AssociationExpression}\"" +
                       $" {OptionNamer.PurposeList} {string.Join(" ", personalDataColumn.Purposes.Select(p => p.Key))}";
         process.GiveInput(command);
     }
@@ -335,7 +335,7 @@ public class TestResources
         var command = $"{CommandNamer.PersonalDataColumnAlias} {CommandNamer.Update} " +
                       $"{OptionNamer.TableColumn} {old.Key.TableName} {old.Key.ColumnName} " +
                       $"{OptionNamer.DefaultValue} \"{updated.DefaultValue}\" " +
-                      $"{OptionNamer.JoinCondition} \"{updated.JoinCondition}\" " +
+                      $"{OptionNamer.AssociationExpression} \"{updated.AssociationExpression}\" " +
                       $"{OptionNamer.Description} \"{updated.Description}\" ";
 
         testProcess.GiveInput(command);

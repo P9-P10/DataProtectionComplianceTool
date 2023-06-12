@@ -29,10 +29,10 @@ public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPa
             .WithAlias(OptionNamer.DefaultValueAlias)
             .WithDescription("The default value that attributes in the column should receive upon deletion");
         
-        var joinConditionOption = OptionBuilder
-            .CreateOption<string>(OptionNamer.JoinCondition)
-            .WithAlias(OptionNamer.JoinConditionAlias)
-            .WithDescription("The condition that describes how this personal data column should be joined on the table containing individuals");
+        var associationExpressionOption = OptionBuilder
+            .CreateOption<string>(OptionNamer.AssociationExpression)
+            .WithAlias(OptionNamer.AssociationExpressionAlias)
+            .WithDescription("The expression that describes how this personal data column should be associated with the table containing individuals");
 
         var purposeListOption = OptionBuilder
             .CreatePurposeListOption()
@@ -43,7 +43,7 @@ public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPa
             descriptionOption,
             purposeListOption,
             defaultValueOption,
-            joinConditionOption,
+            associationExpressionOption,
             _purposesManager);
 
         var updateBinder = new PersonalDataColumnBinder(
@@ -51,7 +51,7 @@ public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPa
             descriptionOption,
             purposeListOption,
             defaultValueOption,
-            joinConditionOption,
+            associationExpressionOption,
             _purposesManager);
 
         var purposeListChangesCommands = BuildListChangesCommand(
@@ -63,11 +63,11 @@ public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPa
             .WithSubCommands(
                 CreateCommand(keyOption, createBinder, new Option[]
                 {
-                    descriptionOption, defaultValueOption, joinConditionOption, purposeListOption
+                    descriptionOption, defaultValueOption, associationExpressionOption, purposeListOption
                 }),
                 UpdateCommand(keyOption, updateBinder, new Option[]
                 {
-                    descriptionOption, defaultValueOption, joinConditionOption
+                    descriptionOption, defaultValueOption, associationExpressionOption
                 }),
                 purposeListChangesCommands.Add,
                 purposeListChangesCommands.Remove
@@ -93,9 +93,9 @@ public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPa
             FeedbackEmitter.EmitMissing(column.Key!, "default value");
         }
 
-        if (column.JoinCondition is null)
+        if (column.AssociationExpression is null)
         {
-            FeedbackEmitter.EmitMissing(column.Key!, "join condition");
+            FeedbackEmitter.EmitMissing(column.Key!, "association expression");
         }
     }
 }

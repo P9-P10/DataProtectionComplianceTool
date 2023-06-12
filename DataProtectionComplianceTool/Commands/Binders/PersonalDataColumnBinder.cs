@@ -10,7 +10,7 @@ namespace GraphManipulation.Commands.Binders;
 public class PersonalDataColumnBinder : BaseBinder<TableColumnPair, PersonalDataColumn>
 {
     private readonly Option<string> _defaultValueOption;
-    private readonly Option<string> _joinConditionOption;
+    private readonly Option<string> _associationExpressionOption;
     private readonly IManager<string, Purpose> _purposesManager;
     private readonly Option<IEnumerable<string>> _purposesOption;
 
@@ -19,12 +19,12 @@ public class PersonalDataColumnBinder : BaseBinder<TableColumnPair, PersonalData
         Option<string> descriptionOption,
         Option<IEnumerable<string>> purposesOption,
         Option<string> defaultValueOption,
-        Option<string> joinConditionOption,
+        Option<string> associationExpressionOption,
         IManager<string, Purpose> purposesManager) : base(keyOption, descriptionOption)
     {
         _purposesOption = purposesOption;
         _defaultValueOption = defaultValueOption;
-        _joinConditionOption = joinConditionOption;
+        _associationExpressionOption = associationExpressionOption;
         _purposesManager = purposesManager;
     }
 
@@ -37,9 +37,9 @@ public class PersonalDataColumnBinder : BaseBinder<TableColumnPair, PersonalData
             pdc.DefaultValue = bindingContext.ParseResult.GetValueForOption(_defaultValueOption);
         }
 
-        if (bindingContext.ParseResult.HasOption(_joinConditionOption))
+        if (bindingContext.ParseResult.HasOption(_associationExpressionOption))
         {
-            pdc.JoinCondition = bindingContext.ParseResult.GetValueForOption(_joinConditionOption);
+            pdc.AssociationExpression = bindingContext.ParseResult.GetValueForOption(_associationExpressionOption);
         }
 
         if (bindingContext.ParseResult.HasOption(_purposesOption))
