@@ -16,7 +16,7 @@ public class PersonalDataOriginsTest : TestResources
         CreateIndividual(process, TestIndividual1);
         AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
-        AddPersonalData(process, TestPersonalDataColumn);
+        AddPersonalDataColumn(process, TestPersonalDataColumn);
         AddOrigin(process, TestOrigin);
         CreatePersonalDataOrigin(process, 1, TestPersonalDataColumn, TestIndividual1, TestOrigin);
 

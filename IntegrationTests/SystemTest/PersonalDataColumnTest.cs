@@ -6,7 +6,7 @@ using IntegrationTests.SystemTest.Tools;
 
 namespace IntegrationTests.SystemTest;
 
-public class PersonalDataTest : TestResources
+public class PersonalDataColumnTest : TestResources
 {
     [Fact]
     public void PersonalDataCanBeAdded()
@@ -17,7 +17,7 @@ public class PersonalDataTest : TestResources
         AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
 
-        AddPersonalData(process, TestPersonalDataColumn);
+        AddPersonalDataColumn(process, TestPersonalDataColumn);
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetAllOutputNoWhitespaceOrPrompt().ToList();
@@ -40,8 +40,8 @@ public class PersonalDataTest : TestResources
 
         AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
-        AddPersonalData(process, TestPersonalDataColumn);
-        ShowPersonalData(process, TestPersonalDataColumn);
+        AddPersonalDataColumn(process, TestPersonalDataColumn);
+        ShowPersonalDataColumn(process, TestPersonalDataColumn);
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetAllOutputNoWhitespace();
@@ -59,9 +59,9 @@ public class PersonalDataTest : TestResources
 
         AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
-        AddPersonalData(process, TestPersonalDataColumn);
-        UpdatePersonalData(process, TestPersonalDataColumn, UpdatedTestPersonalDataColumn);
-        ShowPersonalData(process, UpdatedTestPersonalDataColumn);
+        AddPersonalDataColumn(process, TestPersonalDataColumn);
+        UpdatePersonalDataColumn(process, TestPersonalDataColumn, UpdatedTestPersonalDataColumn);
+        ShowPersonalDataColumn(process, UpdatedTestPersonalDataColumn);
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetLastOutputNoWhitespace();
@@ -80,9 +80,9 @@ public class PersonalDataTest : TestResources
         AddStoragePolicy(process, NewTestStoragePolicy);
         AddPurpose(process, TestPurpose);
         AddPurpose(process, NewTestPurpose);
-        AddPersonalData(process, TestPersonalDataColumn);
-        AddPersonalData(process, NewTestPersonalDataColumn);
-        ListPersonalData(process);
+        AddPersonalDataColumn(process, TestPersonalDataColumn);
+        AddPersonalDataColumn(process, NewTestPersonalDataColumn);
+        ListPersonalDataColumn(process);
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetLastOutput().ToList();
@@ -100,8 +100,8 @@ public class PersonalDataTest : TestResources
 
         AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
-        AddPersonalData(process, TestPersonalDataColumn);
-        DeletePersonalData(process, TestPersonalDataColumn);
+        AddPersonalDataColumn(process, TestPersonalDataColumn);
+        DeletePersonalDataColumn(process, TestPersonalDataColumn);
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetAllOutputNoWhitespace();
@@ -123,8 +123,8 @@ public class PersonalDataTest : TestResources
         AddPurpose(process, TestPurpose);
         AddPurpose(process, NewTestPurpose);
         AddPurpose(process, VeryNewTestPurpose);
-        AddPersonalData(process, TestPersonalDataColumn);
-        AddPurposesToPersonalData(process, TestPersonalDataColumn, new[] { NewTestPurpose, VeryNewTestPurpose });
+        AddPersonalDataColumn(process, TestPersonalDataColumn);
+        AddPurposesToPersonalDataColumn(process, TestPersonalDataColumn, new[] { NewTestPurpose, VeryNewTestPurpose });
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetLastOutputNoWhitespaceOrPrompt();
@@ -149,13 +149,60 @@ public class PersonalDataTest : TestResources
         AddPurpose(process, TestPurpose);
         AddPurpose(process, NewTestPurpose);
         AddPurpose(process, VeryNewTestPurpose);
-        AddPersonalData(process, TestPersonalDataColumn);
-        AddPurposesToPersonalData(process, TestPersonalDataColumn, new[] { NewTestPurpose, VeryNewTestPurpose });
-        RemovePurposesFromPersonalData(process, TestPersonalDataColumn, new[] { NewTestPurpose, VeryNewTestPurpose });
+        AddPersonalDataColumn(process, TestPersonalDataColumn);
+        AddPurposesToPersonalDataColumn(process, TestPersonalDataColumn, new[] { NewTestPurpose, VeryNewTestPurpose });
+        RemovePurposesFromPersonalDataColumn(process, TestPersonalDataColumn, new[] { NewTestPurpose, VeryNewTestPurpose });
 
         var error = process.GetAllErrorsNoWhitespace();
         var output = process.GetLastOutputNoWhitespaceOrPrompt().ToList();
 
+        error.Should().BeEmpty();
+        output.Should().ContainSingle(s =>
+            s == FeedbackEmitterMessage.SuccessMessage(TestPersonalDataColumn.Key!,
+                SystemOperation.Operation.Updated, TestPersonalDataColumn));
+    }
+    
+    [Fact]
+    public void PersonalDataCanReceiveLegalBases()
+    {
+        using var process = Tools.SystemTest.CreateTestProcess();
+        process.Start();
+        
+        AddStoragePolicy(process, StoragePolicy);
+        AddPurpose(process, TestPurpose);
+        AddLegalBasis(process, TestLegalBasis);
+        AddLegalBasis(process, UpdatedTestLegalBasis);
+        AddPersonalDataColumn(process, TestPersonalDataColumn);
+        AddLegalBasesToPersonalDataColumn(process, TestPersonalDataColumn, new[] { UpdatedTestLegalBasis });
+        
+        var error = process.GetAllErrorsNoWhitespace();
+        var output = process.GetLastOutputNoWhitespaceOrPrompt();
+
+        TestPersonalDataColumn.LegalBases = TestPersonalDataColumn.LegalBases.Append(UpdatedTestLegalBasis);
+        
+        error.Should().BeEmpty();
+        output.Should().ContainSingle(s =>
+            s == FeedbackEmitterMessage.SuccessMessage(TestPersonalDataColumn.Key!,
+                SystemOperation.Operation.Updated, TestPersonalDataColumn));
+    }
+
+    [Fact]
+    public void PersonalDataCanHaveLegalBasesRemoved()
+    {
+        using var process = Tools.SystemTest.CreateTestProcess();
+        process.Start();
+        
+        AddStoragePolicy(process, StoragePolicy);
+        AddPurpose(process, TestPurpose);
+        AddLegalBasis(process, TestLegalBasis);
+        AddLegalBasis(process, UpdatedTestLegalBasis);
+        AddPersonalDataColumn(process, TestPersonalDataColumn);
+        AddLegalBasesToPersonalDataColumn(process, TestPersonalDataColumn, new[] { UpdatedTestLegalBasis });
+        RemoveLegalBasesFromPersonalDataColumn(process, TestPersonalDataColumn, new []{UpdatedTestLegalBasis});
+        
+        var error = process.GetAllErrorsNoWhitespace();
+        var output = process.GetLastOutputNoWhitespaceOrPrompt().ToList();
+        
         error.Should().BeEmpty();
         output.Should().ContainSingle(s =>
             s == FeedbackEmitterMessage.SuccessMessage(TestPersonalDataColumn.Key!,

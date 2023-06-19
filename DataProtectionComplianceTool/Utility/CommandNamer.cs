@@ -31,6 +31,9 @@ public static class CommandNamer
 
     public const string VacuumingPolicyName = "vacuuming-policy";
     public const string VacuumingPolicyAlias = "vp";
+    
+    public const string LegalBasisName = "legal-basis";
+    public const string LegalBasisNameAlias = "lb";
 
     public const string ConfigurationName = "configuration";
     public const string ConfigurationAlias = "cfg";
@@ -63,16 +66,16 @@ public static class CommandNamer
     public const string ExecuteAlias = "e";
 
     public const string AddPurpose = "add-purpose";
-    public const string AddPurposeAlias = "ap";
 
     public const string RemovePurpose = "remove-purpose";
-    public const string RemovePurposeAlias = "rp";
+    
+    public const string AddLegalBasis = "add-legal-basis";
+    
+    public const string RemoveLegalBasis = "remove-legal-basis";
 
     public const string SetSource = "set-source";
-    public const string SetSourceAlias = "sts";
 
     public const string ShowSource = "show-source";
-    public const string ShowSourceAlias = "shs";
 
     public const string Status = "status";
     public const string StatusAlias = "stat";

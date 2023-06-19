@@ -102,6 +102,14 @@ public static class OptionBuilder
             .WithAllowMultipleArguments(true)
             .WithArity(ArgumentArity.OneOrMore);
     }
+    
+    public static Option<IEnumerable<string>> CreateLegalBasisListOption()
+    {
+        return CreateOption<IEnumerable<string>>(OptionNamer.LegalBasisList)
+            .WithAlias(OptionNamer.LegalBasisListAlias)
+            .WithAllowMultipleArguments(true)
+            .WithArity(ArgumentArity.OneOrMore);
+    }
 
     public static void ValidDuration(CommandResult commandResult, Option<string> option)
     {

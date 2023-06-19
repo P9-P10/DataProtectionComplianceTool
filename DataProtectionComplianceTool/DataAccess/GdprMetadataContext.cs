@@ -17,6 +17,7 @@ public class GdprMetadataContext : DbContext
     public DbSet<VacuumingPolicy> vacuumingPolicies { get; set; }
     public DbSet<Processing> processes { get; set; }
     public DbSet<Individual> people { get; set; }
+    public DbSet<LegalBasis> legalBases { get; set; }
 
     public DbSet<ConfigKeyValue> individualsSourceStores { get; set; }
     public DbSet<Purpose> purposes { get; set; }

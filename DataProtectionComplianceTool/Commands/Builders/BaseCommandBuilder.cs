@@ -122,7 +122,7 @@ public abstract class BaseCommandBuilder<TKey, TValue> : BaseCommandBuilder
                 ? CommandBuilder.BuildAddCommand(otherValueType)
                 : CommandBuilder.BuildRemoveCommand(otherValueType))
             .WithDescription(
-                $"{(isAdd ? "Adds" : "Removes")} the given {otherValueType}s {(isAdd ? "to" : "from")} the {GetEntityType()}")
+                $"{(isAdd ? "Adds" : "Removes")} the given {otherValueType}{(otherValueType.Last() != 's' ? "s" : "")} {(isAdd ? "to" : "from")} the {GetEntityType()}")
             .WithOption(out _, keyOption)
             .WithOption(out _, listOption);
 

@@ -85,10 +85,8 @@ public class StatusCommandTest : TestResources
 
         error.Should().BeEmpty();
         outputBeforeReport.SequenceEqual(output).Should().BeTrue();
-        output.Count.Should().Be(3);
+        output.Count.Should().Be(2);
 
-        output.Should().ContainSingle(s => s == FeedbackEmitterMessage
-            .MissingMessage<string, Purpose>(StringKey, "legally required value"));
         output.Should().ContainSingle(s => s == FeedbackEmitterMessage
             .MissingMessage<string, Purpose, StoragePolicy>(StringKey));
         output.Should().ContainSingle(s => s == FeedbackEmitterMessage
@@ -187,10 +185,12 @@ public class StatusCommandTest : TestResources
 
         error.Should().BeEmpty();
         outputBeforeReport.SequenceEqual(output).Should().BeTrue();
-        output.Count.Should().Be(3);
+        output.Count.Should().Be(4);
 
         output.Should().ContainSingle(s => s == FeedbackEmitterMessage
             .MissingMessage<TableColumnPair, PersonalDataColumn, Purpose>(TableColumnPair));
+        output.Should().ContainSingle(s => s == FeedbackEmitterMessage
+            .MissingMessage<TableColumnPair, PersonalDataColumn, LegalBasis>(TableColumnPair));
         output.Should().ContainSingle(s => s == FeedbackEmitterMessage
             .MissingMessage<TableColumnPair, PersonalDataColumn>(TableColumnPair, "default value"));
         output.Should().ContainSingle(s => s == FeedbackEmitterMessage
