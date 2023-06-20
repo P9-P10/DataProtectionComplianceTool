@@ -52,7 +52,8 @@ public class CommandLineInterface
                 new OriginCommandBuilder(_commandHandlerFactory),
                 new VacuumingPolicyCommandBuilder(_commandHandlerFactory, _managerFactory, _vacuumerFactory),
                 new StoragePolicyCommandBuilder(_commandHandlerFactory, _managerFactory),
-                new ProcessingCommandBuilder(_commandHandlerFactory, _managerFactory))
+                new ProcessingCommandBuilder(_commandHandlerFactory, _managerFactory),
+                new LegalBasisCommandBuilder(_commandHandlerFactory))
             .WithSubCommands(
                 LoggingCommandBuilder.Build(_loggerFactory),
                 QuitCommand());

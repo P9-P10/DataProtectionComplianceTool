@@ -176,7 +176,7 @@ public class VacuumingPoliciesTest : TestResources
 
         AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
-        AddPersonalData(process, TestPersonalDataColumn);
+        AddPersonalDataColumn(process, TestPersonalDataColumn);
         UpdateStoragePolicyWithPersonalDataColumn(process, StoragePolicy, TestPersonalDataColumn);
         AddVacuumingPolicy(process, VacuumingPolicy);
 
@@ -211,7 +211,7 @@ public class VacuumingPoliciesTest : TestResources
 
         AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
-        AddPersonalData(process, TestPersonalDataColumn);
+        AddPersonalDataColumn(process, TestPersonalDataColumn);
         // UpdateStoragePolicyWithPersonalDataColumn(process, StoragePolicy, TestPersonalDataColumn);
         AddVacuumingPolicy(process, VacuumingPolicy);
         ExecuteVacuumingPolicy(process, new[] { VacuumingPolicy });
@@ -234,7 +234,7 @@ public class VacuumingPoliciesTest : TestResources
 
         AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
-        AddPersonalData(process, TestPersonalDataColumn);
+        AddPersonalDataColumn(process, TestPersonalDataColumn);
         // UpdateStoragePolicyWithPersonalDataColumn(process, StoragePolicy, TestPersonalDataColumn);
         AddVacuumingPolicy(process, VacuumingPolicy);
         ExecuteVacuumingPolicy(process, new[] { VacuumingPolicy });
@@ -262,7 +262,7 @@ public class VacuumingPoliciesTest : TestResources
 
         AddStoragePolicy(process, StoragePolicy);
         // AddPurpose(process, TestPurpose);
-        AddPersonalData(process, TestPersonalDataColumn);
+        AddPersonalDataColumn(process, TestPersonalDataColumn);
         UpdateStoragePolicyWithPersonalDataColumn(process, StoragePolicy, TestPersonalDataColumn);
         AddVacuumingPolicy(process, VacuumingPolicy);
         ExecuteVacuumingPolicy(process, new[] { VacuumingPolicy });
@@ -285,7 +285,7 @@ public class VacuumingPoliciesTest : TestResources
 
         AddStoragePolicy(process, StoragePolicy);
         // AddPurpose(process, TestPurpose);
-        AddPersonalData(process, TestPersonalDataColumn);
+        AddPersonalDataColumn(process, TestPersonalDataColumn);
         UpdateStoragePolicyWithPersonalDataColumn(process, StoragePolicy, TestPersonalDataColumn);
         AddVacuumingPolicy(process, VacuumingPolicy);
         ExecuteVacuumingPolicy(process, new[] { VacuumingPolicy });
@@ -315,7 +315,7 @@ public class VacuumingPoliciesTest : TestResources
 
         AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
-        AddPersonalData(process, TestPersonalDataColumn);
+        AddPersonalDataColumn(process, TestPersonalDataColumn);
         UpdateStoragePolicyWithPersonalDataColumn(process, StoragePolicy, TestPersonalDataColumn);
         AddVacuumingPolicy(process, VacuumingPolicy);
 
@@ -382,7 +382,7 @@ public class VacuumingPoliciesTest : TestResources
 
         AddStoragePolicy(process, StoragePolicy);
         AddPurpose(process, TestPurpose);
-        AddPersonalData(process, TestPersonalDataColumn);
+        AddPersonalDataColumn(process, TestPersonalDataColumn);
         UpdateStoragePolicyWithPersonalDataColumn(process, StoragePolicy, TestPersonalDataColumn);
         AddVacuumingPolicy(process, VacuumingPolicy);
 

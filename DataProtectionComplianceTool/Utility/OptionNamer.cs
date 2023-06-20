@@ -26,9 +26,6 @@ public static class OptionNamer
     public const string Purpose = "--purpose";
     public const string PurposeAlias = "-p";
 
-    public const string LegallyRequired = "--legally-required";
-    public const string LegallyRequiredAlias = "-lr";
-
     public const string StoragePolicyList = "--storage-policies";
     public const string StoragePolicyListAlias = "-sps";
 
@@ -58,6 +55,9 @@ public static class OptionNamer
 
     public const string PurposeList = "--purposes";
     public const string PurposeListAlias = "-ps";
+    
+    public const string LegalBasisList = "--legal-bases";
+    public const string LegalBasisListAlias = "-lbs";
 
     public const string DefaultValue = "--default-value";
     public const string DefaultValueAlias = "-dv";

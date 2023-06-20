@@ -24,16 +24,12 @@ public class PurposeCommandBuilder : BaseCommandBuilder<string, Purpose>
         var descriptionOption = OptionBuilder.CreateEntityDescriptionOption<Purpose>();
         var newKeyOption = OptionBuilder.CreateNewNameOption<Purpose>();
 
-        var legallyRequiredOption = BuildLegallyRequiredOption()
-            .WithDescription("Whether the purpose falls under any legal obligations");
-
         var storagePolicyListOption = BuildStoragePolicyListOption()
             .WithDescription("The storage policies which personal data stored under this purpose should follow");
 
         var createBinder = new PurposeBinder(
             keyOption,
             descriptionOption,
-            legallyRequiredOption,
             storagePolicyListOption,
             _storagePolicyManager
         );
@@ -41,7 +37,6 @@ public class PurposeCommandBuilder : BaseCommandBuilder<string, Purpose>
         var updateBinder = new PurposeBinder(
             newKeyOption,
             descriptionOption,
-            legallyRequiredOption,
             storagePolicyListOption,
             _storagePolicyManager
         );
@@ -55,22 +50,15 @@ public class PurposeCommandBuilder : BaseCommandBuilder<string, Purpose>
             .WithSubCommands(
                 CreateCommand(keyOption, createBinder, new Option[]
                 {
-                    descriptionOption, legallyRequiredOption, storagePolicyListOption
+                    descriptionOption, storagePolicyListOption
                 }),
                 UpdateCommand(keyOption, updateBinder, new Option[]
                 {
-                    newKeyOption, descriptionOption, legallyRequiredOption
+                    newKeyOption, descriptionOption
                 }),
                 storagePolicyListChangesCommands.Add,
                 storagePolicyListChangesCommands.Remove
             );
-    }
-
-    private static Option<bool> BuildLegallyRequiredOption()
-    {
-        return OptionBuilder
-            .CreateOption<bool>(OptionNamer.LegallyRequired)
-            .WithAlias(OptionNamer.LegallyRequiredAlias);
     }
 
     private static Option<IEnumerable<string>> BuildStoragePolicyListOption()
@@ -85,11 +73,6 @@ public class PurposeCommandBuilder : BaseCommandBuilder<string, Purpose>
 
     protected override void StatusReport(Purpose purpose)
     {
-        if (purpose.LegallyRequired is null)
-        {
-            FeedbackEmitter.EmitMissing(purpose.Key!, "legally required value");
-        }
-
         if (purpose.VacuumingPolicies is null || !purpose.VacuumingPolicies.Any())
         {
             FeedbackEmitter.EmitMissing<VacuumingPolicy>(purpose.Key!);

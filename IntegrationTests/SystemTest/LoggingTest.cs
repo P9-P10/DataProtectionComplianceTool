@@ -159,7 +159,7 @@ public class LoggingTest : TestResources
 
             AddStoragePolicy(process, StoragePolicy);
             AddPurpose(process, TestPurpose);
-            AddPersonalData(process, TestPersonalDataColumn);
+            AddPersonalDataColumn(process, TestPersonalDataColumn);
             UpdateStoragePolicyWithPersonalDataColumn(process, StoragePolicy, TestPersonalDataColumn);
             AddVacuumingPolicy(process, VacuumingPolicy);
             ExecuteVacuumingPolicy(process, new[] { VacuumingPolicy });

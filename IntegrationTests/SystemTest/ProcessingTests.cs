@@ -12,7 +12,7 @@ public class ProcessingTests : TestResources
         process.Start();
 
         AddPurpose(process, TestPurpose);
-        AddPersonalData(process, TestPersonalDataColumn);
+        AddPersonalDataColumn(process, TestPersonalDataColumn);
         AddProcessing(process, TestProcessing);
 
         List<string> result = process.GetLastOutput();
@@ -29,7 +29,7 @@ public class ProcessingTests : TestResources
         process.Start();
 
         AddPurpose(process, TestPurpose);
-        AddPersonalData(process, TestPersonalDataColumn);
+        AddPersonalDataColumn(process, TestPersonalDataColumn);
         AddProcessing(process, TestProcessing);
 
         ListProcessing(process);
@@ -44,7 +44,7 @@ public class ProcessingTests : TestResources
         process.Start();
 
         AddPurpose(process, TestPurpose);
-        AddPersonalData(process, TestPersonalDataColumn);
+        AddPersonalDataColumn(process, TestPersonalDataColumn);
         AddProcessing(process, TestProcessing);
 
         UpdateProcessing(process, TestProcessing, NewTestProcessing);
@@ -61,7 +61,7 @@ public class ProcessingTests : TestResources
         process.Start();
 
         AddPurpose(process, TestPurpose);
-        AddPersonalData(process, TestPersonalDataColumn);
+        AddPersonalDataColumn(process, TestPersonalDataColumn);
         AddProcessing(process, TestProcessing);
 
         UpdateProcessing(process, TestProcessing, NewTestProcessing);
@@ -78,7 +78,7 @@ public class ProcessingTests : TestResources
         process.Start();
 
         AddPurpose(process, TestPurpose);
-        AddPersonalData(process, TestPersonalDataColumn);
+        AddPersonalDataColumn(process, TestPersonalDataColumn);
         AddProcessing(process, TestProcessing);
 
         DeleteProcessing(process, TestProcessing);
@@ -94,7 +94,7 @@ public class ProcessingTests : TestResources
         process.Start();
 
         AddPurpose(process, TestPurpose);
-        AddPersonalData(process, TestPersonalDataColumn);
+        AddPersonalDataColumn(process, TestPersonalDataColumn);
         AddProcessing(process, TestProcessing);
 
         DeleteProcessing(process, TestProcessing);
@@ -112,7 +112,7 @@ public class ProcessingTests : TestResources
         process.Start();
 
         AddPurpose(process, TestPurpose);
-        AddPersonalData(process, TestPersonalDataColumn);
+        AddPersonalDataColumn(process, TestPersonalDataColumn);
         AddProcessing(process, TestProcessing);
 
         ShowProcessing(process, TestProcessing);

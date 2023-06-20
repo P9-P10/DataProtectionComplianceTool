@@ -31,12 +31,25 @@ public class TestResources
         VacuumingCondition = StoragePolicy.VacuumingCondition + "NEW"
     };
 
+    protected static readonly LegalBasis TestLegalBasis = new()
+    {
+        Key = "testLegalBasis",
+        Description = Description,
+        PersonalDataColumns = new List<PersonalDataColumn>()
+    };
+
+    protected static readonly LegalBasis UpdatedTestLegalBasis = new()
+    {
+        Key = TestLegalBasis.Key + "UPDATED",
+        Description = TestLegalBasis.Description + "UPDATED",
+        PersonalDataColumns = TestLegalBasis.PersonalDataColumns
+    };
+
     protected static readonly Purpose TestPurpose = new()
     {
         Key = "purposeName",
         Description = Description,
         StoragePolicies = new List<StoragePolicy>() { StoragePolicy },
-        LegallyRequired = true,
         VacuumingPolicies = new List<VacuumingPolicy>() { }
     };
 
@@ -45,7 +58,6 @@ public class TestResources
         Key = TestPurpose.Key + "NEW",
         Description = TestPurpose.Description + "NEW",
         StoragePolicies = new List<StoragePolicy>() { NewTestStoragePolicy },
-        LegallyRequired = !TestPurpose.LegallyRequired,
         VacuumingPolicies = new List<VacuumingPolicy>()
     };
 
@@ -54,7 +66,6 @@ public class TestResources
         Key = TestPurpose.Key + "NEW",
         Description = TestPurpose.Description + "NEW",
         StoragePolicies = new List<StoragePolicy>() { StoragePolicy },
-        LegallyRequired = !TestPurpose.LegallyRequired,
         VacuumingPolicies = new List<VacuumingPolicy>()
     };
 
@@ -63,7 +74,6 @@ public class TestResources
         Key = TestPurpose.Key + "VERY_NEW",
         Description = TestPurpose.Description + "VERY_NEW",
         StoragePolicies = new List<StoragePolicy>() { NewTestStoragePolicy },
-        LegallyRequired = !NewTestPurpose.LegallyRequired,
         VacuumingPolicies = new List<VacuumingPolicy>()
     };
 
@@ -71,6 +81,7 @@ public class TestResources
     {
         Key = new TableColumnPair("TestTable", "TestColumn"),
         Purposes = new[] { TestPurpose },
+        LegalBases = new[] { TestLegalBasis },
         DefaultValue = "testDefaultValue",
         Description = Description,
         AssociationExpression = "This is a join condition"
@@ -80,18 +91,10 @@ public class TestResources
     {
         Key = TestPersonalDataColumn.Key,
         Purposes = TestPersonalDataColumn.Purposes,
+        LegalBases = TestPersonalDataColumn.LegalBases,
         DefaultValue = TestPersonalDataColumn.DefaultValue + "UPDATED",
         Description = TestPersonalDataColumn.Description + "UPDATED",
         AssociationExpression = TestPersonalDataColumn.AssociationExpression + "UPDATED"
-    };
-
-    protected static readonly PersonalDataColumn TestPersonalDataColumnWithMorePurposes = new()
-    {
-        Key = TestPersonalDataColumn.Key,
-        Purposes = new[] { TestPurpose, NewTestPurpose, VeryNewTestPurpose },
-        Description = TestPersonalDataColumn.Description,
-        DefaultValue = TestPersonalDataColumn.DefaultValue,
-        AssociationExpression = TestPersonalDataColumn.AssociationExpression
     };
 
     protected static readonly PersonalDataColumn NewTestPersonalDataColumn = new()
@@ -100,6 +103,7 @@ public class TestResources
             TestPersonalDataColumn.Key.TableName + "NEW",
             TestPersonalDataColumn.Key.ColumnName + "NEW"),
         Purposes = TestPersonalDataColumn.Purposes,
+        LegalBases = TestPersonalDataColumn.LegalBases,
         DefaultValue = TestPersonalDataColumn.DefaultValue + "NEW",
         Description = TestPersonalDataColumn.Description + "NEW",
         AssociationExpression = TestPersonalDataColumn.AssociationExpression + "NEW"
@@ -160,23 +164,14 @@ public class TestResources
         Purposes = new List<Purpose> { TestPurpose }
     };
 
-    protected static void AddStoragePolicy(TestProcess testProcess, StoragePolicy storagePolicy)
-    {
-        var addDeleteConditionCommand = $"{CommandNamer.StoragePolicyName} {CommandNamer.Create} " +
-                                        $"{OptionNamer.Name} {storagePolicy.Key} " +
-                                        $"{OptionNamer.VacuumingCondition} \"{storagePolicy.VacuumingCondition}\" " +
-                                        $"{OptionNamer.Description} \"{storagePolicy.Description}\"";
-
-        testProcess.GiveInput(addDeleteConditionCommand);
-    }
+    
 
     protected static void AddPurpose(TestProcess testProcess, Purpose purpose)
     {
         var addPurposeCommand = $"{CommandNamer.PurposeName} {CommandNamer.Create} " +
                                 $"{OptionNamer.Name} {purpose.Key} " +
                                 $"{OptionNamer.Description} \"{purpose.Description}\" " +
-                                $"{OptionNamer.StoragePolicyList} {String.Join(" ", purpose.StoragePolicies.Select(p => p.Key).ToList())} " +
-                                $"{OptionNamer.LegallyRequired} {purpose.LegallyRequired} ";
+                                $"{OptionNamer.StoragePolicyList} {String.Join(" ", purpose.StoragePolicies.Select(p => p.Key).ToList())} ";
 
         testProcess.GiveInput(addPurposeCommand);
     }
@@ -194,7 +189,6 @@ public class TestResources
         var updatePurposeCommand = $"{CommandNamer.PurposeName} {CommandNamer.Update} " +
                                    $"{OptionNamer.Name} {old.Key} " +
                                    $"{OptionNamer.Description} \"{updated.Description}\" " +
-                                   $"{OptionNamer.LegallyRequired} {updated.LegallyRequired} " +
                                    $"{OptionNamer.NewName} {updated.Key}";
 
         testProcess.GiveInput(updatePurposeCommand);
@@ -210,6 +204,52 @@ public class TestResources
         var deleteCommand = $"{CommandNamer.PurposeName} {CommandNamer.Delete} " +
                             $"{OptionNamer.Name} {purpose.Key}";
         testProcess.GiveInput(deleteCommand);
+    }
+
+    protected static void AddLegalBasis(TestProcess testProcess, LegalBasis legalBasis)
+    {
+        var addLegalBasisCommand = $"{CommandNamer.LegalBasisName} {CommandNamer.Create} " +
+                                   $"{OptionNamer.Name} {legalBasis.Key} " +
+                                   $"{OptionNamer.Description} \"{legalBasis.Description}\" ";
+        testProcess.GiveInput(addLegalBasisCommand);
+    }
+
+    protected static void ShowLegalBasis(TestProcess testProcess, LegalBasis legalBasis)
+    {
+        var addLegalBasisCommand = $"{CommandNamer.LegalBasisName} {CommandNamer.Show} " +
+                                   $"{OptionNamer.Name} {legalBasis.Key} ";
+        testProcess.GiveInput(addLegalBasisCommand);
+    }
+
+    protected static void UpdateLegalBasis(TestProcess testProcess, LegalBasis old, LegalBasis updated)
+    {
+        var addLegalBasisCommand = $"{CommandNamer.LegalBasisName} {CommandNamer.Update} " +
+                                   $"{OptionNamer.Name} {old.Key} " +
+                                   $"{OptionNamer.Description} \"{updated.Description}\" " +
+                                   $"{OptionNamer.NewName} {updated.Key}";
+        testProcess.GiveInput(addLegalBasisCommand);
+    }
+
+    protected static void ListLegalBasis(TestProcess testProcess)
+    {
+        testProcess.GiveInput($"{CommandNamer.LegalBasisName} {CommandNamer.List}");
+    }
+
+    protected static void DeleteLegalBasis(TestProcess testProcess, LegalBasis legalBasis)
+    {
+        var addLegalBasisCommand = $"{CommandNamer.LegalBasisName} {CommandNamer.Delete} " +
+                                   $"{OptionNamer.Name} {legalBasis.Key} ";
+        testProcess.GiveInput(addLegalBasisCommand);
+    }
+    
+    protected static void AddStoragePolicy(TestProcess testProcess, StoragePolicy storagePolicy)
+    {
+        var addDeleteConditionCommand = $"{CommandNamer.StoragePolicyName} {CommandNamer.Create} " +
+                                        $"{OptionNamer.Name} {storagePolicy.Key} " +
+                                        $"{OptionNamer.VacuumingCondition} \"{storagePolicy.VacuumingCondition}\" " +
+                                        $"{OptionNamer.Description} \"{storagePolicy.Description}\"";
+
+        testProcess.GiveInput(addDeleteConditionCommand);
     }
 
     protected static void ListStoragePolicies(TestProcess process)
@@ -318,18 +358,19 @@ public class TestResources
         process.GiveInput(command);
     }
 
-    protected static void AddPersonalData(TestProcess process, PersonalDataColumn personalDataColumn)
+    protected static void AddPersonalDataColumn(TestProcess process, PersonalDataColumn personalDataColumn)
     {
         var command = $"{CommandNamer.PersonalDataColumnAlias} {CommandNamer.CreateAlias}" +
                       $" {OptionNamer.TableColumn} {personalDataColumn.Key.TableName} {personalDataColumn.Key.ColumnName}" +
                       $" {OptionNamer.DefaultValueAlias} \"{personalDataColumn.DefaultValue}\"" +
                       $" {OptionNamer.Description} \"{personalDataColumn.Description}\"" +
                       $" {OptionNamer.AssociationExpression} \"{personalDataColumn.AssociationExpression}\"" +
-                      $" {OptionNamer.PurposeList} {string.Join(" ", personalDataColumn.Purposes.Select(p => p.Key))}";
+                      $" {OptionNamer.PurposeList} {string.Join(" ", personalDataColumn.Purposes.Select(p => p.Key))} " +
+                      $" {OptionNamer.LegalBasisList} {string.Join(" ", personalDataColumn.LegalBases.Select(l => l.Key))} ";
         process.GiveInput(command);
     }
 
-    protected static void UpdatePersonalData(TestProcess testProcess, PersonalDataColumn old,
+    protected static void UpdatePersonalDataColumn(TestProcess testProcess, PersonalDataColumn old,
         PersonalDataColumn updated)
     {
         var command = $"{CommandNamer.PersonalDataColumnAlias} {CommandNamer.Update} " +
@@ -341,7 +382,7 @@ public class TestResources
         testProcess.GiveInput(command);
     }
 
-    protected static void ShowPersonalData(TestProcess testProcess, PersonalDataColumn personalDataColumn)
+    protected static void ShowPersonalDataColumn(TestProcess testProcess, PersonalDataColumn personalDataColumn)
     {
         var command = $"{CommandNamer.PersonalDataColumnAlias} {CommandNamer.Show} " +
                       $"{OptionNamer.TableColumn} {personalDataColumn.Key.TableName} " +
@@ -350,13 +391,13 @@ public class TestResources
         testProcess.GiveInput(command);
     }
 
-    protected static void ListPersonalData(TestProcess testProcess)
+    protected static void ListPersonalDataColumn(TestProcess testProcess)
     {
         var command = $"{CommandNamer.PersonalDataColumnAlias} {CommandNamer.List}";
         testProcess.GiveInput(command);
     }
 
-    protected static void DeletePersonalData(TestProcess testProcess, PersonalDataColumn personalDataColumn)
+    protected static void DeletePersonalDataColumn(TestProcess testProcess, PersonalDataColumn personalDataColumn)
     {
         var command = $"{CommandNamer.PersonalDataColumnAlias} {CommandNamer.Delete} " +
                       $"{OptionNamer.TableColumn} {personalDataColumn.Key.TableName} " +
@@ -364,7 +405,7 @@ public class TestResources
         testProcess.GiveInput(command);
     }
 
-    protected static void AddPurposesToPersonalData(TestProcess testProcess, PersonalDataColumn personalDataColumn,
+    protected static void AddPurposesToPersonalDataColumn(TestProcess testProcess, PersonalDataColumn personalDataColumn,
         IEnumerable<Purpose> purposes)
     {
         var command = $"{CommandNamer.PersonalDataColumnAlias} {CommandNamer.AddPurpose} " +
@@ -374,7 +415,7 @@ public class TestResources
         testProcess.GiveInput(command);
     }
 
-    protected static void RemovePurposesFromPersonalData(TestProcess testProcess,
+    protected static void RemovePurposesFromPersonalDataColumn(TestProcess testProcess,
         PersonalDataColumn personalDataColumn,
         IEnumerable<Purpose> purposes)
     {
@@ -385,7 +426,28 @@ public class TestResources
         testProcess.GiveInput(command);
     }
 
-    protected static void CreatePersonalDataOrigin(TestProcess testProcess, int id, PersonalDataColumn personalDataColumn,
+    protected static void AddLegalBasesToPersonalDataColumn(TestProcess testProcess,
+        PersonalDataColumn personalDataColumn, IEnumerable<LegalBasis> legalBases)
+    {
+        var command = $"{CommandNamer.PersonalDataColumnName} {CommandNamer.AddLegalBasis} " +
+                      $"{OptionNamer.TableColumn} {personalDataColumn.Key.TableName} " +
+                      $"{personalDataColumn.Key.ColumnName} " +
+                      $"{OptionNamer.LegalBasisList} {string.Join(" ", legalBases.Select(p => p.Key))}";
+        testProcess.GiveInput(command);
+    }
+    
+    protected static void RemoveLegalBasesFromPersonalDataColumn(TestProcess testProcess,
+        PersonalDataColumn personalDataColumn, IEnumerable<LegalBasis> legalBases)
+    {
+        var command = $"{CommandNamer.PersonalDataColumnName} {CommandNamer.RemoveLegalBasis} " +
+                      $"{OptionNamer.TableColumn} {personalDataColumn.Key.TableName} " +
+                      $"{personalDataColumn.Key.ColumnName} " +
+                      $"{OptionNamer.LegalBasisList} {string.Join(" ", legalBases.Select(p => p.Key))}";
+        testProcess.GiveInput(command);
+    }
+
+    protected static void CreatePersonalDataOrigin(TestProcess testProcess, int id,
+        PersonalDataColumn personalDataColumn,
         Individual individual, Origin origin)
     {
         var command = $"{CommandNamer.PersonalDataOriginName} {CommandNamer.Create} " +
@@ -457,7 +519,8 @@ public class TestResources
         testProcess.GiveInput(command);
     }
 
-    protected static void ExecuteVacuumingPolicy(TestProcess testProcess, IEnumerable<VacuumingPolicy> vacuumingPolicies)
+    protected static void ExecuteVacuumingPolicy(TestProcess testProcess,
+        IEnumerable<VacuumingPolicy> vacuumingPolicies)
     {
         var command = $"{CommandNamer.VacuumingPolicyName} {CommandNamer.Execute} " +
                       $"{OptionNamer.VacuumingPolicyList} {string.Join(" ", vacuumingPolicies.Select(p => p.Key))}";

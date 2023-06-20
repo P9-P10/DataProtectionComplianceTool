@@ -10,11 +10,13 @@ namespace GraphManipulation.Commands.Builders;
 public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPair, PersonalDataColumn>
 {
     private readonly IManager<string, Purpose> _purposesManager;
+    private readonly IManager<string, LegalBasis> _legalBasesManager;
 
     public PersonalDataColumnCommandBuilder(ICommandHandlerFactory commandHandlerFactory,
         IManagerFactory managerFactory) : base(commandHandlerFactory)
     {
         _purposesManager = managerFactory.CreateManager<string, Purpose>();
+        _legalBasesManager = managerFactory.CreateManager<string, LegalBasis>();
     }
 
     public override Command Build()
@@ -36,41 +38,56 @@ public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPa
 
         var purposeListOption = OptionBuilder
             .CreatePurposeListOption()
-            .WithDescription("The purpose(s) under which the personal data is stored");
+            .WithDescription("The purposes under which the personal data is stored");
+        
+        var legalBasisListOption = OptionBuilder
+            .CreateLegalBasisListOption()
+            .WithDescription("The legal bases under which the personal data is stored");
 
         var createBinder = new PersonalDataColumnBinder(
             keyOption,
             descriptionOption,
             purposeListOption,
+            legalBasisListOption,
             defaultValueOption,
             associationExpressionOption,
-            _purposesManager);
+            _purposesManager,
+            _legalBasesManager);
 
         var updateBinder = new PersonalDataColumnBinder(
             keyOption,
             descriptionOption,
             purposeListOption,
+            legalBasisListOption,
             defaultValueOption,
             associationExpressionOption,
-            _purposesManager);
+            _purposesManager,
+            _legalBasesManager);
 
         var purposeListChangesCommands = BuildListChangesCommand(
             keyOption, purposeListOption, _purposesManager,
             column => column.Purposes ?? new List<Purpose>(),
             (column, purposes) => column.Purposes = purposes);
+        
+        var legalBasisListChangesCommands = BuildListChangesCommand(
+            keyOption, legalBasisListOption, _legalBasesManager,
+            column => column.LegalBases ?? new List<LegalBasis>(),
+            (column, legalBases) => column.LegalBases = legalBases);
 
         return baseCommand
             .WithSubCommands(
                 CreateCommand(keyOption, createBinder, new Option[]
                 {
-                    descriptionOption, defaultValueOption, associationExpressionOption, purposeListOption
+                    descriptionOption, defaultValueOption, associationExpressionOption, purposeListOption, legalBasisListOption
                 }),
                 UpdateCommand(keyOption, updateBinder, new Option[]
                 {
                     descriptionOption, defaultValueOption, associationExpressionOption
                 }),
                 purposeListChangesCommands.Add,
-                purposeListChangesCommands.Remove
+                purposeListChangesCommands.Remove,
+                legalBasisListChangesCommands.Add,
+                legalBasisListChangesCommands.Remove
             );
     }
 
@@ -86,6 +103,11 @@ public class PersonalDataColumnCommandBuilder : BaseCommandBuilder<TableColumnPa
         if (column.Purposes is null || !column.Purposes.Any())
         {
             FeedbackEmitter.EmitMissing<Purpose>(column.Key!);
+        }
+
+        if (column.LegalBases is null || !column.LegalBases.Any())
+        {
+            FeedbackEmitter.EmitMissing<LegalBasis>(column.Key!);
         }
 
         if (column.DefaultValue is null)
