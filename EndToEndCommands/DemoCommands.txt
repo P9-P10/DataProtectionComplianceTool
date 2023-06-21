@@ -1,0 +1,44 @@
+﻿personal-data-column create --table-column newsletter email --default-value removed --association-expression "newsletter.id"
+personal-data-column create --table-column users name --default-value removed --association-expression "users.id"
+personal-data-column create --table-column orders delivery_address --default-value removed --association-expression "orders.ordered_by"
+
+status
+
+purpose create --name Marketing
+purpose create --name Bookkeeping
+
+personal-data-column add-purpose --table-column newsletter email --purposes Marketing
+personal-data-column add-purpose --table-column users name --purposes Marketing Bookkeeping
+personal-data-column add-purpose --table-column orders delivery_address --purposes Bookkeeping
+
+status
+
+legal-basis create --name Consent
+legal-basis create --name LegalObligation
+
+personal-data-column add-legal-basis --table-column newsletter email --legal-bases Consent
+personal-data-column add-legal-basis --table-column users name --legal-bases Consent LegalObligation
+personal-data-column add-legal-basis --table-column orders delivery_address --legal-bases LegalObligation
+
+status
+
+storage-policy create --name MarketingNewsletter --table-column newsletter email --vacuuming-condition "EXISTS(SELECT u.id FROM users AS u JOIN newsletter AS n ON u.id = n.id WHERE subscribed = 0 AND u.id = newsletter.id)"
+storage-policy create --name MarketingUsers --table-column users name --vacuuming-condition "EXISTS(SELECT u.id FROM users AS u JOIN newsletter AS n ON u.id = n.id WHERE subscribed = 0 AND u.id = users.id)"
+storage-policy create --name BookkeepingUsers --table-column users name --vacuuming-condition "EXISTS(SELECT u.id AS uid, MAX(order_date) AS last_order_date FROM orders JOIN users AS u ON u.id = ordered_by WHERE u.id = users.id GROUP BY ordered_by HAVING last_order_date < datetime('2023-06-02 13:00:00', ‘-5 year’))"
+storage-policy create --name BookkeepingOrders --table-column orders delivery_address --vacuuming-condition "EXISTS(SELECT u.id AS uid, MAX(order_date) AS last_order_date FROM orders JOIN users AS u ON u.id = ordered_by WHERE u.id = orders.ordered_by GROUP BY ordered_by HAVING last_order_date < datetime('2023-06-02 13:00:00', ‘-5 year’))"
+
+purpose add-storage-policy --name Marketing --storage-policies MarketingNewsletter MarketingUsers
+purpose add-storage-policy --name Bookkeeping --storage-policies BookkeepingUsers BookkeepingOrders
+
+status
+
+
+vacuuming-policy create --name DailyVacuuming --duration "1d" --purposes Marketing Bookkeeping
+
+status
+
+
+vacuuming-policy execute --vacuuming-policies DailyVacuuming
+
+
+log list --log-types Vacuuming
