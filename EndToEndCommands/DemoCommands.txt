@@ -11,7 +11,6 @@ personal-data-column add-purpose --table-column newsletter email --purposes Mark
 personal-data-column add-purpose --table-column users name --purposes Marketing Bookkeeping
 personal-data-column add-purpose --table-column orders delivery_address --purposes Bookkeeping
 
-status
 
 legal-basis create --name Consent
 legal-basis create --name LegalObligation
@@ -25,12 +24,10 @@ status
 storage-policy create --name MarketingNewsletter --table-column newsletter email --vacuuming-condition "EXISTS(SELECT u.id FROM users AS u JOIN newsletter AS n ON u.id = n.id WHERE subscribed = 0 AND u.id = newsletter.id)"
 storage-policy create --name MarketingUsers --table-column users name --vacuuming-condition "EXISTS(SELECT u.id FROM users AS u JOIN newsletter AS n ON u.id = n.id WHERE subscribed = 0 AND u.id = users.id)"
 storage-policy create --name BookkeepingUsers --table-column users name --vacuuming-condition "EXISTS(SELECT u.id AS uid, MAX(order_date) AS last_order_date FROM orders JOIN users AS u ON u.id = ordered_by WHERE u.id = users.id GROUP BY ordered_by HAVING last_order_date < datetime('2023-06-02 13:00:00', ‘-5 year’))"
-storage-policy create --name BookkeepingOrders --table-column orders delivery_address --vacuuming-condition "EXISTS(SELECT u.id AS uid, MAX(order_date) AS last_order_date FROM orders JOIN users AS u ON u.id = ordered_by WHERE u.id = orders.ordered_by GROUP BY ordered_by HAVING last_order_date < datetime('2023-06-02 13:00:00', ‘-5 year’))"
+storage-policy create --name BookkeepingOrders --table-column orders delivery_address --vacuuming-condition "EXISTS(SELECT u.id AS uid, MAX(order_date) AS last_order_date FROM orders AS o JOIN users AS u ON u.id = o.ordered_by WHERE u.id = orders.ordered_by GROUP BY o.ordered_by HAVING last_order_date < datetime('2023-06-02 13:00:00', ‘-5 year’))"
 
 purpose add-storage-policy --name Marketing --storage-policies MarketingNewsletter MarketingUsers
 purpose add-storage-policy --name Bookkeeping --storage-policies BookkeepingUsers BookkeepingOrders
-
-status
 
 
 vacuuming-policy create --name DailyVacuuming --duration "1d" --purposes Marketing Bookkeeping
